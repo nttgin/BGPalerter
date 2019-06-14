@@ -1,0 +1,30 @@
+{
+  "name": "bgpalerter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "",
+    "watch-and-serve": "nodemon --inspect --exec babel-node index.js",
+    "serve": "nodemon --exec babel-node index.js"
+  },
+  "author": "Massimo Candela",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "JSONStream": "^1.3.5",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "event-stream": "^4.0.1",
+    "sleep": "^6.1.0",
+    "websocket-stream": "^5.5.0",
+    "ws": "^7.0.0",
+    "yarn": "^1.16.0"
+  }
+}
