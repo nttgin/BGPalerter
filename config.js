@@ -1,17 +1,13 @@
 import MonitorHijack from "./monitors/monitorHijack";
+import yaml from "js-yaml";
+import fs from "fs";
 
-module.exports = {
-    bufferSize: 10,
-    wsParams: {
-        moreSpecific: false,
-        type: "UPDATE",
-        // host: "rrc21",
-        socketOptions: {
-            includeRaw: false
-        }
-    },
+const configFile = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
 
+const config = {
     monitors: [
         MonitorHijack
     ]
 };
+
+module.exports = Object.assign(config, configFile);

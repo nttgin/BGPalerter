@@ -6,10 +6,9 @@ export default class Consumer {
         this.monitors = config.monitors.map(monitor => new monitor());
     };
 
-    dispatch = (message) => {
-        console.log("ere");
+    dispatch = (data) => {
         try {
-            message = JSON.parse(message);
+            const message = JSON.parse(data);
             switch (message.type) {
                 case "ris_message": this.handleUpdate(message)
             }
@@ -18,10 +17,48 @@ export default class Consumer {
         }
     };
 
-    handleUpdate = (message) => {
+    handleUpdate = (data) => {
+        const messages = this.transform(data);
         for (let monitor of this.monitors){
-            monitor.monitor(message);
+            for (const message of messages){
+                monitor.monitor(message);
+            }
         }
+    };
+
+    transform = (message) => {
+        message = message.data;
+        const components = [];
+        const announcements = message["announcements"] || [];
+        const withdrawals = message["withdrawals"] || [];
+        const peer = message["peer"];
+        const path = message["path"];
+
+        for (let announcement of announcements){
+            const nextHop = announcement["next_hop"];
+            const prefixes = announcement["prefixes"] || [];
+
+            for (let prefix of prefixes){
+                components.push({
+                    type: "announcement",
+                    prefix,
+                    peer,
+                    path,
+                    nextHop
+                })
+            }
+        }
+
+        for (let prefix of withdrawals){
+            components.push({
+                type: "withdrawal",
+                prefix,
+                peer
+
+            })
+        }
+
+        return components;
     }
 
 }

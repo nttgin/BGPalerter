@@ -1,0 +1,44 @@
+# Please, rename this file to config.yml
+
+testMode: true
+
+bufferSize: 10,
+
+wsParams:
+  moreSpecific: true
+  type: "UPDATE"
+  host: "rrc21"
+  socketOptions:
+    includeRaw: false
+
+# The streaming services used to have real-time data
+# This is an array (use new lines and dashes!)
+websocketDataService: wss://ris-live.ripe.net/v1/ws/
+
+senderNotificationsEmail: me@test.net
+
+notifiedEmails:
+  - email1@test.net
+  - email2@test.net
+
+# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# This is an array (use new lines and dashes!)
+monitoredPrefixesFiles:
+  - monitored_prefixes.base.yml
+
+# After how many announcements from different peers we trigger an alter?
+numberPeersBeforeHijackAlert: 0
+
+# After how many withdrawals from different peers we trigger an alter?
+numberPeersBeforeLowVisibilityAlert: 0
+
+# 10 seconds is the default
+repeatAlertAfterSeconds: 1
+
+# delete or 0 for never
+repeatStatusHeartbeatAfterSeconds: 400
+
+
+# stop sending the same alert after x seconds. Default 600
+resetAfterSeconds: 4
+
