@@ -6,7 +6,11 @@ const configFile = yaml.safeLoad(fs.readFileSync('./config.yml', 'utf8'));
 
 const config = {
     monitors: [
-        MonitorHijack
+        {
+            class: MonitorHijack,
+            channel: "hijack",
+            name: "basic-hijack-detection"
+        }
     ]
 };
 

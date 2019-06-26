@@ -1,37 +1,37 @@
 27.114.0.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 58.88.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 60.32.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.112.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.113.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.118.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.119.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.120.144.0/20:
   description: subas 64600
@@ -40,12 +40,12 @@
 61.126.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.199.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.200.80.0/20:
   description: subas 64600
@@ -54,12 +54,12 @@
 61.207.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.208.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 61.213.144.0/20:
   description: subas 64600
@@ -88,12 +88,12 @@
 114.144.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 114.160.0.0/11:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 117.103.176.0/20:
   description: subas 64600
@@ -110,12 +110,12 @@
 118.0.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 118.16.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 120.29.144.0/21:
   description: subas 64600
@@ -128,37 +128,37 @@
 121.112.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 122.1.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 122.16.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 123.216.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 123.224.0.0/14:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 124.40.0.0/18:
   description: subas 64600
   asn: 2914
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 124.40.32.0/19:
   description: iboss
   asn: 137922
-  ignore_morespecifics: True
+  ignoreMorespecifics: True
 
 124.40.56.0/24:
   description: capitalonline
@@ -171,27 +171,27 @@
 124.84.0.0/14:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 124.96.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 125.170.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 125.172.0.0/14:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 125.200.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 130.94.19.0/24:
   description: subas 65061
@@ -208,32 +208,32 @@
 153.176.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.192.0.0/11:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.224.0.0/12:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.240.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.248.0.0/14:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.252.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 153.254.0.0/15:
   description: subas 64600
@@ -242,37 +242,37 @@
 180.0.0.0/10:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.169.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.168.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.170.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.171.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.172.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.12.173.0/24:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.210.232.0/24:
   description: subas 64600
@@ -293,7 +293,7 @@
 202.234.192.0/18:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 203.105.64.0/19:
   description: subas 64600
@@ -302,17 +302,17 @@
 203.139.160.0/19:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 203.140.96.0/20:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 203.140.112.0/20:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 203.205.112.0/20:
   description: subas 64600
@@ -353,47 +353,47 @@
 210.132.0.0/18:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.145.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.154.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.160.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.161.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.162.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.163.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.164.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.170.64.0/18:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.175.160.0/19:
   description: subas 64600
@@ -402,57 +402,57 @@
 210.190.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.225.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.226.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.232.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.248.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 210.254.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.0.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.6.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.11.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.16.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.122.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.129.0.0/16:
   description: OCN
@@ -461,7 +461,7 @@
 211.130.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 211.130.96.0/19:
   description: subas 64600
@@ -474,204 +474,204 @@
 218.43.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 218.44.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 218.47.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 218.224.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 218.230.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.96.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.114.0.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.160.0.0/14:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.164.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.166.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.96.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.98.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.99.0.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.99.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.104.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.106.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.108.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.110.0.0/16:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.111.0.0/19:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.111.32.0/20:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.111.48.0/20:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.111.64.0/18:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.111.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.220.0.0/15:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 221.113.128.0/17:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 221.184.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 222.144.0.0/13:
   description: OCN
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 223.216.0.0/14:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 114.163.192.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 124.85.96.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.0.248.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.13.216.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.22.248.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.3.96.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.39.216.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.50.120.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.57.120.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 180.57.128.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 219.162.32.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 220.96.8.0/21:
   description: OCN prefix
   asn: 4713
-  ignore_morespecifics: False
+  ignoreMorespecifics: False
 
 124.40.52.128/26:
   description: Solid Trading / Crossivity
   asn: 50601
-  ignore_morespecifics: False
+  ignoreMorespecifics: False

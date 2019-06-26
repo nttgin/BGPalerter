@@ -1,9 +1,9 @@
 import config from "./config";
 
 export default class Consumer {
-    constructor(){
+    constructor(inputManager){
         process.on('message', this.dispatch);
-        this.monitors = config.monitors.map(monitor => new monitor());
+        this.monitors = config.monitors.map(monitor => new monitor.class(inputManager, monitor.channel, monitor.name));
     };
 
     dispatch = (data) => {
@@ -19,9 +19,18 @@ export default class Consumer {
 
     handleUpdate = (data) => {
         const messages = this.transform(data);
-        for (let monitor of this.monitors){
-            for (const message of messages){
-                monitor.monitor(message);
+        for (let monitor of this.monitors) {
+
+            // Blocking filtering to reduce stack usage
+            for (const message of messages.filter(monitor.filter)) {
+
+                // Promise call to reduce waiting times
+                monitor.monitor(message)
+                    .catch(error => {
+
+                        // Log error properly
+                        console.log(error);
+                    });
             }
         }
     };
@@ -44,6 +53,7 @@ export default class Consumer {
                     prefix,
                     peer,
                     path,
+                    originAs: path[path.length - 1],
                     nextHop
                 })
             }

@@ -1473,6 +1473,25 @@ invariant@^2.2.2:
   dependencies:
     loose-envify "^1.0.0"
 
+ip-address@^5.9.2:
+  version "5.9.2"
+  resolved "https://registry.yarnpkg.com/ip-address/-/ip-address-5.9.2.tgz#8e7d2dab5cbf3cbf34e1f730ec6913f55fec8c74"
+  integrity sha512-7aeFm/7oqo0mMhubTSjZ2Juw/F+WJ3hyfCScNVRQdz5RSRhw1Rj4ZlBFsmEajeKgQDI8asqVs31h8DpxEv7IfQ==
+  dependencies:
+    jsbn "1.1.0"
+    lodash "^4.17.11"
+    sprintf-js "1.1.2"
+
+ip2buf@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ip2buf/-/ip2buf-2.0.0.tgz#289b94a8cc107be6a2fa9624e236b46c9ae6bd66"
+  integrity sha512-ezW62UW6IPwpuS3mpsvOS3/3Jgx7aaNZT+uJo/+xVBxHCq7EA1ryuhzZw2MyC5GuGd1sAp3RDx7e4+nJCGt9vA==
+
+ip@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.5.tgz#bdded70114290828c0a039e72ef25f5aaec4354a"
+  integrity sha1-vd7XARQpCCjAoDnnLvJfWq7ENUo=
+
 is-accessor-descriptor@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz#a9e12cb3ae8d876727eeef3843f8a0897b5c98d6"
@@ -1733,6 +1752,11 @@ js-yaml@^3.13.1:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
+jsbn@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-1.1.0.tgz#b01307cb29b618a1ed26ec79e911f803c4da0040"
+  integrity sha1-sBMHyym2GKHtJux56RH4A8TaAEA=
+
 jsesc@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-1.3.0.tgz#46c3fec8c1892b12b0833db9bc7622176dbab34b"
@@ -1784,7 +1808,7 @@ latest-version@^3.0.0:
   dependencies:
     package-json "^4.0.0"
 
-lodash@^4.17.4:
+lodash@^4.17.11, lodash@^4.17.4:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -2225,6 +2249,11 @@ pstree.remy@^1.1.6:
   resolved "https://registry.yarnpkg.com/pstree.remy/-/pstree.remy-1.1.7.tgz#c76963a28047ed61542dc361aa26ee55a7fa15f3"
   integrity sha512-xsMgrUwRpuGskEzBFkH8NmTimbZ5PcPup0LA8JJkHIm2IMUbQcpo3yeLNWVrufEYjh8YwtSVh0xz6UeWc5Oh5A==
 
+pubsub-js@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/pubsub-js/-/pubsub-js-1.7.0.tgz#eca97f9a4217bef62b2d3aaa1552005260cc2e49"
+  integrity sha512-Pb68P9qFZxnvDipHMuj9oT1FoIgBcXJ9C9eWdHCLZAnulaUoJ3+Y87RhGMYilWpun6DMWVmvK70T4RP4drZMSA==
+
 randomatic@^3.0.0:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/randomatic/-/randomatic-3.1.1.tgz#b776efc59375984e36c537b2f51a1f0aff0da1ed"
@@ -2539,6 +2568,11 @@ split@^1.0.1:
   integrity sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==
   dependencies:
     through "2"
+
+sprintf-js@1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.1.2.tgz#da1765262bf8c0f571749f2ad6c26300207ae673"
+  integrity sha512-VE0SOVEHCk7Qc8ulkWw3ntAzXuqf7S2lvwQaDLRnUeIEaKNQJzV6BwmLKhOqT61aGhfUMrXeaBk+oDGCzvhcug==
 
 sprintf-js@~1.0.2:
   version "1.0.3"

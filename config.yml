@@ -1,6 +1,10 @@
 # Please, rename this file to config.yml
 
-testMode: true
+testMode: true,
+
+checkStaleNotificationsSeconds: 60;
+notificationIntervalSeconds: 60 * 20;
+clearNotificationQueueAfterSeconds: 60 * 30; # If nothing happened in the meanwhile
 
 bufferSize: 10,
 
@@ -24,7 +28,7 @@ notifiedEmails:
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
-  - monitored_prefixes.base.yml
+  - prefixes.yml
 
 # After how many announcements from different peers we trigger an alter?
 numberPeersBeforeHijackAlert: 0

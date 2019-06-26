@@ -4,6 +4,10 @@ import cluster from "cluster";
 import WebSocket from "ws";
 import sleep from "sleep";
 import Consumer from "./consumer";
+import InputManager from "./inputManager";
+
+
+const inputManager = new InputManager(config);
 
 if (cluster.isMaster) {
 
@@ -11,13 +15,27 @@ if (cluster.isMaster) {
 
 
     if (config.testMode){
-        const message = JSON.stringify({
+        // const update = {
+        //     data: {
+        //         withdrawals: ["124.40.52.0/22"],
+        //         peer: "124.0.0.2"
+        //     },
+        //     type: "ris_message"
+        // };
+
+        const update = {
             data: {
-                withdrawals: ["123.0.0.1/23"],
-                peer: "124.0.0.2"
+                announcements: [{
+                    prefixes: ["124.40.52.0/22"],
+                    next_hop: "124.0.0.2"
+                }],
+                peer: "124.0.0.2",
+                path: "1,2,3,2914".split(",")
             },
             type: "ris_message"
-        });
+        };
+
+        const message = JSON.stringify(update);
 
         while (true){
             worker.send(message);
@@ -44,5 +62,5 @@ if (cluster.isMaster) {
     }
 
 } else {
-    new Consumer()
+    new Consumer(inputManager)
 }
