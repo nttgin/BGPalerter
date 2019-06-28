@@ -1,9 +1,9 @@
 import PubSub from 'pubsub-js';
-import config from "../config";
 
 export default class Monitor {
 
-    constructor(inputManager, name, channel){
+    constructor(inputManager, name, channel, config) {
+        this.config = config;
         this.input = inputManager;
         this.name = name;
         this.channel = channel;
@@ -11,7 +11,7 @@ export default class Monitor {
         this.alerts = {};
         this.sent = {};
         this.updateMonitoredPrefixes();
-        setTimeout(this._publish, config.checkStaleNotificationsSeconds)
+        setInterval(this._publish, this.config.checkStaleNotificationsSeconds * 1000)
     };
 
     updateMonitoredPrefixes = () => {
@@ -40,8 +40,8 @@ export default class Monitor {
 
         for (let alert of alerts){
 
-            earliest = Math.max(alert.timestamp, earliest);
-            latest = Math.max(alert.timestamp, latest);
+            earliest = Math.max(alert.timestamp * 1000, earliest);
+            latest = Math.max(alert.timestamp * 1000, latest);
 
             if (id !== alert.id) {
                 throw new Error('Squash MUST receive a list of events all with the same ID.');
@@ -61,10 +61,10 @@ export default class Monitor {
 
     };
 
-    publishAlert = (eventId, message, affected, data) => {
+    publishAlert = (id, message, affected, data) => {
 
         const context = {
-            eventId,
+            id,
             timestamp: new Date(),
             message,
             affected,
@@ -76,11 +76,15 @@ export default class Monitor {
         }
 
         this.alerts[id].push(context);
+
+        if (!this.sent[id]) {
+            this._publish();
+        }
     };
 
     _clean = (group) => {
 
-        if (new Date().getTime() > group.latest + (config.clearNotificationQueueAfterSeconds * 1000)) {
+        if (new Date().getTime() > group.latest + (this.config.clearNotificationQueueAfterSeconds * 1000)) {
             delete this.alerts[group.id];
 
             return true;
@@ -90,21 +94,27 @@ export default class Monitor {
     };
 
     _checkLastSent = (group) => {
-
         const lastTimeSent = this.sent[group.id];
-        const isThereSomethingNew = lastTimeSent < group.latest;
-        const isItTimeToSend = new Date().getTime() > lastTimeSent + (config.notificationIntervalSeconds * 1000);
 
-        return isThereSomethingNew && isItTimeToSend;
 
+        if (lastTimeSent) {
+
+            const isThereSomethingNew = lastTimeSent < group.latest;
+            const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.config.notificationIntervalSeconds * 1000);
+
+            return isThereSomethingNew && isItTimeToSend;
+        } else {
+            return true;
+        }
     };
 
     _publish = () => {
 
-        for (let id of this.alerts) {
+        for (let id in this.alerts) {
             const group = this._squash(this.alerts[id]);
 
             if (this._checkLastSent(group)) {
+                this.sent[group.id] = new Date().getTime();
                 this._publishOnChannel(group);
             }
 
@@ -115,6 +125,7 @@ export default class Monitor {
 
     _publishOnChannel = (alert) => {
 
+        console.log(alert);
         PubSub.publish(this.channel, alert);
 
         return alert;

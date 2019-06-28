@@ -2,11 +2,11 @@
 
 testMode: true,
 
-checkStaleNotificationsSeconds: 60;
-notificationIntervalSeconds: 60 * 20;
-clearNotificationQueueAfterSeconds: 60 * 30; # If nothing happened in the meanwhile
+checkStaleNotificationsSeconds: 30
+notificationIntervalSeconds: 10
+clearNotificationQueueAfterSeconds: 60 * 30 # If nothing happened in the meanwhile
 
-bufferSize: 10,
+bufferSize: 10
 
 wsParams:
   moreSpecific: true

@@ -1,10 +1,11 @@
 import Monitor from "./monitor";
+import ipUtils from "../ipUtils";
 import ip from "ip";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(inputManager, name, channel){
-        super(inputManager, name, channel);
+    constructor(inputManager, name, channel, config){
+        super(inputManager, name, channel, config);
     };
 
     updateMonitoredPrefixes = () => {
@@ -20,22 +21,26 @@ export default class MonitorHijack extends Monitor {
     };
 
 
-    monitor = (message) => {
+    monitor = (message) => new Promise((resolve, reject) => {
+
         const messagePrefix = message.prefix;
 
-        for (let item of this.monitored) {
-            const prefix = item.prefix;
-
-            if (prefix === messagePrefix) {
-                if (message.originAs !== item.asn) {
-                    this.publishAlert(`The prefix ${prefix} is announced by the AS${message.originAs} 
-                    instead of AS${item.asn}`,);
-                }
-
-            } else if (ip.cidrSubnet(prefix).contains(messagePrefix)) {
-
-            }
+        let matches = this.monitored.filter(item => {
+            return item.prefix === messagePrefix || ip.cidrSubnet(item.prefix).contains(messagePrefix);
+        });
+        if (matches.length > 1) {
+            matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];
         }
-    };
+
+        if (matches.length !== 0) {
+            const match = matches[0];
+            this.publishAlert(message.originAs + "-" + match.prefix,
+                `The prefix ${match.prefix} is announced by the AS${message.originAs} instead of AS${match.asn}`,
+                match.asn,
+                matches[0]);
+        }
+
+        resolve(true);
+    });
 
 }

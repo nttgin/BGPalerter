@@ -3,7 +3,8 @@ import config from "./config";
 export default class Consumer {
     constructor(inputManager){
         process.on('message', this.dispatch);
-        this.monitors = config.monitors.map(monitor => new monitor.class(inputManager, monitor.channel, monitor.name));
+        this.monitors = config.monitors.map(monitor =>
+            new monitor.class(inputManager, monitor.channel, monitor.name, config));
     };
 
     dispatch = (data) => {
