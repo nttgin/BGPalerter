@@ -26,12 +26,13 @@ monitoredPrefixesFiles:
 
 
 emailConfig:
-    smtp: smtp.gmail.com
-    email:
-    port: 465
-    secure: true
-    user:
-    password:
+  enabled: false
+  smtp: smtp.gmail.com
+  email:
+  port: 465
+  secure: true
+  user:
+  password:
 
 notifiedEmails:
   - me@email.it
