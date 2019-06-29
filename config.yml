@@ -4,7 +4,7 @@ testMode: true,
 
 checkStaleNotificationsSeconds: 30
 notificationIntervalSeconds: 10
-clearNotificationQueueAfterSeconds: 60 * 30 # If nothing happened in the meanwhile
+clearNotificationQueueAfterSeconds: 10 # If nothing happened in the meanwhile
 
 bufferSize: 10
 
@@ -19,30 +19,20 @@ wsParams:
 # This is an array (use new lines and dashes!)
 websocketDataService: wss://ris-live.ripe.net/v1/ws/
 
-senderNotificationsEmail: me@test.net
-
-notifiedEmails:
-  - email1@test.net
-  - email2@test.net
-
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
   - prefixes.yml
 
-# After how many announcements from different peers we trigger an alter?
-numberPeersBeforeHijackAlert: 0
 
-# After how many withdrawals from different peers we trigger an alter?
-numberPeersBeforeLowVisibilityAlert: 0
+emailConfig:
+    smtp: smtp.gmail.com
+    email:
+    port: 465
+    secure: true
+    user:
+    password:
 
-# 10 seconds is the default
-repeatAlertAfterSeconds: 1
-
-# delete or 0 for never
-repeatStatusHeartbeatAfterSeconds: 400
-
-
-# stop sending the same alert after x seconds. Default 600
-resetAfterSeconds: 4
+notifiedEmails:
+  - me@email.it
 

@@ -26,6 +26,7 @@
     "ip-address": "^5.9.2",
     "ip2buf": "^2.0.0",
     "js-yaml": "^3.13.1",
+    "nodemailer": "^6.2.1",
     "pubsub-js": "^1.7.0",
     "sleep": "^6.1.0",
     "websocket-stream": "^5.5.0",

@@ -1,9 +1,9 @@
-import PubSub from 'pubsub-js';
 
 export default class Monitor {
 
-    constructor(inputManager, name, channel, config) {
+    constructor(inputManager, name, channel, config, pubSub) {
         this.config = config;
+        this.pubSub = pubSub;
         this.input = inputManager;
         this.name = name;
         this.channel = channel;
@@ -40,8 +40,8 @@ export default class Monitor {
 
         for (let alert of alerts){
 
-            earliest = Math.max(alert.timestamp * 1000, earliest);
-            latest = Math.max(alert.timestamp * 1000, latest);
+            earliest = Math.min(alert.timestamp, earliest);
+            latest = Math.max(alert.timestamp, latest);
 
             if (id !== alert.id) {
                 throw new Error('Squash MUST receive a list of events all with the same ID.');
@@ -56,7 +56,11 @@ export default class Monitor {
             latest,
             affected: firstAlert.affected,
             message: this.squashAlerts(alerts),
-            data: alerts.map(a => a.data)
+            data: alerts.map(a => {
+                return Object.assign(a.data, {
+                    timestamp: a.timestamp
+                });
+            })
         }
 
     };
@@ -65,7 +69,7 @@ export default class Monitor {
 
         const context = {
             id,
-            timestamp: new Date(),
+            timestamp: new Date().getTime(),
             message,
             affected,
             data
@@ -86,6 +90,7 @@ export default class Monitor {
 
         if (new Date().getTime() > group.latest + (this.config.clearNotificationQueueAfterSeconds * 1000)) {
             delete this.alerts[group.id];
+            delete this.sent[group.id];
 
             return true;
         }
@@ -95,7 +100,6 @@ export default class Monitor {
 
     _checkLastSent = (group) => {
         const lastTimeSent = this.sent[group.id];
-
 
         if (lastTimeSent) {
 
@@ -125,8 +129,7 @@ export default class Monitor {
 
     _publishOnChannel = (alert) => {
 
-        console.log(alert);
-        PubSub.publish(this.channel, alert);
+        this.pubSub.publish(this.channel, alert);
 
         return alert;
     }

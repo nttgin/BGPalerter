@@ -1,4 +1,3 @@
-// import os from "os";
 import config from "./config";
 import cluster from "cluster";
 import WebSocket from "ws";
@@ -41,9 +40,10 @@ if (cluster.isMaster) {
             worker.send(message);
             sleep.sleep(1);
         }
+
     } else {
 
-        const ws = new WebSocket("wss://ris-live.ripe.net/v1/ws/");
+        const ws = new WebSocket(config.websocketDataService);
 
         ws.on('message', (message) => {
             worker.send(message);

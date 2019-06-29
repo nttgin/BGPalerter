@@ -1,10 +1,15 @@
 import config from "./config";
+import pubSub from 'pubsub-js';
 
 export default class Consumer {
+
     constructor(inputManager){
         process.on('message', this.dispatch);
         this.monitors = config.monitors.map(monitor =>
-            new monitor.class(inputManager, monitor.channel, monitor.name, config));
+            new monitor.class(inputManager, monitor.name, monitor.channel, config, pubSub));
+
+        this.reports = config.reports.map(report =>
+            new report.class(report.channels, config, pubSub));
     };
 
     dispatch = (data) => {
