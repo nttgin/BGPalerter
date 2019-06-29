@@ -30,6 +30,7 @@
     "pubsub-js": "^1.7.0",
     "sleep": "^6.1.0",
     "websocket-stream": "^5.5.0",
+    "winston": "^3.2.1",
     "ws": "^7.0.0",
     "yarn": "^1.16.0"
   }
