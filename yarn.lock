@@ -1569,6 +1569,10 @@ ip@^1.1.5:
   resolved "https://registry.yarnpkg.com/ip/-/ip-1.1.5.tgz#bdded70114290828c0a039e72ef25f5aaec4354a"
   integrity sha1-vd7XARQpCCjAoDnnLvJfWq7ENUo=
 
+"ip@https://github.com/MaxCam/node-ip.git#contains-prefix":
+  version "1.1.5"
+  resolved "https://github.com/MaxCam/node-ip.git#f088d6611315deb914619c2c12f49f35cae4d0d5"
+
 is-accessor-descriptor@^0.1.6:
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/is-accessor-descriptor/-/is-accessor-descriptor-0.1.6.tgz#a9e12cb3ae8d876727eeef3843f8a0897b5c98d6"

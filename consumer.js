@@ -1,5 +1,6 @@
 import config from "./config";
 import pubSub from 'pubsub-js';
+import logger from './logger';
 
 export default class Consumer {
 
@@ -10,6 +11,7 @@ export default class Consumer {
 
         this.reports = config.reports.map(report =>
             new report.class(report.channels, config, pubSub));
+
     };
 
     dispatch = (data) => {
@@ -18,8 +20,8 @@ export default class Consumer {
             switch (message.type) {
                 case "ris_message": this.handleUpdate(message)
             }
-        } catch (e) {
-            console.log(e);
+        } catch (error) {
+            // Don't do anything
         }
     };
 
@@ -33,9 +35,10 @@ export default class Consumer {
                 // Promise call to reduce waiting times
                 monitor.monitor(message)
                     .catch(error => {
-
-                        // Log error properly
-                        console.log(error);
+                        logger.log({
+                            level: 'error',
+                            message: error
+                        });
                     });
             }
         }

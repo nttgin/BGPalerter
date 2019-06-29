@@ -22,7 +22,7 @@
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "event-stream": "^4.0.1",
-    "ip": "^1.1.5",
+    "ip": "https://github.com/MaxCam/node-ip.git#contains-prefix",
     "ip-address": "^5.9.2",
     "ip2buf": "^2.0.0",
     "js-yaml": "^3.13.1",

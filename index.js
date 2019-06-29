@@ -4,7 +4,7 @@ import WebSocket from "ws";
 import sleep from "sleep";
 import Consumer from "./consumer";
 import InputManager from "./inputManager";
-
+import logger from './logger';
 
 const inputManager = new InputManager(config);
 
@@ -57,7 +57,10 @@ if (cluster.isMaster) {
         });
 
         ws.on('close', function close() {
-            console.log('Disconnected');
+            logger.log({
+                level: 'info',
+                message: 'Web socket disconnected'
+            });
         });
     }
 

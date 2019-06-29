@@ -1,3 +1,4 @@
+import logger from '../logger';
 
 export default class Monitor {
 
@@ -130,6 +131,11 @@ export default class Monitor {
     _publishOnChannel = (alert) => {
 
         this.pubSub.publish(this.channel, alert);
+
+        logger.log({
+            level: 'verbose',
+            message: alert.message
+        });
 
         return alert;
     }

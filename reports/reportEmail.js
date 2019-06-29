@@ -1,5 +1,7 @@
 import Report from "./report";
 import nodemailer from "nodemailer";
+import logger from '../logger';
+
 
 export default class ReportEmail extends Report {
 
@@ -30,7 +32,10 @@ export default class ReportEmail extends Report {
                     text: "Hello world?"
                 })
                 .catch(error => {
-                    console.log("log the error properly!", error);
+                    logger.log({
+                        level: 'error',
+                        message: error
+                    });
                 })
         }
     }
