@@ -132,6 +132,7 @@ export default class Monitor {
 
         this.pubSub.publish(this.channel, alert);
 
+        console.log(alert);
         logger.log({
             level: 'verbose',
             message: alert.message

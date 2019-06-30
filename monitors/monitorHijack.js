@@ -20,7 +20,6 @@ export default class MonitorHijack extends Monitor {
         return alerts[0].message;
     };
 
-
     monitor = (message) => new Promise((resolve, reject) => {
 
         const messagePrefix = message.prefix;
