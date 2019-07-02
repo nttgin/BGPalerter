@@ -1,6 +1,18 @@
 # Please, rename this file to config.yml
 
-testMode: true,
+monitors:
+  - class: MonitorHijack
+    channel: hijack
+    name: basic-hijack-detection
+
+reports:
+  - class: ReportEmail
+    channels:
+      - hijack
+      - pippo
+
+
+testMode: true
 
 checkStaleNotificationsSeconds: 30
 notificationIntervalSeconds: 10
@@ -10,8 +22,8 @@ bufferSize: 10
 
 wsParams:
   moreSpecific: true
-  type: "UPDATE"
-  host: "rrc21"
+  type: UPDATE
+  host: rrc21
   socketOptions:
     includeRaw: false
 
@@ -25,15 +37,21 @@ monitoredPrefixesFiles:
   - prefixes.yml
 
 
+logging:
+  logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
+  zippedArchive: true
+  maxSize: 20m
+  maxFiles: 14d
+
+
 emailConfig:
   enabled: false
   smtp: smtp.gmail.com
-  email:
+  email: sender@email
   port: 465
   secure: true
-  user:
-  password:
+  user: user
+  password: password
 
 notifiedEmails:
   - me@email.it
-

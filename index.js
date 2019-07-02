@@ -1,12 +1,8 @@
-import config from "./config";
+import { config, logger } from "./env";
 import cluster from "cluster";
 import WebSocket from "ws";
 import sleep from "sleep";
 import Consumer from "./consumer";
-import InputManager from "./inputManager";
-import logger from './logger';
-
-const inputManager = new InputManager(config);
 
 if (cluster.isMaster) {
 
@@ -65,5 +61,5 @@ if (cluster.isMaster) {
     }
 
 } else {
-    new Consumer(inputManager)
+    new Consumer();
 }

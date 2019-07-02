@@ -1,11 +1,11 @@
-import logger from '../logger';
 
 export default class Monitor {
 
-    constructor(inputManager, name, channel, config, pubSub) {
-        this.config = config;
-        this.pubSub = pubSub;
-        this.input = inputManager;
+    constructor(name, channel, env) {
+        this.config = env.config;
+        this.pubSub = env.pubSub;
+        this.logger = env.logger;
+        this.input = env.input;
         this.name = name;
         this.channel = channel;
         this.monitored = [];
@@ -132,8 +132,7 @@ export default class Monitor {
 
         this.pubSub.publish(this.channel, alert);
 
-        console.log(alert);
-        logger.log({
+        this.logger.log({
             level: 'verbose',
             message: alert.message
         });

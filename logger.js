@@ -1,4 +1,6 @@
+import { config, logger } from "./env";
 import winston from 'winston';
+
 require('winston-daily-rotate-file');
 
 const { combine, timestamp, label, printf } = winston.format;
@@ -13,12 +15,13 @@ const verboseFilter  = winston.format((info, opts) => {
     return info.level === 'verbose' ? info : false
 });
 
+
 const transportError = new (winston.transports.DailyRotateFile)({
     filename: 'logs/error-%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '14d',
+    datePattern: config.logging.logRotatePattern,
+    zippedArchive: config.logging.zippedArchive,
+    maxSize: config.logging.maxSize,
+    maxFiles: config.logging.maxFiles,
     level: 'error',
     timestamp: true,
     eol: '\n',
@@ -32,10 +35,10 @@ const transportError = new (winston.transports.DailyRotateFile)({
 
 const transportReports = new (winston.transports.DailyRotateFile)({
     filename: 'logs/reports-%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: '20m',
-    maxFiles: '14d',
+    datePattern: config.logging.logRotatePattern,
+    zippedArchive: config.logging.zippedArchive,
+    maxSize: config.logging.maxSize,
+    maxFiles: config.logging.maxFiles,
     level: 'verbose',
     timestamp: true,
     eol: '\n',

@@ -1,12 +1,10 @@
 import Report from "./report";
 import nodemailer from "nodemailer";
-import logger from '../logger';
-
 
 export default class ReportEmail extends Report {
 
-    constructor(channels, config, pubSub) {
-        super(channels, config, pubSub);
+    constructor(channels, env) {
+        super(channels, env);
 
         if (this.config.emailConfig.enabled) {
             this.transporter = nodemailer.createTransport({
@@ -32,7 +30,7 @@ export default class ReportEmail extends Report {
                     text: "Hello world?"
                 })
                 .catch(error => {
-                    logger.log({
+                    this.logger.log({
                         level: 'error',
                         message: error
                     });

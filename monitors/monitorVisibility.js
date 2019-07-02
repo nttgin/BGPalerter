@@ -1,6 +1,5 @@
 import Monitor from "./monitor";
 import ipUtils from "../ipUtils";
-import ip from "ip";
 
 export default class MonitorVisibility extends Monitor {
 

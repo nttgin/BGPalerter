@@ -4,8 +4,8 @@ import ip from "ip";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(inputManager, name, channel, config, pubSub){
-        super(inputManager, name, channel, config, pubSub);
+    constructor(name, channel, env){
+        super(name, channel, env);
     };
 
     updateMonitoredPrefixes = () => {

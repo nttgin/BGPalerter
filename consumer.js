@@ -1,17 +1,9 @@
-import config from "./config";
-import pubSub from 'pubsub-js';
-import logger from './logger';
+import { config, logger, monitors } from "./env";
 
 export default class Consumer {
 
-    constructor(inputManager){
+    constructor(){
         process.on('message', this.dispatch);
-        this.monitors = config.monitors.map(monitor =>
-            new monitor.class(inputManager, monitor.name, monitor.channel, config, pubSub));
-
-        this.reports = config.reports.map(report =>
-            new report.class(report.channels, config, pubSub));
-
     };
 
     dispatch = (data) => {
@@ -21,13 +13,16 @@ export default class Consumer {
                 case "ris_message": this.handleUpdate(message)
             }
         } catch (error) {
-            // Don't do anything
+            logger.log({
+                level: 'error',
+                message: error
+            });
         }
     };
 
     handleUpdate = (data) => {
         const messages = this.transform(data);
-        for (let monitor of this.monitors) {
+        for (let monitor of monitors) {
 
             // Blocking filtering to reduce stack usage
             for (const message of messages.filter(monitor.filter)) {
