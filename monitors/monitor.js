@@ -47,7 +47,6 @@ export default class Monitor {
             if (id !== alert.id) {
                 throw new Error('Squash MUST receive a list of events all with the same ID.');
             }
-
         }
 
         return {
@@ -131,11 +130,6 @@ export default class Monitor {
     _publishOnChannel = (alert) => {
 
         this.pubSub.publish(this.channel, alert);
-
-        this.logger.log({
-            level: 'verbose',
-            message: alert.message
-        });
 
         return alert;
     }

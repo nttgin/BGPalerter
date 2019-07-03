@@ -64,7 +64,7 @@ if (vector.env === 'prod') {
 config.monitors = (config.monitors || [])
     .map(item => {
         return {
-            class: require("./monitors/" + item.class).default,
+            class: require("./monitors/" + item.file).default,
             channel: item.channel,
             name: item.name
         };
@@ -74,8 +74,18 @@ config.reports = (config.reports || [])
     .map(item => {
 
         return {
-            class: require("./reports/" + item.class).default,
+            class: require("./reports/" + item.file).default,
             channels: item.channels
+        };
+
+    });
+
+config.connectors = (config.connectors || [])
+    .map(item => {
+
+        return {
+            class: require("./connectors/" + item.file).default,
+            params: item.params
         };
 
     });
@@ -88,5 +98,6 @@ vector.input = input;
 vector.pubSub = pubSub;
 vector.monitors = config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, vector));
 vector.reports = config.reports.map(report => new report.class(report.channels, vector));
+
 
 module.exports = vector;

@@ -3,6 +3,7 @@ import cluster from "cluster";
 import WebSocket from "ws";
 import sleep from "sleep";
 import Consumer from "./consumer";
+import Connector from "./connector";
 
 if (cluster.isMaster) {
 

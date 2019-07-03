@@ -1,12 +1,26 @@
 # Please, rename this file to config.yml
 
+connectors:
+  - file: connectorRIS
+    params:
+      url: wss://ris-live.ripe.net/v1/ws/
+      moreSpecific: true
+      type: UPDATE
+      host: rrc21
+      socketOptions:
+        includeRaw: false
+
+
 monitors:
-  - class: MonitorHijack
+  - file: monitorHijack
     channel: hijack
     name: basic-hijack-detection
 
 reports:
-  - class: ReportEmail
+  - file: reportFile
+    channels:
+      - hijack
+  - file: ReportEmail
     channels:
       - hijack
       - pippo
@@ -19,17 +33,6 @@ notificationIntervalSeconds: 10
 clearNotificationQueueAfterSeconds: 10 # If nothing happened in the meanwhile
 
 bufferSize: 10
-
-wsParams:
-  moreSpecific: true
-  type: UPDATE
-  host: rrc21
-  socketOptions:
-    includeRaw: false
-
-# The streaming services used to have real-time data
-# This is an array (use new lines and dashes!)
-websocketDataService: wss://ris-live.ripe.net/v1/ws/
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
