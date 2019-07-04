@@ -2,6 +2,7 @@
 
 connectors:
   - file: connectorRIS
+    name: ris
     params:
       url: wss://ris-live.ripe.net/v1/ws/
       moreSpecific: true

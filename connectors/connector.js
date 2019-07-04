@@ -1,5 +1,4 @@
 
-
 export default class Connector {
 
     constructor(params, env){
@@ -16,7 +15,7 @@ export default class Connector {
         new Promise((resolve, reject) => reject(new Error('The method connect has to be implemented')));
 
 
-    close = () => {
+    error = () => {
         this.logger.log({
             level: 'info',
             message: 'Web socket disconnected'
@@ -27,7 +26,15 @@ export default class Connector {
         throw new Error('The method subscribe has to be implemented');
     };
 
-    message = (message) => this.messageCallback(message);
+    message = (message) => {
+        if (this.messageCallback)
+        this.messageCallback(message);
+    };
+
+    connected = (message) => {
+        if (this.connectCallback)
+            this.connectCallback(message);
+    };
 
     transform = (message) => {
         throw new Error('The method transform has to be implemented');
@@ -41,7 +48,8 @@ export default class Connector {
         this.messageCallback = callback;
     };
 
-    onClose = (callback) => {
+    onError = (callback) => {
         this.closeCallback = callback;
     };
+
 }

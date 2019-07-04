@@ -1,65 +1,42 @@
-import { config, logger } from "./env";
+import { config, logger, input } from "./env";
 import cluster from "cluster";
 import WebSocket from "ws";
 import sleep from "sleep";
 import Consumer from "./consumer";
-import Connector from "./connector";
+import ConnectorFactory from "./connectorFactory";
 
 if (cluster.isMaster) {
 
     const worker = cluster.fork();
 
 
-    if (config.testMode){
-        // const update = {
-        //     data: {
-        //         withdrawals: ["124.40.52.0/22"],
-        //         peer: "124.0.0.2"
-        //     },
-        //     type: "ris_message"
-        // };
+    const connectorFactory = new ConnectorFactory();
 
-        const update = {
-            data: {
-                announcements: [{
-                    prefixes: ["124.40.52.0/22"],
-                    next_hop: "124.0.0.2"
-                }],
-                peer: "124.0.0.2",
-                path: "1,2,3,2914".split(",")
-            },
-            type: "ris_message"
-        };
+    connectorFactory.loadConnectors();
+    connectorFactory.connectConnectors()
+        .then(() => connectorFactory.subscribeConnectors(input))
+        .then(() => {
 
-        const message = JSON.stringify(update);
+            for (const connector of connectorFactory.getConnectors()) {
+                connector.onMessage((message) => {
+                    worker.send(message);
+                });
+                connector.onError(error => {
+                    logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                });
 
-        while (true){
-            worker.send(message);
-            sleep.sleep(1);
-        }
-
-    } else {
-
-        const ws = new WebSocket(config.websocketDataService);
-
-        ws.on('message', (message) => {
-            worker.send(message);
-        });
-
-        ws.on('open', () => {
-            ws.send(JSON.stringify({
-                type: "ris_subscribe",
-                data: config.wsParams
-            }));
-        });
-
-        ws.on('close', function close() {
+            }
+        })
+        .catch(error => {
             logger.log({
-                level: 'info',
-                message: 'Web socket disconnected'
+                level: 'error',
+                message: error
             });
         });
-    }
+
 
 } else {
     new Consumer();

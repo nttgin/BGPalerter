@@ -21,6 +21,8 @@ export default class Consumer {
     };
 
     handleUpdate = (data) => {
+        // console.log(data);
+        return;
         const messages = this.transform(data);
         for (let monitor of monitors) {
 
@@ -73,7 +75,7 @@ export default class Consumer {
         }
 
         return components;
-    }
+    };
 
 }
 

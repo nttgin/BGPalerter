@@ -53,7 +53,10 @@ const logger = winston.createLogger({
     level: 'info',
     transports: [
         transportError,
-        transportReports
+        transportReports,
+        new winston.transports.Console({
+            format: winston.format.simple()
+        })
     ]
 });
 
@@ -85,7 +88,8 @@ config.connectors = (config.connectors || [])
 
         return {
             class: require("./connectors/" + item.file).default,
-            params: item.params
+            params: item.params,
+            name: item.name
         };
 
     });
@@ -96,8 +100,8 @@ vector.config = config;
 vector.logger = logger;
 vector.input = input;
 vector.pubSub = pubSub;
-vector.monitors = config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, vector));
-vector.reports = config.reports.map(report => new report.class(report.channels, vector));
+// vector.monitors = config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, vector));
+// vector.reports = config.reports.map(report => new report.class(report.channels, vector));
 
 
 module.exports = vector;

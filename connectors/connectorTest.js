@@ -1,44 +1,32 @@
 import WebSocket from "ws";
-import Connector from "./connector";
 
 export default class ConnectorRIS extends Connector{
 
     constructor(params, env) {
         super(params, env);
-        this.ws = null;
     }
 
-    connect = () =>
-        new Promise((resolve, reject) => {
-            try {
+    connect = () => {
 
-                this.ws = new WebSocket(this.params.url);
-                this.ws.on('message', this.message);
-                this.ws.on('close', this.error);
-                this.ws.on('open', () => {
-                    resolve(true);
-                    this.connected();
-                });
+        // const ws = new WebSocket(this.params.url);
+        //
+        // ws.on('message', this.message);
+        //
+        // ws.on('open', () => {
+        //
+        // });
+        //
+        // ws.on('close', this.close);
 
-            } catch(error) {
-                resolve(false);
-            }
-        });
+        new Promise((resolve, reject) => reject(new Error('The method connect has to be implemented')));
+    };
 
-
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            try {
-                this.ws.send(JSON.stringify({
-                    type: "ris_subscribe",
-                    data: this.params
-                }));
-                resolve(true);
-            } catch(error) {
-                resolve(false);
-            }
-        });
-
+    subscribe = (input) => {
+        ws.send(JSON.stringify({
+            type: "ris_subscribe",
+            data: this.params
+        }));
+    };
 
     transform = (message) => {
         message = message.data;

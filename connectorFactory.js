@@ -3,33 +3,65 @@ import env from "./env";
 export default class ConnectorFactory {
 
     constructor() {
-        this.disconnected = [];
-        this.connected = [];
-
+        this.connectors = {};
     }
 
+    getConnector = (name) => {
+        return this.connectors[name];
+    };
+
+    getConnectors = () => {
+        return Object.keys(this.connectors).map(name => this.connectors[name]);
+    };
+
     loadConnectors = () => {
-        if (this.disconnected.length === 0) {
-            this.disconnected = config.reports.map(connector => new connector.class(connector.params, env));
+        const connectors = Object.keys(this.connectors);
+        if (connectors.length === 0) {
+
+            for (let connector of env.config.connectors) {
+                this.connectors[connector.name] = new connector.class(connector.params, env);
+            }
         }
     };
 
     connectConnectors = () =>
-        Promise.all(this.disconnected.map(connector => {
-            connector.connect()
-                .then(() => {
-                    this.connected.push();
-                });
-        }));
+        new Promise((resolve, reject) => {
+            const connectors = this.getConnectors();
 
-    subscribeConnectors = (params) =>
+            if (connectors.length === 0) {
+                reject(new Error("No connections available"));
+
+            } else {
+                resolve(Promise.all(connectors
+                    .map(connector =>
+                        new Promise((resolve, reject) => {
+                            connector.connect()
+                                .then(() => {
+                                    connector.connected = true;
+                                    resolve(true);
+                                })
+                                .catch((error) => {
+                                    env.logger.log({
+                                        level: 'error',
+                                        message: error
+                                    });
+                                    resolve(false);
+                                })
+                        }))));
+            }
+        });
+
+    subscribeConnectors = (params, callback) =>
         new Promise((resolve, reject) => {
 
-            if (this.connectors.length === 0) {
-                reject(new Error("No connectors loaded"));
-            } else {
+            const connectors = this.getConnectors();
 
-                resolve(Promise.all(this.connectors.map(connector => connector.subscribe(params))));
+            if (connectors.length === 0) {
+                reject(new Error("No connections available"));
+            } else {
+                resolve(Promise.all(connectors.map(connector => {
+                    connector.subscribe(params);
+                })));
             }
 
         });
