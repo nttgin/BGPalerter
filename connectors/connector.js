@@ -1,10 +1,11 @@
 
 export default class Connector {
 
-    constructor(params, env){
+    constructor(name, params, env){
         this.config = env.config;
         this.logger = env.logger;
         this.params = params;
+        this.name = name;
         this.messageCallback = null;
         this.connectCallback = null;
         this.errorCallback = null;
@@ -12,18 +13,18 @@ export default class Connector {
     }
 
     connect = () =>
-        new Promise((resolve, reject) => reject(new Error('The method connect has to be implemented')));
+        new Promise((resolve, reject) => reject(new Error('The method connect MUST be implemented')));
 
 
     error = () => {
         this.logger.log({
-            level: 'info',
-            message: 'Web socket disconnected'
+            level: 'error',
+            message: this.name + ' disconnected'
         });
     };
 
     subscribe = (input) => {
-        throw new Error('The method subscribe has to be implemented');
+        throw new Error('The method subscribe MUST be implemented');
     };
 
     message = (message) => {
@@ -36,8 +37,8 @@ export default class Connector {
             this.connectCallback(message);
     };
 
-    transform = (message) => {
-        throw new Error('The method transform has to be implemented');
+    static transform = (message) => {
+        throw new Error('The method transform (STATIC) MUST be implemented');
     };
 
     onConnect = (callback) => {

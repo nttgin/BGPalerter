@@ -19,7 +19,7 @@ export default class ConnectorFactory {
         if (connectors.length === 0) {
 
             for (let connector of env.config.connectors) {
-                this.connectors[connector.name] = new connector.class(connector.params, env);
+                this.connectors[connector.name] = new connector.class(connector.name, connector.params, env);
             }
         }
     };

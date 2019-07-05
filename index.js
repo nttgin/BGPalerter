@@ -1,7 +1,5 @@
 import { config, logger, input } from "./env";
 import cluster from "cluster";
-import WebSocket from "ws";
-import sleep from "sleep";
 import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
 
@@ -14,12 +12,11 @@ if (cluster.isMaster) {
 
     connectorFactory.loadConnectors();
     connectorFactory.connectConnectors()
-        .then(() => connectorFactory.subscribeConnectors(input))
         .then(() => {
 
             for (const connector of connectorFactory.getConnectors()) {
                 connector.onMessage((message) => {
-                    worker.send(message);
+                    worker.send(connector.name + "-" + message);
                 });
                 connector.onError(error => {
                     logger.log({
@@ -27,9 +24,15 @@ if (cluster.isMaster) {
                         message: error
                     });
                 });
-
+                connector.onConnect(error => {
+                    logger.log({
+                        level: 'info',
+                        message: error
+                    });
+                });
             }
         })
+        .then(() => connectorFactory.subscribeConnectors(input))
         .catch(error => {
             logger.log({
                 level: 'error',

@@ -1,67 +1,87 @@
-import WebSocket from "ws";
+import sleep from "sleep";
+import Connector from "./connector";
 
-export default class ConnectorRIS extends Connector{
+export default class ConnectorTest extends Connector{
 
-    constructor(params, env) {
-        super(params, env);
+    constructor(name, params, env) {
+        super(name, params, env);
     }
 
-    connect = () => {
+    connect = () =>
+        new Promise((resolve, reject) => {
+            resolve(true);
+        });
 
-        // const ws = new WebSocket(this.params.url);
-        //
-        // ws.on('message', this.message);
-        //
-        // ws.on('open', () => {
-        //
-        // });
-        //
-        // ws.on('close', this.close);
 
-        new Promise((resolve, reject) => reject(new Error('The method connect has to be implemented')));
-    };
+    subscribe = (input) =>
+        new Promise((resolve, reject) => {
+            resolve(true);
 
-    subscribe = (input) => {
-        ws.send(JSON.stringify({
-            type: "ris_subscribe",
-            data: this.params
-        }));
-    };
+            // const update = {
+            //     data: {
+            //         withdrawals: ["124.40.52.0/22"],
+            //         peer: "124.0.0.2"
+            //     },
+            //     type: "ris_message"
+            // };
 
-    transform = (message) => {
-        message = message.data;
-        const components = [];
-        const announcements = message["announcements"] || [];
-        const withdrawals = message["withdrawals"] || [];
-        const peer = message["peer"];
-        const path = message["path"];
+            const update = {
+                data: {
+                    announcements: [{
+                        prefixes: ["124.40.52.0/22"],
+                        next_hop: "124.0.0.2"
+                    }],
+                    peer: "124.0.0.2",
+                    path: "1,2,3,2914".split(",")
+                },
+                type: "ris_message"
+            };
 
-        for (let announcement of announcements){
-            const nextHop = announcement["next_hop"];
-            const prefixes = announcement["prefixes"] || [];
+            const message = JSON.stringify(update);
 
-            for (let prefix of prefixes){
+            while (true){
+                this.message(message);
+                sleep.sleep(1);
+            }
+
+
+        });
+
+    static transform = (message) => {
+        if (message.type === 'ris_message') {
+            message = message.data;
+            const components = [];
+            const announcements = message["announcements"] || [];
+            const withdrawals = message["withdrawals"] || [];
+            const peer = message["peer"];
+            const path = message["path"];
+
+            for (let announcement of announcements){
+                const nextHop = announcement["next_hop"];
+                const prefixes = announcement["prefixes"] || [];
+
+                for (let prefix of prefixes){
+                    components.push({
+                        type: "announcement",
+                        prefix,
+                        peer,
+                        path,
+                        originAs: path[path.length - 1],
+                        nextHop
+                    })
+                }
+            }
+
+            for (let prefix of withdrawals){
                 components.push({
-                    type: "announcement",
+                    type: "withdrawal",
                     prefix,
-                    peer,
-                    path,
-                    originAs: path[path.length - 1],
-                    nextHop
+                    peer
+
                 })
             }
+
+            return components;
         }
-
-        for (let prefix of withdrawals){
-            components.push({
-                type: "withdrawal",
-                prefix,
-                peer
-
-            })
-        }
-
-        return components;
     };
-
 }

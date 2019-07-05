@@ -1,80 +1,49 @@
-import { config, logger, monitors } from "./env";
+import env from "./env";
 
 export default class Consumer {
 
     constructor(){
+        this.connectors = {};
+        for (let connector of env.config.connectors) {
+            this.connectors[connector.name] = connector.class
+        }
+
+
+        this.monitors = env.config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, env));
+        this.reports = env.config.reports.map(report => new report.class(report.channels, env));
+
         process.on('message', this.dispatch);
     };
 
     dispatch = (data) => {
         try {
-            const message = JSON.parse(data);
-            switch (message.type) {
-                case "ris_message": this.handleUpdate(message)
+            const connector = data.slice(0,3);
+            const messagesRaw = JSON.parse(data.slice(4));
+            const messages = this.connectors[connector].transform(messagesRaw);
+
+            for (let monitor of this.monitors) {
+
+                // Blocking filtering to reduce stack usage
+                for (const message of messages.filter(monitor.filter)) {
+
+                    // Promise call to reduce waiting times
+                    monitor
+                        .monitor(message)
+                        .catch(error => {
+                            env.logger.log({
+                                level: 'error',
+                                message: error
+                            });
+                        });
+                }
             }
+
         } catch (error) {
-            logger.log({
+            env.logger.log({
                 level: 'error',
                 message: error
             });
         }
-    };
-
-    handleUpdate = (data) => {
-        // console.log(data);
-        return;
-        const messages = this.transform(data);
-        for (let monitor of monitors) {
-
-            // Blocking filtering to reduce stack usage
-            for (const message of messages.filter(monitor.filter)) {
-
-                // Promise call to reduce waiting times
-                monitor.monitor(message)
-                    .catch(error => {
-                        logger.log({
-                            level: 'error',
-                            message: error
-                        });
-                    });
-            }
-        }
-    };
-
-    transform = (message) => {
-        message = message.data;
-        const components = [];
-        const announcements = message["announcements"] || [];
-        const withdrawals = message["withdrawals"] || [];
-        const peer = message["peer"];
-        const path = message["path"];
-
-        for (let announcement of announcements){
-            const nextHop = announcement["next_hop"];
-            const prefixes = announcement["prefixes"] || [];
-
-            for (let prefix of prefixes){
-                components.push({
-                    type: "announcement",
-                    prefix,
-                    peer,
-                    path,
-                    originAs: path[path.length - 1],
-                    nextHop
-                })
-            }
-        }
-
-        for (let prefix of withdrawals){
-            components.push({
-                type: "withdrawal",
-                prefix,
-                peer
-
-            })
-        }
-
-        return components;
     };
 
 }

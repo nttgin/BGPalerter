@@ -3,8 +3,8 @@ import Connector from "./connector";
 
 export default class ConnectorRIS extends Connector{
 
-    constructor(params, env) {
-        super(params, env);
+    constructor(name, params, env) {
+        super(name, params, env);
         this.ws = null;
     }
 
@@ -17,7 +17,7 @@ export default class ConnectorRIS extends Connector{
                 this.ws.on('close', this.error);
                 this.ws.on('open', () => {
                     resolve(true);
-                    this.connected();
+                    this.connected(this.name + ' connector connected');
                 });
 
             } catch(error) {
@@ -39,41 +39,41 @@ export default class ConnectorRIS extends Connector{
             }
         });
 
+    static transform = (message) => {
+        if (message.type === 'ris_message') {
+            message = message.data;
+            const components = [];
+            const announcements = message["announcements"] || [];
+            const withdrawals = message["withdrawals"] || [];
+            const peer = message["peer"];
+            const path = message["path"];
 
-    transform = (message) => {
-        message = message.data;
-        const components = [];
-        const announcements = message["announcements"] || [];
-        const withdrawals = message["withdrawals"] || [];
-        const peer = message["peer"];
-        const path = message["path"];
+            for (let announcement of announcements){
+                const nextHop = announcement["next_hop"];
+                const prefixes = announcement["prefixes"] || [];
 
-        for (let announcement of announcements){
-            const nextHop = announcement["next_hop"];
-            const prefixes = announcement["prefixes"] || [];
+                for (let prefix of prefixes){
+                    components.push({
+                        type: "announcement",
+                        prefix,
+                        peer,
+                        path,
+                        originAs: path[path.length - 1],
+                        nextHop
+                    })
+                }
+            }
 
-            for (let prefix of prefixes){
+            for (let prefix of withdrawals){
                 components.push({
-                    type: "announcement",
+                    type: "withdrawal",
                     prefix,
-                    peer,
-                    path,
-                    originAs: path[path.length - 1],
-                    nextHop
+                    peer
+
                 })
             }
+
+            return components;
         }
-
-        for (let prefix of withdrawals){
-            components.push({
-                type: "withdrawal",
-                prefix,
-                peer
-
-            })
-        }
-
-        return components;
     };
-
 }

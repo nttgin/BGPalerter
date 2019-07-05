@@ -82,9 +82,18 @@ config.reports = (config.reports || [])
         };
 
     });
+config.connectors = config.connectors || [];
 
-config.connectors = (config.connectors || [])
-    .map(item => {
+if ([...new Set(config.connectors)].length !== config.connectors.length) {
+    throw new Error('Connectors names MUST to be unique');
+}
+
+config.connectors = config.connectors
+    .map((item, index) => {
+
+        if (item.name.length !== 3) {
+            throw new Error('Connectors names MUST be exactly 3 letters');
+        }
 
         return {
             class: require("./connectors/" + item.file).default,
@@ -100,8 +109,5 @@ vector.config = config;
 vector.logger = logger;
 vector.input = input;
 vector.pubSub = pubSub;
-// vector.monitors = config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, vector));
-// vector.reports = config.reports.map(report => new report.class(report.channels, vector));
-
 
 module.exports = vector;
