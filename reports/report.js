@@ -1,11 +1,12 @@
 
 export default class Report {
 
-    constructor(channels, env) {
+    constructor(channels, params, env) {
 
         this.config = env.config;
         this.logger = env.logger;
         this.pubSub = env.pubSub;
+        this.params = params;
 
         for (let channel of channels){
             env.pubSub.subscribe(channel, (message, content) => {

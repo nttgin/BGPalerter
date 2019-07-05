@@ -3,8 +3,9 @@ import fs from "fs";
 import path from "path";
 import pubSub from 'pubsub-js';
 import winston from 'winston';
-import InputManager from "./inputManager";
+import Input from "./inputs/inputYml";
 require('winston-daily-rotate-file');
+
 const { combine, timestamp, label, printf } = winston.format;
 
 const vector = {
@@ -69,7 +70,8 @@ config.monitors = (config.monitors || [])
         return {
             class: require("./monitors/" + item.file).default,
             channel: item.channel,
-            name: item.name
+            name: item.name,
+            params: item.params
         };
     });
 
@@ -78,7 +80,8 @@ config.reports = (config.reports || [])
 
         return {
             class: require("./reports/" + item.file).default,
-            channels: item.channels
+            channels: item.channels,
+            params: item.params
         };
 
     });
@@ -103,7 +106,7 @@ config.connectors = config.connectors
 
     });
 
-const input = new InputManager(config);
+const input = new Input(config);
 
 vector.config = config;
 vector.logger = logger;

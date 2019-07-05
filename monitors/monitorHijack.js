@@ -4,8 +4,8 @@ import ip from "ip";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(name, channel, env){
-        super(name, channel, env);
+    constructor(name, channel, params, env){
+        super(name, channel, params, env);
     };
 
     updateMonitoredPrefixes = () => {
@@ -37,10 +37,9 @@ export default class MonitorHijack extends Monitor {
                 this.publishAlert(message.originAs + "-" + match.prefix,
                     `The prefix ${match.prefix} is announced by the AS${message.originAs} instead of AS${match.asn}`,
                     match.asn,
-                    {
-                        rule: matches[0],
-                        received: message
-                    });
+                    matches[0],
+                    message,
+                    {});
             }
 
             resolve(true);

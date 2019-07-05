@@ -9,8 +9,11 @@ export default class Consumer {
         }
 
 
-        this.monitors = env.config.monitors.map(monitor => new monitor.class(monitor.name, monitor.channel, env));
-        this.reports = env.config.reports.map(report => new report.class(report.channels, env));
+        this.monitors = env.config.monitors
+            .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params, env));
+
+        this.reports = env.config.reports
+            .map(report => new report.class(report.channels, report.params, env));
 
         process.on('message', this.dispatch);
     };

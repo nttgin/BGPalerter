@@ -1,18 +1,16 @@
-# Please, rename this file to config.yml
 
 connectors:
   - file: connectorTest
     name: tes
-  - file: connectorRIS
-    name: ris
-    params:
-      url: wss://ris-live.ripe.net/v1/ws/
-      moreSpecific: true
-      type: UPDATE
-      host: rrc00
-      socketOptions:
-        includeRaw: false
-
+#  - file: connectorRIS
+#    name: ris
+#    params:
+#      url: wss://ris-live.ripe.net/v1/ws/
+#      moreSpecific: true
+#      type: UPDATE
+#      host: rrc00
+#      socketOptions:
+#        includeRaw: false
 
 monitors:
   - file: monitorHijack
@@ -26,38 +24,31 @@ reports:
   - file: ReportEmail
     channels:
       - hijack
-      - pippo
+    params:
+      smtp: smtp.gmail.com
+      email: sender@email
+      port: 465
+      secure: true
+      user: user
+      password: password
+      notifiedEmails:
+        default:
+          - me1@email.it
+          - me2@email.it
 
 
-testMode: true
 
 checkStaleNotificationsSeconds: 30
 notificationIntervalSeconds: 10
 clearNotificationQueueAfterSeconds: 10 # If nothing happened in the meanwhile
-
-bufferSize: 10
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
   - prefixes.yml
 
-
 logging:
   logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
   zippedArchive: true
   maxSize: 20m
   maxFiles: 14d
-
-
-emailConfig:
-  enabled: false
-  smtp: smtp.gmail.com
-  email: sender@email
-  port: 465
-  secure: true
-  user: user
-  password: password
-
-notifiedEmails:
-  - me@email.it

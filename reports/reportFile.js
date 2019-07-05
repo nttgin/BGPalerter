@@ -3,8 +3,8 @@ import nodemailer from "nodemailer";
 
 export default class ReportEmail extends Report {
 
-    constructor(channels, env) {
-        super(channels, env);
+    constructor(channels, params, env) {
+        super(channels, params, env);
     }
 
     report = (message, content) => {

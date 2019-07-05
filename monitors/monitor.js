@@ -1,11 +1,12 @@
 
 export default class Monitor {
 
-    constructor(name, channel, env) {
+    constructor(name, channel, params, env) {
         this.config = env.config;
         this.pubSub = env.pubSub;
         this.logger = env.logger;
         this.input = env.input;
+        this.params = params;
         this.name = name;
         this.channel = channel;
         this.monitored = [];
@@ -57,22 +58,26 @@ export default class Monitor {
             affected: firstAlert.affected,
             message: this.squashAlerts(alerts),
             data: alerts.map(a => {
-                return Object.assign(a.data, {
+                return {
+                    extra: a.extra,
+                    matchedRule: a.matchedRule,
+                    matchedMessage: a.matchedMessage,
                     timestamp: a.timestamp
-                });
+                };
             })
         }
-
     };
 
-    publishAlert = (id, message, affected, data) => {
+    publishAlert = (id, message, affected, matchedRule, matchedMessage, extra) => {
 
         const context = {
             id,
             timestamp: new Date().getTime(),
             message,
             affected,
-            data
+            matchedRule,
+            matchedMessage,
+            extra
         };
 
         if (!this.alerts[id]) {
