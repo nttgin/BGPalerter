@@ -12,30 +12,29 @@ export default class ConnectorTest extends Connector{
             resolve(true);
         });
 
-
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             resolve(true);
 
-            // const update = {
-            //     data: {
-            //         withdrawals: ["124.40.52.0/22"],
-            //         peer: "124.0.0.2"
-            //     },
-            //     type: "ris_message"
-            // };
-
-            const update = {
-                data: {
-                    announcements: [{
-                        prefixes: ["124.40.52.0/22"],
-                        next_hop: "124.0.0.2"
-                    }],
-                    peer: "124.0.0.2",
-                    path: "1,2,3,2914".split(",")
-                },
-                type: "ris_message"
-            };
+            const update = (this.params.testType === 'withdrawal') ?
+                {
+                    data: {
+                        withdrawals: ["124.40.52.128/26"],
+                        peer: "124.0.0.2"
+                    },
+                    type: "ris_message"
+                } :
+                {
+                    data: {
+                        announcements: [{
+                            prefixes: ["124.40.52.0/22"],
+                            next_hop: "124.0.0.2"
+                        }],
+                        peer: "124.0.0.2",
+                        path: "1,2,3,2914".split(",")
+                    },
+                    type: "ris_message"
+                };
 
             const message = JSON.stringify(update);
 
@@ -43,7 +42,6 @@ export default class ConnectorTest extends Connector{
                 this.message(message);
                 sleep.sleep(1);
             }
-
 
         });
 
@@ -77,7 +75,6 @@ export default class ConnectorTest extends Connector{
                     type: "withdrawal",
                     prefix,
                     peer
-
                 })
             }
 

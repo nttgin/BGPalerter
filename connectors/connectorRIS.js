@@ -69,7 +69,6 @@ export default class ConnectorRIS extends Connector{
                     type: "withdrawal",
                     prefix,
                     peer
-
                 })
             }
 

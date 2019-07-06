@@ -2,28 +2,40 @@
 connectors:
   - file: connectorTest
     name: tes
-#  - file: connectorRIS
-#    name: ris
-#    params:
-#      url: wss://ris-live.ripe.net/v1/ws/
-#      moreSpecific: true
-#      type: UPDATE
-#      host: rrc00
-#      socketOptions:
-#        includeRaw: false
+    params:
+      testType: withdrawal
+  - file: connectorRIS
+    name: ris
+    params:
+      url: wss://ris-live.ripe.net/v1/ws/
+      moreSpecific: true
+      type: UPDATE
+      host: rrc00
+      socketOptions:
+        includeRaw: false
 
 monitors:
   - file: monitorHijack
     channel: hijack
     name: basic-hijack-detection
+  - file: monitorNewPrefix
+    channel: newprefix
+    name: prefix-detection
+  - file: monitorVisibility
+    channel: visibility
+    name: withdrawal-detection
 
 reports:
   - file: reportFile
     channels:
       - hijack
+      - newprefix
+      - visibility
   - file: ReportEmail
     channels:
       - hijack
+      - newprefix
+      - visibility
     params:
       smtp: smtp.gmail.com
       email: sender@email
@@ -35,8 +47,6 @@ reports:
         default:
           - me1@email.it
           - me2@email.it
-
-
 
 checkStaleNotificationsSeconds: 30
 notificationIntervalSeconds: 10
