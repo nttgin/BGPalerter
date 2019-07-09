@@ -1,16 +1,10 @@
-environment: production
+environment: test
 
 connectors:
-  - file: connectorRIS
-    name: ris
+  - file: connectorTest
+    name: tes
     params:
-      url: wss://ris-live.ripe.net/v1/ws/
-      subscription:
-        moreSpecific: true
-        type: UPDATE
-        host: rrc00
-        socketOptions:
-          includeRaw: false
+      testType: withdrawal
 
 monitors:
   - file: monitorHijack
@@ -25,7 +19,7 @@ monitors:
     channel: visibility
     name: withdrawal-detection
     params:
-      threshold: 0
+      threshold: 4
 
 reports:
   - file: reportFile
@@ -33,13 +27,6 @@ reports:
       - hijack
       - newprefix
       - visibility
-      -
-  - file: ReportEmail
-    channels:
-      - hijack
-      - newprefix
-      - visibility
-
 
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
@@ -48,7 +35,7 @@ clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event whic
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
-  - prefixes.yml
+  - tests/prefixes.test.yml
 
 logging:
   directory: logs

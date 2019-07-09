@@ -17,7 +17,7 @@ const verboseFilter  = winston.format((info, opts) => {
 
 
 const transportError = new (winston.transports.DailyRotateFile)({
-    filename: 'logs/error-%DATE%.log',
+    filename: config.logging.directory + '/error-%DATE%.log',
     datePattern: config.logging.logRotatePattern,
     zippedArchive: config.logging.zippedArchive,
     maxSize: config.logging.maxSize,
@@ -34,7 +34,7 @@ const transportError = new (winston.transports.DailyRotateFile)({
 });
 
 const transportReports = new (winston.transports.DailyRotateFile)({
-    filename: 'logs/reports-%DATE%.log',
+    filename: config.logging.directory + '/reports-%DATE%.log',
     datePattern: config.logging.logRotatePattern,
     zippedArchive: config.logging.zippedArchive,
     maxSize: config.logging.maxSize,

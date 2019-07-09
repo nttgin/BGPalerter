@@ -1,5 +1,4 @@
 import Report from "./report";
-import nodemailer from "nodemailer";
 
 export default class ReportEmail extends Report {
 

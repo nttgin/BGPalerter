@@ -21,6 +21,7 @@ export default class ConnectorRIS extends Connector{
                 });
 
             } catch(error) {
+                this.error(error);
                 resolve(false);
             }
         });
@@ -31,10 +32,11 @@ export default class ConnectorRIS extends Connector{
             try {
                 this.ws.send(JSON.stringify({
                     type: "ris_subscribe",
-                    data: this.params
+                    data: this.params.subscription
                 }));
                 resolve(true);
             } catch(error) {
+                this.error(error);
                 resolve(false);
             }
         });
@@ -48,11 +50,11 @@ export default class ConnectorRIS extends Connector{
             const peer = message["peer"];
             const path = message["path"];
 
-            for (let announcement of announcements){
+            for (let announcement of announcements) {
                 const nextHop = announcement["next_hop"];
                 const prefixes = announcement["prefixes"] || [];
 
-                for (let prefix of prefixes){
+                for (let prefix of prefixes) {
                     components.push({
                         type: "announcement",
                         prefix,
@@ -64,7 +66,7 @@ export default class ConnectorRIS extends Connector{
                 }
             }
 
-            for (let prefix of withdrawals){
+            for (let prefix of withdrawals) {
                 components.push({
                     type: "withdrawal",
                     prefix,
@@ -74,5 +76,5 @@ export default class ConnectorRIS extends Connector{
 
             return components;
         }
-    };
-}
+    }
+};

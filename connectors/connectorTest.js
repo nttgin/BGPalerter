@@ -1,10 +1,12 @@
-import sleep from "sleep";
 import Connector from "./connector";
 
 export default class ConnectorTest extends Connector{
 
+    static isTest = true;
+
     constructor(name, params, env) {
         super(name, params, env);
+        console.log("Test connector running");
     }
 
     connect = () =>
@@ -12,7 +14,7 @@ export default class ConnectorTest extends Connector{
             resolve(true);
         });
 
-    subscribe = (input) =>
+    subscribe = () =>
         new Promise((resolve, reject) => {
             resolve(true);
 
@@ -36,12 +38,12 @@ export default class ConnectorTest extends Connector{
                     type: "ris_message"
                 };
 
-            const message = JSON.stringify(update);
-
-            while (true){
-                this.message(message);
-                sleep.sleep(1);
-            }
+            setInterval(() => {
+                this.message(JSON.stringify(update));
+                let peer = update.data.peer.split('.');
+                peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
+                update.data.peer = peer.join(".");
+            }, 1000);
 
         });
 

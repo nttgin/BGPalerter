@@ -5,6 +5,7 @@ export default class MonitorVisibility extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
+        this.threshold = (params.threshold != null) ? params.threshold : 10;
     };
 
     updateMonitoredPrefixes = () => {
@@ -17,7 +18,14 @@ export default class MonitorVisibility extends Monitor {
 
     squashAlerts = (alerts) => {
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
-        return `The prefix ${alerts[0].matchedMessage.prefix} has been withdrawn. It is no longer visible from ${peers} peer(s).`;
+
+        if (peers >= this.threshold) {
+            return (peers === 1) ?
+                `The prefix ${alerts[0].matchedMessage.prefix} it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}.` :
+                `The prefix ${alerts[0].matchedMessage.prefix} has been withdrawn. It is no longer visible from ${peers} peers.`;
+        } else {
+            return false;
+        }
     };
 
     monitor = (message) =>
@@ -34,7 +42,9 @@ export default class MonitorVisibility extends Monitor {
 
             if (matches.length !== 0) {
                 const match = matches[0];
-                this.publishAlert(match.prefix,
+                let key = match.prefix;
+
+                this.publishAlert(key,
                     `The prefix ${match.prefix} has been withdrawn.`,
                     match.asn,
                     matches[0],

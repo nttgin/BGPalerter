@@ -8,16 +8,16 @@ require('winston-daily-rotate-file');
 
 const { combine, timestamp, label, printf } = winston.format;
 
-const vector = {
-    env: "dev" // Get the real one later
-};
+const vector = {};
+const fileName = process.argv[2] || path.resolve(__dirname, 'config.yml');
+console.log("loading config:", fileName);
+const config = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
 
-const config = yaml.safeLoad(fs.readFileSync(path.resolve(__dirname, 'config.yml'), 'utf8'));
 
 const formatLine = printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`);
 const verboseFilter  = winston.format((info, opts) => info.level === 'verbose' ? info : false);
 const transportError = new (winston.transports.DailyRotateFile)({
-    filename: 'logs/error-%DATE%.log',
+    filename: config.logging.directory  +'/error-%DATE%.log',
     datePattern: config.logging.logRotatePattern,
     zippedArchive: config.logging.zippedArchive,
     maxSize: config.logging.maxSize,
@@ -27,13 +27,13 @@ const transportError = new (winston.transports.DailyRotateFile)({
     eol: '\n',
     json: false,
     format: combine(
-        label({ label: vector.env}),
+        label({ label: config.environment}),
         timestamp(),
         formatLine
     )
 });
 const transportReports = new (winston.transports.DailyRotateFile)({
-    filename: 'logs/reports-%DATE%.log',
+    filename: config.logging.directory + '/reports-%DATE%.log',
     datePattern: config.logging.logRotatePattern,
     zippedArchive: config.logging.zippedArchive,
     maxSize: config.logging.maxSize,
@@ -44,7 +44,7 @@ const transportReports = new (winston.transports.DailyRotateFile)({
     json: false,
     format: combine(
         verboseFilter(),
-        label({ label: vector.env}),
+        label({ label: config.environment}),
         timestamp(),
         formatLine
     )
@@ -61,7 +61,7 @@ const logger = winston.createLogger({
     ]
 });
 
-if (vector.env === 'prod') {
+if (config.environment === 'production') {
     logger.remove(logger.transports.Console);
 }
 
@@ -88,7 +88,7 @@ config.reports = (config.reports || [])
 config.connectors = config.connectors || [];
 
 if ([...new Set(config.connectors)].length !== config.connectors.length) {
-    throw new Error('Connectors names MUST to be unique');
+    throw new Error('Connectors names MUST be unique');
 }
 
 config.connectors = config.connectors
@@ -105,6 +105,7 @@ config.connectors = config.connectors
         };
 
     });
+
 
 const input = new Input(config);
 

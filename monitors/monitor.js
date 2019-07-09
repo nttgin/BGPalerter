@@ -35,36 +35,40 @@ export default class Monitor {
 
     _squash = (alerts) => {
 
-        const firstAlert = alerts[0];
-        const id = firstAlert.id;
-        let earliest = Infinity;
-        let latest = -Infinity;
+        const message = this.squashAlerts(alerts);
 
-        for (let alert of alerts){
+        if (message) {
+            const firstAlert = alerts[0];
+            const id = firstAlert.id;
+            let earliest = Infinity;
+            let latest = -Infinity;
 
-            earliest = Math.min(alert.timestamp, earliest);
-            latest = Math.max(alert.timestamp, latest);
+            for (let alert of alerts) {
 
-            if (id !== alert.id) {
-                throw new Error('Squash MUST receive a list of events all with the same ID.');
+                earliest = Math.min(alert.timestamp, earliest);
+                latest = Math.max(alert.timestamp, latest);
+
+                if (id !== alert.id) {
+                    throw new Error('Squash MUST receive a list of events all with the same ID.');
+                }
             }
-        }
 
-        return {
-            id,
-            origin: this.name,
-            earliest,
-            latest,
-            affected: firstAlert.affected,
-            message: this.squashAlerts(alerts),
-            data: alerts.map(a => {
-                return {
-                    extra: a.extra,
-                    matchedRule: a.matchedRule,
-                    matchedMessage: a.matchedMessage,
-                    timestamp: a.timestamp
-                };
-            })
+            return {
+                id,
+                origin: this.name,
+                earliest,
+                latest,
+                affected: firstAlert.affected,
+                message,
+                data: alerts.map(a => {
+                    return {
+                        extra: a.extra,
+                        matchedRule: a.matchedRule,
+                        matchedMessage: a.matchedMessage,
+                        timestamp: a.timestamp
+                    };
+                })
+            }
         }
     };
 
@@ -122,12 +126,14 @@ export default class Monitor {
         for (let id in this.alerts) {
             const group = this._squash(this.alerts[id]);
 
-            if (this._checkLastSent(group)) {
-                this.sent[group.id] = new Date().getTime();
-                this._publishOnChannel(group);
-            }
+            if (group) {
+                if (this._checkLastSent(group)) {
+                    this.sent[group.id] = new Date().getTime();
+                    this._publishOnChannel(group);
+                }
 
-            this._clean(group);
+                this._clean(group);
+            }
         }
 
     };

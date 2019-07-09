@@ -59,10 +59,11 @@ export default class ConnectorFactory {
             if (connectors.length === 0) {
                 reject(new Error("No connections available"));
             } else {
-                resolve(Promise.all(connectors.map(connector => {
-                    connector.subscribe(params);
-                })));
+                const connectorList = connectors
+                    .map(connector => connector.subscribe(params));
+
+                resolve(Promise.all(connectorList));
             }
 
-        });
+        })
 }

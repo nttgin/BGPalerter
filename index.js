@@ -1,23 +1,29 @@
-import { config, logger, input } from "./env";
-import cluster from "cluster";
+import { config, logger, input, pubSub } from "./env";
 import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
+import cluster from "cluster";
 
-if (cluster.isMaster) {
 
-    const worker = cluster.fork();
-
+function master(worker) {
 
     const connectorFactory = new ConnectorFactory();
 
     connectorFactory.loadConnectors();
-    connectorFactory.connectConnectors()
+    return connectorFactory.connectConnectors()
         .then(() => {
 
             for (const connector of connectorFactory.getConnectors()) {
-                connector.onMessage((message) => {
-                    worker.send(connector.name + "-" + message);
-                });
+
+                if (worker){
+                    connector.onMessage((message) => {
+                        worker.send(connector.name + "-" + message);
+                    });
+                } else {
+                    connector.onMessage((message) => {
+                        pubSub.publish("data", connector.name + "-" + message);
+                    });
+                }
+
                 connector.onError(error => {
                     logger.log({
                         level: 'error',
@@ -39,8 +45,20 @@ if (cluster.isMaster) {
                 message: error
             });
         });
+}
 
+module.exports = pubSub;
+
+console.log("RUNNING ENVIRONMENT:", config.environment);
+if (config.environment === "test") {
+
+    master();
+    new Consumer();
 
 } else {
-    new Consumer();
+    if (cluster.isMaster) {
+        master(cluster.fork());
+    } else {
+        new Consumer();
+    }
 }

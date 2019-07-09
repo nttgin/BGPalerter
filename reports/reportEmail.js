@@ -9,10 +9,15 @@ export default class ReportEmail extends Report {
         this.transporter = nodemailer.createTransport({
             host: this.params.smtp,
             port: this.params.port,
-            secure: this.params.secure,
+            secure: this.params.useTls,
+            ignoreTLS: this.params.ignoreTLS,
             auth: {
                 user: this.params.user,
-                pass: this.params.password
+                pass: this.params.password,
+                type: this.params.authType
+            },
+            tls: {
+                rejectUnauthorizedCertificate: this.params.rejectUnauthorizedCertificate
             }
         });
     }
@@ -53,7 +58,6 @@ export default class ReportEmail extends Report {
             const emailGroups = this.getEmails(content);
 
             for (let emails of emailGroups) {
-                console.log(content.message);
 
                 this.transporter
                     .sendMail({

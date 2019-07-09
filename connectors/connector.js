@@ -16,10 +16,10 @@ export default class Connector {
         new Promise((resolve, reject) => reject(new Error('The method connect MUST be implemented')));
 
 
-    error = () => {
+    error = (error) => {
         this.logger.log({
             level: 'error',
-            message: this.name + ' disconnected'
+            message: error
         });
     };
 

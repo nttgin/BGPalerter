@@ -1,0 +1,14 @@
+124.40.52.128/26:
+  description: Solid Trading / Crossivity
+  asn: 50601
+  ignoreMorespecifics: false
+
+180.50.120.0/21:
+  description: OCN prefix
+  asn: 4713
+  ignoreMorespecifics: false
+
+180.57.120.0/21:
+  description: OCN prefix
+  asn: 4713
+  ignoreMorespecifics: true
