@@ -1,0 +1,15 @@
+${summary}
+
+
+DETAILS:
+------------------------------------------------------
+Monitored prefix:     ${prefix}
+Prefix Description:   ${description}
+Usual prefix origin:  AS${asn}
+Event type:           ${type}
+Now announced by:     AS${neworigin}
+Now announced with:   ${newprefix}
+When event started:   ${earliest} UTC
+Last event:           ${latest} UTC
+Detected by peers:    ${peers}
+See in BGPlay:        ${bgplay}

@@ -248,7 +248,9 @@ describe("Alerting", function() {
                 ]);
 
             done();
-            process.exit()
+            setTimeout(function () {
+                process.exit()
+            }, 20000);
         });
 
     }).timeout(10000);

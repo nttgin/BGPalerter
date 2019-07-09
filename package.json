@@ -28,6 +28,7 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "brembo": "^2.0.3",
     "event-stream": "^4.0.1",
     "ip": "https://github.com/MaxCam/node-ip.git#contains-prefix",
     "js-yaml": "^3.13.1",
