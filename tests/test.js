@@ -127,7 +127,7 @@ describe("Logging", function() {
     process.argv[2] = "tests/config.test.yml";
     var env = require("../env");
 
-    it("Errors logging on the right file", function(done) {
+    it("errors logging on the right file", function(done) {
         const message = "Test message";
         env.logger
             .log({
@@ -148,7 +148,7 @@ describe("Logging", function() {
 
     });
 
-    it("Reports logging on the right file", function(done) {
+    it("reports logging on the right file", function(done) {
         const message = "Test message";
         env.logger
             .log({
@@ -201,7 +201,7 @@ describe("Alerting", function() {
     }).timeout(5000);
 
 
-    it("Hijack reporting", function(done) {
+    it("hijack reporting", function(done) {
 
         pubSub.publish("test-type", "hijack");
 
