@@ -6,8 +6,8 @@
   "bin": "index.js",
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "./node_modules/.bin/mocha tests --require babel-core/register",
-    "build": "babel src -d build",
+    "test": "./node_modules/.bin/mocha tests --require @babel/register",
+    "build": "./build.sh",
     "watch-and-serve": "nodemon --inspect --exec babel-node index.js",
     "serve": "nodemon --exec babel-node index.js"
   },
