@@ -1,8 +1,20 @@
 {
-  "presets": ["env"],
+  "presets": [
+    "@babel/preset-env"
+  ],
   "plugins": [
-    "transform-class-properties",
-    "transform-async-to-generator",
-    "transform-object-rest-spread"
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-async-to-generator",
+    "@babel/plugin-proposal-object-rest-spread"
+  ],
+
+  "ignore": [
+    "./node_modules",
+    "./assets",
+    "./view",
+    "./tests",
+    "./logs",
+    "./build",
+    "./bin.js"
   ]
 }
