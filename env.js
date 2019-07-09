@@ -9,7 +9,7 @@ require('winston-daily-rotate-file');
 const { combine, timestamp, label, printf } = winston.format;
 
 const vector = {};
-const fileName = process.argv[2] || path.resolve(__dirname, 'config.yml');
+const fileName = process.argv[2] || path.resolve(process.cwd(), 'config.yml');
 console.log("loading config:", fileName);
 const config = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
 
@@ -50,7 +50,7 @@ const transportReports = new (winston.transports.DailyRotateFile)({
     )
 });
 
-const logger = winston.createLogger({
+const wlogger = winston.createLogger({
     level: 'info',
     transports: [
         transportError,
@@ -62,7 +62,7 @@ const logger = winston.createLogger({
 });
 
 if (config.environment === 'production') {
-    logger.remove(logger.transports.Console);
+    wlogger.remove(wlogger.transports.Console);
 }
 
 config.monitors = (config.monitors || [])
@@ -110,7 +110,7 @@ config.connectors = config.connectors
 const input = new Input(config);
 
 vector.config = config;
-vector.logger = logger;
+vector.logger = wlogger;
 vector.input = input;
 vector.pubSub = pubSub;
 
