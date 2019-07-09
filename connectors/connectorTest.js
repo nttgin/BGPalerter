@@ -7,6 +7,11 @@ export default class ConnectorTest extends Connector{
     constructor(name, params, env) {
         super(name, params, env);
         console.log("Test connector running");
+        this.pubSub.subscribe("test-type", (type, message) => {
+            clearInterval(this.timer);
+            this.subscribe({type: message});
+            console.log("switching to", message);
+        });
     }
 
     connect = () =>
@@ -14,35 +19,58 @@ export default class ConnectorTest extends Connector{
             resolve(true);
         });
 
-    subscribe = () =>
+    subscribe = (params) =>
         new Promise((resolve, reject) => {
             resolve(true);
 
-            const update = (this.params.testType === 'withdrawal') ?
-                {
-                    data: {
-                        withdrawals: ["124.40.52.128/26"],
-                        peer: "124.0.0.2"
-                    },
-                    type: "ris_message"
-                } :
-                {
-                    data: {
-                        announcements: [{
-                            prefixes: ["124.40.52.0/22"],
-                            next_hop: "124.0.0.2"
-                        }],
-                        peer: "124.0.0.2",
-                        path: "1,2,3,2914".split(",")
-                    },
-                    type: "ris_message"
-                };
+            const type = params.type || this.params.testType;
 
-            setInterval(() => {
+            let update;
+
+            switch (type) {
+                case "hijack":
+                    update = {
+                        data: {
+                            announcements: [{
+                                prefixes: ["180.50.120.0/22"],
+                                next_hop: "124.0.0.2"
+                            }],
+                            peer: "124.0.0.2",
+                            path: "1,2,3,4".split(",")
+                        },
+                        type: "ris_message"
+                    };
+                    break;
+                case "newprefix":
+                    update = {
+                        data: {
+                            announcements: [{
+                                prefixes: ["124.40.52.0/22"],
+                                next_hop: "124.0.0.2"
+                            }],
+                            peer: "124.0.0.2",
+                            path: "1,2,3,2914".split(",")
+                        },
+                        type: "ris_message"
+                    };
+                    break;
+                default:
+                    update = {
+                        data: {
+                            withdrawals: ["124.40.52.128/26"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    };
+            }
+
+            this.timer = setInterval(() => {
                 this.message(JSON.stringify(update));
-                let peer = update.data.peer.split('.');
-                peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
-                update.data.peer = peer.join(".");
+                if (type === 'withdrawal') {
+                    let peer = update.data.peer.split('.');
+                    peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
+                    update.data.peer = peer.join(".");
+                }
             }, 1000);
 
         });

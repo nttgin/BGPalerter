@@ -176,7 +176,7 @@ describe("Alerting", function() {
     var pubSub = require("../index");
     var env = require("../env");
 
-    it("Data analyzed in time (from boot)", function(done) {
+    it("Alert reporting", function(done) {
 
         pubSub.subscribe("visibility", function (type, message) {
 
@@ -185,7 +185,59 @@ describe("Alerting", function() {
                     id: '124.40.52.128/26',
                     origin: 'withdrawal-detection',
                     affected: 50601,
-                    message: 'The prefix 124.40.52.128/26 has been withdrawn. It is no longer visible from 4 peers.'
+                    message: 'The prefix 124.40.52.128/26 (Solid Trading / Crossivity) has been withdrawn. It is no longer visible from 4 peers.'
+                });
+
+            expect(message).to.contain
+                .keys([
+                    "latest",
+                    "earliest",
+                    "data"
+                ]);
+
+            done();
+        });
+
+    }).timeout(5000);
+
+
+    it("Hijack reporting", function(done) {
+
+        pubSub.publish("test-type", "hijack");
+
+        pubSub.subscribe("hijack", function (type, message) {
+
+            expect(message).to
+                .containSubset({
+                    "affected": 4713,
+                    "data": [
+                        {
+                            "extra": {},
+                            "matchedMessage": {
+                                "nextHop": "124.0.0.2",
+                                "originAs": "4",
+                                "path": [
+                                    "1",
+                                    "2",
+                                    "3",
+                                    "4",
+                                ],
+                                "peer": "124.0.0.2",
+                                "prefix": "180.50.120.0/22",
+                                "type": "announcement",
+                            },
+                            "matchedRule": {
+                                "asn": 4713,
+                                "description": "OCN prefix",
+                                "ignoreMorespecifics": false,
+                                "prefix": "180.50.120.0/21",
+                                "user": "default"
+                            },
+                        }
+                    ],
+                    "id": "4-180.50.120.0/22",
+                    "message": "A new prefix 180.50.120.0/22 is announced by AS4. It should be instead 180.50.120.0/21 (OCN prefix) announced by AS4713",
+                    "origin": "basic-hijack-detection",
                 });
 
             expect(message).to.contain
@@ -199,7 +251,6 @@ describe("Alerting", function() {
             process.exit()
         });
 
-    }).timeout(5000);
+    }).timeout(10000);
 
 });
-

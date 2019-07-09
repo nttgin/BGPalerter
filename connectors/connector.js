@@ -4,6 +4,7 @@ export default class Connector {
     constructor(name, params, env){
         this.config = env.config;
         this.logger = env.logger;
+        this.pubSub = env.pubSub;
         this.params = params;
         this.name = name;
         this.messageCallback = null;
