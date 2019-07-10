@@ -6,14 +6,18 @@ export default class MonitorVisibility extends Monitor {
     constructor(name, channel, params, env){
         super(name, channel, params, env);
         this.threshold = (params.threshold != null) ? params.threshold : 10;
+        this.updateMonitoredPrefixes();
     };
 
     updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredMoreSpecifics();
+        this.monitored = this.input.getMonitoredPrefixes();
+        this.monitoredSimpleArray = this.monitored.map(item => item.prefix);
     };
 
     filter = (message) => {
-        return message.type === 'withdrawal';
+        // Based on exact match only
+        return message.type === 'withdrawal'
+            && this.monitoredSimpleArray.includes(message.prefix);
     };
 
     squashAlerts = (alerts) => {
@@ -34,7 +38,7 @@ export default class MonitorVisibility extends Monitor {
             const messagePrefix = message.prefix;
 
             let matches = this.monitored.filter(item => {
-                return item.prefix === messagePrefix;
+                return item.prefix == messagePrefix;
             });
             if (matches.length > 1) {
                 matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];

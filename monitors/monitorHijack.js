@@ -9,7 +9,7 @@ export default class MonitorHijack extends Monitor {
     };
 
     updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredMoreSpecifics();
+        this.monitored = this.input.getMonitoredPrefixes();
     };
 
     filter = (message) => {
@@ -26,7 +26,10 @@ export default class MonitorHijack extends Monitor {
             const messagePrefix = message.prefix;
 
             let matches = this.monitored.filter(item => {
-                return item.prefix === messagePrefix || ip.cidrSubnet(item.prefix).contains(messagePrefix);
+                const sameOrigin = message.originAs == item.asn;
+                return !sameOrigin &&
+                    (item.prefix == messagePrefix ||
+                    (!item.ignoreMorespecifics && ip.cidrSubnet(item.prefix).contains(messagePrefix)));
             });
             if (matches.length > 1) {
                 matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];
