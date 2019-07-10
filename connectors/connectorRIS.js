@@ -27,13 +27,36 @@ export default class ConnectorRIS extends Connector{
         });
 
 
+    _subscribeToAll = (input) => {
+        console.log("Subscribing to everything");
+        this.ws.send(JSON.stringify({
+            type: "ris_subscribe",
+            data: this.params.subscription
+        }));
+
+    };
+
+    _subscribeToPrefixes = (input) => {
+        const monitoredPrefixes = input.getMonitoredPrefixes().map(item => item.prefix);
+        const params = JSON.parse(JSON.stringify(this.params.subscription));
+        for (let prefix of monitoredPrefixes){
+            params.prefix = prefix;
+            console.log("Subscribing to:", prefix);
+            this.ws.send(JSON.stringify({
+                type: "ris_subscribe",
+                data: params
+            }));
+        }
+    };
+
+
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             try {
-                this.ws.send(JSON.stringify({
-                    type: "ris_subscribe",
-                    data: this.params.subscription
-                }));
+                return (this.params.carefulSubscription) ?
+                    this._subscribeToPrefixes(input) :
+                    this._subscribeToAll(input);
+
                 resolve(true);
             } catch(error) {
                 this.error(error);
