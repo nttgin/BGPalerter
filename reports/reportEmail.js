@@ -124,6 +124,14 @@ export default class ReportEmail extends Report {
                 break;
 
             case "newprefix":
+                matched = content.data[0].matchedRule;
+                context.prefix = matched.prefix;
+                context.description = matched.description;
+                context.asn = matched.asn;
+                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
+                context.neworigin = content.data[0].matchedMessage.originAs;
+                context.newprefix = content.data[0].matchedMessage.prefix;
+                context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
                 break;
 
         }

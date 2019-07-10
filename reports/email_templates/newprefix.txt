@@ -7,9 +7,10 @@ Monitored prefix:     ${prefix}
 Prefix Description:   ${description}
 Usually announced by: AS${asn}
 Event type:           ${type}
-Now announced by:     AS${neworigin}
-Now announced with:   ${newprefix}
+Detected new prefix:  ${newprefix}
+Announced by:         AS${neworigin}
 When event started:   ${earliest} UTC
 Last event:           ${latest} UTC
 Detected by peers:    ${peers}
 See in BGPlay:        ${bgplay}
+

@@ -27,6 +27,12 @@ reports:
       - hijack
       - newprefix
       - visibility
+  - file: ReportEmail
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+
 
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds

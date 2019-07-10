@@ -41,19 +41,21 @@ export default class ConnectorTest extends Connector{
                         type: "ris_message"
                     };
                     break;
+
                 case "newprefix":
                     update = {
                         data: {
                             announcements: [{
-                                prefixes: ["124.40.52.0/22"],
+                                prefixes: ["180.50.120.0/22"],
                                 next_hop: "124.0.0.2"
                             }],
                             peer: "124.0.0.2",
-                            path: "1,2,3,2914".split(",")
+                            path: "1,2,3,4713".split(",")
                         },
                         type: "ris_message"
                     };
                     break;
+
                 default:
                     update = {
                         data: {
