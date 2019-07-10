@@ -4,11 +4,12 @@ connectors:
   - file: connectorRIS
     name: ris
     params:
+      carefulSubscription: false
       url: wss://ris-live.ripe.net/v1/ws/
       subscription:
         moreSpecific: true
         type: UPDATE
-        host: rrc00
+        host:
         socketOptions:
           includeRaw: false
 
