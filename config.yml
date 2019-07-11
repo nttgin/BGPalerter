@@ -34,12 +34,20 @@ reports:
       - hijack
       - newprefix
       - visibility
-      -
+
   - file: ReportEmail
     channels:
       - hijack
       - newprefix
       - visibility
+
+  - file: ReportSlack
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+    params:
+      hookUrl: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
 checkStaleNotificationsSeconds: 60
