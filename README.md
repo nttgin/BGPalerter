@@ -24,13 +24,13 @@ Possible connectors are:
 - connectorRIS - for real-time data from RIPE RIS (https://ris-live.ripe.net/)
 - connectorTest - for testing purposes, it provokes all types of alerting
 
-###monitors
+####monitors
 Possible monitors are:
 - monitorHijack - for monitoring hijacks
 - monitorVisibility - for monitoring prefixes visibility (you will get notified when withdrawals make monitored routes disappear). A threshold can be specified in config.yml to trigger an alert only if the issue is visible from a certain amount of peers.
 - monitorNewPrefix - for monitoring if new more specifics (of the monitored prefixes) start to be announced
 
-###reports
+####reports
 Possible reports are:
 - reportEmail - to send alerts by email. Smtp configurations are in config.yml
 - reportFile - to log the alerts in files. File directory, format, and log rotation configurations are in config.yml
