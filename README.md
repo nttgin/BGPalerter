@@ -25,7 +25,7 @@ Connectors retrieve/listen the data from different sources and transform them in
 Monitors analize the data flow and produce alerts. Different monitors try to detect different issues.
 Reports send/store the alerts, e.g. by email or to a file.
 
-####connectors
+#####connectors
 
 Possible connectors are:
 
@@ -33,7 +33,7 @@ Possible connectors are:
 
 * connectorTest, for testing purposes, it provokes all types of alerting
 
-####monitors
+#####monitors
 
 Possible monitors are:
 
@@ -43,13 +43,16 @@ Possible monitors are:
 
 * monitorNewPrefix, for monitoring if new more specifics (of the monitored prefixes) start to be announced
 
-####reports
+#####reports
 
 Possible reports are:
 
 * reportEmail, to send alerts by email. Smtp configurations are in config.yml
 
 * reportFile, to log the alerts in files. File directory, format, and log rotation configurations are in config.yml
+
+* reportSlack, to send alerts in Slack. Hook url is configurable in config.yml
+
 
 ##For Developers
 
