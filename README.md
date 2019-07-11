@@ -21,8 +21,8 @@ Reports send/store the alerts, e.g. by email or to a file.
 
 ####connectors
 Possible connectors are:
-- connectorRIS - for real-time data from RIPE RIS (https://ris-live.ripe.net/)
-- connectorTest - for testing purposes, it provokes all types of alerting
+- connectorRIS, for real-time data from RIPE RIS (https://ris-live.ripe.net/)
+- connectorTest, for testing purposes, it provokes all types of alerting
 
 ####monitors
 Possible monitors are:
