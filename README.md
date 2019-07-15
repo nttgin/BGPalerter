@@ -78,13 +78,14 @@ To start develop:
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
 All connectors must extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
-From the super class they will inherit various generic methods wile some specific for the particular component have to be implemented.
+From the super class they will inherit various generic methods while some specific for the particular component have to be implemented.
+Reports don't receive only alerts but also the data that provoked such alerts.
 
 In config.yml, for each collection of components:
 
 * file - refers to the file name which contains the class
 
-* channel(s) - refer to what channel will be used to send/receive messages
+* channels - refer to what channel(s) will be used to send/receive messages
 
 * params - whatever param it may be needed to the component at creation time
 
