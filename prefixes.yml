@@ -36,8 +36,44 @@
 61.120.144.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 61.126.0.0/15:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.127.80.0/21:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.113.48.0/20:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.127.40.0/23:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.119.112.0/21:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.113.80.0/21:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.113.64.0/20:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+61.127.64.0/20:
   description: OCN
   asn: 4713
   ignoreMorespecifics: false
@@ -50,6 +86,7 @@
 61.200.80.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 61.207.0.0/16:
   description: OCN
@@ -64,26 +101,27 @@
 61.213.144.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 61.213.160.0/19:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 61.214.0.0/16:
   description: OCN
   asn: 4713
+  ignoreMorespecifics: false
 
 80.74.8.0/22:
   description: subas 65316
   asn: 2914
+  ignoreMorespecifics: false
 
 83.217.224.0/23:
   description: subas 65316
   asn: 2914
-
-91.212.152.0/24:
-  description: subas 65310
-  asn: 2914
+  ignoreMorespecifics: false
 
 114.144.0.0/12:
   description: OCN
@@ -98,14 +136,17 @@
 117.103.176.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 117.104.64.0/18:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 117.104.128.0/19:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 118.0.0.0/12:
   description: OCN
@@ -120,10 +161,12 @@
 120.29.144.0/21:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 120.88.48.0/21:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 121.112.0.0/13:
   description: OCN
@@ -157,16 +200,18 @@
 
 124.40.32.0/19:
   description: iboss
-  asn: 137922
+  asn: 2914
   ignoreMorespecifics: true
 
 124.40.56.0/24:
   description: capitalonline
   asn: 63199
+  ignoreMorespecifics: false
 
 124.40.57.0/24:
   description: capitalonline
   asn: 63199
+  ignoreMorespecifics: false
 
 124.84.0.0/14:
   description: OCN
@@ -196,14 +241,17 @@
 130.94.19.0/24:
   description: subas 65061
   asn: 2914
+  ignoreMorespecifics: false
 
 153.128.0.0/11:
   description: OCN
   asn: 4713
+  ignoreMorespecifics: false
 
 153.160.0.0/12:
   description: OCN
   asn: 4713
+  ignoreMorespecifics: false
 
 153.176.0.0/12:
   description: OCN
@@ -238,28 +286,9 @@
 153.254.0.0/15:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 180.0.0.0/10:
-  description: OCN
-  asn: 4713
-  ignoreMorespecifics: false
-
-180.12.169.0/24:
-  description: OCN
-  asn: 4713
-  ignoreMorespecifics: false
-
-180.12.168.0/24:
-  description: OCN
-  asn: 4713
-  ignoreMorespecifics: false
-
-180.12.170.0/24:
-  description: OCN
-  asn: 4713
-  ignoreMorespecifics: false
-
-180.12.171.0/24:
   description: OCN
   asn: 4713
   ignoreMorespecifics: false
@@ -277,18 +306,22 @@
 180.210.232.0/24:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 198.252.194.0/23:
   description: subas 65017
   asn: 2914
+  ignoreMorespecifics: false
 
 199.164.210.0/24:
   description: subas 65052
   asn: 2914
+  ignoreMorespecifics: false
 
 202.47.16.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 202.234.192.0/18:
   description: OCN
@@ -298,6 +331,7 @@
 203.105.64.0/19:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 203.139.160.0/19:
   description: OCN
@@ -317,38 +351,47 @@
 203.205.112.0/20:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 206.197.81.0/24:
   description: subas 65061
   asn: 2914
+  ignoreMorespecifics: false
 
 207.158.192.0/18:
   description: formerly subas 65043
   asn: 2914
+  ignoreMorespecifics: false
 
 207.201.128.0/18:
   description: formerly subas 65043
   asn: 2914
+  ignoreMorespecifics: false
 
 208.55.0.0/16:
   description: formerly subas 65043
   asn: 2914
+  ignoreMorespecifics: false
 
 209.41.0.0/18:
   description: subas 65062
   asn: 2914
+  ignoreMorespecifics: false
 
 209.130.0.0/17:
   description: formerly subas 65043
   asn: 2914
+  ignoreMorespecifics: false
 
 209.207.128.0/17:
   description: subas 65061
   asn: 2914
+  ignoreMorespecifics: false
 
 209.238.0.0/16:
   description: subas 65062
   asn: 2914
+  ignoreMorespecifics: false
 
 210.132.0.0/18:
   description: OCN
@@ -398,6 +441,7 @@
 210.175.160.0/19:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 210.190.0.0/16:
   description: OCN
@@ -439,12 +483,37 @@
   asn: 4713
   ignoreMorespecifics: false
 
+211.6.68.0/24:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+211.6.69.0/24:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+211.6.70.0/24:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
 211.11.0.0/16:
   description: OCN
   asn: 4713
   ignoreMorespecifics: false
 
+211.11.100.0/22:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
 211.16.0.0/15:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+211.16.129.0/24:
   description: OCN
   asn: 4713
   ignoreMorespecifics: false
@@ -457,8 +526,24 @@
 211.129.0.0/16:
   description: OCN
   asn: 4713
+  ignoreMorespecifics: false
+
+211.123.212.0/22:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
 
 211.130.0.0/16:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+211.130.128.0/20:
+  description: OCN
+  asn: 4713
+  ignoreMorespecifics: false
+
+211.130.152.0/22:
   description: OCN
   asn: 4713
   ignoreMorespecifics: false
@@ -466,10 +551,12 @@
 211.130.96.0/19:
   description: subas 64600
   asn: 2914
+  ignoreMorespecifics: false
 
 216.167.0.0/17:
   description: subas 65061
   asn: 2914
+  ignoreMorespecifics: false
 
 218.43.0.0/16:
   description: OCN
