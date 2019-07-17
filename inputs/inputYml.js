@@ -49,6 +49,9 @@ export default class InputYml extends Input {
 
             const monitoredPrefixes = Object.keys(monitoredPrefixesFile)
                 .map(i => {
+                    if (["string", "number"].includes(typeof(monitoredPrefixesFile[i].asn))) {
+                        monitoredPrefixesFile[i].asn = [monitoredPrefixesFile[i].asn]
+                    }
                     return Object.assign({
                         prefix: i,
                         user: 'default'
