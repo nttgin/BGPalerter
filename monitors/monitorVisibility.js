@@ -82,7 +82,7 @@ export default class MonitorVisibility extends Monitor {
 
                 this.publishAlert(key,
                     `The prefix ${match.prefix} has been withdrawn.`,
-                    match.asn,
+                    match.asn[0],
                     matches[0],
                     message,
                     {});

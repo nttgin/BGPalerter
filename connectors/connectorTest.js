@@ -68,7 +68,7 @@ export default class ConnectorTest extends Connector{
                                 next_hop: "124.0.0.2"
                             }],
                             peer: "124.0.0.2",
-                            path: "1,2,3,4".split(",")
+                            path: "1,2,3,4".split(",").map(i => parseInt(i))
                         },
                         type: "ris_message"
                     };
@@ -82,7 +82,7 @@ export default class ConnectorTest extends Connector{
                                 next_hop: "124.0.0.2"
                             }],
                             peer: "124.0.0.2",
-                            path: "1,2,3,4713".split(",")
+                            path: "1,2,3,4713".split(",").map(i => parseInt(i))
                         },
                         type: "ris_message"
                     };
