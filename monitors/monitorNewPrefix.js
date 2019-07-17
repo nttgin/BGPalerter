@@ -59,7 +59,7 @@ export default class MonitorNewPrefix extends Monitor {
             const messagePrefix = message.prefix;
 
             let matches = this.monitored.filter(item => {
-                const sameOrigin = message.originAs == item.asn;
+                const sameOrigin = item.asn.includes(message.originAs);
                 return sameOrigin &&
                     item.prefix != messagePrefix &&
                     ip.cidrSubnet(item.prefix).contains(messagePrefix);
@@ -70,11 +70,11 @@ export default class MonitorNewPrefix extends Monitor {
 
             if (matches.length !== 0) {
                 const match = matches[0];
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by AS${match.asn}. It should be instead ${match.prefix} (${match.description}) announced by AS${match.asn}`;
+                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by AS${message.originAs}. It is a more specific of ${match.prefix} (${match.description}).`;
 
                 this.publishAlert(message.originAs + "-" + message.prefix,
                     text,
-                    match.asn,
+                    match.asn[0],
                     matches[0],
                     message,
                     {});
