@@ -49,11 +49,21 @@ export default class InputYml extends Input {
 
             const monitoredPrefixes = Object.keys(monitoredPrefixesFile)
                 .map(i => {
+                    const asList = monitoredPrefixesFile[i].asn;
+                    if (["string", "number"].includes(typeof(asList))) {
+                        monitoredPrefixesFile[i].asn = [parseInt(asList)];
+                    } else if (asList instanceof Array) {
+                        monitoredPrefixesFile[i].asn = asList.map(i => parseInt(i));
+                    } else {
+                        return null;
+                    }
+
                     return Object.assign({
                         prefix: i,
                         user: 'default'
                     }, monitoredPrefixesFile[i])
-                });
+                })
+                .filter(i => i !== null);
 
             this.prefixes = this.prefixes.concat(monitoredPrefixes);
         }

@@ -129,21 +129,21 @@ describe("Tests", function() {
                 .containSubset({
                     "prefixes": [
                         {
-                            "asn": 50601,
+                            "asn": [50601],
                             "description": "Solid Trading / Crossivity",
                             "ignoreMorespecifics": false,
                             "prefix": "124.40.52.128/26",
                             "user": "default",
                         },
                         {
-                            "asn": 4713,
+                            "asn": [4713],
                             "description": "OCN prefix",
                             "ignoreMorespecifics": false,
                             "prefix": "180.50.120.0/21",
                             "user": "default",
                         },
                         {
-                            "asn": 4713,
+                            "asn": [4713],
                             "description": "OCN prefix",
                             "ignoreMorespecifics": true,
                             "prefix": "180.57.120.0/21",
@@ -250,19 +250,19 @@ describe("Tests", function() {
                                 "extra": {},
                                 "matchedMessage": {
                                     "nextHop": "124.0.0.2",
-                                    "originAs": "4",
+                                    "originAs": 4,
                                     "path": [
-                                        "1",
-                                        "2",
-                                        "3",
-                                        "4",
+                                        1,
+                                        2,
+                                        3,
+                                        4
                                     ],
                                     "peer": "124.0.0.2",
                                     "prefix": "180.50.120.0/22",
                                     "type": "announcement",
                                 },
                                 "matchedRule": {
-                                    "asn": 4713,
+                                    "asn": [4713],
                                     "description": "OCN prefix",
                                     "ignoreMorespecifics": false,
                                     "prefix": "180.50.120.0/21",
@@ -302,19 +302,19 @@ describe("Tests", function() {
                                 "extra": {},
                                 "matchedMessage": {
                                     "nextHop": "124.0.0.2",
-                                    "originAs": "4713",
+                                    "originAs": 4713,
                                     "path": [
-                                        "1",
-                                        "2",
-                                        "3",
-                                        "4713",
+                                        1,
+                                        2,
+                                        3,
+                                        4713
                                     ],
                                     "peer": "124.0.0.2",
                                     "prefix": "180.50.120.0/22",
                                     "type": "announcement",
                                 },
                                 "matchedRule": {
-                                    "asn": 4713,
+                                    "asn": [4713],
                                     "description": "OCN prefix",
                                     "ignoreMorespecifics": false,
                                     "prefix": "180.50.120.0/21",
@@ -323,7 +323,7 @@ describe("Tests", function() {
                             }
                         ],
                         "id": "4713-180.50.120.0/22",
-                        "message": "Possible change of configuration. A new prefix 180.50.120.0/22 is announced by AS4713. It should be instead 180.50.120.0/21 (OCN prefix) announced by AS4713",
+                        "message": "Possible change of configuration. A new prefix 180.50.120.0/22 is announced by AS4713. It is a more specific of 180.50.120.0/21 (OCN prefix).",
                         "origin": "prefix-detection",
                     });
 
