@@ -26,7 +26,7 @@ monitors:
     channel: visibility
     name: withdrawal-detection
     params:
-      threshold: 0
+      threshold: 10
 
 reports:
   - file: reportFile
@@ -35,19 +35,27 @@ reports:
       - newprefix
       - visibility
 
-  - file: ReportEmail
-    channels:
-      - hijack
-      - newprefix
-      - visibility
+#  - file: ReportEmail
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#    params:
+#      smtp: localhost
+#      email: bgpalerter@ntt.net
+#      port: 25
+#
+#      notifiedEmails:
+#        default:
+#          - me@email.it
 
-  - file: ReportSlack
-    channels:
-      - hijack
-      - newprefix
-      - visibility
-    params:
-      hookUrl: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#  - file: ReportSlack
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#    params:
+#      hookUrl: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 
 checkStaleNotificationsSeconds: 60
