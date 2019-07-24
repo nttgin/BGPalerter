@@ -4,7 +4,7 @@ connectors:
   - file: connectorRIS
     name: ris
     params:
-      carefulSubscription: false
+      carefulSubscription: true
       url: wss://ris-live.ripe.net/v1/ws/
       subscription:
         moreSpecific: true
