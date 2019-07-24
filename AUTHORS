@@ -1,11 +1,22 @@
-BGPalerter was created at NTT Ltd in 2019.
+BGPalerter was originally created at the beginning of 2019 at NTT Ltd.
+
+Here is a list of authors and contributors who patched or extended the code.
 If this list is not up to date, please contact NTT or one of the authors.
 
 - AUTHORS -
 
-Massimo Candela <massimo@ntt.net>
-NTT
-http://massimocandela.com
+    Massimo Candela <massimo@ntt.net>
+    NTT
+    https://massimocandela.com/
 
 
 - CONTRIBUTORS -
+
+
+A special THANK YOU goes to:
+
+    Job Snijders <job@ntt.net> for pushing for this project to happen.
+
+    The RIPE RIS project for the amazing real-time streaming service.
+
+
