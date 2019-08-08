@@ -60,19 +60,19 @@ To start develop:
 
 1. git clone this repo
 
-2. execute "yarn" to install all dependencies
+2. execute `yarn` to install all dependencies
 
-3. run "npm watch-and-serve" to run the application. At every file change it will self-reload.
+3. run `npm watch-and-serve` to run the application. At every file change it will self-reload.
 
 ### npm commands
 
-* "npm watch-and serve" to run the application from source code and monitor for file changes
+* `npm watch-and serve` to run the application from source code and monitor for file changes
 
-* "npm serve" to run the application from the source
+* `npm serve` to run the application from the source
 
-* "npm test" to run the tests
+* `npm test` to run the tests
 
-* "npm build" to compile and buil native applications
+* `npm build` to compile and buil native applications
 
 ### Composition
 
