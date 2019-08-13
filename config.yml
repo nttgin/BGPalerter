@@ -35,28 +35,21 @@ reports:
       - newprefix
       - visibility
 
-#  - file: ReportEmail
-#    channels:
-#      - hijack
-#      - newprefix
-#      - visibility
-#    params:
-#      smtp: localhost
-#      email: bgpalerter@ntt.net
-#      port: 25
-#
-#      notifiedEmails:
-#        default:
-#          - me@email.it
-
-#  - file: ReportSlack
-#    channels:
-#      - hijack
-#      - newprefix
-#      - visibility
-#    params:
-#      hookUrl: https://hooks.slack.com/services/XXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
+  - file: reportEmail
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+    params:
+      smtp: localhost
+      email: bgpalerter@xxxx
+      port: 25
+      tls: false
+      secure: false
+      notifiedEmails:
+        default:
+          - joe@example.org
+          - noc@example.org
 
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
