@@ -27,10 +27,6 @@
     "read-last-lines": "^1.7.1"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
     "axios": "^0.19.0",
     "babel-upgrade": "^1.0.1",
     "brembo": "^2.0.3",
