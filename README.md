@@ -3,17 +3,17 @@
 
 ## TL;DR
 
-1. Download the executable from bin/ (be careful to select the one for your OS)
+1. Download the executable from <a href="https://github.com/nttgin/BGPalerter/tree/master/bin">bin/</a> (be sure to select the one for your OS)
 
-2. Download config.yml and prefixes.yml and place them in the same directory of the executable
+2. Download <a href="https://github.com/nttgin/BGPalerter/blob/master/config.yml">config.yml</a>  and <a href="https://github.com/nttgin/BGPalerter/blob/master/prefixes.yml">prefixes.yml</a> and place them in the same directory of the executable
 
-3. Modify prefixes.yml and add the prefixes you want to monitor
+3. Modify `prefixes.yml` to add the prefixes you want to monitor
 
-4. (optional) Modify config.yml and add your smtp configuration for email alerting
+4. (optional) Modify `config.yml` and add your smtp configuration for email alerting
 
 5. Run the executable
 
-6. See the alerts in logs/reports-YYYY-MM-DD.log (or in the mailbox)
+6. See the alerts in `logs/reports-YYYY-MM-DD.log` (or in the mailbox)
 
 ## For Users
 
