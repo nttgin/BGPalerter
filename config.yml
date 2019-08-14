@@ -41,20 +41,20 @@ reports:
 #      - newprefix
 #      - visibility
 #    params:
+#      senderEmail: bgpalerter@xxxx
 #      # BGPalerter uses nodemailer.
 #      # The smtp section can be configured with all the parameters available at https://nodemailer.com/smtp/
 #      # the following are just the most useful one
 #      smtp:
 #        host: localhost
-#        email: bgpalerter@xxxx
 #        port: 25
 #        secure: false # If true the connection will use TLS when connecting to server. If false it will be still possible doing connection upgrade via STARTTLS
 #        auth:
 #          user: username
-#          password: password
-#          authType: login
+#          pass: password
+#          type: login
 #        tls:
-#          rejectUnauthorizedCertificate: true
+#          rejectUnauthorized: true  # Reject unauthorized certificates
 #      notifiedEmails:
 #        default:
 #          - joe@example.org

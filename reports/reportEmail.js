@@ -179,7 +179,7 @@ export default class ReportEmail extends Report {
             const text = this.getEmailText(channel, content);
 
             this.emailBacklog.push({
-                from: this.params.email,
+                from: this.params.senderEmail,
                 to: emails.join(', '),
                 subject: 'BGP alert: ' + channel,
                 text: text
