@@ -13,8 +13,8 @@
 
 5. See the alerts in `logs/reports-YYYY-MM-DD.log`
 
-In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
-Please uncomment the related section and configure accordingly to your needs.
+In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
+Please uncomment the related section and configure according to your needs.
 
 ## More information for users
 
@@ -22,8 +22,8 @@ Please uncomment the related section and configure accordingly to your needs.
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
 
-Connectors retrieve/listen the data from different sources and transform them in a common format.
-Monitors analize the data flow and produce alerts. Different monitors try to detect different issues.
+Connectors retrieve/listen to the data from different sources and transform them to a common format.
+Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
 Reports send/store the alerts, e.g. by email or to a file.
 
 ##### connectors
@@ -40,7 +40,7 @@ Possible monitors are:
 
 * _monitorHijack_, for monitoring hijacks
 
-* _monitorVisibility_, for monitoring prefixes visibility (you will get notified when withdrawals make monitored routes disappear). A threshold can be specified in config.yml to trigger an alert only if the issue is visible from a certain amount of peers.
+* _monitorVisibility_, for monitoring prefixes' visibility (you will get notified when withdrawals make monitored routes disappear). A threshold can be specified in config.yml to trigger an alert only if the issue is visible from a certain amount of peers.
 
 * _monitorNewPrefix_, for monitoring if new more specifics (of the monitored prefixes) start to be announced
 
@@ -48,16 +48,16 @@ Possible monitors are:
 
 Possible reports are:
 
-* _reportEmail_, to send alerts by email. Smtp configurations are in config.yml
+* _reportEmail_, to send alerts by email. SMTP configurations are in config.yml
 
-* _reportFile_, to log the alerts in files. File directory, format, and log rotation configurations are in config.yml
+* _reportFile_, to log the alerts to files. File directory, format, and log rotation configurations are in config.yml
 
-* _reportSlack_, to send alerts in Slack. Hook url is configurable in config.yml
+* _reportSlack_, to send alerts in Slack. Hook URL is configurable in config.yml
 
 
 ## More information for developers
 
-To start develop:
+To start development:
 
 1. git clone this repo
 
@@ -81,7 +81,7 @@ To start develop:
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
 All connectors must extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
-From the super class they will inherit various generic methods while some specific for the particular component have to be implemented.
+From the superclass they will inherit various generic methods while some specifically for the particular component have to be implemented.
 Reports don't receive only alerts but also the data that provoked such alerts (so you can store the data and replay the accident later).
 
 In `config.yml`, for each collection of components:
@@ -90,7 +90,7 @@ In `config.yml`, for each collection of components:
 
 * `channels` - refer to what channel(s) will be used to send or receive messages
 
-* `params` - whatever parameters it may be needed to the component at creation time
+* `params` - whatever parameters may be needed by the component at creation time
 
 
 
