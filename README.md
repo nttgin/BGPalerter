@@ -14,7 +14,7 @@
 5. See the alerts in `logs/reports-YYYY-MM-DD.log`
 
 In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
-Please uncomment the relative section and configure accordingly to your needs.
+Please uncomment the related section and configure accordingly to your needs.
 
 ## More information for users
 
