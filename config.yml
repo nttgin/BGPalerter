@@ -35,27 +35,46 @@ reports:
       - newprefix
       - visibility
 
-  - file: reportEmail
-    channels:
-      - hijack
-      - newprefix
-      - visibility
-    params:
-      smtp: localhost
-      email: bgpalerter@xxxx
-      port: 25
-      tls: false
-      secure: false
-      notifiedEmails:
-        default:
-          - joe@example.org
-          - noc@example.org
+#  - file: reportEmail
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#    params:
+#      # BGPalerter uses nodemailer.
+#      # The smtp section can be configured with all the parameters available at https://nodemailer.com/smtp/
+#      # the following are just the most useful one
+#      smtp:
+#        host: localhost
+#        email: bgpalerter@xxxx
+#        port: 25
+#        secure: false # If true the connection will use TLS when connecting to server. If false it will be still possible doing connection upgrade via STARTTLS
+#        auth:
+#          user: username
+#          password: password
+#          authType: login
+#        tls:
+#          rejectUnauthorizedCertificate: true
+#      notifiedEmails:
+#        default:
+#          - joe@example.org
+#          - noc@example.org
+#
+#  - file: ReportSlack
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#    params:
+#      hookUrl: _YOUR_SLACK_WEBHOOK_URL_
+
+
 
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event which didn't happen again in x seconds
 
-# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# The file containing the monitored prefixes. Please see prefixes.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
   - prefixes.yml
