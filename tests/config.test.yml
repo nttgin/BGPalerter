@@ -28,7 +28,6 @@ reports:
       - newprefix
       - visibility
 
-
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event which didn't happen again in x seconds

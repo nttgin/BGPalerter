@@ -3,19 +3,20 @@
 
 ## TL;DR
 
-1. Download the executable from bin/ (be careful to select the one for your OS)
+1. Download the executable from `bin/` (be careful to select the one for your OS)
 
-2. Download config.yml and prefixes.yml and place them in the same directory of the executable
+2. Download `config.yml` and `prefixes.yml` and place them in the same directory of the executable
 
-3. Modify prefixes.yml and add the prefixes you want to monitor
+3. Modify `prefixes.yml` and add the prefixes you want to monitor
 
-4. (optional) Modify config.yml and add your smtp configuration for email alerting
+4. Run the executable
 
-5. Run the executable
+5. See the alerts in `logs/reports-YYYY-MM-DD.log`
 
-6. See the alerts in logs/reports-YYYY-MM-DD.log (or in the mailbox)
+In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
+Please uncomment the relative section and configure accordingly to your needs.
 
-## For Users
+## More information for users
 
 ### Composition
 
@@ -29,65 +30,67 @@ Reports send/store the alerts, e.g. by email or to a file.
 
 Possible connectors are:
 
-* connectorRIS, for real-time data from RIPE RIS (https://ris-live.ripe.net/)
+* _connectorRIS_, for real-time data from RIPE RIS (https://ris-live.ripe.net/)
 
-* connectorTest, for testing purposes, it provokes all types of alerting
+* _connectorTest_, for testing purposes, it provokes all types of alerting
 
 ##### monitors
 
 Possible monitors are:
 
-* monitorHijack, for monitoring hijacks
+* _monitorHijack_, for monitoring hijacks
 
-* monitorVisibility, for monitoring prefixes visibility (you will get notified when withdrawals make monitored routes disappear). A threshold can be specified in config.yml to trigger an alert only if the issue is visible from a certain amount of peers.
+* _monitorVisibility_, for monitoring prefixes visibility (you will get notified when withdrawals make monitored routes disappear). A threshold can be specified in config.yml to trigger an alert only if the issue is visible from a certain amount of peers.
 
-* monitorNewPrefix, for monitoring if new more specifics (of the monitored prefixes) start to be announced
+* _monitorNewPrefix_, for monitoring if new more specifics (of the monitored prefixes) start to be announced
 
 ##### reports
 
 Possible reports are:
 
-* reportEmail, to send alerts by email. Smtp configurations are in config.yml
+* _reportEmail_, to send alerts by email. Smtp configurations are in config.yml
 
-* reportFile, to log the alerts in files. File directory, format, and log rotation configurations are in config.yml
+* _reportFile_, to log the alerts in files. File directory, format, and log rotation configurations are in config.yml
 
-* reportSlack, to send alerts in Slack. Hook url is configurable in config.yml
+* _reportSlack_, to send alerts in Slack. Hook url is configurable in config.yml
 
 
-## For Developers
+## More information for developers
 
 To start develop:
 
 1. git clone this repo
 
-2. execute `yarn` to install all dependencies (<a href="https://yarnpkg.com/lang/en/docs/install">Installing Yarn</a>)
+2. install Node.js (version >= 10.16) and npm ([installing node and npm](https://nodejs.org/en/download/))
 
-3. run `npm run-script watch-and-serve` to run the application. At every file change it will self-reload.
+3. execute `npm install` or `yarn` to install all dependencies ([installing yarn](https://yarnpkg.com/lang/en/docs/install))
 
-### npm commands
+4. run `npm run watch-and-serve` to run the application. At every file change it will self-reload.
 
-* `npm run-script watch-and-serve` to run the application from source code and monitor for file changes
+### All npm commands
 
-* `npm run-script serve` to run the application from the source
+* `npm run watch-and-serve` to run the application from source code and monitor for file changes
 
-* `npm run-script test` to run the tests
+* `npm run serve` to run the application from the source
 
-* `npm run-script build` to compile and buil native applications
+* `npm run test` to run the tests
+
+* `npm run build` to compile and build OS native applications
 
 ### Composition
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
 All connectors must extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
 From the super class they will inherit various generic methods while some specific for the particular component have to be implemented.
-Reports don't receive only alerts but also the data that provoked such alerts.
+Reports don't receive only alerts but also the data that provoked such alerts (so you can store the data and replay the accident later).
 
-In config.yml, for each collection of components:
+In `config.yml`, for each collection of components:
 
-* file - refers to the file name which contains the class
+* `file` - refers to the file name which contains the class
 
-* channels - refer to what channel(s) will be used to send/receive messages
+* `channels` - refer to what channel(s) will be used to send or receive messages
 
-* params - whatever param it may be needed to the component at creation time
+* `params` - whatever parameters it may be needed to the component at creation time
 
 
 

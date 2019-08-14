@@ -45,20 +45,7 @@ export default class ReportEmail extends Report {
         this.templates = {};
         this.emailBacklog = [];
 
-        this.transporter = nodemailer.createTransport({
-            host: this.params.smtp,
-            port: this.params.port,
-            secure: this.params.useTls,
-            ignoreTLS: this.params.ignoreTLS,
-            auth: {
-                user: this.params.user,
-                pass: this.params.password,
-                type: this.params.authType
-            },
-            tls: {
-                rejectUnauthorizedCertificate: this.params.rejectUnauthorizedCertificate
-            }
-        });
+        this.transporter = nodemailer.createTransport(this.params.smtp);
 
         for (let channel of channels) {
             try {
