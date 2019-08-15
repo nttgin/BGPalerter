@@ -9,7 +9,8 @@
     "test": "./node_modules/.bin/mocha tests --require @babel/register",
     "build": "./build.sh",
     "watch-and-serve": "nodemon --inspect --exec babel-node index.js",
-    "serve": "nodemon --exec babel-node index.js"
+    "serve": "nodemon --exec babel-node index.js",
+    "generate-prefixes": "babel-node generatePrefixesList.js"
   },
   "author": "Massimo Candela",
   "license": "ISC",
