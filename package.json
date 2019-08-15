@@ -31,7 +31,6 @@
     "babel-upgrade": "^1.0.1",
     "brembo": "^2.0.3",
     "event-stream": "^4.0.1",
-    "ip": "https://github.com/MaxCam/node-ip.git#contains-prefix",
     "js-yaml": "^3.13.1",
     "nodemailer": "^6.2.1",
     "path": "^0.12.7",

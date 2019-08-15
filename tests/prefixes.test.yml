@@ -1,14 +1,24 @@
-124.40.52.128/26:
-  description: Solid Trading / Crossivity
-  asn: 50601
+165.254.225.0/24:
+  description: description 1
+  asn: 15562
   ignoreMorespecifics: false
 
-180.50.120.0/21:
-  description: OCN prefix
-  asn: 4713
+165.254.255.0/24:
+  description: description 2
+  asn: 15562
   ignoreMorespecifics: false
 
-180.57.120.0/21:
-  description: OCN prefix
-  asn: 4713
+192.147.168.0/24:
+  description: description 3
+  asn: 15562
   ignoreMorespecifics: true
+
+2a00:5884::/32:
+  description: alarig fix test
+  asn: 204092
+  ignoreMorespecifics: false
+
+2a0e:f40::/29:
+  description: alarig fix test 2
+  asn: 208585
+  ignoreMorespecifics: false
