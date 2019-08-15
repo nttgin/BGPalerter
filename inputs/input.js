@@ -49,7 +49,7 @@ export default class Input {
     };
 
     validatePrefix = (ip) => {
-        return ipUtils.isValid(ip);
+        return ipUtils.isValidPrefix(ip);
     };
 
     getMonitoredMoreSpecifics = () => {
