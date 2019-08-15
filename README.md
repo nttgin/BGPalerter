@@ -26,7 +26,7 @@ To auto generate the monitored prefixes file (by default called `prefixes.yml`) 
 
 The script will download the currently announced prefixes of the selected AS (according to RIPEstat data). A warning will be triggered in case of not valid RPKI prefixes.
 
-Multiple ASns can be moniotred in the same file e.g.`npm run generate-prefixes 2914,3333 nttprefixes.yml` (see comma-separated ASns). Additionally, multiple files can be monitored by adding them under `monitoredPrefixesFiles` in `config.yml`.
+Multiple ASns can be moniotred in the same file e.g.`npm run generate-prefixes 2914,4713 nttprefixes.yml` (see comma-separated ASns). Additionally, multiple files can be monitored by adding them under `monitoredPrefixesFiles` in `config.yml`.
 
 ### Composition
 
