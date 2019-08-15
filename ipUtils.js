@@ -2,15 +2,39 @@ import { Address4, Address6 } from "ip-address";
 
 const ip = {
 
-    isValid: function(ip) {
-        if (ip.indexOf("/") !== -1){
-            ip = ip.split("/")[0];
-        }
+    isValidPrefix: function(prefix){
+        let bits, ip;
 
-        if (ip.indexOf(":") === -1){
-            return new Address4(ip).isValid();
-        } else {
-            return new Address6(ip).isValid();
+        try {
+            if (prefix.indexOf("/") !== -1) {
+                const components = prefix.split("/");
+                ip = components[0];
+                bits = parseInt(components[1]);
+            } else {
+                return false;
+            }
+
+            if (ip.indexOf(":") === -1) {
+                return this.isValidIP(ip) && (bits >= 0 && bits <= 32);
+            } else {
+                return this.isValidIP(ip) && (bits >= 0 && bits <= 128);
+            }
+
+        } catch (e) {
+            return false;
+        }
+    },
+
+    isValidIP: function(ip) {
+
+        try {
+            if (ip.indexOf(":") === -1) {
+                return new Address4(ip).isValid();
+            } else {
+                return new Address6(ip).isValid();
+            }
+        } catch (e) {
+            return false;
         }
     },
 
