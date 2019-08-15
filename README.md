@@ -16,6 +16,8 @@
 In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
 Please uncomment the related section and configure according to your needs.
 
+If you enable email reporting, download also the directory `reports/email_templates` in the same directory of the executable.
+
 ## More information for users
 
 ### Composition
