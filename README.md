@@ -22,7 +22,7 @@ If you enable email reporting, download also the directory `reports/email_templa
 ## More information for users
 
 ### Auto generate prefixes.yml
-To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute `npm run generate-prefixes ASN(S) OUTPUT_FILE` (e.g. `npm run generate-prefixes 2914 nttprefixes.yml`.
+To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute `npm run generate-prefixes ASN(S) OUTPUT_FILE` (e.g. `npm run generate-prefixes 2914 nttprefixes.yml`).
 
 The script will download the currently announced prefixes of the selected AS (according to RIPEstat data). A warning will be triggered in case of not valid RPKI prefixes.
 
