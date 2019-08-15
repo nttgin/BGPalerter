@@ -32,7 +32,6 @@
 
 import Monitor from "./monitor";
 import ipUtils from "../ipUtils";
-import ip from "ip";
 
 export default class MonitorHijack extends Monitor {
 
@@ -61,7 +60,7 @@ export default class MonitorHijack extends Monitor {
                 const sameOrigin = item.asn.includes(message.originAs);
                 return !sameOrigin &&
                     (item.prefix == messagePrefix ||
-                    (!item.ignoreMorespecifics && ip.cidrSubnet(item.prefix).contains(messagePrefix)));
+                    (!item.ignoreMorespecifics && ipUtils.isSubnet(item.prefix, messagePrefix)));
             });
             if (matches.length > 1) {
                 matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];

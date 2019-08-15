@@ -125,35 +125,51 @@ describe("Tests", function() {
 
 
         it("loading prefixes", function () {
+
+            expect(env.input.prefixes.length).to.equal(5);
             expect(env.input).to
                 .containSubset({
                     "prefixes": [
                         {
-                            "asn": [50601],
-                            "description": "Solid Trading / Crossivity",
+                            "asn": [15562],
+                            "description": "description 1",
                             "ignoreMorespecifics": false,
-                            "prefix": "124.40.52.128/26",
+                            "prefix": "165.254.225.0/24",
                             "user": "default",
                         },
                         {
-                            "asn": [4713],
-                            "description": "OCN prefix",
+                            "asn": [15562],
+                            "description": "description 2",
                             "ignoreMorespecifics": false,
-                            "prefix": "180.50.120.0/21",
+                            "prefix": "165.254.255.0/24",
                             "user": "default",
                         },
                         {
-                            "asn": [4713],
-                            "description": "OCN prefix",
+                            "asn": [15562],
+                            "description": "description 3",
                             "ignoreMorespecifics": true,
-                            "prefix": "180.57.120.0/21",
+                            "prefix": "192.147.168.0/24",
                             "user": "default",
+                        },
+                        {
+                            "asn": [204092],
+                            "description": "alarig fix test",
+                            "ignoreMorespecifics": false,
+                            "prefix": "2a00:5884::/32",
+                            "user": "default"
+                        },
+                        {
+                            "asn": [208585],
+                            "description": "alarig fix test 2",
+                            "ignoreMorespecifics": false,
+                            "prefix": "2a0e:f40::/29",
+                            "user": "default"
                         }
+
                     ]
                 });
 
         });
-
 
     });
 
@@ -213,76 +229,159 @@ describe("Tests", function() {
 
         it("visibility reporting", function(done) {
 
+            pubSub.publish("test-type", "visibility");
+
+            const expectedData = {
+                "165.254.225.0/24": {
+                    id: '165.254.225.0/24',
+                    origin: 'withdrawal-detection',
+                    affected: 15562,
+                    message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers.'
+                },
+                "2a00:5884::/32": {
+                    id: '2a00:5884::/32',
+                    origin: 'withdrawal-detection',
+                    affected: 204092,
+                    message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers.'
+                }
+            };
+
             pubSub.subscribe("visibility", function (type, message) {
 
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+
                 expect(message).to
-                    .containSubset({
-                        id: '124.40.52.128/26',
-                        origin: 'withdrawal-detection',
-                        affected: 50601,
-                        message: 'The prefix 124.40.52.128/26 (Solid Trading / Crossivity) has been withdrawn. It is no longer visible from 4 peers.'
-                    });
+                    .containSubset(expectedData[id]);
 
                 expect(message).to.contain
                     .keys([
                         "latest",
-                        "earliest",
-                        "data"
+                        "earliest"
                     ]);
 
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0){
+                    done();
+                }
+
             });
 
         }).timeout(10000);
+
 
 
         it("hijack reporting", function(done) {
 
             pubSub.publish("test-type", "hijack");
 
+            const expectedData = {
+                "4-165.254.255.0/25": {
+                    id: '4-165.254.255.0/25',
+                    origin: 'basic-hijack-detection',
+                    affected: 15562,
+                    message: 'A new prefix 165.254.255.0/25 is announced by AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule: {
+                                prefix: "165.254.255.0/24",
+                                user: "default",
+                                description: "description 2",
+                                asn: [15562],
+                                ignoreMorespecifics: false
+                            },
+                            matchedMessage: {
+                                type: "announcement",
+                                prefix: "165.254.255.0/25",
+                                peer: "124.0.0.2",
+                                path: [1, 2, 3, 4],
+                                originAs: 4,
+                                nextHop: "124.0.0.2"
+                            }
+                        }
+                    ]
+                },
+                "208585-2a00:5884:ffff:/48": {
+                    id: '208585-2a00:5884:ffff:/48',
+                    origin: 'basic-hijack-detection',
+                    affected: 204092,
+                    message: 'A new prefix 2a00:5884:ffff:/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule:{
+                                prefix:"2a00:5884::/32",
+                                user:"default",
+                                description:"alarig fix test",
+                                asn:[204092],
+                                ignoreMorespecifics:false
+                            },
+                            matchedMessage: {
+                                type: "announcement",
+                                prefix: "2a00:5884:ffff:/48",
+                                peer: "124.0.0.3",
+                                path: [1, 2, 3, 208585],
+                                originAs: 208585,
+                                nextHop: "124.0.0.3"
+                            }
+                        }
+                    ]
+                },
+                "15563-2a00:5884::/32": {
+                    id: '15563-2a00:5884::/32',
+                    origin: 'basic-hijack-detection',
+                    affected: 204092,
+                    message: 'The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule:{
+                                prefix: "2a00:5884::/32",
+                                user: "default",
+                                description: "alarig fix test",
+                                asn:[204092],
+                                ignoreMorespecifics: false
+                            },
+                            matchedMessage: {
+                                type: "announcement",
+                                prefix: "2a00:5884::/32",
+                                peer:"124.0.0.3",
+                                path:[1,2,3,15563],
+                                originAs:15563,
+                                nextHop:"124.0.0.3"
+                            }
+                        }
+                    ]
+                }
+
+            };
+
             pubSub.subscribe("hijack", function (type, message) {
 
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+
                 expect(message).to
-                    .containSubset({
-                        "affected": 4713,
-                        "data": [
-                            {
-                                "extra": {},
-                                "matchedMessage": {
-                                    "nextHop": "124.0.0.2",
-                                    "originAs": 4,
-                                    "path": [
-                                        1,
-                                        2,
-                                        3,
-                                        4
-                                    ],
-                                    "peer": "124.0.0.2",
-                                    "prefix": "180.50.120.0/22",
-                                    "type": "announcement",
-                                },
-                                "matchedRule": {
-                                    "asn": [4713],
-                                    "description": "OCN prefix",
-                                    "ignoreMorespecifics": false,
-                                    "prefix": "180.50.120.0/21",
-                                    "user": "default"
-                                },
-                            }
-                        ],
-                        "id": "4-180.50.120.0/22",
-                        "message": "A new prefix 180.50.120.0/22 is announced by AS4. It should be instead 180.50.120.0/21 (OCN prefix) announced by AS4713",
-                        "origin": "basic-hijack-detection",
-                    });
+                    .containSubset(expectedData[id]);
 
                 expect(message).to.contain
                     .keys([
                         "latest",
-                        "earliest",
-                        "data"
+                        "earliest"
                     ]);
 
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0){
+                    done();
+                }
+
             });
 
         }).timeout(10000);
@@ -292,53 +391,91 @@ describe("Tests", function() {
 
             pubSub.publish("test-type", "newprefix");
 
+            const expectedData = {
+                "15562-165.254.255.0/25":
+                    {
+                        id: '15562-165.254.255.0/25',
+                        origin: 'prefix-detection',
+                        affected: 15562,
+                        message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2).',
+                        data: [
+                            {
+                                extra: {},
+                                matchedRule: {
+                                    prefix: '165.254.255.0/24',
+                                    user: 'default',
+                                    description: 'description 2',
+                                    asn: [15562],
+                                    ignoreMorespecifics: false
+                                },
+                                matchedMessage: {
+                                    type: 'announcement',
+                                    prefix: '165.254.255.0/25',
+                                    peer: '124.0.0.2',
+                                    path: [ 1, 2, 3, 15562 ],
+                                    originAs: 15562,
+                                    nextHop: '124.0.0.2'
+                                }
+                            }
+                        ]
+                    },
+                "204092-2a00:5884:ffff:/48": {
+                    id: '204092-2a00:5884:ffff:/48',
+                    origin: 'prefix-detection',
+                    affected: 204092,
+                    message: 'Possible change of configuration. A new prefix 2a00:5884:ffff:/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule: {
+                                prefix: '2a00:5884::/32',
+                                user: 'default',
+                                description: 'alarig fix test',
+                                asn: [ 204092 ],
+                                ignoreMorespecifics: false
+                            },
+                            matchedMessage: {
+                                type: 'announcement',
+                                prefix: '2a00:5884:ffff:/48',
+                                peer: '124.0.0.3',
+                                path: [ 1, 2, 3, 204092 ],
+                                originAs: 204092,
+                                nextHop: '124.0.0.3'
+                            }
+                        }
+                    ]
+                }
+
+            };
+
             pubSub.subscribe("newprefix", function (type, message) {
 
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+
                 expect(message).to
-                    .containSubset({
-                        "affected": 4713,
-                        "data": [
-                            {
-                                "extra": {},
-                                "matchedMessage": {
-                                    "nextHop": "124.0.0.2",
-                                    "originAs": 4713,
-                                    "path": [
-                                        1,
-                                        2,
-                                        3,
-                                        4713
-                                    ],
-                                    "peer": "124.0.0.2",
-                                    "prefix": "180.50.120.0/22",
-                                    "type": "announcement",
-                                },
-                                "matchedRule": {
-                                    "asn": [4713],
-                                    "description": "OCN prefix",
-                                    "ignoreMorespecifics": false,
-                                    "prefix": "180.50.120.0/21",
-                                    "user": "default"
-                                },
-                            }
-                        ],
-                        "id": "4713-180.50.120.0/22",
-                        "message": "Possible change of configuration. A new prefix 180.50.120.0/22 is announced by AS4713. It is a more specific of 180.50.120.0/21 (OCN prefix).",
-                        "origin": "prefix-detection",
-                    });
+                    .containSubset(expectedData[id]);
 
                 expect(message).to.contain
                     .keys([
                         "latest",
-                        "earliest",
-                        "data"
+                        "earliest"
                     ]);
 
-                done();
-                setTimeout(function () {
-                    process.exit()
-                }, 20000);
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0){
+                    done();
+                    setTimeout(function () {
+                        process.exit()
+                    }, 20000);
+                }
+
             });
+
+
 
         }).timeout(10000);
 

@@ -57,54 +57,143 @@ export default class ConnectorTest extends Connector{
 
             const type = params.type || this.params.testType;
 
-            let update;
+            let updates;
 
             switch (type) {
                 case "hijack":
-                    update = {
-                        data: {
-                            announcements: [{
-                                prefixes: ["180.50.120.0/22"],
-                                next_hop: "124.0.0.2"
-                            }],
-                            peer: "124.0.0.2",
-                            path: "1,2,3,4".split(",").map(i => parseInt(i))
+                    updates = [
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["165.254.255.0/25"],
+                                    next_hop: "124.0.0.2"
+                                }],
+                                peer: "124.0.0.2",
+                                path: "1,2,3,4".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
                         },
-                        type: "ris_message"
-                    };
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884:ffff:/48"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,208585".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884::/32"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884::/32"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,15563".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884::/32"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        }
+                    ];
                     break;
 
                 case "newprefix":
-                    update = {
-                        data: {
-                            announcements: [{
-                                prefixes: ["180.50.120.0/22"],
-                                next_hop: "124.0.0.2"
-                            }],
-                            peer: "124.0.0.2",
-                            path: "1,2,3,4713".split(",").map(i => parseInt(i))
+                    updates = [
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["165.254.255.0/25"],
+                                    next_hop: "124.0.0.2"
+                                }],
+                                peer: "124.0.0.2",
+                                path: "1,2,3,15562".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
                         },
-                        type: "ris_message"
-                    };
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884::/32"],
+                                    next_hop: "124.0.0.2"
+                                }],
+                                peer: "124.0.0.2",
+                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a00:5884:ffff:/48"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
+                        }
+                    ];
                     break;
 
-                default:
-                    update = {
-                        data: {
-                            withdrawals: ["124.40.52.128/26"],
-                            peer: "124.0.0.2"
+                case "visibility":
+                    updates = [
+                        {
+                            data: {
+                                withdrawals: ["165.254.225.0/24"],
+                                peer: "124.0.0.2"
+                            },
+                            type: "ris_message"
                         },
-                        type: "ris_message"
-                    };
+                        {
+                            data: {
+                                withdrawals: ["2a00:5884::/32"],
+                                peer: "124.0.0.2"
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                withdrawals: ["2a00:5884:ffff:/48"],
+                                peer: "124.0.0.2"
+                            },
+                            type: "ris_message"
+                        }
+                    ];
+                    break;
             }
 
             this.timer = setInterval(() => {
-                this.message(JSON.stringify(update));
-                if (type === 'withdrawal') {
-                    let peer = update.data.peer.split('.');
-                    peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
-                    update.data.peer = peer.join(".");
-                }
+                updates.forEach(update => {
+                    this.message(JSON.stringify(update));
+                    if (type === 'visibility') {
+                        let peer = update.data.peer.split('.');
+                        peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
+                        update.data.peer = peer.join(".");
+                    }
+                });
             }, 1000);
 
         });

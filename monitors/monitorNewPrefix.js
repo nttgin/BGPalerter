@@ -32,7 +32,6 @@
 
 import Monitor from "./monitor";
 import ipUtils from "../ipUtils";
-import ip from "ip";
 
 export default class MonitorNewPrefix extends Monitor {
 
@@ -60,10 +59,12 @@ export default class MonitorNewPrefix extends Monitor {
 
             let matches = this.monitored.filter(item => {
                 const sameOrigin = item.asn.includes(message.originAs);
+
                 return sameOrigin &&
                     item.prefix != messagePrefix &&
-                    ip.cidrSubnet(item.prefix).contains(messagePrefix);
+                    ipUtils.isSubnet(item.prefix, messagePrefix);
             });
+
             if (matches.length > 1) {
                 matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];
             }
