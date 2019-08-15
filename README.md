@@ -2,6 +2,8 @@
 
 
 ## TL;DR
+> This section is useful if you don't care about the source code but you just want to run the monitor.
+If you want to know more about the source code (which is completely open) please see the following sections.
 
 1. Download the executable from [`bin/`](https://github.com/nttgin/BGPalerter/tree/master/bin) (be sure to select the one for your OS)
 
@@ -92,8 +94,11 @@ To start development:
 ### Composition
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
-All connectors must extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
-From the superclass they will inherit various generic methods while some specifically for the particular component have to be implemented.
+
+> **Important:**
+All connectors MUST extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
+From the superclass they will inherit various generic methods while some have to be implemented.
+
 Reports don't receive only alerts but also the data that provoked such alerts (so you can store the data and replay the accident later).
 
 In `config.yml`, for each collection of components:
