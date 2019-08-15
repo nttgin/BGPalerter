@@ -7,7 +7,7 @@
 
 2. Download [`config.yml`](https://github.com/nttgin/BGPalerter/blob/master/config.yml) and [`prefixes.yml`](https://github.com/nttgin/BGPalerter/blob/master/prefixes.yml) and place them in the same directory of the executable
 
-3. Modify `prefixes.yml` and add the prefixes you want to monitor
+3. Modify `prefixes.yml` and add the prefixes you want to monitor (or see below how to auto generate this file)
 
 4. Run the executable
 
@@ -18,7 +18,15 @@ Please uncomment the related section and configure according to your needs.
 
 If you enable email reporting, download also the directory `reports/email_templates` in the same directory of the executable.
 
+
 ## More information for users
+
+### Auto generate prefixes.yml
+To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute `npm run generate-prefixes ASN(S) OUTPUT_FILE` (e.g. `npm run generate-prefixes 2914 nttprefixes.yml`.
+
+The script will download the currently announced prefixes of the selected AS (according to RIPEstat data). A warning will be triggered in case of not valid RPKI prefixes.
+
+Multiple ASns can be moniotred in the same file e.g.`npm run generate-prefixes 2914,3333 nttprefixes.yml` (see comma-separated ASns). Additionally, multiple files can be monitored by adding them under `monitoredPrefixesFiles` in `config.yml`.
 
 ### Composition
 
