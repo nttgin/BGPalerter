@@ -31,9 +31,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import ipUtils from "../ipUtils";
+
 export default class Input {
 
     constructor(config){
+    };
+
+    validateAS = (asn) => {
+        try {
+            asn = parseInt(asn);
+        } catch (e) {
+            return false;
+        }
+
+        return asn > 0 && asn <= 4294967295
+    };
+
+    validatePrefix = (ip) => {
+        return ipUtils.isValid(ip);
     };
 
     getMonitoredMoreSpecifics = () => {

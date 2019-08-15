@@ -33,6 +33,7 @@
 import yaml from "js-yaml";
 import fs from "fs";
 import Input from "./input";
+import env from "../env";
 
 export default class InputYml extends Input {
 
@@ -47,27 +48,72 @@ export default class InputYml extends Input {
         for (let prefixesFile of config.monitoredPrefixesFiles){
             const monitoredPrefixesFile = yaml.safeLoad(fs.readFileSync('./' + prefixesFile, 'utf8'));
 
-            const monitoredPrefixes = Object.keys(monitoredPrefixesFile)
-                .map(i => {
-                    const asList = monitoredPrefixesFile[i].asn;
-                    if (["string", "number"].includes(typeof(asList))) {
-                        monitoredPrefixesFile[i].asn = [parseInt(asList)];
-                    } else if (asList instanceof Array) {
-                        monitoredPrefixesFile[i].asn = asList.map(i => parseInt(i));
-                    } else {
-                        return null;
-                    }
+            if (this.validate(monitoredPrefixesFile)) {
 
-                    return Object.assign({
-                        prefix: i,
-                        user: 'default'
-                    }, monitoredPrefixesFile[i])
-                })
-                .filter(i => i !== null);
+                const monitoredPrefixes = Object
+                    .keys(monitoredPrefixesFile)
+                    .map(i => {
+                        const asList = monitoredPrefixesFile[i].asn;
 
-            this.prefixes = this.prefixes.concat(monitoredPrefixes);
+                        if (["string", "number"].includes(typeof (asList))) {
+                            monitoredPrefixesFile[i].asn = [parseInt(asList)];
+                        } else if (asList instanceof Array) {
+                            monitoredPrefixesFile[i].asn = asList.map(i => parseInt(i));
+                        }
+
+                        return Object.assign({
+                            prefix: i,
+                            user: 'default'
+                        }, monitoredPrefixesFile[i])
+                    })
+                    .filter(i => i !== null);
+
+                this.prefixes = this.prefixes.concat(monitoredPrefixes);
+            }
+
         }
 
+    };
+
+    validate = (fileContent) => {
+        const errors = Object
+            .keys(fileContent)
+            .map(prefix => {
+                const item = fileContent[prefix];
+                let asns;
+
+                if (!prefix || !this.validatePrefix(prefix)){
+                    return "Not a valid prefix: " + prefix;
+                }
+
+                if (["string", "number"].includes(typeof(item.asn))) {
+                    asns = [item.asn];
+                } else if (item.asn instanceof Array) {
+                    asns = item.asn;
+                } else {
+                    return "Not a valid AS number for: " + prefix;
+                }
+
+                if (asns.some(asn => !asn || !this.validateAS(asn))){
+                    return "Not a valid AS number for: " + prefix;
+                }
+
+                if (!["string", "number"].includes(typeof(item.description))){
+                    return "Not a valid description for: " + prefix;
+                }
+
+                if (typeof(item.ignoreMorespecifics) !== "boolean"){
+                    return "Not a valid ignoreMorespecifics value for: " + prefix;
+                }
+
+                return null;
+            })
+            .filter(i => i != null)
+            .map(error => {
+                throw new Error(error);
+            });
+
+        return errors.length === 0;
     };
 
     getMonitoredMoreSpecifics = () => {

@@ -1,4 +1,18 @@
- const ip = {
+import { Address4, Address6 } from "ip-address";
+
+const ip = {
+
+    isValid: function(ip) {
+        if (ip.indexOf("/") !== -1){
+            ip = ip.split("/")[0];
+        }
+
+        if (ip.indexOf(":") === -1){
+            return new Address4(ip).isValid();
+        } else {
+            return new Address6(ip).isValid();
+        }
+    },
 
     sortByPrefixLength: function (a, b) {
         const netA = a.split("/")[1];
