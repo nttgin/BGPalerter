@@ -2,12 +2,14 @@
 
 
 ## TL;DR
+> This section is useful if you don't care about the source code but you just want to run the monitor.
+If you want to know more about the source code (which is completely open) please see the following sections.
 
 1. Download the executable from [`bin/`](https://github.com/nttgin/BGPalerter/tree/master/bin) (be sure to select the one for your OS)
 
 2. Download [`config.yml`](https://github.com/nttgin/BGPalerter/blob/master/config.yml) and [`prefixes.yml`](https://github.com/nttgin/BGPalerter/blob/master/prefixes.yml) and place them in the same directory of the executable
 
-3. Modify `prefixes.yml` and add the prefixes you want to monitor
+3. Modify `prefixes.yml` and add the prefixes you want to monitor (or see below how to auto generate this file)
 
 4. Run the executable
 
@@ -18,7 +20,15 @@ Please uncomment the related section and configure according to your needs.
 
 If you enable email reporting, download also the directory `reports/email_templates` in the same directory of the executable.
 
+
 ## More information for users
+
+### Auto generate prefixes.yml
+To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute `npm run generate-prefixes ASN(S) OUTPUT_FILE` (e.g. `npm run generate-prefixes 2914 nttprefixes.yml`).
+
+The script will download the currently announced prefixes of the selected AS (according to RIPEstat data). A warning will be triggered in case of not valid RPKI prefixes.
+
+Multiple ASns can be moniotred in the same file e.g.`npm run generate-prefixes 2914,4713 nttprefixes.yml` (see comma-separated ASns). Additionally, multiple files can be monitored by adding them under `monitoredPrefixesFiles` in `config.yml`.
 
 ### Composition
 
@@ -79,11 +89,16 @@ To start development:
 
 * `npm run build` to compile and build OS native applications
 
+* `npm run generate-prefixes ASN(S) OUTPUT_FILE` to generate the monitored prefixes file
+
 ### Composition
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
-All connectors must extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
-From the superclass they will inherit various generic methods while some specifically for the particular component have to be implemented.
+
+> **Important:**
+All connectors MUST extend the class Connector. Monitors extend the class Monitor. Reports extend the class Report.
+From the superclass they will inherit various generic methods while some have to be implemented.
+
 Reports don't receive only alerts but also the data that provoked such alerts (so you can store the data and replay the accident later).
 
 In `config.yml`, for each collection of components:
