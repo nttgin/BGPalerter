@@ -87,6 +87,8 @@ To start development:
 
 * `npm run build` to compile and build OS native applications
 
+* `npm run generate-prefixes ASN(S) OUTPUT_FILE` to generate the monitored prefixes file
+
 ### Composition
 
 You can compose the tool with 3 main components: connectors, monitors, and reports.
