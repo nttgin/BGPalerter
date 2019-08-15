@@ -32,7 +32,7 @@
 
 import Report from "./report";
 
-export default class ReportEmail extends Report {
+export default class ReportFile extends Report {
 
     constructor(channels, params, env) {
         super(channels, params, env);
