@@ -33,7 +33,7 @@
 import Report from "./report";
 import axios from "axios";
 
-export default class ReportEmail extends Report {
+export default class ReportSlack extends Report {
 
     constructor(channels, params, env) {
         super(channels, params, env);

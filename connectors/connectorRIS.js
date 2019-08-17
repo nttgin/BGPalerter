@@ -38,15 +38,23 @@ export default class ConnectorRIS extends Connector{
     constructor(name, params, env) {
         super(name, params, env);
         this.ws = null;
+        this.subscription = null;
+        this.pingTimer = null;
     }
 
     connect = () =>
         new Promise((resolve, reject) => {
             try {
-
+                delete this.pingTimer;
                 this.ws = new WebSocket(this.params.url);
+
+                this.pingTimer = setInterval(() => {
+                    this.ws.ping(() => {})
+                }, 5000);
+
                 this.ws.on('message', this.message);
-                this.ws.on('close', this.error);
+                this.ws.on('close', this.close);
+                this.ws.on('error', this.error);
                 this.ws.on('open', () => {
                     resolve(true);
                     this.connected(this.name + ' connector connected');
@@ -58,6 +66,12 @@ export default class ConnectorRIS extends Connector{
             }
         });
 
+
+    close = (error) => {
+        this.error(error);
+        clearInterval(this.pingTimer);
+        setTimeout(() => this.subscribe(this.subscription), 5000);
+    };
 
     _subscribeToAll = (input) => {
         console.log("Subscribing to everything");
@@ -84,6 +98,7 @@ export default class ConnectorRIS extends Connector{
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
+            this.subscription = input;
             try {
                 return (this.params.carefulSubscription) ?
                     this._subscribeToPrefixes(input) :
