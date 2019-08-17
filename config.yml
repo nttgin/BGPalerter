@@ -60,14 +60,13 @@ reports:
 #          - joe@example.org
 #          - noc@example.org
 #
-#  - file: ReportSlack
+#  - file: reportSlack
 #    channels:
 #      - hijack
 #      - newprefix
 #      - visibility
 #    params:
 #      hookUrl: _YOUR_SLACK_WEBHOOK_URL_
-
 
 
 checkStaleNotificationsSeconds: 60

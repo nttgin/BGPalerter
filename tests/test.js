@@ -212,11 +212,10 @@ describe("Tests", function() {
                 .read(file, 1)
                 .then((line) => {
                     const lineMessage = line.split(" ").slice(3, 5).join(" ").trim();
-
-                    expect(lineMessage).to
-                        .equal(message);
+                    expect(lineMessage).to.equal(message);
                     done();
                 });
+
 
         });
 

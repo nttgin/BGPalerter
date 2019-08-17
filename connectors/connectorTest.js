@@ -183,6 +183,8 @@ export default class ConnectorTest extends Connector{
                         }
                     ];
                     break;
+                default:
+                    return;
             }
 
             this.timer = setInterval(() => {
