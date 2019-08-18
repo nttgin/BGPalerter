@@ -55,31 +55,20 @@ export default class MonitorHijack extends Monitor {
         new Promise((resolve, reject) => {
 
             const messagePrefix = message.prefix;
+            const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
 
-            let matches = this.monitored.filter(item => {
-                const sameOrigin = item.asn.includes(message.originAs);
-                return !sameOrigin &&
-                    (item.prefix == messagePrefix ||
-                    (!item.ignoreMorespecifics && ipUtils.isSubnet(item.prefix, messagePrefix)));
-            });
-            if (matches.length > 1) {
-                matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];
-            }
+            if (matchedRule && !matchedRule.asn.includes(message.originAs)) {
+                const asnText = matchedRule.asn.join(", or AS");
 
-            if (matches.length !== 0) {
-                const match = matches[0];
-
-                const asnText = match.asn.join(", or AS");
-
-                const text = (message.prefix === match.prefix) ?
-                    `The prefix ${match.prefix} (${match.description}) is announced by AS${message.originAs} instead of AS${asnText}` :
+                const text = (message.prefix === matchedRule.prefix) ?
+                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by AS${message.originAs} instead of AS${asnText}` :
                     `A new prefix ${message.prefix} is announced by AS${message.originAs}. ` +
-                    `It should be instead ${match.prefix} (${match.description}) announced by AS${asnText}`;
+                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by AS${asnText}`;
 
                 this.publishAlert(message.originAs + "-" + message.prefix,
                     text,
-                    match.asn[0],
-                    matches[0],
+                    matchedRule.asn[0],
+                    matchedRule,
                     message,
                     {});
             }

@@ -68,22 +68,17 @@ export default class MonitorVisibility extends Monitor {
         new Promise((resolve, reject) => {
 
             const messagePrefix = message.prefix;
+            const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
 
-            let matches = this.monitored.filter(item => {
-                return item.prefix == messagePrefix;
-            });
-            if (matches.length > 1) {
-                matches = [matches.sort((a, b) => ipUtils.sortByPrefixLength(a.prefix, b.prefix)).pop()];
-            }
+            if (matchedRule && matchedRule.prefix === messagePrefix) {
+                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by AS${message.originAs}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
 
-            if (matches.length !== 0) {
-                const match = matches[0];
-                let key = match.prefix;
+                let key = matchedRule.prefix;
 
                 this.publishAlert(key,
-                    `The prefix ${match.prefix} has been withdrawn.`,
-                    match.asn[0],
-                    matches[0],
+                    `The prefix ${matchedRule.prefix} has been withdrawn.`,
+                    matchedRule.asn[0],
+                    matchedRule,
                     message,
                     {});
             }

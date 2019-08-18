@@ -154,6 +154,17 @@ export default class ConnectorTest extends Connector{
                                 path: "1,2,3,204092".split(",").map(i => parseInt(i))
                             },
                             type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a0e:f40::/32"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                            },
+                            type: "ris_message"
                         }
                     ];
                     break;
@@ -180,6 +191,13 @@ export default class ConnectorTest extends Connector{
                                 peer: "124.0.0.2"
                             },
                             type: "ris_message"
+                        },
+                        {
+                            data: {
+                                withdrawals: ["2a0e:f40::/32"],
+                                peer: "124.0.0.2"
+                            },
+                            type: "ris_message"
                         }
                     ];
                     break;
@@ -189,7 +207,7 @@ export default class ConnectorTest extends Connector{
 
             this.timer = setInterval(() => {
                 updates.forEach(update => {
-                    this.message(JSON.stringify(update));
+                    this._message(JSON.stringify(update));
                     if (type === 'visibility') {
                         let peer = update.data.peer.split('.');
                         peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
