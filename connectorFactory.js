@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import env from "./env";
+import env, {logger} from "./env";
 
 export default class ConnectorFactory {
 
@@ -67,10 +67,35 @@ export default class ConnectorFactory {
                 resolve(Promise.all(connectors
                     .map(connector =>
                         new Promise((resolve, reject) => {
-                            connector.connect()
+                            connector
+                                .connect()
                                 .then(() => {
                                     connector.connected = true;
                                     resolve(true);
+
+                                    connector.onError(error => {
+                                        logger.log({
+                                            level: 'error',
+                                            message: error
+                                        });
+                                    });
+
+                                    connector.onConnect(error => {
+                                        logger.log({
+                                            level: 'info',
+                                            message: error
+                                        });
+                                    });
+
+                                    connector.onDisconnect(error => {
+                                        connector.connected = false;
+
+                                        logger.log({
+                                            level: 'info',
+                                            message: error
+                                        });
+                                    });
+
                                 })
                                 .catch((error) => {
                                     env.logger.log({

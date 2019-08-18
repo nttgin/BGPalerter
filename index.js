@@ -55,19 +55,6 @@ function master(worker) {
                         pubSub.publish("data", connector.name + "-" + message);
                     });
                 }
-
-                connector.onError(error => {
-                    logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                });
-                connector.onConnect(error => {
-                    logger.log({
-                        level: 'info',
-                        message: error
-                    });
-                });
             }
         })
         .then(() => connectorFactory.subscribeConnectors(input))
