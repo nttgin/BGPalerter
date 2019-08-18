@@ -42,30 +42,38 @@ export default class Connector {
         this.messageCallback = null;
         this.connectCallback = null;
         this.errorCallback = null;
-        this.closeCallback = null;
+        this.disconnectCallback = null;
     }
 
     connect = () =>
         new Promise((resolve, reject) => reject(new Error('The method connect MUST be implemented')));
 
 
-    error = (error) => {
+    _error = (error) => {
         this.logger.log({
             level: 'error',
             message: error
         });
+
+        if (this.errorCallback)
+            this.errorCallback(error);
     };
 
     subscribe = (input) => {
         throw new Error('The method subscribe MUST be implemented');
     };
 
-    message = (message) => {
-        if (this.messageCallback)
-        this.messageCallback(message);
+    _disconnect = (message) => {
+        if (this.disconnectCallback)
+            this.disconnectCallback(message);
     };
 
-    connected = (message) => {
+    _message = (message) => {
+        if (this.messageCallback)
+            this.messageCallback(message);
+    };
+
+    _connect = (message) => {
         if (this.connectCallback)
             this.connectCallback(message);
     };
@@ -83,7 +91,11 @@ export default class Connector {
     };
 
     onError = (callback) => {
-        this.closeCallback = callback;
+        this.errorCallback = callback;
+    };
+
+    onDisconnect = (callback) => {
+        this.disconnectCallback = callback;
     };
 
 }

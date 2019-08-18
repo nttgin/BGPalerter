@@ -45,19 +45,18 @@ export default class ConnectorRIS extends Connector{
     connect = () =>
         new Promise((resolve, reject) => {
             try {
-                delete this.pingTimer;
                 this.ws = new WebSocket(this.params.url);
 
                 this.pingTimer = setInterval(() => {
                     this.ws.ping(() => {})
                 }, 5000);
 
-                this.ws.on('message', this.message);
+                this.ws.on('message', this._message);
                 this.ws.on('close', this.close);
-                this.ws.on('error', this.error);
+                this.ws.on('error', this._error);
                 this.ws.on('open', () => {
                     resolve(true);
-                    this.connected(this.name + ' connector connected');
+                    this._connect(this.name + ' connector connected');
                 });
 
             } catch(error) {
@@ -66,11 +65,17 @@ export default class ConnectorRIS extends Connector{
             }
         });
 
-
     close = (error) => {
-        this.error(error);
+        this._disconnect(error);
         clearInterval(this.pingTimer);
-        setTimeout(() => this.subscribe(this.subscription), 5000);
+        setTimeout(() => {
+            try {
+                this.ws.terminate();
+            } catch(e) {
+            }
+            this.connect()
+                .then(() => this.subscribe(this.subscription));
+        }, 5000);
     };
 
     _subscribeToAll = (input) => {
@@ -106,7 +111,7 @@ export default class ConnectorRIS extends Connector{
 
                 resolve(true);
             } catch(error) {
-                this.error(error);
+                this._error(error);
                 resolve(false);
             }
         });
