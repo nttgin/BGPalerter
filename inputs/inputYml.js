@@ -34,6 +34,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 import Input from "./input";
 import env from "../env";
+import ipUtils from "../ipUtils";
 
 export default class InputYml extends Input {
 
@@ -70,8 +71,11 @@ export default class InputYml extends Input {
 
                 this.prefixes = this.prefixes.concat(monitoredPrefixes);
             }
-
         }
+
+        this.prefixes = this.prefixes.sort((a, b) => {
+            return ipUtils.sortByPrefixLength(b.prefix, a.prefix);
+        });
 
     };
 

@@ -36,6 +36,8 @@ import ipUtils from "../ipUtils";
 export default class Input {
 
     constructor(config){
+        this.prefixes = [];
+        this.cache = {};
     };
 
     validateAS = (asn) => {
@@ -58,6 +60,30 @@ export default class Input {
 
     getMonitoredPrefixes = () => {
         throw new Error('The method getMonitoredPrefixes MUST be implemented');
+    };
+
+    getMoreSpecificMatch = (prefix) => {
+
+        for (let p of this.prefixes) {
+            if (p.prefix === prefix) {
+                return p;
+            } else {
+                if (!this.cache[p.prefix]) {
+                    this.cache[p.prefix] = ipUtils.getNetmask(p.prefix);
+                }
+                const p2 = ipUtils.getNetmask(prefix);
+
+                if (ipUtils.isSubnetBinary(this.cache[p.prefix], p2)) {
+                    if (p.ignoreMorespecifics){
+                        return null;
+                    } else {
+                        return p;
+                    }
+                }
+            }
+        }
+
+        return null;
     };
 
 }

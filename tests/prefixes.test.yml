@@ -22,3 +22,8 @@
   description: alarig fix test 2
   asn: 208585
   ignoreMorespecifics: false
+
+2a0e:f40::/30:
+  description: ignore sub test
+  asn: 1234
+  ignoreMorespecifics: true

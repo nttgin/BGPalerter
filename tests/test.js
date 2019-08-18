@@ -126,7 +126,7 @@ describe("Tests", function() {
 
         it("loading prefixes", function () {
 
-            expect(env.input.prefixes.length).to.equal(5);
+            expect(env.input.prefixes.length).to.equal(6);
             expect(env.input).to
                 .containSubset({
                     "prefixes": [
@@ -163,6 +163,13 @@ describe("Tests", function() {
                             "description": "alarig fix test 2",
                             "ignoreMorespecifics": false,
                             "prefix": "2a0e:f40::/29",
+                            "user": "default"
+                        },
+                        {
+                            "asn": [1234],
+                            "description": "ignore sub test",
+                            "ignoreMorespecifics": true,
+                            "prefix": "2a0e:f40::/30",
                             "user": "default"
                         }
 

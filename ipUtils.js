@@ -47,7 +47,7 @@ const ip = {
 
     toDecimal: function(ip) {
         let bytes = "";
-        if (ip.indexOf(":") == -1) {
+        if (ip.indexOf(":") === -1) {
             bytes = ip.split(".").map(ip => parseInt(ip).toString(2).padStart(8, '0')).join("");
         } else {
             bytes = ip.split(":").filter(ip => ip !== "").map(ip => parseInt(ip, 16).toString(2).padStart(16, '0')).join("");
@@ -63,7 +63,7 @@ const ip = {
 
         let binaryRoot;
 
-        if (ip.indexOf(":") == -1){
+        if (ip.indexOf(":") === -1){
             binaryRoot = this.toDecimal(ip).padEnd(32, '0').slice(0, bits);
         } else {
             binaryRoot = this.toDecimal(ip).padEnd(128, '0').slice(0, bits);
@@ -73,11 +73,12 @@ const ip = {
 
     },
 
-    isSubnet: function (prefixContainer, prefixContained) {
-        prefixContained = this.getNetmask(prefixContained);
-        prefixContainer = this.getNetmask(prefixContainer);
-
+    isSubnetBinary: (prefixContainer, prefixContained) => {
         return prefixContained != prefixContainer && prefixContained.includes(prefixContainer);
+    },
+
+    isSubnet: function (prefixContainer, prefixContained) {
+        return this.isSubnetBinary(this.getNetmask(prefixContainer), this.getNetmask(prefixContained));
     }
 
 };
