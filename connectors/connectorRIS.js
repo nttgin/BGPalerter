@@ -32,6 +32,7 @@
 
 import WebSocket from "ws";
 import Connector from "./connector";
+import { AS, Path } from "../model";
 
 export default class ConnectorRIS extends Connector{
 
@@ -105,7 +106,7 @@ export default class ConnectorRIS extends Connector{
         new Promise((resolve, reject) => {
             this.subscription = input;
             try {
-                return (this.params.carefulSubscription) ?
+                (this.params.carefulSubscription) ?
                     this._subscribeToPrefixes(input) :
                     this._subscribeToAll(input);
 
@@ -121,22 +122,29 @@ export default class ConnectorRIS extends Connector{
             message = message.data;
             const components = [];
             const announcements = message["announcements"] || [];
+            const aggregator = message["aggregator"] || null;
             const withdrawals = message["withdrawals"] || [];
             const peer = message["peer"];
-            const path = message["path"];
+            let path, originAS;
+            if (message["path"] && message["path"].length) {
+                path = new Path(message["path"].map(i => new AS(i)));
+                originAS = path.getLast();
+            }
 
             for (let announcement of announcements) {
                 const nextHop = announcement["next_hop"];
                 const prefixes = announcement["prefixes"] || [];
 
                 for (let prefix of prefixes) {
+
                     components.push({
                         type: "announcement",
                         prefix,
                         peer,
                         path,
-                        originAs: path[path.length - 1],
-                        nextHop
+                        originAS,
+                        nextHop,
+                        aggregator
                     })
                 }
             }

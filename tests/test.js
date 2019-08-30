@@ -34,9 +34,11 @@ var chai = require("chai");
 var chaiSubset = require('chai-subset');
 var readLastLines = require('read-last-lines');
 var moment = require('moment');
+var model = require('../model');
 const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
+var AS = model.AS;
 
 describe("Tests", function() {
     beforeEach(resetCache);
@@ -127,7 +129,7 @@ describe("Tests", function() {
         it("loading prefixes", function () {
 
             expect(env.input.prefixes.length).to.equal(6);
-            expect(env.input).to
+            expect(JSON.parse(JSON.stringify(env.input))).to
                 .containSubset({
                     "prefixes": [
                         {
@@ -135,7 +137,7 @@ describe("Tests", function() {
                             "description": "description 1",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.225.0/24",
-                            "user": "default",
+                            "user": "default"
                         },
                         {
                             "asn": [15562],
@@ -152,7 +154,7 @@ describe("Tests", function() {
                             "user": "default",
                         },
                         {
-                            "asn": [204092],
+                            "asn": [204092, 45],
                             "description": "alarig fix test",
                             "ignoreMorespecifics": false,
                             "prefix": "2a00:5884::/32",
@@ -247,12 +249,14 @@ describe("Tests", function() {
                 "2a00:5884::/32": {
                     id: '2a00:5884::/32',
                     origin: 'withdrawal-detection',
-                    affected: 204092,
+                    affected: "204092-45",
                     message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers.'
                 }
             };
 
             pubSub.subscribe("visibility", function (type, message) {
+
+                message = JSON.parse(JSON.stringify(message));
 
                 const id = message.id;
 
@@ -285,11 +289,11 @@ describe("Tests", function() {
             pubSub.publish("test-type", "hijack");
 
             const expectedData = {
-                "4-165.254.255.0/25": {
-                    id: '4-165.254.255.0/25',
+                "15562-4-165.254.255.0/25": {
+                    id: '15562-4-165.254.255.0/25',
                     origin: 'basic-hijack-detection',
                     affected: 15562,
-                    message: 'A new prefix 165.254.255.0/25 is announced by AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
+                    message: 'A new prefix 165.254.255.0/25 is announced by AS4, and AS15562. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
                     data: [
                         {
                             extra: {},
@@ -304,8 +308,8 @@ describe("Tests", function() {
                                 type: "announcement",
                                 prefix: "165.254.255.0/25",
                                 peer: "124.0.0.2",
-                                path: [1, 2, 3, 4],
-                                originAs: 4,
+                                path: [1, 2, 3, [4, 15562]],
+                                originAS: [4],
                                 nextHop: "124.0.0.2"
                             }
                         }
@@ -314,8 +318,8 @@ describe("Tests", function() {
                 "208585-2a00:5884:ffff:/48": {
                     id: '208585-2a00:5884:ffff:/48',
                     origin: 'basic-hijack-detection',
-                    affected: 204092,
-                    message: 'A new prefix 2a00:5884:ffff:/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092',
+                    affected: "204092-45",
+                    message: 'A new prefix 2a00:5884:ffff:/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
                     data: [
                         {
                             extra: {},
@@ -323,7 +327,7 @@ describe("Tests", function() {
                                 prefix:"2a00:5884::/32",
                                 user:"default",
                                 description:"alarig fix test",
-                                asn:[204092],
+                                asn:[204092, 45],
                                 ignoreMorespecifics:false
                             },
                             matchedMessage: {
@@ -331,7 +335,7 @@ describe("Tests", function() {
                                 prefix: "2a00:5884:ffff:/48",
                                 peer: "124.0.0.3",
                                 path: [1, 2, 3, 208585],
-                                originAs: 208585,
+                                originAS: [208585],
                                 nextHop: "124.0.0.3"
                             }
                         }
@@ -340,8 +344,8 @@ describe("Tests", function() {
                 "15563-2a00:5884::/32": {
                     id: '15563-2a00:5884::/32',
                     origin: 'basic-hijack-detection',
-                    affected: 204092,
-                    message: 'The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092',
+                    affected: "204092-45",
+                    message: 'The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45',
                     data: [
                         {
                             extra: {},
@@ -349,7 +353,7 @@ describe("Tests", function() {
                                 prefix: "2a00:5884::/32",
                                 user: "default",
                                 description: "alarig fix test",
-                                asn:[204092],
+                                asn:[204092, 45],
                                 ignoreMorespecifics: false
                             },
                             matchedMessage: {
@@ -357,7 +361,7 @@ describe("Tests", function() {
                                 prefix: "2a00:5884::/32",
                                 peer:"124.0.0.3",
                                 path:[1,2,3,15563],
-                                originAs:15563,
+                                originAS: [15563],
                                 nextHop:"124.0.0.3"
                             }
                         }
@@ -367,6 +371,8 @@ describe("Tests", function() {
             };
 
             pubSub.subscribe("hijack", function (type, message) {
+
+                message = JSON.parse(JSON.stringify(message));
 
                 const id = message.id;
 
@@ -419,7 +425,7 @@ describe("Tests", function() {
                                     prefix: '165.254.255.0/25',
                                     peer: '124.0.0.2',
                                     path: [ 1, 2, 3, 15562 ],
-                                    originAs: 15562,
+                                    originAS: [15562],
                                     nextHop: '124.0.0.2'
                                 }
                             }
@@ -428,7 +434,7 @@ describe("Tests", function() {
                 "204092-2a00:5884:ffff:/48": {
                     id: '204092-2a00:5884:ffff:/48',
                     origin: 'prefix-detection',
-                    affected: 204092,
+                    affected: "204092-45",
                     message: 'Possible change of configuration. A new prefix 2a00:5884:ffff:/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
                     data: [
                         {
@@ -437,7 +443,7 @@ describe("Tests", function() {
                                 prefix: '2a00:5884::/32',
                                 user: 'default',
                                 description: 'alarig fix test',
-                                asn: [ 204092 ],
+                                asn: [ 204092, 45],
                                 ignoreMorespecifics: false
                             },
                             matchedMessage: {
@@ -445,7 +451,7 @@ describe("Tests", function() {
                                 prefix: '2a00:5884:ffff:/48',
                                 peer: '124.0.0.3',
                                 path: [ 1, 2, 3, 204092 ],
-                                originAs: 204092,
+                                originAS: [204092],
                                 nextHop: '124.0.0.3'
                             }
                         }
@@ -455,6 +461,8 @@ describe("Tests", function() {
             };
 
             pubSub.subscribe("newprefix", function (type, message) {
+
+                message = JSON.parse(JSON.stringify(message));
 
                 const id = message.id;
 

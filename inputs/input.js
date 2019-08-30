@@ -40,20 +40,6 @@ export default class Input {
         this.cache = {};
     };
 
-    validateAS = (asn) => {
-        try {
-            asn = parseInt(asn);
-        } catch (e) {
-            return false;
-        }
-
-        return asn > 0 && asn <= 4294967295
-    };
-
-    validatePrefix = (ip) => {
-        return ipUtils.isValidPrefix(ip);
-    };
-
     getMonitoredMoreSpecifics = () => {
         throw new Error('The method getMonitoredMoreSpecifics MUST be implemented');
     };

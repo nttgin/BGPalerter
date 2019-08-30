@@ -128,7 +128,7 @@ export default class ReportEmail extends Report {
                 context.description = matched.description;
                 context.asn = matched.asn.join(", AS");
                 context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAs;
+                context.neworigin = content.data[0].matchedMessage.originAS;
                 context.newprefix = content.data[0].matchedMessage.prefix;
                 context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
                 break;
@@ -148,7 +148,7 @@ export default class ReportEmail extends Report {
                 context.description = matched.description;
                 context.asn = matched.asn.join(", AS");
                 context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAs;
+                context.neworigin = content.data[0].matchedMessage.originAS;
                 context.newprefix = content.data[0].matchedMessage.prefix;
                 context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
                 break;
