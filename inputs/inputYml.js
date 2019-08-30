@@ -35,6 +35,8 @@ import fs from "fs";
 import Input from "./input";
 import env from "../env";
 import ipUtils from "../ipUtils";
+import { AS, Path } from "../model";
+
 
 export default class InputYml extends Input {
 
@@ -54,13 +56,7 @@ export default class InputYml extends Input {
                 const monitoredPrefixes = Object
                     .keys(monitoredPrefixesFile)
                     .map(i => {
-                        const asList = monitoredPrefixesFile[i].asn;
-
-                        if (["string", "number"].includes(typeof (asList))) {
-                            monitoredPrefixesFile[i].asn = [parseInt(asList)];
-                        } else if (asList instanceof Array) {
-                            monitoredPrefixesFile[i].asn = asList.map(i => parseInt(i));
-                        }
+                        monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
 
                         return Object.assign({
                             prefix: i,
@@ -86,7 +82,7 @@ export default class InputYml extends Input {
                 const item = fileContent[prefix];
                 let asns;
 
-                if (!prefix || !this.validatePrefix(prefix)){
+                if (!prefix || !ipUtils.isValidPrefix(prefix)){
                     return "Not a valid prefix: " + prefix;
                 }
 
@@ -98,7 +94,7 @@ export default class InputYml extends Input {
                     return "Not a valid AS number for: " + prefix;
                 }
 
-                if (asns.some(asn => !asn || !this.validateAS(asn))){
+                if (asns.some(asn => !asn || !new AS(asn).isValid())){
                     return "Not a valid AS number for: " + prefix;
                 }
 

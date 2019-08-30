@@ -57,17 +57,17 @@ export default class MonitorHijack extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && !matchedRule.asn.includes(message.originAs)) {
-                const asnText = matchedRule.asn.join(", or AS");
+            if (matchedRule && !matchedRule.asn.includes(message.originAS)) {
+                const asnText = matchedRule.asn;
 
                 const text = (message.prefix === matchedRule.prefix) ?
-                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by AS${message.originAs} instead of AS${asnText}` :
-                    `A new prefix ${message.prefix} is announced by AS${message.originAs}. ` +
-                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by AS${asnText}`;
+                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
+                    `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
+                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
 
-                this.publishAlert(message.originAs + "-" + message.prefix,
+                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
                     text,
-                    matchedRule.asn[0],
+                    matchedRule.asn.getId(),
                     matchedRule,
                     message,
                     {});

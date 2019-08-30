@@ -58,12 +58,12 @@ export default class MonitorNewPrefix extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && matchedRule.asn.includes(message.originAs) && matchedRule.prefix !== messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by AS${message.originAs}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
+            if (matchedRule && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
+                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
 
-                this.publishAlert(message.originAs + "-" + message.prefix,
+                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
                     text,
-                    matchedRule.asn[0],
+                    matchedRule.asn.getId(),
                     matchedRule,
                     message,
                     {});

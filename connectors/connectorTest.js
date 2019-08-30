@@ -31,6 +31,7 @@
  */
 
 import Connector from "./connector";
+import {AS, Path} from "../model";
 
 export default class ConnectorTest extends Connector{
 
@@ -69,7 +70,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.2"
                                 }],
                                 peer: "124.0.0.2",
-                                path: "1,2,3,4".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, [4, 15562]]
                             },
                             type: "ris_message"
                         },
@@ -80,7 +81,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,208585".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, 208585]
                             },
                             type: "ris_message"
                         },
@@ -91,7 +92,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, [204092, 45]]
                             },
                             type: "ris_message"
                         },
@@ -102,7 +103,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,15563".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, [15563]]
                             },
                             type: "ris_message"
                         },
@@ -113,7 +114,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, 204092]
                             },
                             type: "ris_message"
                         }
@@ -129,7 +130,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.2"
                                 }],
                                 peer: "124.0.0.2",
-                                path: "1,2,3,15562".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, 15562]
                             },
                             type: "ris_message"
                         },
@@ -140,7 +141,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.2"
                                 }],
                                 peer: "124.0.0.2",
-                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, [45]]
                             },
                             type: "ris_message"
                         },
@@ -151,7 +152,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, 204092]
                             },
                             type: "ris_message"
                         },
@@ -162,7 +163,7 @@ export default class ConnectorTest extends Connector{
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
-                                path: "1,2,3,204092".split(",").map(i => parseInt(i))
+                                path: [1, 2, 3, 204092]
                             },
                             type: "ris_message"
                         }
@@ -224,12 +225,14 @@ export default class ConnectorTest extends Connector{
             const components = [];
             const announcements = message["announcements"] || [];
             const withdrawals = message["withdrawals"] || [];
+            const aggregator = message["aggregator"] || null;
             const peer = message["peer"];
-            const path = message["path"];
 
             for (let announcement of announcements){
                 const nextHop = announcement["next_hop"];
                 const prefixes = announcement["prefixes"] || [];
+                let path = new Path(message["path"].map(i => new AS(i)));
+                let originAS = path.getLast();
 
                 for (let prefix of prefixes){
                     components.push({
@@ -237,8 +240,9 @@ export default class ConnectorTest extends Connector{
                         prefix,
                         peer,
                         path,
-                        originAs: path[path.length - 1],
-                        nextHop
+                        originAS,
+                        nextHop,
+                        aggregator
                     })
                 }
             }

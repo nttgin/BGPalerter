@@ -71,13 +71,13 @@ export default class MonitorVisibility extends Monitor {
             const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
 
             if (matchedRule && matchedRule.prefix === messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by AS${message.originAs}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
+                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
 
                 let key = matchedRule.prefix;
 
                 this.publishAlert(key,
                     `The prefix ${matchedRule.prefix} has been withdrawn.`,
-                    matchedRule.asn[0],
+                    matchedRule.asn.getId(),
                     matchedRule,
                     message,
                     {});
