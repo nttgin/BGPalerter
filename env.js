@@ -37,14 +37,13 @@ import pubSub from 'pubsub-js';
 import winston from 'winston';
 import Input from "./inputs/inputYml";
 require('winston-daily-rotate-file');
-
 const { combine, timestamp, label, printf } = winston.format;
 
-const vector = {};
-const fileName = process.argv[2] || path.resolve(process.cwd(), 'config.yml');
-console.log("loading config:", fileName);
-const config = yaml.safeLoad(fs.readFileSync(fileName, 'utf8'));
-
+const vector = {
+    version: "19.8.30.2",
+    configFile: process.argv[2] || path.resolve(process.cwd(), 'config.yml')
+};
+const config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8'));
 
 const formatLine = printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`);
 const verboseFilter  = winston.format((info, opts) => info.level === 'verbose' ? info : false);

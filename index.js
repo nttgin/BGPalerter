@@ -30,13 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { config, logger, input, pubSub } from "./env";
+import { config, logger, input, pubSub, version, configFile } from "./env";
 import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 
 
 function master(worker) {
+
+    console.log("BGPalerter, version:", version, "environment:", config.environment);
+    console.log("Loaded config:", configFile);
 
     const connectorFactory = new ConnectorFactory();
 
@@ -68,7 +71,6 @@ function master(worker) {
 
 module.exports = pubSub;
 
-console.log("RUNNING ENVIRONMENT:", config.environment);
 if (config.environment === "test") {
 
     master();
