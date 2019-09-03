@@ -1,5 +1,5 @@
 # BGPalerter
-
+[![Build Status](https://api.travis-ci.org/nttgin/bgpalerter.svg)](https://travis-ci.org/nttgin/bgpalerter)
 
 ## TL;DR
 > This section is useful if you don't care about the source code but you just want to run the monitor.
