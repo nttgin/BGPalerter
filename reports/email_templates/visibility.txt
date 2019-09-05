@@ -5,7 +5,7 @@ DETAILS:
 ------------------------------------------------------
 Monitored prefix:     ${prefix}
 Prefix Description:   ${description}
-Prefix origin:        AS${asn}
+Prefix origin:        ${asn}
 Event type:           ${type}
 When event started:   ${earliest} UTC
 Last event:           ${latest} UTC
