@@ -5,9 +5,9 @@ DETAILS:
 ------------------------------------------------------
 Monitored prefix:     ${prefix}
 Prefix Description:   ${description}
-Usually announced by: AS${asn}
+Usually announced by: ${asn}
 Event type:           ${type}
-Now announced by:     AS${neworigin}
+Now announced by:     ${neworigin}
 Now announced with:   ${newprefix}
 When event started:   ${earliest} UTC
 Last event:           ${latest} UTC
