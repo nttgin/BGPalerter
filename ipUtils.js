@@ -74,7 +74,6 @@ const ip = {
     },
 
     isSubnetBinary: (prefixContainer, prefixContained) => {
-        console.log(prefixContainer, prefixContained);
         return prefixContained != prefixContainer && prefixContained.startsWith(prefixContainer);
     },
 
