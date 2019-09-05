@@ -48,6 +48,7 @@ export default class InputYml extends Input {
             throw new Error("The monitoredPrefixesFiles key is missing in the config file");
         }
 
+        const uniquePrefixes = {};
         for (let prefixesFile of config.monitoredPrefixesFiles){
             const monitoredPrefixesFile = yaml.safeLoad(fs.readFileSync('./' + prefixesFile, 'utf8'));
 
@@ -56,6 +57,10 @@ export default class InputYml extends Input {
                 const monitoredPrefixes = Object
                     .keys(monitoredPrefixesFile)
                     .map(i => {
+                        if (uniquePrefixes[i]){
+                            throw new Error("Duplicate entry for " + i);
+                        }
+                        uniquePrefixes[i] = true;
                         monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
 
                         return Object.assign({
