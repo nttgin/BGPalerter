@@ -40,7 +40,7 @@ require('winston-daily-rotate-file');
 const { combine, timestamp, label, printf } = winston.format;
 
 const vector = {
-    version: "19.8.30.2",
+    version: "19.9.5.2",
     configFile: process.argv[2] || path.resolve(process.cwd(), 'config.yml')
 };
 const config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8'));
