@@ -2,6 +2,7 @@ import axios from "axios";
 import brembo from "brembo";
 import yaml from "js-yaml";
 import fs from "fs";
+const batchPromises = require('batch-promises');
 
 
 const asns = process.argv[2];
@@ -19,6 +20,45 @@ if (!outputFile) {
 
 const asnList = asns.split(",");
 
+const getAnnouncedMoreSpecifics = (prefix) => {
+    const url = brembo.build("https://stat.ripe.net", {
+        path: ["data", "related-prefixes", "data.json"],
+        params: {
+            resource: prefix
+        }
+    });
+
+    return axios({
+        url,
+        method: 'GET',
+        responseType: 'json'
+    })
+        .then(data => {
+            let prefixes = [];
+            if (data.data && data.data.data && data.data.data.prefixes){
+                prefixes = data.data.data.prefixes
+                    .filter(i => i.relationship === "Overlap - More Specific")
+                    .map(i => {
+                        return {
+                            asn: i.origin_asn,
+                            prefix: i.prefix
+                        }
+                    });
+            }
+
+            return prefixes;
+        })
+
+};
+
+
+const generateRule = (asn, ignoreMorespecifics) => {
+    return {
+        description: "No description provided",
+        asn: parseInt(asn),
+        ignoreMorespecifics
+    }
+};
 
 const getAnnouncedPrefixes = (asn) => {
     const url = brembo.build("https://stat.ripe.net", {
@@ -50,17 +90,31 @@ const getAnnouncedPrefixes = (asn) => {
         })
         .then(list => list
             .map(i => {
-
-                generateList[i.prefix] = {
-                    description: "No description provided",
-                    asn: parseInt(asn),
-                    ignoreMorespecifics: false
-                };
+                generateList[i.prefix] = generateRule(asn, false);
 
                 return i.prefix;
             }))
         .then(prefixes => {
-            return Promise.all(prefixes.map(prefix => validatePrefix(asn, prefix)));
+            return Promise.all(prefixes.map(prefix => validatePrefix(asn, prefix)))
+                .then(() => prefixes);
+        })
+        .then(prefixes => {
+
+            prefixes = prefixes.filter(i => !generateList[i].prefix);
+
+            return batchPromises(20, prefixes, prefix =>
+                new Promise((resolve, reject) => {
+
+                    resolve(getAnnouncedMoreSpecifics(prefix)
+                        .then(items => {
+
+                            if (items) {
+                                for (let item of items) {
+                                    generateList[item.prefix] = generateRule(item.asn, true);
+                                }
+                            }
+                        }));
+                }));
         })
 };
 
@@ -90,6 +144,7 @@ const validatePrefix = (asn, prefix) => {
             } else {
                 someNotValidatedPrefixes = true;
             }
+
         })
 };
 
@@ -100,7 +155,7 @@ Promise
         fs.writeFileSync(outputFile, yamlContent);
 
         if (someNotValidatedPrefixes) {
-            console.log("WARNING: some prefixes don't have a valid ROA associated (see output for more details).");
+            console.log("WARNING: The generated configuration is a snapshot of what is currently announced by " + asns + " but some of the prefixes don't have ROA objects associated. Please, verify the config file by hand!");
         }
         console.log("Done!");
     });
