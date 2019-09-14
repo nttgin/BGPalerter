@@ -33,7 +33,6 @@
 import yaml from "js-yaml";
 import fs from "fs";
 import Input from "./input";
-import env from "../env";
 import ipUtils from "../ipUtils";
 import { AS, Path } from "../model";
 

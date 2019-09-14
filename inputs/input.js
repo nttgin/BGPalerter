@@ -40,6 +40,40 @@ export default class Input {
         this.cache = {};
     };
 
+    _isAlreadyContained = (prefix, lessSpecifics) => {
+        const p1b = ipUtils.getNetmask(prefix);
+
+        for (let p2 of lessSpecifics) {
+            const p2b = ipUtils.getNetmask(p2.prefix);
+
+            if (ipUtils.isSubnetBinary(p2b, p1b)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    getMonitoredLessSpecifics = () => {
+        const prefixes = this.prefixes.sort((a, b) => {
+            return ipUtils.sortByPrefixLength(a.prefix, b.prefix);
+        });
+
+        const lessSpecifics = [];
+
+        lessSpecifics.push(prefixes.pop());
+
+
+        for (let p1 of prefixes) {
+             const p1b = ipUtils.getNetmask(p1.prefix);
+            if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
+                lessSpecifics.push(p1);
+            }
+        }
+
+        return lessSpecifics;
+    };
+
     getMonitoredMoreSpecifics = () => {
         throw new Error('The method getMonitoredMoreSpecifics MUST be implemented');
     };
