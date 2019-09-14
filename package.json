@@ -8,7 +8,7 @@
     "babel": "./node_modules/.bin/babel",
     "test": "./node_modules/.bin/mocha tests --require @babel/register",
     "build": "./build.sh",
-    "watch-and-serve": "nodemon --inspect --exec babel-node index.js",
+    "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "nodemon --exec babel-node index.js",
     "generate-prefixes": "babel-node generatePrefixesList.js"
   },
@@ -30,6 +30,7 @@
   "dependencies": {
     "axios": "^0.19.0",
     "babel-upgrade": "^1.0.1",
+    "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
     "event-stream": "^4.0.1",
     "ip-address": "^6.1.0",
