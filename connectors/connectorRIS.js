@@ -89,7 +89,7 @@ export default class ConnectorRIS extends Connector{
     };
 
     _subscribeToPrefixes = (input) => {
-        const monitoredPrefixes = input.getMonitoredPrefixes().map(item => item.prefix);
+        const monitoredPrefixes = input.getMonitoredLessSpecifics().map(item => item.prefix);
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let prefix of monitoredPrefixes){
             params.prefix = prefix;
