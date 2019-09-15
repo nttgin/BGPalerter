@@ -30,56 +30,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { config, logger, input, pubSub, version, configFile } from "./env";
-import Consumer from "./consumer";
-import ConnectorFactory from "./connectorFactory";
-import cluster from "cluster";
+import Monitor from "./monitor";
+import yargs from 'yargs';
+
+const params = yargs
+    .usage('Usage: $0 <command> [options]')
+
+    .command('$0', 'Run BGPalerter (default)', function () {
+    })
+    .example('$0 run -c config.yml', 'Run BGPalerter')
 
 
-function master(worker) {
+    .command('generate', 'Generate prefixes to monitor', function () {
+        yargs.alias('o', 'output')
+            .nargs('o', 1)
+            .alias('a', 'ASn')
+            .nargs('a', 1)
+            .describe('o', 'Write to file')
+            .demandOption(['o', 'a'])
+    })
+    .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
 
-    console.log("BGPalerter, version:", version, "environment:", config.environment);
-    console.log("Loaded config:", configFile);
 
-    const connectorFactory = new ConnectorFactory();
+    .help('h')
+    .alias('h', 'help')
+    .epilog('Copyright (c) 2019, NTT Ltd')
+    .argv;
 
-    connectorFactory.loadConnectors();
-    return connectorFactory.connectConnectors()
-        .then(() => {
+switch(params._[0]) {
+    case "generate":
+        const generatePrefixes = require("./generatePrefixesList");
+        generatePrefixes(params.a.toString(), params.o);
+        break;
 
-            for (const connector of connectorFactory.getConnectors()) {
-
-                if (worker){
-                    connector.onMessage((message) => {
-                        worker.send(connector.name + "-" + message);
-                    });
-                } else {
-                    connector.onMessage((message) => {
-                        pubSub.publish("data", connector.name + "-" + message);
-                    });
-                }
-            }
-        })
-        .then(() => connectorFactory.subscribeConnectors(input))
-        .catch(error => {
-            logger.log({
-                level: 'error',
-                message: error
-            });
-        });
-}
-
-module.exports = pubSub;
-
-if (config.environment === "test") {
-
-    master();
-    new Consumer();
-
-} else {
-    if (cluster.isMaster) {
-        master(cluster.fork());
-    } else {
-        new Consumer();
-    }
+    default: // Run monitor
+        module.exports = new Monitor(params.c).pubSub;
 }

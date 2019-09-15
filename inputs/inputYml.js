@@ -49,7 +49,19 @@ export default class InputYml extends Input {
 
         const uniquePrefixes = {};
         for (let prefixesFile of config.monitoredPrefixesFiles){
-            const monitoredPrefixesFile = yaml.safeLoad(fs.readFileSync('./' + prefixesFile, 'utf8'));
+
+            let monitoredPrefixesFile = {};
+
+            try {
+                monitoredPrefixesFile = yaml.safeLoad(fs.readFileSync('./' + prefixesFile, 'utf8')) || {};
+            } catch(e) {
+                fs.writeFileSync(prefixesFile, "");
+                throw new Error("No prefixes to monitor in " + prefixesFile);
+            }
+
+            if (Object.keys(monitoredPrefixesFile).length === 0 ) {
+                throw new Error("No prefixes to monitor in " + prefixesFile);
+            }
 
             if (this.validate(monitoredPrefixesFile)) {
 

@@ -39,11 +39,78 @@ import Input from "./inputs/inputYml";
 require('winston-daily-rotate-file');
 const { combine, timestamp, label, printf } = winston.format;
 
+const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
-    version: "19.9.14.2",
-    configFile: process.argv[2] || path.resolve(process.cwd(), 'config.yml')
+    version: "19.9.15.2",
+    configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath
 };
-const config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8'));
+let config = {
+    environment: "production",
+    connectors: [
+        {
+            file: "connectorRIS",
+            name: "ris",
+            params: {
+                carefulSubscription: true,
+                url: "wss://ris-live.ripe.net/v1/ws/",
+                subscription: {
+                    moreSpecific: true,
+                    type: "UPDATE",
+                    host: null,
+                    socketOptions: {
+                        includeRaw: false
+                    }
+                }
+            }
+        }
+    ],
+    monitors: [
+        {
+            file: "monitorHijack",
+            channel: "hijack",
+            name: "basic-hijack-detection",
+        },
+        {
+            file: "monitorNewPrefix",
+            channel: "newprefix",
+            name: "prefix-detection",
+        },
+        {
+            file: "monitorVisibility",
+            channel: "visibility",
+            name: "withdrawal-detection",
+            params: {
+                threshold: 10
+            }
+        }
+    ],
+    reports: [
+        {
+            file: "reportFile",
+            channels: ["hijack", "newprefix", "visibility"]
+        }
+    ],
+    checkStaleNotificationsSeconds : 60,
+    notificationIntervalSeconds: 1800,
+    clearNotificationQueueAfterSeconds: 1900,
+    monitoredPrefixesFiles: ["prefixes.yml"],
+    logging: {
+        directory: "logs",
+        logRotatePattern: "YYYY-MM-DD",
+        zippedArchive: true,
+        maxSize: "20m",
+        maxFiles: "14d",
+    }
+
+};
+
+try {
+    config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8')) || config;
+} catch(e) {
+    console.log("Impossible to load config.yml. A default configuration file has been generated.");
+    fs.writeFileSync(defaultConfigFilePath, yaml.dump(config))
+
+}
 
 const formatLine = printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`);
 const verboseFilter  = winston.format((info, opts) => info.level === 'verbose' ? info : false);
