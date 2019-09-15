@@ -10,7 +10,7 @@
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "nodemon --exec babel-node index.js",
-    "generate-prefixes": "babel-node generatePrefixesList.js"
+    "generate-prefixes": "babel-node index.js generate"
   },
   "author": "Massimo Candela",
   "license": "ISC",
@@ -44,6 +44,7 @@
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^3.9.0",
     "ws": "^7.0.0",
+    "yargs": "^14.0.0",
     "yarn": "^1.16.0"
   },
   "pkg": {

@@ -44,7 +44,7 @@ describe("Tests", function() {
     beforeEach(resetCache);
 
     describe("Configuration loader", function () {
-        process.argv[2] = "tests/config.test.yml";
+        global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
         var env = require("../env");
 
         it("config structure", function () {
