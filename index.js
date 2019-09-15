@@ -30,7 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Monitor from "./monitor";
 import yargs from 'yargs';
 
 const params = yargs
@@ -64,5 +63,6 @@ switch(params._[0]) {
         break;
 
     default: // Run monitor
+        const Monitor = require("./monitor").default;
         module.exports = new Monitor(params.c).pubSub;
 }
