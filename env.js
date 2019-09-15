@@ -41,7 +41,7 @@ const { combine, timestamp, label, printf } = winston.format;
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
-    version: "19.9.15.2",
+    version: process.env.npm_package_version,
     configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath
 };
 let config = {
