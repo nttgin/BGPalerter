@@ -65,7 +65,6 @@ export default class Input {
 
 
         for (let p1 of prefixes) {
-             const p1b = ipUtils.getNetmask(p1.prefix);
             if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
                 lessSpecifics.push(p1);
             }
