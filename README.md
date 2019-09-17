@@ -26,7 +26,7 @@ If you enable email reporting, download also the directory `reports/email_templa
 ### Auto generate prefixes.yml
 To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute:
 * If you are using the binary `./bgpalerter-linux-x64 generate -a ASN(S) -o OUTPUT_FILE` (e.g. `./bgpalerter-linux-x64 generate -a 2914 -o test.yml`).
-* If you are using the source code `npm run generate-prefixes -a ASN(S) -o OUTPUT_FILE` (e.g. `npm run generate-prefixes -a 2914 -o nttprefixes.yml`).
+* If you are using the source code `npm run generate-prefixes -- --a ASN(S) --o OUTPUT_FILE` (e.g. `npm run generate-prefixes -- --a 2914 --o nttprefixes.yml`).
 
 The script will download the currently announced prefixes of the selected AS (according to RIPEstat data). A warning will be triggered in case of not valid RPKI prefixes.
 
@@ -91,7 +91,7 @@ To start development:
 
 * `npm run build` to compile and build OS native applications
 
-* `npm run generate-prefixes ASN(S) OUTPUT_FILE` to generate the monitored prefixes file
+* `npm run generate-prefixes -- --a ASN(S) --o OUTPUT_FILE` to generate the monitored prefixes file
 
 ### Composition
 

@@ -4,7 +4,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asns, outputFile) {
+module.exports = function generatePrefixes(asns, outputFile, exclude) {
     const generateList = {};
     let someNotValidatedPrefixes = false;
 
@@ -87,6 +87,7 @@ module.exports = function generatePrefixes(asns, outputFile) {
                 return [];
             })
             .then(list => list
+                .filter(i => !exclude.includes(i.prefix))
                 .map(i => {
                     generateList[i.prefix] = generateRule(asn, false);
 
@@ -98,7 +99,7 @@ module.exports = function generatePrefixes(asns, outputFile) {
             })
             .then(prefixes => {
 
-                prefixes = prefixes.filter(i => !generateList[i].prefix);
+                prefixes = prefixes.filter(i => !generateList[i].prefix && !exclude.includes(i));
 
                 return batchPromises(20, prefixes, prefix =>
                     new Promise((resolve, reject) => {
