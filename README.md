@@ -22,6 +22,7 @@ If you enable email reporting, download also the directory `reports/email_templa
 
 
 ## More information for users
+Below thre are some basic topics, more information will be soon [in the wiki](https://github.com/nttgin/BGPalerter/wiki).
 
 ### Auto generate prefixes.yml
 To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute:
