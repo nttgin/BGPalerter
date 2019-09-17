@@ -39,6 +39,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
                         .map(i => {
                             return {
                                 asn: i.origin_asn,
+                                description: i.asn_name,
                                 prefix: i.prefix
                             }
                         });
@@ -50,9 +51,9 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
     };
 
 
-    const generateRule = (asn, ignoreMorespecifics) => {
+    const generateRule = (asn, ignoreMorespecifics, description) => {
         return {
-            description: "No description provided",
+            description: description || "No description provided",
             asn: parseInt(asn),
             ignoreMorespecifics
         }
@@ -109,7 +110,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
 
                                 if (items) {
                                     for (let item of items) {
-                                        generateList[item.prefix] = generateRule(item.asn, true);
+                                        generateList[item.prefix] = generateRule(item.asn, true, item.description);
                                     }
                                 }
                             }));
