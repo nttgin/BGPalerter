@@ -2,13 +2,16 @@
   description: Job
   asn: 15562
   ignoreMorespecifics: false
+  ignore: false
  
 165.254.255.0/24:
   description: Job
   asn: 15562
   ignoreMorespecifics: false
+  ignore: false
  
 192.147.168.0/24:
   description: Job
   asn: 15562
   ignoreMorespecifics: false
+  ignore: false
