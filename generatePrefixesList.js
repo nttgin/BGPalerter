@@ -100,7 +100,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                     .then(() => prefixes);
             })
             .then(prefixes => {
-
+                const delegated = [];
                 prefixes = prefixes.filter(i => !generateList[i].prefix && !exclude.includes(i));
 
                 return batchPromises(20, prefixes, prefix =>
@@ -112,11 +112,14 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                                 if (items) {
                                     for (let item of items) {
                                         generateList[item.prefix] = generateRule(item.asn, true, item.description, excludeDelegated);
+                                        delegated.push([item.asn, item.prefix])
                                     }
                                 }
                             }));
-                    }));
+                    }))
+                    .then(() => delegated);
             })
+            .then(delegated => Promise.all(delegated.map(delegated => validatePrefix(...delegated))));
     };
 
     const validatePrefix = (asn, prefix) => {
