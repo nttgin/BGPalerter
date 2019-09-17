@@ -76,7 +76,7 @@ export default class InputYml extends Input {
 
                         return Object.assign({
                             prefix: i,
-                            user: 'default'
+                            group: 'default'
                         }, monitoredPrefixesFile[i])
                     })
                     .filter(i => i !== null);
