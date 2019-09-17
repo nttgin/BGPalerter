@@ -29,3 +29,9 @@
   description: ignore sub test
   asn: 1234
   ignoreMorespecifics: true
+
+2a0e:240::/32:
+  description: ignore flag test
+  asn: 1234
+  ignore: true
+  ignoreMorespecifics: true

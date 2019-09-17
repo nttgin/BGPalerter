@@ -166,6 +166,17 @@ export default class ConnectorTest extends Connector{
                                 path: [1, 2, 3, 204092]
                             },
                             type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2a0e:240::/32"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: [1, 2, 3, 1345]
+                            },
+                            type: "ris_message"
                         }
                     ];
                     break;

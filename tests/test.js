@@ -128,7 +128,7 @@ describe("Tests", function() {
 
         it("loading prefixes", function () {
 
-            expect(env.input.prefixes.length).to.equal(6);
+            expect(env.input.prefixes.length).to.equal(7);
             expect(JSON.parse(JSON.stringify(env.input))).to
                 .containSubset({
                     "prefixes": [
@@ -137,7 +137,8 @@ describe("Tests", function() {
                             "description": "description 1",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.225.0/24",
-                            "group": "default"
+                            "group": "default",
+                            "ignore": false
                         },
                         {
                             "asn": [15562],
@@ -145,6 +146,7 @@ describe("Tests", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.255.0/24",
                             "group": "default",
+                            "ignore": false
                         },
                         {
                             "asn": [15562],
@@ -152,29 +154,40 @@ describe("Tests", function() {
                             "ignoreMorespecifics": true,
                             "prefix": "192.147.168.0/24",
                             "group": "default",
+                            "ignore": false
                         },
                         {
                             "asn": [204092, 45],
                             "description": "alarig fix test",
                             "ignoreMorespecifics": false,
                             "prefix": "2a00:5884::/32",
-                            "group": "default"
+                            "group": "default",
+                            "ignore": false
                         },
                         {
                             "asn": [208585],
                             "description": "alarig fix test 2",
                             "ignoreMorespecifics": false,
                             "prefix": "2a0e:f40::/29",
-                            "group": "default"
+                            "group": "default",
+                            "ignore": false
                         },
                         {
                             "asn": [1234],
                             "description": "ignore sub test",
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:f40::/30",
-                            "group": "default"
+                            "group": "default",
+                            "ignore": false
+                        },
+                        {
+                            "asn": [1234],
+                            "description": "ignore flag test",
+                            "ignoreMorespecifics": true,
+                            "prefix": "2a0e:240::/32",
+                            "group": "default",
+                            "ignore": true
                         }
-
                     ]
                 });
 
