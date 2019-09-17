@@ -43,9 +43,16 @@ const params = yargs
     .command('generate', 'Generate prefixes to monitor', function () {
         yargs.alias('o', 'output')
             .nargs('o', 1)
-            .alias('a', 'ASn')
-            .nargs('a', 1)
             .describe('o', 'Write to file')
+
+            .alias('a', 'asn')
+            .nargs('a', 1)
+            .describe('a', 'AS number to monitor')
+
+            .alias('e', 'exclude')
+            .nargs('e', 1)
+            .describe('e', 'Prefixes to exclude (optional)')
+
             .demandOption(['o', 'a'])
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -59,7 +66,7 @@ const params = yargs
 switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./generatePrefixesList");
-        generatePrefixes(params.a.toString(), params.o);
+        generatePrefixes(params.a.toString(), params.o, (params.e || "").split(","));
         break;
 
     default: // Run monitor
