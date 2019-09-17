@@ -4,7 +4,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asns, outputFile, exclude) {
+module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDelegated) {
     const generateList = {};
     let someNotValidatedPrefixes = false;
 
@@ -51,11 +51,12 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
     };
 
 
-    const generateRule = (asn, ignoreMorespecifics, description) => {
+    const generateRule = (asn, ignoreMorespecifics, description, excludeDelegated) => {
         return {
             description: description || "No description provided",
             asn: parseInt(asn),
-            ignoreMorespecifics
+            ignoreMorespecifics,
+            ignore: excludeDelegated
         }
     };
 
@@ -90,7 +91,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
             .then(list => list
                 .filter(i => !exclude.includes(i.prefix))
                 .map(i => {
-                    generateList[i.prefix] = generateRule(asn, false);
+                    generateList[i.prefix] = generateRule(asn, false, null, false);
 
                     return i.prefix;
                 }))
@@ -110,7 +111,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude) {
 
                                 if (items) {
                                     for (let item of items) {
-                                        generateList[item.prefix] = generateRule(item.asn, true, item.description);
+                                        generateList[item.prefix] = generateRule(item.asn, true, item.description, excludeDelegated);
                                     }
                                 }
                             }));

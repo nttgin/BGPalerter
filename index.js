@@ -51,7 +51,11 @@ const params = yargs
 
             .alias('e', 'exclude')
             .nargs('e', 1)
-            .describe('e', 'Prefixes to exclude (optional)')
+            .describe('e', 'Prefixes to exclude')
+
+            .alias('i', 'ignore-delegated')
+            .nargs('i', 0)
+            .describe('i', 'Ignore delegated prefixes')
 
             .demandOption(['o', 'a'])
     })
@@ -66,7 +70,12 @@ const params = yargs
 switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./generatePrefixesList");
-        generatePrefixes(params.a.toString(), params.o, (params.e || "").split(","));
+        generatePrefixes(
+            params.a.toString(),
+            params.o,
+            (params.e || "").split(","),
+            params.i || false
+        );
         break;
 
     default: // Run monitor
