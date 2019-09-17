@@ -137,42 +137,42 @@ describe("Tests", function() {
                             "description": "description 1",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.225.0/24",
-                            "user": "default"
+                            "group": "default"
                         },
                         {
                             "asn": [15562],
                             "description": "description 2",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.255.0/24",
-                            "user": "default",
+                            "group": "default",
                         },
                         {
                             "asn": [15562],
                             "description": "description 3",
                             "ignoreMorespecifics": true,
                             "prefix": "192.147.168.0/24",
-                            "user": "default",
+                            "group": "default",
                         },
                         {
                             "asn": [204092, 45],
                             "description": "alarig fix test",
                             "ignoreMorespecifics": false,
                             "prefix": "2a00:5884::/32",
-                            "user": "default"
+                            "group": "default"
                         },
                         {
                             "asn": [208585],
                             "description": "alarig fix test 2",
                             "ignoreMorespecifics": false,
                             "prefix": "2a0e:f40::/29",
-                            "user": "default"
+                            "group": "default"
                         },
                         {
                             "asn": [1234],
                             "description": "ignore sub test",
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:f40::/30",
-                            "user": "default"
+                            "group": "default"
                         }
 
                     ]
@@ -299,7 +299,7 @@ describe("Tests", function() {
                             extra: {},
                             matchedRule: {
                                 prefix: "165.254.255.0/24",
-                                user: "default",
+                                group: "default",
                                 description: "description 2",
                                 asn: [15562],
                                 ignoreMorespecifics: false
@@ -325,7 +325,7 @@ describe("Tests", function() {
                             extra: {},
                             matchedRule:{
                                 prefix:"2a00:5884::/32",
-                                user:"default",
+                                group:"default",
                                 description:"alarig fix test",
                                 asn:[204092, 45],
                                 ignoreMorespecifics:false
@@ -351,7 +351,7 @@ describe("Tests", function() {
                             extra: {},
                             matchedRule:{
                                 prefix: "2a00:5884::/32",
-                                user: "default",
+                                group: "default",
                                 description: "alarig fix test",
                                 asn:[204092, 45],
                                 ignoreMorespecifics: false
@@ -415,7 +415,7 @@ describe("Tests", function() {
                                 extra: {},
                                 matchedRule: {
                                     prefix: '165.254.255.0/24',
-                                    user: 'default',
+                                    group: 'default',
                                     description: 'description 2',
                                     asn: [15562],
                                     ignoreMorespecifics: false
@@ -441,7 +441,7 @@ describe("Tests", function() {
                             extra: {},
                             matchedRule: {
                                 prefix: '2a00:5884::/32',
-                                user: 'default',
+                                group: 'default',
                                 description: 'alarig fix test',
                                 asn: [ 204092, 45],
                                 ignoreMorespecifics: false

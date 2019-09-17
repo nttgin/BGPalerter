@@ -70,8 +70,8 @@ export default class ReportEmail extends Report {
     getEmails = (content) => {
         const users = content.data
             .map(item => {
-                if (item.matchedRule && item.matchedRule.user){
-                    return item.matchedRule.user;
+                if (item.matchedRule && item.matchedRule.group){
+                    return item.matchedRule.group;
                 } else {
                     return false;
                 }
@@ -86,7 +86,7 @@ export default class ReportEmail extends Report {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: 'Not all users have an associated email address'
+                message: 'Not all groups have an associated email address'
             });
         }
 

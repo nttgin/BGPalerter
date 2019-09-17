@@ -37,12 +37,23 @@ export default class ReportSlack extends Report {
 
     constructor(channels, params, env) {
         super(channels, params, env);
+
+
+        this.enabled = true;
+        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
+            this.logger.log({
+                level: 'error',
+                message: "Slack reporting is not enabled: no group is defined"
+            });
+            this.enabled = false;
+        }
+
     }
 
-    report = (message, content) => {
-
+    _sendSlackMessage = (url, content) => {
+        console.log("sending to", url);
         axios({
-            url: this.params.hookUrl,
+            url: url,
             method: "POST",
             resposnseType: "json",
             data: {
@@ -55,7 +66,18 @@ export default class ReportSlack extends Report {
                     message: error
                 });
             })
+    };
 
+    report = (message, content) => {
+        if (this.enabled){
+            const groups = content.data.map(i => i.matchedRule.group);
+
+            for (let group of groups) {
+                if (this.params.hooks[group]) {
+                    this._sendSlackMessage(this.params.hooks[group], content);
+                }
+            }
+        }
 
     }
 }
