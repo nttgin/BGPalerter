@@ -56,11 +56,11 @@ export default class ReportSlack extends Report {
             method: "POST",
             resposnseType: "json",
             data: {
-                text: content.message,
                 attachments: [
                     {
                         color: this.params.colors[message],
-                        title: message
+                        title: message,
+                        text: content.message
                     }
                 ]
             }
