@@ -49,7 +49,11 @@ export default class ConnectorRIS extends Connector{
                 this.ws = new WebSocket(this.params.url);
 
                 this.pingTimer = setInterval(() => {
-                    this.ws.ping(() => {})
+                    try {
+                        this.ws.ping(() => {});
+                    } catch (e) {
+                        // Nothing to do here
+                    }
                 }, 5000);
 
                 this.ws.on('message', this._message);
