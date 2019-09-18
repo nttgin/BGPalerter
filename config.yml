@@ -60,18 +60,18 @@ reports:
 #          - joe@example.org
 #          - noc@example.org
 #
-#  - file: reportSlack
-#    channels:
-#      - hijack
-#      - newprefix
-#      - visibility
-#    params:
-#      colors:
-#        hijack: #d60b1c
-#        newprefix: #fa9548
-#        visibility: #fad648
-#      hooks:
-#        default: _YOUR_SLACK_WEBHOOK_URL_
+  - file: reportSlack
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+    params:
+      colors:
+        hijack: '#d60b1c'
+        newprefix: '#fa9548'
+        visibility: '#fad648'
+      hooks:
+        default: _YOUR_SLACK_WEBHOOK_URL_
 
 
 checkStaleNotificationsSeconds: 60
