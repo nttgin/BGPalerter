@@ -18,6 +18,29 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
 
     const asnList = asns.split(",");
 
+    const getMultipleOrigins = (prefix) => {
+        const url = brembo.build("https://stat.ripe.net", {
+            path: ["data", "prefix-overview", "data.json"],
+            params: {
+                resource: prefix
+            }
+        });
+
+        return axios({
+            url,
+            method: 'GET',
+            responseType: 'json'
+        })
+            .then(data => {
+                let asns = [];
+                if (data.data && data.data.data && data.data.data.asns){
+                    asns = data.data.data.asns.map(i => i.asn);
+                }
+
+                return asns;
+            })
+    };
+
     const getAnnouncedMoreSpecifics = (prefix) => {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
@@ -51,14 +74,18 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
     };
 
 
-    const generateRule = (asn, ignoreMorespecifics, description, excludeDelegated) => {
-        return {
-            description: description || "No description provided",
-            asn: parseInt(asn),
-            ignoreMorespecifics,
-            ignore: excludeDelegated
-        }
-    };
+    const generateRule = (prefix, asn, ignoreMorespecifics, description, excludeDelegated) =>
+        getMultipleOrigins(prefix)
+            .then(asns => {
+                const origin = (asns && asns.length) ? asns : [asn];
+
+                generateList[prefix] = {
+                    description: description || "No description provided",
+                    asn: origin.map(i => parseInt(i)),
+                    ignoreMorespecifics: ignoreMorespecifics,
+                    ignore: excludeDelegated
+                };
+            });
 
     const getAnnouncedPrefixes = (asn) => {
         const url = brembo.build("https://stat.ripe.net", {
@@ -88,38 +115,11 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                 }
                 return [];
             })
-            .then(list => list
-                .filter(i => !exclude.includes(i.prefix))
-                .map(i => {
-                    generateList[i.prefix] = generateRule(asn, false, null, false);
-
-                    return i.prefix;
-                }))
-            .then(prefixes => {
-                return Promise.all(prefixes.map(prefix => validatePrefix(asn, prefix)))
-                    .then(() => prefixes);
+            .then(list => list.filter(i => !exclude.includes(i.prefix)))
+            .then(list => {
+                return Promise.all(list.map(i => generateRule(i.prefix, asn, false, null, false)))
+                    .then(() => list.map(i => i.prefix))
             })
-            .then(prefixes => {
-                const delegated = [];
-                prefixes = prefixes.filter(i => !generateList[i].prefix && !exclude.includes(i));
-
-                return batchPromises(20, prefixes, prefix =>
-                    new Promise((resolve, reject) => {
-
-                        resolve(getAnnouncedMoreSpecifics(prefix)
-                            .then(items => {
-
-                                if (items) {
-                                    for (let item of items) {
-                                        generateList[item.prefix] = generateRule(item.asn, true, item.description, excludeDelegated);
-                                        delegated.push([item.asn, item.prefix])
-                                    }
-                                }
-                            }));
-                    }))
-                    .then(() => delegated);
-            })
-            .then(delegated => Promise.all(delegated.map(delegated => validatePrefix(...delegated))));
     };
 
     const validatePrefix = (asn, prefix) => {
@@ -154,7 +154,18 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
 
     return Promise
         .all(asnList.map(getAnnouncedPrefixes))
-        .then((data) => {
+        .then(items => [].concat.apply([], items))
+        .then(prefixes => {
+            return batchPromises(20, prefixes, prefix => {
+                return getAnnouncedMoreSpecifics(prefix)
+                    .then((items) => Promise
+                        .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))));
+            })
+        })
+        .then(() => {
+            return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
+        })
+        .then(() => {
             const yamlContent = yaml.dump(generateList);
             fs.writeFileSync(outputFile, yamlContent);
 
