@@ -50,14 +50,19 @@ export default class ReportSlack extends Report {
 
     }
 
-    _sendSlackMessage = (url, content) => {
-        console.log("sending to", url);
+    _sendSlackMessage = (url, message, content) => {
         axios({
             url: url,
             method: "POST",
             resposnseType: "json",
             data: {
-                text: content.message
+                text: content.message,
+                attachments: [
+                    {
+                        color: this.params.colors[message],
+                        title: message
+                    }
+                ]
             }
         })
             .catch((error) => {
@@ -74,7 +79,7 @@ export default class ReportSlack extends Report {
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {
-                    this._sendSlackMessage(this.params.hooks[group], content);
+                    this._sendSlackMessage(this.params.hooks[group], message, content);
                 }
             }
         }
