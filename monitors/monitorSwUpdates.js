@@ -32,19 +32,14 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorNewPrefix extends Monitor {
+export default class MonitorSwUpdates extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.updateMonitoredPrefixes();
-    };
-
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredMoreSpecifics();
     };
 
     filter = (message) => {
-        return message.type === 'announcement';
+        return message.type === 'software-update';
     };
 
     squashAlerts = (alerts) => {
@@ -54,19 +49,12 @@ export default class MonitorNewPrefix extends Monitor {
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
-            const messagePrefix = message.prefix;
-            const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
-
-            if (matchedRule && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
-
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
-            }
+            this.publishAlert("software-update",
+                `A new version of BGPalerter is available. Current version: ${message.currentVersion} new version: ${message.newVersion}. Please, go to: ${message.repo}`,
+                "bgpalerter",
+                {},
+                message,
+                {});
 
             resolve(true);
         });

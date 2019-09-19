@@ -51,6 +51,11 @@ export default class ReportSlack extends Report {
     }
 
     _sendSlackMessage = (url, message, content) => {
+
+        const color = (this.params && this.params.colors && this.params.colors[message])
+            ? this.params.colors[message]
+            : '#4287f5';
+
         axios({
             url: url,
             method: "POST",
@@ -58,7 +63,7 @@ export default class ReportSlack extends Report {
             data: {
                 attachments: [
                     {
-                        color: this.params.colors[message],
+                        color: color,
                         title: message,
                         text: content.message
                     }
@@ -75,7 +80,8 @@ export default class ReportSlack extends Report {
 
     report = (message, content) => {
         if (this.enabled){
-            const groups = [...new Set(content.data.map(i => i.matchedRule.group))];
+            let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
+             groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there are no groups defined, send to all of them
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {

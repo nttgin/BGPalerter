@@ -79,6 +79,6 @@ switch(params._[0]) {
         break;
 
     default: // Run monitor
-        const Monitor = require("./monitor").default;
-        module.exports = new Monitor(params.c).pubSub;
+        const Worker = require("./worker").default;
+        module.exports = new Worker(params.c).pubSub;
 }

@@ -33,12 +33,11 @@
 import Connector from "./connector";
 import axios from "axios";
 
-export default class ConnectorUpdates extends Connector{
+export default class ConnectorSwUpdates extends Connector{
 
     constructor(name, params, env) {
         super(name, params, env);
         this.timer = null;
-        console.log("Running");
     }
 
     connect = () =>
@@ -53,19 +52,32 @@ export default class ConnectorUpdates extends Connector{
         })
             .then(data => {
                 if (data && data.data && data.data.version && data.data.version !== this.version){
-                    console.log("Update needed");
+                    this._message(JSON.stringify({
+                        type: "software-update",
+                        currentVersion: this.version,
+                        newVersion: data.data.version,
+                        repo: "https://github.com/nttgin/BGPalerter"
+                    }));
                 }
+            })
+            .catch(() => {
+                this.logger.log({
+                    level: 'error',
+                    message: "It was not possible to check for software updates"
+                });
             });
     };
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
-            this._checkForUpdates(); // Check now
-            this.timer = setInterval(this._checkForUpdates, 3600 * 24 * 10); // Check every 10 days
+            if (this.config.checkForUpdatesAtBoot){
+                this._checkForUpdates();
+            }
+            this.timer = setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);
         });
 
     static transform = (message) => {
-        return message;
+        return [ message ];
     }
 };

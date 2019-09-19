@@ -34,7 +34,7 @@ import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 
-export default class Monitor {
+export default class Worker {
     constructor(configFile) {
         global.EXTERNAL_CONFIG_FILE = configFile;
 

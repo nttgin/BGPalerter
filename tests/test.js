@@ -40,11 +40,13 @@ chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
 
+process.env.npm_package_version = "0.0.1";
+global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+
 describe("Tests", function() {
     beforeEach(resetCache);
 
     describe("Configuration loader", function () {
-        global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
         var env = require("../env");
 
         it("config structure", function () {
@@ -58,7 +60,8 @@ describe("Tests", function() {
                     "notificationIntervalSeconds",
                     "clearNotificationQueueAfterSeconds",
                     "monitoredPrefixesFiles",
-                    "logging"
+                    "logging",
+                    "checkForUpdatesAtBoot"
                 ]);
             expect(env.config.connectors[0]).to.have
                 .property('class')
@@ -122,7 +125,6 @@ describe("Tests", function() {
 
 
     describe("Input loader", function () {
-        process.argv[2] = "tests/config.test.yml";
         var env = require("../env");
 
 
@@ -197,7 +199,6 @@ describe("Tests", function() {
 
 
     describe("Logging", function () {
-        process.argv[2] = "tests/config.test.yml";
         var env = require("../env");
 
         it("errors logging on the right file", function (done) {
@@ -243,8 +244,22 @@ describe("Tests", function() {
 
     });
 
+
+    describe("Software updates check", function () {
+        var pubSub = require("../index");
+
+        it("new version detected", function (done) {
+
+            pubSub.subscribe("software-update", function (type, message) {
+                expect(type).to.equal("software-update");
+                done();
+            });
+        });
+
+    });
+
+
     describe("Alerting", function () {
-        process.argv[2] = "tests/config.test.yml";
         var pubSub = require("../index");
         var env = require("../env");
 
