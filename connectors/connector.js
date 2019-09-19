@@ -34,6 +34,7 @@
 export default class Connector {
 
     constructor(name, params, env){
+        this.version = env.version;
         this.config = env.config;
         this.logger = env.logger;
         this.pubSub = env.pubSub;

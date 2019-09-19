@@ -87,7 +87,6 @@ export default class ConnectorRIS extends Connector{
     };
 
     _subscribeToAll = (input) => {
-        console.log("Subscribing to everything");
         this.ws.send(JSON.stringify({
             type: "ris_subscribe",
             data: this.params.subscription
@@ -99,8 +98,8 @@ export default class ConnectorRIS extends Connector{
         const monitoredPrefixes = input.getMonitoredLessSpecifics().map(item => item.prefix);
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let prefix of monitoredPrefixes){
+            console.log("Monitoring", prefix);
             params.prefix = prefix;
-            console.log("Subscribing to:", prefix);
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params

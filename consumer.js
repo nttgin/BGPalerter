@@ -78,7 +78,7 @@ export default class Consumer {
         } catch (error) {
             env.logger.log({
                 level: 'error',
-                message: error
+                message: "Error in parsing data, dispatch method of consumer.js: " + error
             });
         }
     };

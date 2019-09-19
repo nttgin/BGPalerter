@@ -100,8 +100,8 @@ let config = {
         zippedArchive: true,
         maxSize: "20m",
         maxFiles: "14d",
-    }
-
+    },
+    checkForUpdatesAtBoot: true
 };
 
 try {
@@ -120,7 +120,7 @@ const transportError = new (winston.transports.DailyRotateFile)({
     zippedArchive: config.logging.zippedArchive,
     maxSize: config.logging.maxSize,
     maxFiles: config.logging.maxFiles,
-    level: 'error',
+    level: 'info',
     timestamp: true,
     eol: '\n',
     json: false,
@@ -130,6 +130,7 @@ const transportError = new (winston.transports.DailyRotateFile)({
         formatLine
     )
 });
+
 const transportReports = new (winston.transports.DailyRotateFile)({
     filename: config.logging.directory + '/reports-%DATE%.log',
     datePattern: config.logging.logRotatePattern,
@@ -148,22 +149,29 @@ const transportReports = new (winston.transports.DailyRotateFile)({
     )
 });
 
-const wlogger = winston.createLogger({
-    level: 'info',
-    transports: [
-        transportError,
-        transportReports,
-        new winston.transports.Console({
-            format: winston.format.simple()
-        })
-    ]
-});
+const winstonTransports = [
+    transportError,
+    transportReports
+];
 
-if (config.environment === 'production') {
-    wlogger.remove(wlogger.transports.Console);
+if (config.environment !== 'production') {
+    const consoleTransport = new winston.transports.Console({
+        format: winston.format.simple()
+    });
+    winstonTransports.push(consoleTransport);
 }
 
-config.monitors = (config.monitors || [])
+const wlogger = winston.createLogger({ transports: winstonTransports });
+
+config.monitors = (config.monitors || []);
+config.monitors.push({
+    file: "monitorSwUpdates",
+    channel: "software-update",
+    name: "software-update",
+});
+
+
+config.monitors = config.monitors
     .map(item => {
         return {
             class: require("./monitors/" + item.file).default,
@@ -178,12 +186,17 @@ config.reports = (config.reports || [])
 
         return {
             class: require("./reports/" + item.file).default,
-            channels: item.channels,
+            channels: [...item.channels, "software-update"],
             params: item.params
         };
 
     });
 config.connectors = config.connectors || [];
+
+config.connectors.push(        {
+    file: "connectorSwUpdates",
+    name: "upd"
+});
 
 if ([...new Set(config.connectors)].length !== config.connectors.length) {
     throw new Error('Connectors names MUST be unique');

@@ -39,7 +39,6 @@ export default class ReportFile extends Report {
     }
 
     report = (message, content) => {
-
         this.logger.log({
             level: 'verbose',
             message: content.message

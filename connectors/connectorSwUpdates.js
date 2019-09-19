@@ -30,45 +30,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Monitor from "./monitor";
+import Connector from "./connector";
+import axios from "axios";
 
-export default class MonitorNewPrefix extends Monitor {
+export default class ConnectorSwUpdates extends Connector{
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
-        this.updateMonitoredPrefixes();
-    };
+    constructor(name, params, env) {
+        super(name, params, env);
+        this.timer = null;
+    }
 
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredMoreSpecifics();
-    };
-
-    filter = (message) => {
-        return message.type === 'announcement';
-    };
-
-    squashAlerts = (alerts) => {
-        return alerts[0].message;
-    };
-
-    monitor = (message) =>
+    connect = () =>
         new Promise((resolve, reject) => {
-
-            const messagePrefix = message.prefix;
-            const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
-
-            if (matchedRule && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
-
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
-            }
-
             resolve(true);
         });
 
-}
+    _checkForUpdates = () => {
+        return axios({
+            responseType: "json",
+            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
+        })
+            .then(data => {
+                if (data && data.data && data.data.version && data.data.version !== this.version){
+                    this._message(JSON.stringify({
+                        type: "software-update",
+                        currentVersion: this.version,
+                        newVersion: data.data.version,
+                        repo: "https://github.com/nttgin/BGPalerter"
+                    }));
+                }
+            })
+            .catch(() => {
+                this.logger.log({
+                    level: 'error',
+                    message: "It was not possible to check for software updates"
+                });
+            });
+    };
+
+    subscribe = (input) =>
+        new Promise((resolve, reject) => {
+            if (this.config.checkForUpdatesAtBoot){
+                this._checkForUpdates();
+            }
+            this.timer = setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
+            resolve(true);
+        });
+
+    static transform = (message) => {
+        return [ message ];
+    }
+};
