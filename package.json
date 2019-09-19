@@ -14,6 +14,7 @@
     "status": "forever list",
     "stop": "forever stop \"$(< ~/bgpalerter.pid)\"",
     "restart": "forever restart \"$(< ~/bgpalerter.pid)\"",
+    "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
   "author": "Massimo Candela",
