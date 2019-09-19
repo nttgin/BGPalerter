@@ -50,11 +50,6 @@ export default class Connector {
 
 
     _error = (error) => {
-        this.logger.log({
-            level: 'error',
-            message: error
-        });
-
         if (this.errorCallback)
             this.errorCallback(error);
     };
