@@ -79,9 +79,6 @@ export default class ReportSlack extends Report {
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {
-
-                    console.log(message);
-
                     this._sendSlackMessage(this.params.hooks[group], message, content);
                 }
             }
