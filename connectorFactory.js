@@ -67,35 +67,36 @@ export default class ConnectorFactory {
                 resolve(Promise.all(connectors
                     .map(connector =>
                         new Promise((resolve, reject) => {
+
+                            connector.onError(error => {
+                                logger.log({
+                                    level: 'error',
+                                    message: error
+                                });
+                            });
+
+                            connector.onConnect(message => {
+                                logger.log({
+                                    level: 'info',
+                                    message: message
+                                });
+                            });
+
+                            connector.onDisconnect(error => {
+                                connector.connected = false;
+
+                                logger.log({
+                                    level: 'error',
+                                    message: error
+                                });
+                            });
+
+
                             connector
                                 .connect()
                                 .then(() => {
                                     connector.connected = true;
                                     resolve(true);
-
-                                    connector.onError(error => {
-                                        logger.log({
-                                            level: 'error',
-                                            message: error
-                                        });
-                                    });
-
-                                    connector.onConnect(error => {
-                                        logger.log({
-                                            level: 'info',
-                                            message: error
-                                        });
-                                    });
-
-                                    connector.onDisconnect(error => {
-                                        connector.connected = false;
-
-                                        logger.log({
-                                            level: 'info',
-                                            message: error
-                                        });
-                                    });
-
                                 })
                                 .catch((error) => {
                                     env.logger.log({

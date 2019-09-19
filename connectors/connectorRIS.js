@@ -57,7 +57,7 @@ export default class ConnectorRIS extends Connector{
                 }, 5000);
 
                 this.ws.on('message', this._message);
-                this.ws.on('close', this.close);
+                this.ws.on('close', this._close);
                 this.ws.on('error', this._error);
                 this.ws.on('open', () => {
                     resolve(true);
@@ -65,18 +65,21 @@ export default class ConnectorRIS extends Connector{
                 });
 
             } catch(error) {
-                this.error(error);
+                this._error(error);
                 resolve(false);
             }
         });
 
-    close = (error) => {
+    _close = (error) => {
         this._disconnect(error);
         clearInterval(this.pingTimer);
+
+        // Reconnect
         setTimeout(() => {
             try {
                 this.ws.terminate();
             } catch(e) {
+                // Nothing to do here
             }
             this.connect()
                 .then(() => this.subscribe(this.subscription));
