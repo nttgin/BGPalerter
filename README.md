@@ -5,7 +5,7 @@
 > This section is useful if you don't care about the source code but you just want to run the monitor.
 If you want to know more about the source code (which is completely open) please see the following sections.
 
-1. Download the executable from [`bin/`](https://github.com/nttgin/BGPalerter/tree/master/bin) (be sure to select the one for your OS)
+1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
 2. Download [`config.yml`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml) and [`prefixes.yml`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/prefixes.yml) and place them in the same directory of the executable (if you skip this step, some default configuration files will be generated during the first execution)
 
