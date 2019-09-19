@@ -1,6 +1,6 @@
 {
   "name": "bgpalerter",
-  "version": "19.9.19.2",
+  "version": "1.19.1",
   "description": "",
   "main": "index.js",
   "bin": "index.js",
