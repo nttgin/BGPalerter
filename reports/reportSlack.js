@@ -75,10 +75,13 @@ export default class ReportSlack extends Report {
 
     report = (message, content) => {
         if (this.enabled){
-            const groups = content.data.map(i => i.matchedRule.group);
+            const groups = [...new Set(content.data.map(i => i.matchedRule.group))];
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {
+
+                    console.log(message);
+
                     this._sendSlackMessage(this.params.hooks[group], message, content);
                 }
             }
