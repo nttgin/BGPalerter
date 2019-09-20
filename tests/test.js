@@ -254,7 +254,7 @@ describe("Tests", function() {
                 expect(type).to.equal("software-update");
                 done();
             });
-        });
+        }).timeout(10000);
 
     });
 
