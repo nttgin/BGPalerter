@@ -42,7 +42,7 @@ import {version} from './package.json';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
-    version: version,
+    version: global.EXTERNAL_VERSION_FOR_TEST || version,
     configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath
 };
 let config = {

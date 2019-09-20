@@ -40,7 +40,7 @@ chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
 
-process.env.npm_package_version = "0.0.1";
+global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 describe("Tests", function() {
