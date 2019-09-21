@@ -1,5 +1,8 @@
-# BGPalerter
 [![Build Status](https://api.travis-ci.org/nttgin/bgpalerter.svg)](https://travis-ci.org/nttgin/bgpalerter)
+# BGPalerter
+Real-time BGP monitoring tool, pre-configured for visibility loss and hijacks detection.
+It can deliver alerts on files, by email, on slack, and more.
+![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
 ## TL;DR
 > This section is useful if you don't care about the source code but you just want to run the monitor.
