@@ -29,6 +29,9 @@ The prefix list is a file containing a series of blocks like the one below, one 
   description: Rome peering
   asn: 2914
   ignoreMorespecifics: false
+  ignore: false,
+  excludeMonitors:
+    - withdrawal-detection
 ```
 
 > Tip: In yml, arrays of values are described with dashes, like below:
