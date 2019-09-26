@@ -78,6 +78,8 @@ export default class InputYml extends Input {
                             prefix: i,
                             group: 'default',
                             ignore: false,
+                            excludeMonitors: [],
+                            includeMonitors: [],
                         }, monitoredPrefixesFile[i])
                     })
                     .filter(i => i !== null);
@@ -99,7 +101,7 @@ export default class InputYml extends Input {
                 const item = fileContent[prefix];
                 let asns;
 
-                if (!prefix || !ipUtils.isValidPrefix(prefix)){
+                if (!prefix || !ipUtils.isValidPrefix(prefix)) {
                     return "Not a valid prefix: " + prefix;
                 }
 
@@ -111,16 +113,33 @@ export default class InputYml extends Input {
                     return "Not a valid AS number for: " + prefix;
                 }
 
-                if (asns.some(asn => !asn || !new AS(asn).isValid())){
+                if (asns.some(asn => !asn || !new AS(asn).isValid())) {
                     return "Not a valid AS number for: " + prefix;
                 }
 
-                if (!["string", "number"].includes(typeof(item.description))){
+                if (!["string", "number"].includes(typeof(item.description))) {
                     return "Not a valid description for: " + prefix;
                 }
 
-                if (typeof(item.ignoreMorespecifics) !== "boolean"){
+                if (typeof(item.ignoreMorespecifics) !== "boolean") {
                     return "Not a valid ignoreMorespecifics value for: " + prefix;
+                }
+
+                if (item.ignore !== undefined && typeof(item.ignore) !== "boolean") {
+                    return "Not a valid ignore value for: " + prefix;
+                }
+
+                if (item.includeMonitors !== undefined && item.excludeMonitors !== undefined) {
+                    return "You can define only one of includeMonitor or excludeMonitor for: " + prefix;
+
+                }
+
+                if (item.excludeMonitors !== undefined && !Array.isArray(item.excludeMonitors)) {
+                    return "Not a valid excludeMonitor value for: " + prefix;
+                }
+
+                if (item.includeMonitors !== undefined && !Array.isArray(item.includeMonitors)) {
+                    return "Not a valid includeMonitor value for: " + prefix;
                 }
 
                 return null;

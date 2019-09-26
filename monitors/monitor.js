@@ -175,6 +175,18 @@ export default class Monitor {
         this.pubSub.publish(this.channel, alert);
 
         return alert;
-    }
+    };
+
+    getMoreSpecificMatch = (prefix) => {
+        const matched = this.input.getMoreSpecificMatch(prefix);
+
+        if (matched) {
+            if (matched.includeMonitors.length > 0 && !matched.includeMonitors.includes(this.name)) {
+                return null;
+            }
+
+            return (matched.excludeMonitors.includes(this.name)) ? null : matched;
+        }
+    };
 
 }

@@ -35,3 +35,20 @@
   asn: 1234
   ignore: true
   ignoreMorespecifics: true
+
+175.254.205.0/24:
+  description: include exclude test
+  asn: 1234
+  ignoreMorespecifics: false
+  ignore: false
+  excludeMonitors:
+    - basic-hijack-detection
+    - withdrawal-detection
+
+170.254.205.0/24:
+  description: include exclude test
+  asn: 1234
+  ignoreMorespecifics: false
+  ignore: false
+  includeMonitors:
+    - prefix-detection
