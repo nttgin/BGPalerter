@@ -28,9 +28,9 @@ If you enable email reporting, download also the directory `reports/email_templa
 
 ## More information for users
 
-- [Monitored prefixes List](docs/prefixes/#prefixes)
-  - [Auto-generate](docs/prefixes/#generate)
-  - [Fields and meaning](docs/prefixes/#prefixes-fields)
+- [Monitored prefixes List](docs/prefixes.md#prefixes)
+  - [Auto-generate](docs/prefixes.md#generate)
+  - [Fields and meaning](docs/prefixes.md#prefixes-fields)
 
 ### Composition
 
