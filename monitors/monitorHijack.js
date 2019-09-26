@@ -54,7 +54,7 @@ export default class MonitorHijack extends Monitor {
         new Promise((resolve, reject) => {
 
             const messagePrefix = message.prefix;
-            const matchedRule = this.input.getMoreSpecificMatch(messagePrefix);
+            const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
             if (matchedRule && !matchedRule.asn.includes(message.originAS)) {
                 const asnText = matchedRule.asn;

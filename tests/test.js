@@ -130,7 +130,7 @@ describe("Tests", function() {
 
         it("loading prefixes", function () {
 
-            expect(env.input.prefixes.length).to.equal(7);
+            expect(env.input.prefixes.length).to.equal(9);
             expect(JSON.parse(JSON.stringify(env.input))).to
                 .containSubset({
                     "prefixes": [
@@ -140,7 +140,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.225.0/24",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [15562],
@@ -148,7 +150,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.255.0/24",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [15562],
@@ -156,7 +160,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": true,
                             "prefix": "192.147.168.0/24",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [204092, 45],
@@ -164,7 +170,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "2a00:5884::/32",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [208585],
@@ -172,7 +180,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "2a0e:f40::/29",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [1234],
@@ -180,7 +190,9 @@ describe("Tests", function() {
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:f40::/30",
                             "group": "default",
-                            "ignore": false
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         },
                         {
                             "asn": [1234],
@@ -188,7 +200,29 @@ describe("Tests", function() {
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:240::/32",
                             "group": "default",
-                            "ignore": true
+                            "ignore": true,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
+                        },
+                        {
+                            "asn": [1234],
+                            "description": "include exclude test",
+                            "ignoreMorespecifics": false,
+                            "prefix": "175.254.205.0/24",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors" : ["basic-hijack-detection", "withdrawal-detection"],
+                            "includeMonitors": []
+                        },
+                        {
+                            "asn": [1234],
+                            "description": "include exclude test",
+                            "ignoreMorespecifics": false,
+                            "prefix": "170.254.205.0/24",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": ["prefix-detection"]
                         }
                     ]
                 });
@@ -310,8 +344,6 @@ describe("Tests", function() {
 
         }).timeout(10000);
 
-
-
         it("hijack reporting", function(done) {
 
             pubSub.publish("test-type", "hijack");
@@ -426,12 +458,67 @@ describe("Tests", function() {
 
         }).timeout(10000);
 
-
         it("newprefix reporting", function (done) {
 
             pubSub.publish("test-type", "newprefix");
 
             const expectedData = {
+                "1234-175.254.205.0/25": {
+                    id: '1234-175.254.205.0/25',
+                    origin: 'prefix-detection',
+                    affected: 1234,
+                    message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test).',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule: {
+                                prefix: '175.254.205.0/24',
+                                group: 'default',
+                                description: 'include exclude test',
+                                asn: [1234],
+                                ignoreMorespecifics: false,
+                                ignore: false,
+                                excludeMonitors: ["basic-hijack-detection", "withdrawal-detection"]
+                            },
+                            matchedMessage: {
+                                type: 'announcement',
+                                prefix: '175.254.205.0/25',
+                                peer: '124.0.0.3',
+                                path: [ 1, 2, 3, 1234 ],
+                                originAS: [1234],
+                                nextHop: '124.0.0.3'
+                            }
+                        }
+                    ]
+                },
+                "1234-170.254.205.0/25": {
+                    id: '1234-170.254.205.0/25',
+                    origin: 'prefix-detection',
+                    affected: 1234,
+                    message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test).',
+                    data: [
+                        {
+                            extra: {},
+                            matchedRule: {
+                                prefix: '170.254.205.0/24',
+                                group: 'default',
+                                description: 'include exclude test',
+                                asn: [1234],
+                                ignoreMorespecifics: false,
+                                includeMonitors: ["prefix-detection"],
+                                ignore: false
+                            },
+                            matchedMessage: {
+                                type: 'announcement',
+                                prefix: '170.254.205.0/25',
+                                peer: '124.0.0.3',
+                                path: [ 1, 2, 3, 1234 ],
+                                originAS: [1234],
+                                nextHop: '124.0.0.3'
+                            }
+                        }
+                    ]
+                },
                 "15562-165.254.255.0/25":
                     {
                         id: '15562-165.254.255.0/25',
@@ -496,7 +583,6 @@ describe("Tests", function() {
 
                 expect(Object.keys(expectedData).includes(id)).to.equal(true);
                 expect(expectedData[id] != null).to.equal(true);
-
 
                 expect(message).to
                     .containSubset(expectedData[id]);
