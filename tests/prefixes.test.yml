@@ -52,3 +52,33 @@
   ignore: false
   includeMonitors:
     - prefix-detection
+
+94.5.4.3/22:
+  description: path matching test only regex
+  asn: 2914
+  ignoreMorespecifics: false
+  ignore: false
+  path:
+    match: ".*2914$"
+    notMatch: ".*5060.*"
+    matchDescription: test description
+
+98.5.4.3/22:
+  description: path matching test regex and maxLength
+  asn: 2914
+  ignoreMorespecifics: false
+  ignore: false
+  path:
+    match: ".*2914$"
+    maxLength: 3
+    matchDescription: test description
+
+99.5.4.3/22:
+  description: path matching test regex and minLength
+  asn: 2914
+  ignoreMorespecifics: false
+  ignore: false
+  path:
+    match: ".*2914$"
+    minLength: 10
+    matchDescription: test description

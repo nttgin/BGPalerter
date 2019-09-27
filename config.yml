@@ -22,6 +22,10 @@ monitors:
     channel: newprefix
     name: prefix-detection
 
+#  - file: monitorPath
+#    channel: path
+#    name: path-matching
+
   - file: monitorVisibility
     channel: visibility
     name: withdrawal-detection
@@ -34,6 +38,7 @@ reports:
       - hijack
       - newprefix
       - visibility
+      - path
 
 #  - file: reportEmail
 #    channels:

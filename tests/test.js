@@ -130,7 +130,7 @@ describe("Tests", function() {
 
         it("loading prefixes", function () {
 
-            expect(env.input.prefixes.length).to.equal(9);
+            expect(env.input.prefixes.length).to.equal(12);
             expect(JSON.parse(JSON.stringify(env.input))).to
                 .containSubset({
                     "prefixes": [
@@ -596,6 +596,111 @@ describe("Tests", function() {
                 delete expectedData[id];
                 if (Object.keys(expectedData).length === 0){
                     done();
+                }
+
+            });
+
+
+
+        }).timeout(10000);
+
+
+        it("path match reporting", function (done) {
+
+            pubSub.publish("test-type", "path");
+
+            const expectedData = {
+                "98.5.4.3/22": {
+                    id: '98.5.4.3/22',
+                    origin: 'path-matching',
+                    affected: "98.5.4.3/22",
+                    message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times.',
+                    data: [
+                        {
+                            extra: {
+                                lengthViolation: true
+                            },
+                            matchedRule: {
+                                prefix: '98.5.4.3/22',
+                                group: 'default',
+                                description: 'path matching test regex and maxLength',
+                                asn: [2914],
+                                ignoreMorespecifics: false,
+                                ignore: false,
+                                path: {
+                                    match: ".*2914$",
+                                    matchDescription: "test description",
+                                    maxLength: 3,
+                                }
+                            },
+                            matchedMessage: {
+                                type: 'announcement',
+                                prefix: '98.5.4.3/22',
+                                peer: '124.0.0.3',
+                                path: [1, 2, 3, 4321, 5060, 2914],
+                                originAS: [2914],
+                                nextHop: '124.0.0.3'
+                            }
+                        }
+                    ]
+                },
+
+                "99.5.4.3/22": {
+                    id: '99.5.4.3/22',
+                    origin: 'path-matching',
+                    affected: "99.5.4.3/22",
+                    message: 'Matched test description on prefix 99.5.4.3/22 (including length violation) 1 times.',
+                    data: [
+                        {
+                            extra: {
+                                lengthViolation: true
+                            },
+                            matchedRule: {
+                                prefix: '99.5.4.3/22',
+                                group: 'default',
+                                description: 'path matching test regex and minLength',
+                                asn: [2914],
+                                ignoreMorespecifics: false,
+                                ignore: false,
+                                path: {
+                                    match: ".*2914$",
+                                    matchDescription: "test description",
+                                    minLength: 10,
+                                }
+                            },
+                            matchedMessage: {
+                                type: 'announcement',
+                                prefix: '99.5.4.3/22',
+                                peer: '124.0.0.3',
+                                path: [1, 2, 3, 4321, 5060, 2914],
+                                originAS: [2914],
+                                nextHop: '124.0.0.3'
+                            }
+                        }
+                    ]
+                },
+            };
+
+            pubSub.subscribe("path", function (type, message) {
+
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+                expect(message).to
+                    .containSubset(expectedData[id]);
+
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
+
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0){
+                    done();
                     setTimeout(function () {
                         process.exit()
                     }, 20000);
@@ -606,6 +711,7 @@ describe("Tests", function() {
 
 
         }).timeout(10000);
+
 
     });
 

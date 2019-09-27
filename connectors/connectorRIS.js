@@ -94,12 +94,41 @@ export default class ConnectorRIS extends Connector{
 
     };
 
+    _optimizedPathMatch = (regex) => {
+
+        if (regex) {
+            regex = (regex.slice(0,2) === ".*") ? regex.slice(2) : regex;
+            regex = (regex.slice(-2) === ".*") ? regex.slice(0,-2) : regex;
+            const regexTests = [
+                "^[\\^]*\\d+[\\$]*$",
+                "^[\\^]*[\\d+,]+\\d+[\\$]*$",
+                "^[\\^]*\\[[\\d+,]+\\d+\\][\\$]*$"
+            ];
+
+            for (let r of regexTests) {
+                if (new RegExp(r).test(regex)) {
+                    return regex;
+                }
+            }
+        }
+
+        return null;
+    };
+
     _subscribeToPrefixes = (input) => {
-        const monitoredPrefixes = input.getMonitoredLessSpecifics().map(item => item.prefix);
+        const monitoredPrefixes = input.getMonitoredLessSpecifics();
+
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-        for (let prefix of monitoredPrefixes){
-            console.log("Monitoring", prefix);
-            params.prefix = prefix;
+        for (let p of monitoredPrefixes){
+            if (p.path && p.path.match){
+                const regex = this._optimizedPathMatch(p.path.match);
+                if (regex) {
+                    params.path = regex;
+                }
+            }
+            console.log("Monitoring", p.prefix);
+            params.prefix = p.prefix;
+
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params

@@ -233,6 +233,22 @@ export default class ConnectorTest extends Connector{
                         }
                     ];
                     break;
+
+                case "path":
+                    updates = [
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["94.5.4.3/22", "98.5.4.3/22", "99.5.4.3/22"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: [1, 2, 3, 4321, 5060, 2914]
+                            },
+                            type: "ris_message"
+                        }
+                    ];
+                    break;
                 default:
                     return;
             }

@@ -21,12 +21,17 @@ monitors:
     params:
       threshold: 4
 
+  - file: monitorPath
+    channel: path
+    name: path-matching
+
 reports:
   - file: reportFile
     channels:
       - hijack
       - newprefix
       - visibility
+      - path
 
 checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
