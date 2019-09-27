@@ -11,7 +11,11 @@ export class Path {
         return JSON.stringify(this.toJSON());
     };
 
-    toJSON = () => this.value.map(i => i.getValue());
+    getValues = () => {
+        return this.value.map(i => i.getValue());
+    };
+
+    toJSON = () => this.getValues();
 }
 
 

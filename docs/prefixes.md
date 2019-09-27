@@ -29,6 +29,16 @@ The prefix list is a file containing a series of blocks like the one below, one 
   description: Rome peering
   asn: 2914
   ignoreMorespecifics: false
+  ignore: false,
+  excludeMonitors:
+    - withdrawal-detection
+  path:
+    match: ".*2194,1234$"
+    notMatch: ".*5054.*"
+    matchDescription: detected scrubbing center
+    maxLength: 128
+    minLength: 2
+
 ```
 
 > Tip: In yml, arrays of values are described with dashes, like below:
@@ -48,6 +58,13 @@ Below the complete list of attributes:
 | ignore | Exclude the current prefix from monitoring. Useful when you are monitoring a prefix and you want to exclude a particular sub-prefix| A boolean | No |
 | includeMonitors | The list of monitors you want to run on this prefix. If this attribute is not declared, all monitors will be used. Not compatible with excludeMonitors. | An array of strings (monitors name according to config.yml) | No |
 | excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. | An array of strings (monitors name according to config.yml) | No |
+| path | A dictionary containing all sub-attributes for path matching. All the sub-attributes are in AND.| Sub-attributes (as follows) | No |
+| path.match | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message triggers an alert. ASns are comma separated (see example above). | A string (valid RegEx) | No |
+| path.notMatch | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message will not triggers an alert. ASns are comma separated (see example above). | A string (valid RegEx) | No |
+| path.matchDescription | The description that will be reported in the alert in case the regex test results in a match. | A string | No |
+| path.maxLength | The maximum length allowed for an AS path. Longer paths will trigger an alert. | A number | No |
+| path.minLength | The minimum length allowed for an AS path. Shorter paths will trigger an alert. | A number | No |
+
 
  
 

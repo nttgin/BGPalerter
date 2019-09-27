@@ -142,6 +142,21 @@ export default class InputYml extends Input {
                     return "Not a valid includeMonitor value for: " + prefix;
                 }
 
+                if (item.path) {
+                    if (!item.path.matchDescription){
+                        return "No matchDescription set";
+                    }
+                    this._validateRegex(item.path.match);
+                    this._validateRegex(item.path.notMatch);
+                    if (item.path.maxLength && !(typeof(item.path.maxLength) == "number" && item.path.maxLength > 1)) {
+                        return "Not valid maxLength";
+                    }
+
+                    if (item.path.minLength && !(typeof(item.path.minLength) == "number" && item.path.minLength > 1)) {
+                        return "Not valid minLength";
+                    }
+                }
+
                 return null;
             })
             .filter(i => i != null)
@@ -150,6 +165,17 @@ export default class InputYml extends Input {
             });
 
         return errors.length === 0;
+    };
+
+    _validateRegex = (regex) => {
+        if (regex) {
+            try {
+                new RegExp(regex);
+            } catch (e) {
+                return "Not valid Path regex" + regex;
+            }
+        }
+
     };
 
     getMonitoredMoreSpecifics = () => {
