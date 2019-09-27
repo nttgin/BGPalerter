@@ -45,12 +45,12 @@ export default class MonitorPath extends Monitor {
     };
 
     filter = (message) => {
-        // Based on exact match only
         return message.type === 'announcement';
     };
 
     squashAlerts = (alerts) => {
-        return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${alerts.length} times.`;
+        const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation)" : "";
+        return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation} ${alerts.length} times.`;
     };
 
     monitor = (message) =>
@@ -62,32 +62,38 @@ export default class MonitorPath extends Monitor {
             if (matchedRule && matchedRule.path) {
                 const pathString = message.path.getValues().join(",");
 
-                try {
-                    let expMatch = true;
-                    let expNotMatch = true;
+                let expMatch = true;
+                let expNotMatch = true;
+                let correctLength = true;
 
-                    if (matchedRule.path.match){
-                        expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
-                    }
-                    if (matchedRule.path.notMatch){
-                        expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
-                    }
-
-                    if (expMatch && expNotMatch){
-
-                        this.publishAlert(messagePrefix,
-                            `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
-                            matchedRule.prefix,
-                            matchedRule,
-                            message,
-                            {});
-                    }
-
-                } catch(e) {
-                    throw new Error("Not valid Path regex for " + matchedRule.pathMatch);
+                if (matchedRule.path.match){
+                    expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
+                }
+                if (matchedRule.path.notMatch){
+                    expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
                 }
 
+                if (matchedRule.path.maxLength && matchedRule.path.maxLength < message.path.length) {
+                    correctLength = false;
+                }
 
+                if (matchedRule.path.minLength && matchedRule.path.minLength > message.path.length) {
+                    correctLength = false;
+                }
+
+                const lengthViolation = ((!matchedRule.path.maxLength && !matchedRule.path.minLength) || correctLength);
+
+                if (expMatch && expNotMatch && lengthViolation){
+
+                    this.publishAlert(messagePrefix,
+                        `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
+                        matchedRule.prefix,
+                        matchedRule,
+                        message,
+                        {
+                            lengthViolation
+                        });
+                }
             }
 
             resolve(true);
