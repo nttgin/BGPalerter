@@ -59,12 +59,22 @@ Below the complete list of attributes:
 | includeMonitors | The list of monitors you want to run on this prefix. If this attribute is not declared, all monitors will be used. Not compatible with excludeMonitors. | An array of strings (monitors name according to config.yml) | No |
 | excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. | An array of strings (monitors name according to config.yml) | No |
 | path | A dictionary containing all sub-attributes for path matching. All the sub-attributes are in AND.| Sub-attributes (as follows) | No |
-| path.match | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message triggers an alert. ASns are comma separated (see example above). | A string (valid RegEx) | No |
+| path.match | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message triggers an alert. ASns are comma separated (see example above). **Please, use optimized regular expression as described [here](#optimized-regular-expressions-for-as-path-match)** | A string (valid RegEx) | No |
 | path.notMatch | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message will not triggers an alert. ASns are comma separated (see example above). | A string (valid RegEx) | No |
 | path.matchDescription | The description that will be reported in the alert in case the regex test results in a match. | A string | No |
 | path.maxLength | The maximum length allowed for an AS path. Longer paths will trigger an alert. | A number | No |
 | path.minLength | The minimum length allowed for an AS path. Shorter paths will trigger an alert. | A number | No |
 
 
- 
 
+### Optimized regular expressions for AS path match
+
+The following simple regular expressions will drastically reduce CPU and network usage when applied to the `path.match` attribute. Instead, there are no benefits in applying the following regular expressions to the `path.notMatch` attribute.
+
+To drastically optimize the process, try to use one of the following regular expression for `path.match` attribute. If the obtained filter is too loose, add additional (complex) constraints in `path.notMatch`. In this way the more complex `path.notMatch` will be tested only on the subset produced by the faster `path.match`.
+
+* "789$" - match paths that originate with AS789
+* "456" - match any path that traverses AS456 at any point
+* "^123,456" - match paths where the last traversed ASNs were 123 and 456 (in that order)
+* "^123,456,789$" - match the exact path [123, 457, 789]
+* "[789,101112]" - match paths containing the AS_SET {789, 101112}
