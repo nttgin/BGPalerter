@@ -66,11 +66,20 @@ export default class MonitorPath extends Monitor {
                 let expNotMatch = true;
                 let correctLength = true;
 
-                if (matchedRule.path.match){
+                if (matchedRule.path.match) {
                     expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
+                    if (!expMatch) {
+                        resolve(true);
+                        return;
+                    }
                 }
+
                 if (matchedRule.path.notMatch){
                     expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
+                    if (!expNotMatch) {
+                        resolve(true);
+                        return;
+                    }
                 }
 
                 if (matchedRule.path.maxLength && matchedRule.path.maxLength < message.path.length) {
