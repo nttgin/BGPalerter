@@ -38,7 +38,7 @@ The prefix list is a file containing a series of blocks like the one below, one 
     matchDescription: detected scrubbing center
     maxLength: 128
     minLength: 2
-
+    
 ```
 
 > Tip: In yml, arrays of values are described with dashes, like below:
