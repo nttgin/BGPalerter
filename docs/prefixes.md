@@ -48,7 +48,7 @@ asn:
 - 3333 
 ```
 
-Below the complete list of attributes:
+Below the complete list of attributes (the dot notation is used to represent yml sub-dictionaries):
 
 | Attribute | Description | Expected type | Required |
 |---|---|---|---|
