@@ -49,8 +49,8 @@ export default class MonitorPath extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation)" : "";
-        return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation} ${alerts.length} times.`;
+        const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
+        return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
     };
 
     monitor = (message) =>
@@ -82,17 +82,16 @@ export default class MonitorPath extends Monitor {
                     }
                 }
 
-                if (matchedRule.path.maxLength && matchedRule.path.maxLength < message.path.length) {
+                if (matchedRule.path.maxLength && message.path.getValues().length > matchedRule.path.maxLength) {
                     correctLength = false;
                 }
 
-                if (matchedRule.path.minLength && matchedRule.path.minLength > message.path.length) {
+                if (matchedRule.path.minLength && message.path.getValues().length < matchedRule.path.minLength) {
                     correctLength = false;
                 }
 
-                const lengthViolation = ((!matchedRule.path.maxLength && !matchedRule.path.minLength) || correctLength);
-
-                if (expMatch && expNotMatch && lengthViolation){
+                if (expMatch && expNotMatch &&
+                    ((!matchedRule.path.maxLength && !matchedRule.path.maxLength) || !correctLength)) {
 
                     this.publishAlert(messagePrefix,
                         `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
@@ -100,7 +99,7 @@ export default class MonitorPath extends Monitor {
                         matchedRule,
                         message,
                         {
-                            lengthViolation
+                            lengthViolation: !correctLength
                         });
                 }
             }

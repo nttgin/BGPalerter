@@ -649,11 +649,11 @@ describe("Tests", function() {
                     id: '99.5.4.3/22',
                     origin: 'path-matching',
                     affected: "99.5.4.3/22",
-                    message: 'Matched test description on prefix 99.5.4.3/22 (including length violation) 1 times.',
+                    message: 'Matched test description on prefix 99.5.4.3/22 1 times.',
                     data: [
                         {
                             extra: {
-                                lengthViolation: true
+                                lengthViolation: false
                             },
                             matchedRule: {
                                 prefix: '99.5.4.3/22',
@@ -665,7 +665,7 @@ describe("Tests", function() {
                                 path: {
                                     match: ".*2914$",
                                     matchDescription: "test description",
-                                    minLength: 10,
+                                    minLength: 2,
                                 }
                             },
                             matchedMessage: {
