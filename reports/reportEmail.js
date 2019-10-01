@@ -45,26 +45,42 @@ export default class ReportEmail extends Report {
         this.templates = {};
         this.emailBacklog = [];
 
-        this.transporter = nodemailer.createTransport(this.params.smtp);
+        if (!this.params.notifiedEmails || !Object.keys(this.params.notifiedEmails).length) {
+            this.logger.log({
+                level: 'error',
+                message: "Email reporting is not enabled: no group is defined"
+            });
 
-        for (let channel of channels) {
-            try {
-                const file = path.resolve('reports/email_templates', `${channel}.txt`);
-                this.templates[channel] = fs.readFileSync(file, "utf8");
-            } catch (error){
+        } else {
+
+            if (!this.params.notifiedEmails["default"]) {
                 this.logger.log({
                     level: 'error',
-                    message: channel + ' template cannot be loaded'
-                })
+                    message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
+                });
             }
-        }
 
-        setInterval(() => {
-            const nextEmail = this.emailBacklog.pop();
-            if (nextEmail) {
-                this._sendEmail(nextEmail);
+            this.transporter = nodemailer.createTransport(this.params.smtp);
+
+            for (let channel of channels) {
+                try {
+                    const file = path.resolve('reports/email_templates', `${channel}.txt`);
+                    this.templates[channel] = fs.readFileSync(file, "utf8");
+                } catch (error) {
+                    this.logger.log({
+                        level: 'error',
+                        message: channel + ' template cannot be loaded'
+                    })
+                }
             }
-        }, 3000);
+
+            setInterval(() => {
+                const nextEmail = this.emailBacklog.pop();
+                if (nextEmail) {
+                    this._sendEmail(nextEmail);
+                }
+            }, 3000);
+        }
     }
 
     getEmails = (content) => {
@@ -153,9 +169,14 @@ export default class ReportEmail extends Report {
                 context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
                 break;
 
+            case "software-update":
+                break;
+
+            default:
+                return false;
         }
 
-        return this.templates[channel].replace(/\${([^}]*)}/g, (r,k)=>context[k]);
+        return (this.templates[channel]) ? this.templates[channel].replace(/\${([^}]*)}/g, (r,k)=>context[k]) : false;
     };
 
     _sendEmail = (email) => {
@@ -172,18 +193,24 @@ export default class ReportEmail extends Report {
     };
 
     report = (channel, content) => {
-        const emailGroups = this.getEmails(content);
 
-        for (let emails of emailGroups) {
+        if (Object.keys(this.templates).length > 0) {
 
-            const text = this.getEmailText(channel, content);
+            const emailGroups = this.getEmails(content);
 
-            this.emailBacklog.push({
-                from: this.params.senderEmail,
-                to: emails.join(', '),
-                subject: 'BGP alert: ' + channel,
-                text: text
-            });
+            for (let emails of emailGroups) {
+
+                const text = this.getEmailText(channel, content);
+
+                if (text) {
+                    this.emailBacklog.push({
+                        from: this.params.senderEmail,
+                        to: emails.join(', '),
+                        subject: 'BGP alert: ' + channel,
+                        text: text
+                    });
+                }
+            }
 
         }
     }

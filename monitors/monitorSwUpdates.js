@@ -52,7 +52,9 @@ export default class MonitorSwUpdates extends Monitor {
             this.publishAlert("software-update",
                 `A new version of BGPalerter is available. Current version: ${message.currentVersion} new version: ${message.newVersion}. Please, go to: ${message.repo}`,
                 "bgpalerter",
-                {},
+                {
+                    group: "default"
+                },
                 message,
                 {});
 

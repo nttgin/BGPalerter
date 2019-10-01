@@ -46,6 +46,13 @@ export default class ReportSlack extends Report {
                 message: "Slack reporting is not enabled: no group is defined"
             });
             this.enabled = false;
+        } else {
+            if (!this.params.hooks["default"]) {
+                this.logger.log({
+                    level: 'error',
+                    message: "In hooks, for reportSlack, a group named 'default' is required for communications to the admin."
+                });
+            }
         }
 
     }
