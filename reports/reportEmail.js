@@ -172,6 +172,9 @@ export default class ReportEmail extends Report {
             case "software-update":
                 break;
 
+            case "path":
+                break;
+
             default:
                 return false;
         }

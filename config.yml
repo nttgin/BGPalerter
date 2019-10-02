@@ -22,9 +22,9 @@ monitors:
     channel: newprefix
     name: prefix-detection
 
-#  - file: monitorPath
-#    channel: path
-#    name: path-matching
+  - file: monitorPath
+    channel: path
+    name: path-matching
 
   - file: monitorVisibility
     channel: visibility
@@ -45,13 +45,14 @@ reports:
 #      - hijack
 #      - newprefix
 #      - visibility
+#      - path
 #    params:
 #      senderEmail: bgpalerter@xxxx
 #      # BGPalerter uses nodemailer.
 #      # The smtp section can be configured with all the parameters available at https://nodemailer.com/smtp/
 #      # the following are just the most useful one
 #      smtp:
-#        host: localhost
+#        host: localhost42cbf5
 #        port: 25
 #        secure: false # If true the connection will use TLS when connecting to server. If false it will be still possible doing connection upgrade via STARTTLS
 #        auth:
@@ -70,11 +71,13 @@ reports:
 #      - hijack
 #      - newprefix
 #      - visibility
+#      - path
 #    params:
 #      colors:
 #        hijack: '#d60b1c'
 #        newprefix: '#fa9548'
 #        visibility: '#fad648'
+#        path: '#42cbf5'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
 

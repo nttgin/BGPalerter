@@ -72,6 +72,11 @@ let config = {
             name: "basic-hijack-detection",
         },
         {
+            file: "monitorPath",
+            channel: "path",
+            name: "path-matching",
+        },
+        {
             file: "monitorNewPrefix",
             channel: "newprefix",
             name: "prefix-detection",
@@ -88,7 +93,7 @@ let config = {
     reports: [
         {
             file: "reportFile",
-            channels: ["hijack", "newprefix", "visibility"]
+            channels: ["hijack", "newprefix", "visibility", "path"]
         }
     ],
     checkStaleNotificationsSeconds : 60,
