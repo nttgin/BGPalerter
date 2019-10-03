@@ -1,2 +1,6 @@
 config.yml
 prefixes.yml
+.idea/
+node_modules/
+bin/
+build/
