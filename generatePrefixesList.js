@@ -120,6 +120,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                 return Promise.all(list.map(i => generateRule(i.prefix, asn, false, null, false)))
                     .then(() => list.map(i => i.prefix))
             })
+
     };
 
     const validatePrefix = (asn, prefix) => {
@@ -148,7 +149,6 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                 } else {
                     someNotValidatedPrefixes = true;
                 }
-
             })
     };
 
@@ -159,11 +159,20 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
             return batchPromises(20, prefixes, prefix => {
                 return getAnnouncedMoreSpecifics(prefix)
                     .then((items) => Promise
-                        .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))));
+                        .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))))
+                    .catch((e) => {
+                        console.log("Cannot download more specific prefixes of", prefix, e);
+                    })
             })
+                .catch((e) => {
+                    console.log("Cannot download more specific prefixes", e);
+                })
         })
         .then(() => {
             return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
+                .catch((e) => {
+                    console.log("ROA check failed due to error", e);
+                })
         })
         .then(() => {
             const yamlContent = yaml.dump(generateList);
@@ -173,6 +182,9 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
                 console.log("WARNING: The generated configuration is a snapshot of what is currently announced by " + asns + " but some of the prefixes don't have ROA objects associated. Please, verify the config file by hand!");
             }
             console.log("Done!");
-        });
+        })
+        .catch((e) => {
+            console.log("Something went wrong", e);
+        })
 
-}
+};

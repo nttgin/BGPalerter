@@ -61,10 +61,10 @@ export default class Input {
 
         const lessSpecifics = [];
 
-        lessSpecifics.push(prefixes.pop());
+        lessSpecifics.push(prefixes[prefixes.length - 1]);
 
 
-        for (let p1 of prefixes) {
+        for (let p1 of prefixes.slice(0, -1)) {
             if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
                 lessSpecifics.push(p1);
             }

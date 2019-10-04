@@ -12,7 +12,7 @@ If you want to know more about the source code (which is completely open) please
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yaml` and [`prefixes.yml`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/prefixes.yml.example) as `prefixes.yml`, and place them in the same directory of the executable (if you skip this step, some default configuration files will be generated during the first execution)
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yaml` and [`prefixes.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/prefixes.yml.example) as `prefixes.yml`, and place them in the same directory of the executable (if you skip this step, some default configuration files will be generated during the first execution)
 
 3. Modify `prefixes.yml` and add the prefixes you want to monitor (or see below how to auto generate this file)
 
