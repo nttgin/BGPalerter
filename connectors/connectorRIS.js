@@ -164,6 +164,9 @@ export default class ConnectorRIS extends Connector{
             if (message["path"] && message["path"].length) {
                 path = new Path(message["path"].map(i => new AS(i)));
                 originAS = path.getLast();
+	    } else {
+                path = new Path([]);
+                originAS = null;
             }
 
             for (let announcement of announcements) {
