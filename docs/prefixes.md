@@ -41,6 +41,7 @@ The prefix list is a file containing a series of blocks like the one below, one 
     
 ```
 
+###### <a name="array"></a>
 > Tip: In yml, arrays of values are described with dashes, like below:
 ```
 asn:
