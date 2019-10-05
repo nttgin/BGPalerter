@@ -79,18 +79,26 @@ describe("Tests", function() {
 
 
         it("loading monitors", function () {
+
+            expect(env.config.monitors.length).to.equal(5);
+
+
             expect(env.config.monitors[0]).to
                 .containSubset({
                     "channel": "hijack",
                     "name": "basic-hijack-detection",
-                    "params": undefined
+                    "params": {
+                        "thresholdMinPeers": 0
+                    }
                 });
 
             expect(env.config.monitors[1]).to
                 .containSubset({
                     "channel": "newprefix",
                     "name": "prefix-detection",
-                    "params": undefined
+                    "params": {
+                        "thresholdMinPeers": 0
+                    }
                 });
 
             expect(env.config.monitors[2]).to
@@ -98,8 +106,24 @@ describe("Tests", function() {
                     "channel": "visibility",
                     "name": "withdrawal-detection",
                     "params": {
-                        "threshold": 4
+                        "thresholdMinPeers": 4
                     }
+                });
+
+            expect(env.config.monitors[3]).to
+                .containSubset({
+                    "channel": "path",
+                    "name": "path-matching",
+                    "params": {
+                        "thresholdMinPeers": 0
+                    }
+                });
+
+            expect(env.config.monitors[env.config.monitors.length - 1]).to
+                .containSubset({
+                    "channel": "software-update",
+                    "name": "software-update",
+                    "params": undefined
                 });
 
             expect(env.config.monitors[0]).to.have

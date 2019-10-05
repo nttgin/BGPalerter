@@ -31,12 +31,12 @@
  */
 
 import Monitor from "./monitor";
-import {logger} from "../env";
 
 export default class MonitorPath extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
         this.updateMonitoredPrefixes();
     };
 
@@ -50,8 +50,14 @@ export default class MonitorPath extends Monitor {
 
     squashAlerts = (alerts) => {
         alerts = alerts.filter(i => i.matchedRule && i.matchedRule.path);
-        const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
-        return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
+        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+
+        if (peers >= this.thresholdMinPeers) {
+            const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
+            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
+        }
+
+        return false;
     };
 
     monitor = (message) =>

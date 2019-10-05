@@ -36,6 +36,7 @@ export default class MonitorHijack extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
     };
 
     updateMonitoredPrefixes = () => {
@@ -47,7 +48,13 @@ export default class MonitorHijack extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        return alerts[0].message;
+        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+
+        if (peers >= this.thresholdMinPeers) {
+            return alerts[0].message;
+        }
+
+        return false;
     };
 
     monitor = (message) =>

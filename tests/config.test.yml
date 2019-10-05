@@ -10,20 +10,26 @@ monitors:
   - file: monitorHijack
     channel: hijack
     name: basic-hijack-detection
+    params:
+      thresholdMinPeers: 0
 
   - file: monitorNewPrefix
     channel: newprefix
     name: prefix-detection
+    params:
+      thresholdMinPeers: 0
 
   - file: monitorVisibility
     channel: visibility
     name: withdrawal-detection
     params:
-      threshold: 4
+      thresholdMinPeers: 4
 
   - file: monitorPath
     channel: path
     name: path-matching
+    params:
+      thresholdMinPeers: 0
 
 reports:
   - file: reportFile

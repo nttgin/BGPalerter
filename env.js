@@ -70,23 +70,32 @@ let config = {
             file: "monitorHijack",
             channel: "hijack",
             name: "basic-hijack-detection",
+            params: {
+                thresholdMinPeers: 2
+            }
         },
         {
             file: "monitorPath",
             channel: "path",
             name: "path-matching",
+            params: {
+                thresholdMinPeers: 0
+            }
         },
         {
             file: "monitorNewPrefix",
             channel: "newprefix",
             name: "prefix-detection",
+            params: {
+                thresholdMinPeers: 2
+            }
         },
         {
             file: "monitorVisibility",
             channel: "visibility",
             name: "withdrawal-detection",
             params: {
-                threshold: 10
+                thresholdMinPeers: 10
             }
         }
     ],

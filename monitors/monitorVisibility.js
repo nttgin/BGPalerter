@@ -36,7 +36,14 @@ export default class MonitorVisibility extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.threshold = (params.threshold != null) ? params.threshold : 10;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 10;
+        if (params.threshold) {
+            this.logger.log({
+                level: 'error',
+                message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
+            });
+            this.thresholdMinPeers = params.threshold;
+        }
         this.updateMonitoredPrefixes();
     };
 
@@ -54,7 +61,7 @@ export default class MonitorVisibility extends Monitor {
     squashAlerts = (alerts) => {
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
-        if (peers >= this.threshold) {
+        if (peers >= this.thresholdMinPeers) {
             return (peers === 1) ?
                 `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}.` :
                 `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers.`;
