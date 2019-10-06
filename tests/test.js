@@ -149,7 +149,7 @@ describe("Tests", function() {
                             "description": "description 2",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.255.0/24",
-                            "group": "default",
+                            "group": "groupName",
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -359,7 +359,7 @@ describe("Tests", function() {
                             extra: {},
                             matchedRule: {
                                 prefix: "165.254.255.0/24",
-                                group: "default",
+                                group: "groupName",
                                 description: "description 2",
                                 asn: [15562],
                                 ignoreMorespecifics: false
@@ -530,7 +530,7 @@ describe("Tests", function() {
                                 extra: {},
                                 matchedRule: {
                                     prefix: '165.254.255.0/24',
-                                    group: 'default',
+                                    group: 'groupName',
                                     description: 'description 2',
                                     asn: [15562],
                                     ignoreMorespecifics: false

@@ -24,12 +24,15 @@ Below the list of possible parameters. **Remember to prepend them with a `--` in
 
 The prefix list is a file containing a series of blocks like the one below, one for each prefix to monitor.
 
+>Tip: Only the attributes description, asn, and ignoreMorespecifics are mandatory.
+
 ```
 165.254.255.0/24:
   description: Rome peering
   asn: 2914
   ignoreMorespecifics: false
   ignore: false,
+  group: aUserGroup
   excludeMonitors:
     - withdrawal-detection
   path:
@@ -65,6 +68,7 @@ Below the complete list of attributes (the dot notation is used to represent yml
 | path.matchDescription | The description that will be reported in the alert in case the regex test results in a match. | A string | No |
 | path.maxLength | The maximum length allowed for an AS path. Longer paths will trigger an alert. | A number | No |
 | path.minLength | The minimum length allowed for an AS path. Shorter paths will trigger an alert. | A number | No |
+| group | The name of the group that will receive alerts about this monitored prefix. By default all alerts are sent to the "default" group. | A string | No |
 
 
 
