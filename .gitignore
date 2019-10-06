@@ -4,3 +4,5 @@ prefixes.yml
 node_modules/
 bin/
 build/
+logs/
+.DS_Store
