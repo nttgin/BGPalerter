@@ -7,6 +7,7 @@
   description: description 2
   asn: 15562
   ignoreMorespecifics: false
+  group: groupName
 
 192.147.168.0/24:
   description: description 3

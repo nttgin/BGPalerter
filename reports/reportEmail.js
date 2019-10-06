@@ -53,7 +53,7 @@ export default class ReportEmail extends Report {
 
         } else {
 
-            if (!this.params.notifiedEmails["default"]) {
+            if (!this.params.notifiedEmails["default"] || !this.params.notifiedEmails["default"].length) {
                 this.logger.log({
                     level: 'error',
                     message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
@@ -95,10 +95,13 @@ export default class ReportEmail extends Report {
             .filter(item => !!item);
 
         try {
-            return [...new Set(users)]
+            const emails = [...new Set(users)]
                 .map(user => {
                     return this.params.notifiedEmails[user];
-                });
+                })
+                .filter(item => !!item);
+
+            return (emails.length) ? emails : [this.params.notifiedEmails["default"]];
         } catch (error) {
             this.logger.log({
                 level: 'error',
@@ -197,7 +200,10 @@ export default class ReportEmail extends Report {
 
     report = (channel, content) => {
 
-        if (Object.keys(this.templates).length > 0) {
+        if (Object.keys(this.templates).length > 0 &&
+            this.params.notifiedEmails &&
+            this.params.notifiedEmails["default"] &&
+            this.params.notifiedEmails["default"].length) {
 
             const emailGroups = this.getEmails(content);
 
