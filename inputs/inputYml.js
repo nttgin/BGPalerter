@@ -43,54 +43,61 @@ export default class InputYml extends Input {
         super(config);
         this.prefixes = [];
 
-        if (!config.monitoredPrefixesFiles || config.monitoredPrefixesFiles.length === 0){
-            throw new Error("The monitoredPrefixesFiles key is missing in the config file");
-        }
-
-        const uniquePrefixes = {};
-        for (let prefixesFile of config.monitoredPrefixesFiles){
-
-            let monitoredPrefixesFile = {};
-
-            try {
-                monitoredPrefixesFile = yaml.safeLoad(fs.readFileSync('./' + prefixesFile, 'utf8')) || {};
-            } catch(e) {
-                fs.writeFileSync(prefixesFile, "");
-                throw new Error("No prefixes to monitor in " + prefixesFile);
+            if (!config.monitoredPrefixesFiles || config.monitoredPrefixesFiles.length === 0) {
+                throw new Error("The monitoredPrefixesFiles key is missing in the config file");
             }
 
-            if (Object.keys(monitoredPrefixesFile).length === 0 ) {
-                throw new Error("No prefixes to monitor in " + prefixesFile);
+            const uniquePrefixes = {};
+            for (let prefixesFile of config.monitoredPrefixesFiles) {
+
+                let monitoredPrefixesFile = {};
+                let fileContent;
+
+                if (fs.existsSync('./' + prefixesFile)) {
+                    fileContent = fs.readFileSync('./' + prefixesFile, 'utf8');
+                    try {
+                        monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
+                    } catch (error) {
+                        throw new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]);
+                    }
+
+                    if (Object.keys(monitoredPrefixesFile).length === 0) {
+                        throw new Error("No prefixes to monitor in " + prefixesFile);
+                    }
+
+                    if (this.validate(monitoredPrefixesFile)) {
+
+                        const monitoredPrefixes = Object
+                            .keys(monitoredPrefixesFile)
+                            .map(i => {
+                                if (uniquePrefixes[i]) {
+                                    throw new Error("Duplicate entry for " + i);
+                                }
+                                uniquePrefixes[i] = true;
+                                monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
+
+                                return Object.assign({
+                                    prefix: i,
+                                    group: 'default',
+                                    ignore: false,
+                                    excludeMonitors: [],
+                                    includeMonitors: [],
+                                }, monitoredPrefixesFile[i])
+                            })
+                            .filter(i => i !== null);
+
+                        this.prefixes = this.prefixes.concat(monitoredPrefixes);
+                    }
+
+                } else {
+                    fs.writeFileSync(prefixesFile, "");
+                    throw new Error("The file " + prefixesFile + " cannot be loaded. An empty one has been created.");
+                }
             }
 
-            if (this.validate(monitoredPrefixesFile)) {
-
-                const monitoredPrefixes = Object
-                    .keys(monitoredPrefixesFile)
-                    .map(i => {
-                        if (uniquePrefixes[i]){
-                            throw new Error("Duplicate entry for " + i);
-                        }
-                        uniquePrefixes[i] = true;
-                        monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
-
-                        return Object.assign({
-                            prefix: i,
-                            group: 'default',
-                            ignore: false,
-                            excludeMonitors: [],
-                            includeMonitors: [],
-                        }, monitoredPrefixesFile[i])
-                    })
-                    .filter(i => i !== null);
-
-                this.prefixes = this.prefixes.concat(monitoredPrefixes);
-            }
-        }
-
-        this.prefixes = this.prefixes.sort((a, b) => {
-            return ipUtils.sortByPrefixLength(b.prefix, a.prefix);
-        });
+            this.prefixes = this.prefixes.sort((a, b) => {
+                return ipUtils.sortByPrefixLength(b.prefix, a.prefix);
+            });
 
     };
 
@@ -113,7 +120,7 @@ export default class InputYml extends Input {
                     return "Not a valid AS number for: " + prefix;
                 }
 
-                if (asns.some(asn => !asn || !new AS(asn).isValid())) {
+                if (!new AS(asns).isValid()) {
                     return "Not a valid AS number for: " + prefix;
                 }
 

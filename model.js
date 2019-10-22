@@ -25,14 +25,18 @@ export class AS {
         this.ASset = false;
 
         if (["string", "number"].includes(typeof(numbers))) {
-            this.numbers = [ parseInt(numbers) ];
+            this.numbers = [ numbers ];
         } else if (numbers instanceof Array && numbers.length){
             this.ASset = true;
             if (numbers.length === 1) {
-                this.numbers = [ parseInt(numbers[0]) ];
+                this.numbers = [ numbers[0] ];
             } else {
-                this.numbers = numbers.map(i => parseInt(i));
+                this.numbers = numbers;
             }
+        }
+
+        if (this.isValid()) {
+            this.numbers.map(i => parseInt(i));
         }
     }
 
@@ -44,14 +48,20 @@ export class AS {
         return this.numbers.length > 0 &&
             this.numbers
                 .every(asn => {
+
                     try {
-                        asn = parseInt(asn);
+                        const intAsn = parseInt(asn);
+                        if (intAsn !== asn) {
+                            return false;
+                        }
+                        asn = intAsn;
                     } catch (e) {
                         return false;
                     }
 
                     return asn > 0 && asn <= 4294967295;
-                })
+                }) &&
+            [...new Set(this.numbers.map(i => parseInt(i)))].length === this.numbers.length;
     };
 
     includes = (ASn) => {

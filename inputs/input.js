@@ -55,6 +55,10 @@ export default class Input {
     };
 
     getMonitoredLessSpecifics = () => {
+        if (!this.prefixes.length) {
+            return [];
+        }
+
         const prefixes = this.prefixes.sort((a, b) => {
             return ipUtils.sortByPrefixLength(a.prefix, b.prefix);
         });
