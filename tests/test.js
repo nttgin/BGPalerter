@@ -40,6 +40,8 @@ chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
 
+var asyncTimeout = 20000;
+
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
@@ -312,7 +314,7 @@ describe("Tests", function() {
                 expect(type).to.equal("software-update");
                 done();
             });
-        }).timeout(10000);
+        }).timeout(asyncTimeout);
 
     });
 
@@ -366,7 +368,7 @@ describe("Tests", function() {
 
             });
 
-        }).timeout(10000);
+        }).timeout(asyncTimeout);
 
         it("hijack reporting", function(done) {
 
@@ -480,7 +482,7 @@ describe("Tests", function() {
 
             });
 
-        }).timeout(10000);
+        }).timeout(asyncTimeout);
 
         it("newprefix reporting", function (done) {
 
@@ -626,7 +628,7 @@ describe("Tests", function() {
 
 
 
-        }).timeout(10000);
+        }).timeout(asyncTimeout);
 
 
         it("path match reporting", function (done) {
@@ -727,14 +729,14 @@ describe("Tests", function() {
                     done();
                     setTimeout(function () {
                         process.exit()
-                    }, 20000);
+                    }, asyncTimeout + 10000);
                 }
 
             });
 
 
 
-        }).timeout(10000);
+        }).timeout(asyncTimeout);
 
 
     });
