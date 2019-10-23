@@ -33,6 +33,7 @@
 import WebSocket from "ws";
 import Connector from "./connector";
 import { AS, Path } from "../model";
+import brembo from "brembo";
 
 export default class ConnectorRIS extends Connector{
 
@@ -41,12 +42,20 @@ export default class ConnectorRIS extends Connector{
         this.ws = null;
         this.subscription = null;
         this.pingTimer = null;
+
+        this.url = brembo.build(this.params.url, {
+            path: [],
+            params: {
+                client: env.clientId
+            }
+        });
+
     }
 
     connect = () =>
         new Promise((resolve, reject) => {
             try {
-                this.ws = new WebSocket(this.params.url);
+                this.ws = new WebSocket(this.url);
 
                 this.pingTimer = setInterval(() => {
                     try {

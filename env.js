@@ -43,7 +43,8 @@ import {version} from './package.json';
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
-    configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath
+    configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath,
+    clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
 };
 let config = {
     environment: "production",
