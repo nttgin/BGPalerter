@@ -10,10 +10,6 @@
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
-    "start": "forever start --pidFile ~/bgpalerter.pid -c \"babel-node\" index.js> /dev/null && printf \"BGPalerter started\\n\"",
-    "status": "forever list",
-    "stop": "forever stop \"$(< ~/bgpalerter.pid)\"",
-    "restart": "forever restart \"$(< ~/bgpalerter.pid)\"",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
@@ -38,7 +34,6 @@
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
     "event-stream": "^4.0.1",
-    "forever": "^1.0.0",
     "ip-address": "^6.1.0",
     "js-yaml": "^3.13.1",
     "nodemailer": "^6.2.1",
