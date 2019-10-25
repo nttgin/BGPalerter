@@ -36,11 +36,13 @@ import fs from "fs";
 import moment from "moment";
 import nodemailer from "nodemailer";
 import path from "path";
+import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
 
     constructor(channels,params, env) {
         super(channels, params, env);
+        new emailTemplates(this.logger);
 
         this.templates = {};
         this.emailBacklog = [];
