@@ -48,6 +48,19 @@ global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 describe("Tests", function() {
     beforeEach(resetCache);
 
+    describe("Software updates check", function () {
+        var pubSub = require("../index");
+
+        it("new version detected", function (done) {
+
+            pubSub.subscribe("software-update", function (type, message) {
+                expect(type).to.equal("software-update");
+                done();
+            });
+        }).timeout(asyncTimeout);
+
+    });
+
     describe("Configuration loader", function () {
         var env = require("../env");
 
@@ -301,20 +314,6 @@ describe("Tests", function() {
 
 
         });
-
-    });
-
-
-    describe("Software updates check", function () {
-        var pubSub = require("../index");
-
-        it("new version detected", function (done) {
-
-            pubSub.subscribe("software-update", function (type, message) {
-                expect(type).to.equal("software-update");
-                done();
-            });
-        }).timeout(asyncTimeout);
 
     });
 
