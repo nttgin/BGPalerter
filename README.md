@@ -1,4 +1,6 @@
 [![Build Status](https://api.travis-ci.org/nttgin/bgpalerter.svg)](https://travis-ci.org/nttgin/bgpalerter)
+![Dependabot Status](https://badgen.net/dependabot/nttgin/BGPalerter/?icon=dependabot)
+
 # BGPalerter
 Real-time BGP monitoring tool, pre-configured for visibility loss and hijacks detection.
 
