@@ -25,7 +25,7 @@
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "mocha": "^6.2.2",
-    "nodemon": "^1.19.1",
+    "nodemon": "^1.19.4",
     "read-last-lines": "^1.7.1"
   },
   "dependencies": {
