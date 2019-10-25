@@ -2,7 +2,7 @@
 # BGPalerter
 Real-time BGP monitoring tool, pre-configured for visibility loss and hijacks detection.
 
-You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to publiic repos.
+You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to public repos.
 
 It can deliver alerts on files, by email, on slack, and more.
 
