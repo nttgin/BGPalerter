@@ -36,7 +36,7 @@
     "event-stream": "^4.0.1",
     "ip-address": "^6.1.0",
     "js-yaml": "^3.13.1",
-    "nodemailer": "^6.2.1",
+    "nodemailer": "^6.3.1",
     "path": "^0.12.7",
     "pkg": "^4.4.0",
     "pubsub-js": "^1.7.0",
