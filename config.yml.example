@@ -86,6 +86,17 @@ reports:
 #        path: '#42cbf5'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
+#
+#  - file: reportKafka
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#    params:
+#      host: localhost:9092
+#      topics:
+#        default: bgpalerter
 
 
 checkStaleNotificationsSeconds: 60

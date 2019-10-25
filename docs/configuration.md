@@ -179,3 +179,14 @@ Parameters for this report module:
 |hooks.default| The default user group. Each user group is a WebHook (url). | 
 
 
+#### reportKafka
+
+This report sends the alerts (including the BGP messages triggering them) to Kafka. By default it creates a topic `bgpalerter`.
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|host| Host and port of the Kafka instance/broker (e.g. localhost:9092).| 
+|topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
+ 
