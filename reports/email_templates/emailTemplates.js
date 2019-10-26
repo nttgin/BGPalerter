@@ -88,8 +88,7 @@ See in BGPlay:        ${bgplay}';
 export default class emailTemplates {
 
     constructor(logger) {
-        const directory = 'email_templates/';
-        this.indexedFiles = {};
+        const directory = 'reports/email_templates/';
         const templateFiles = [
             {
                 channel: 'hijack',
@@ -113,15 +112,20 @@ export default class emailTemplates {
             }
         ];
 
+        this.indexedFiles = {};
+
         if (!fs.existsSync(directory)) {
-            fs.mkdirSync(directory);
+            fs.mkdirSync(directory,  { recursive: true });
         }
 
         templateFiles
             .forEach(template => {
                 try {
                     const file = path.resolve(directory, template.channel + '.txt');
-                    if (!fs.existsSync(file)) {
+
+                    if (fs.existsSync(file)) {
+                        this.indexedFiles[template.channel] = fs.readFileSync(file, 'utf8');
+                    } else {
                         fs.writeFileSync(file, template.content);
                         this.indexedFiles[template.channel] = template.content;
                     }
@@ -135,10 +139,7 @@ export default class emailTemplates {
     }
 
     getTemplate = (channel) => {
-        if (!this.indexedFiles[channel]) {
-            this.indexedFiles[channel] = fs.readFileSync(); // get it from fileee
-        }
         return this.indexedFiles[channel];
     };
 
-}
+};
