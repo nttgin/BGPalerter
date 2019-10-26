@@ -42,7 +42,7 @@ export default class ReportEmail extends Report {
 
     constructor(channels,params, env) {
         super(channels, params, env);
-        new emailTemplates(this.logger);
+        this.emailTemplates = new emailTemplates(this.logger);
 
         this.templates = {};
         this.emailBacklog = [];
@@ -66,8 +66,7 @@ export default class ReportEmail extends Report {
 
             for (let channel of channels) {
                 try {
-                    const file = path.resolve('reports/email_templates', `${channel}.txt`);
-                    this.templates[channel] = fs.readFileSync(file, "utf8");
+                    this.templates[channel] = this.emailTemplates.getTemplate(channel);
                 } catch (error) {
                     this.logger.log({
                         level: 'error',

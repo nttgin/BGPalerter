@@ -32,7 +32,7 @@
  */
 
 import fs from "fs";
-
+import path from "path";
 
 const templateHijack = '${summary}\n\
 \n\
@@ -88,34 +88,42 @@ See in BGPlay:        ${bgplay}';
 export default class emailTemplates {
 
     constructor(logger) {
+        const directory = 'email_templates/';
+        this.indexedFiles = {};
         const templateFiles = [
             {
-                file: 'reports/email_templates/hijack.txt',
+                channel: 'hijack',
                 content: templateHijack
             },
             {
-                file: 'reports/email_templates/newprefix.txt',
+                channel: 'newprefix',
                 content: templateNewPrefix
             },
             {
-                file: 'reports/email_templates/path.txt',
+                channel: 'path',
                 content: templatePath
             },
             {
-                file: 'reports/email_templates/software-update.txt',
+                channel: 'software-update',
                 content: templateSoftwareUpdate
             },
             {
-                file: 'reports/email_templates/visibility.txt',
+                channel: 'visibility',
                 content: templateVisibility
             }
         ];
 
+        if (!fs.existsSync(directory)) {
+            fs.mkdirSync(directory);
+        }
+
         templateFiles
             .forEach(template => {
                 try {
-                    if (!fs.existsSync(template.file)) {
-                        fs.writeFileSync(template.file, template.content);
+                    const file = path.resolve(directory, template.channel + '.txt');
+                    if (!fs.existsSync(file)) {
+                        fs.writeFileSync(file, template.content);
+                        this.indexedFiles[template.channel] = template.content;
                     }
                 } catch (error) {
                     logger.log({
@@ -124,7 +132,13 @@ export default class emailTemplates {
                     });
                 }
             });
-
     }
+
+    getTemplate = (channel) => {
+        if (!this.indexedFiles[channel]) {
+            this.indexedFiles[channel] = fs.readFileSync(); // get it from fileee
+        }
+        return this.indexedFiles[channel];
+    };
 
 }
