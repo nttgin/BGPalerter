@@ -51,7 +51,7 @@ export default class Monitor {
             clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 3) / 2
         };
         this.updateMonitoredPrefixes();
-        setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000)
+        setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000);
     };
 
     updateMonitoredPrefixes = () => {
