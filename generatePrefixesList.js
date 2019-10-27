@@ -4,19 +4,21 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDelegated) {
+module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes) {
     const generateList = {};
     let someNotValidatedPrefixes = false;
 
-    if (!asns) {
-        throw new Error("One or more comma-separated AS numbers have to be specified");
+    if (!asnList && !prefixes) {
+        throw new Error("You need to specify at least an AS number or a list of prefixes.");
+    }
+
+    if (asnList && prefixes) {
+        throw new Error("You can specify an AS number or a list of prefixes, not both.");
     }
 
     if (!outputFile) {
         throw new Error("Output file not specified");
     }
-
-    const asnList = asns.split(",");
 
     const getMultipleOrigins = (prefix) => {
         const url = brembo.build("https://stat.ripe.net", {
@@ -72,7 +74,6 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
             })
 
     };
-
 
     const generateRule = (prefix, asn, ignoreMorespecifics, description, excludeDelegated) =>
         getMultipleOrigins(prefix)
@@ -152,8 +153,17 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
             })
     };
 
-    return Promise
-        .all(asnList.map(getAnnouncedPrefixes))
+    const getBaseRules = () => {
+        if (prefixes) {
+            return Promise
+                .all(prefixes.map(p => generateRule(p, null, false, null, false)))
+                .then(() => prefixes);
+        } else {
+            return Promise.all(asnList.map(getAnnouncedPrefixes));
+        }
+    };
+
+    return getBaseRules()
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
             return batchPromises(20, prefixes, prefix => {
@@ -179,7 +189,7 @@ module.exports = function generatePrefixes(asns, outputFile, exclude, excludeDel
             fs.writeFileSync(outputFile, yamlContent);
 
             if (someNotValidatedPrefixes) {
-                console.log("WARNING: The generated configuration is a snapshot of what is currently announced by " + asns + " but some of the prefixes don't have ROA objects associated. Please, verify the config file by hand!");
+                console.log("WARNING: The generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
             }
             console.log("Done!");
         })
