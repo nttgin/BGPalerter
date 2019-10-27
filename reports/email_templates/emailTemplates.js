@@ -48,7 +48,10 @@ Now announced with:   ${newprefix}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
-See in BGPlay:        ${bgplay}';
+See in BGPlay:        ${bgplay}\n\
+\n\
+Top ${pathNumber} most used AS paths:\n\
+${paths}';
 
 const templateNewPrefix = '${summary}\n\
 \n\
