@@ -13,3 +13,6 @@ When event started:   ${earliest} UTC
 Last event:           ${latest} UTC
 Detected by peers:    ${peers}
 See in BGPlay:        ${bgplay}
+
+Top ${pathNumber} most used AS paths:
+${paths}

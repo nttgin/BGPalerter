@@ -53,6 +53,7 @@ reports:
 #      - visibility
 #      - path
 #    params:
+#      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
 #      # BGPalerter uses nodemailer.
 #      # The smtp section can be configured with all the parameters available at https://nodemailer.com/smtp/

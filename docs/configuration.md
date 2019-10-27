@@ -158,6 +158,7 @@ Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |senderEmail| The email address that will be used as sender for the alerts. | 
 |smtp| A dictionary containing the SMTP configuration. Some parameters are described in `config.yml.example`. For all the options refer to the [nodemailer documentation](https://nodemailer.com/smtp/). | 
 |notifiedEmails| A dictionary containing email addresses grouped by user groups.  (key: group, value: list of emails)| 
