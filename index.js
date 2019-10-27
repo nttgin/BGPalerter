@@ -65,7 +65,7 @@ const params = yargs
             .nargs('i', 0)
             .describe('i', 'Ignore delegated prefixes')
 
-            .demandOption(['o'])
+            .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
 
