@@ -7,9 +7,8 @@ The following are common parameters which it is possible to specify in the confi
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
 |environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
-|notificationIntervalSeconds| The amount of seconds before the same alert can be repeated. An alert is repeated only if the cause of it has not being solved. | An integer | 1800 | Yes |
-|clearNotificationQueueAfterSeconds| If the cause of an alert is resolved, then stop waiting for more information about the issue. | An integer (greater than notificationIntervalSeconds) | 1900 |  Yes |
-|checkStaleNotificationsSeconds| The amount of seconds between a check on stale alerts. A stale alert happens when the cause of an alert is resolved before the next notification round, in such a case send it anyway. | An integer | 60 | Yes |
+|notificationIntervalSeconds|Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce. | An integer | 1800 | Yes |
+|alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert even if the event that triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |monitoredPrefixesFiles| The [list](docs/prefixes.md#array) of files containing the prefixes to monitor. See [here](docs/prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
 |logging| A dictionary of parameters containing the configuration for the file logging. | || Yes|
 |logging.directory| The directory where the log files will be generated. The directory will be created if not existent. | A string | logs | Yes |

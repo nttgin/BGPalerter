@@ -99,7 +99,21 @@ reports:
 #        default: bgpalerter
 
 
-notificationIntervalSeconds: 7200 # Repeat the same alert (which keeps being triggered) after x seconds
+############################
+# Notification settings:
+# - notificationIntervalSeconds
+#       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
+#       triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce.
+#
+# - alertOnlyOnce - A boolean that, if set to true, will prevent repetitions of the same alert even if the event that
+#       triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored.
+#       If set to true, the signature of all alerts will be cached in order to recognize if they already happened in
+#       the past. This may lead to a memory leak if the amount of alerts is considerable.
+
+notificationIntervalSeconds: 7200
+alertOnlyOnce: false
+
+############################
 
 # Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
 # This is an array (use new lines and dashes!)

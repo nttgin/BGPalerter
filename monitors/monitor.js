@@ -134,8 +134,9 @@ export default class Monitor {
     };
 
     _clean = (group) => {
-
-        if (new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
+        if (this.config.alertOnlyOnce) {
+            delete this.alerts[group.id];
+        } else if (this.config.alertOnlyOnce && new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
             delete this.alerts[group.id];
             delete this.sent[group.id];
 
@@ -148,7 +149,9 @@ export default class Monitor {
     _checkLastSent = (group) => {
         const lastTimeSent = this.sent[group.id];
 
-        if (lastTimeSent) {
+        if (lastTimeSent && this.config.alertOnlyOnce) {
+            return false;
+        } else if (lastTimeSent) {
 
             const isThereSomethingNew = lastTimeSent < group.latest;
             const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.internalConfig.notificationIntervalSeconds * 1000);
