@@ -44,8 +44,14 @@ export default class Monitor {
         this.monitored = [];
         this.alerts = {};
         this.sent = {};
+
+        this.internalConfig = {
+            notificationIntervalSeconds: this.config.notificationIntervalSeconds,
+            checkStaleNotificationsSeconds: 60,
+            clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 3) / 2
+        };
         this.updateMonitoredPrefixes();
-        setInterval(this._publish, this.config.checkStaleNotificationsSeconds * 1000)
+        setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000);
     };
 
     updateMonitoredPrefixes = () => {
@@ -129,7 +135,7 @@ export default class Monitor {
 
     _clean = (group) => {
 
-        if (new Date().getTime() > group.latest + (this.config.clearNotificationQueueAfterSeconds * 1000)) {
+        if (new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
             delete this.alerts[group.id];
             delete this.sent[group.id];
 
@@ -145,7 +151,7 @@ export default class Monitor {
         if (lastTimeSent) {
 
             const isThereSomethingNew = lastTimeSent < group.latest;
-            const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.config.notificationIntervalSeconds * 1000);
+            const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.internalConfig.notificationIntervalSeconds * 1000);
 
             return isThereSomethingNew && isItTimeToSend;
         } else {

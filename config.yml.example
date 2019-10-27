@@ -99,11 +99,9 @@ reports:
 #        default: bgpalerter
 
 
-checkStaleNotificationsSeconds: 60
-notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
-clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event which didn't happen again in x seconds
+notificationIntervalSeconds: 7200 # Repeat the same alert (which keeps being triggered) after x seconds
 
-# The file containing the monitored prefixes. Please see prefixes.yml for an example
+# Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
   - prefixes.yml
@@ -112,7 +110,7 @@ logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
   zippedArchive: true
-  maxSize: 20m
+  maxSize: 80m
   maxFiles: 14d
   
 checkForUpdatesAtBoot: true
