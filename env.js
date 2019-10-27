@@ -107,6 +107,7 @@ let config = {
         }
     ],
     notificationIntervalSeconds: 7200,
+    alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
     logging: {
         directory: "logs",
