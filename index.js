@@ -53,11 +53,19 @@ const params = yargs
             .nargs('e', 1)
             .describe('e', 'Prefixes to exclude')
 
+            .alias('p', 'prefixes')
+            .nargs('p', 1)
+            .describe('p', 'Prefixes to include')
+
+            .alias('pf', 'prefixes-file')
+            .nargs('pf', 1)
+            .describe('pf', 'File containing the prefixes to include')
+
             .alias('i', 'ignore-delegated')
             .nargs('i', 0)
             .describe('i', 'Ignore delegated prefixes')
 
-            .demandOption(['o', 'a'])
+            .demandOption(['o'])
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
 
@@ -70,12 +78,28 @@ const params = yargs
 switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./generatePrefixesList");
+        let prefixes = null;
+        if (params.p && params.pf) {
+            throw new Error("The argument -p is not compatible with the argument -pf");
+        } else if (params.p) {
+            prefixes = params.p.split(",");
+        } else if (params.pf) {
+            const fs = require("fs");
+            if (fs.existsSync(params.pf)) {
+                prefixes = fs.readFileSync(params.pf, 'utf8').split(/\r?\n/).filter(i => i && true);
+            } else {
+                throw new Error("The prefix list file (-pf) is not readable");
+            }
+        }
+
         generatePrefixes(
-            params.a.toString(),
+            (params.a) ? params.a.toString().split(",") : null,
             params.o,
             (params.e || "").split(","),
-            params.i || false
+            params.i || false,
+            prefixes
         );
+
         break;
 
     default: // Run monitor
