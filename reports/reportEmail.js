@@ -36,11 +36,13 @@ import fs from "fs";
 import moment from "moment";
 import nodemailer from "nodemailer";
 import path from "path";
+import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
 
     constructor(channels,params, env) {
         super(channels, params, env);
+        this.emailTemplates = new emailTemplates(this.logger);
 
         this.templates = {};
         this.emailBacklog = [];
@@ -64,8 +66,7 @@ export default class ReportEmail extends Report {
 
             for (let channel of channels) {
                 try {
-                    const file = path.resolve('reports/email_templates', `${channel}.txt`);
-                    this.templates[channel] = fs.readFileSync(file, "utf8");
+                    this.templates[channel] = this.emailTemplates.getTemplate(channel);
                 } catch (error) {
                     this.logger.log({
                         level: 'error',
@@ -142,6 +143,21 @@ export default class ReportEmail extends Report {
 
         switch(channel){
             case "hijack":
+                const pathsCount = {};
+                const pathIndex = content.data
+                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
+                    .forEach(path => {
+                        if (!pathsCount[path]){
+                            pathsCount[path] = 0;
+                        }
+                        pathsCount[path] ++;
+                    });
+
+                const sortedPathIndex = Object.keys(pathsCount)
+                    .map(key => [key, pathsCount[key]] );
+
+                sortedPathIndex.sort((first, second) => second[1] - first[1]);
+
                 matched = content.data[0].matchedRule;
                 context.prefix = matched.prefix;
                 context.description = matched.description;
@@ -150,6 +166,10 @@ export default class ReportEmail extends Report {
                 context.neworigin = content.data[0].matchedMessage.originAS;
                 context.newprefix = content.data[0].matchedMessage.prefix;
                 context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
+                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
+                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
+                    .slice(0, this.params.showPaths)
+                    .map(i => i[0]).join("\n") : "Disabled";
                 break;
 
             case "visibility":
@@ -204,7 +224,6 @@ export default class ReportEmail extends Report {
             this.params.notifiedEmails &&
             this.params.notifiedEmails["default"] &&
             this.params.notifiedEmails["default"].length) {
-
             const emailGroups = this.getEmails(content);
 
             for (let emails of emailGroups) {

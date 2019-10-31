@@ -9,10 +9,6 @@ To start development see how to install the source [here](installation.md#runnin
 
 * `npm run serve` to run the application from the source
 
-* `npm run start|stop|restart` to run the application as a service in background
-
-* `npm run status` to see the status of the service
-
 * `npm run test` to run the tests
 
 * `npm run build` to compile and build OS native applications

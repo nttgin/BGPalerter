@@ -1,10 +1,11 @@
 [![Build Status](https://api.travis-ci.org/nttgin/bgpalerter.svg)](https://travis-ci.org/nttgin/bgpalerter)
 ![Dependabot Status](https://badgen.net/dependabot/nttgin/BGPalerter/?icon=dependabot)
+[![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 # BGPalerter
 Real-time BGP monitoring tool, pre-configured for visibility loss and hijacks detection.
 
-You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to publiic repos.
+You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to public repos.
 
 It can deliver alerts on files, by email, on slack, and more.
 
@@ -26,8 +27,6 @@ If you want to know more about the source code (which is completely open) please
 
 In `config.yml.example` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
 Please uncomment the related section and configure according to your needs.
-
-If you enable email reporting, download also the directory `reports/email_templates` in the same directory of the executable.
 
 
 ## Documentation

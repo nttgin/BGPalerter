@@ -7,9 +7,8 @@ The following are common parameters which it is possible to specify in the confi
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
 |environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
-|notificationIntervalSeconds| The amount of seconds before the same alert can be repeated. An alert is repeated only if the cause of it has not being solved. | An integer | 1800 | Yes |
-|clearNotificationQueueAfterSeconds| If the cause of an alert is resolved, then stop waiting for more information about the issue. | An integer (greater than notificationIntervalSeconds) | 1900 |  Yes |
-|checkStaleNotificationsSeconds| The amount of seconds between a check on stale alerts. A stale alert happens when the cause of an alert is resolved before the next notification round, in such a case send it anyway. | An integer | 60 | Yes |
+|notificationIntervalSeconds|Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce. | An integer | 1800 | Yes |
+|alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert even if the event that triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |monitoredPrefixesFiles| The [list](docs/prefixes.md#array) of files containing the prefixes to monitor. See [here](docs/prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
 |logging| A dictionary of parameters containing the configuration for the file logging. | || Yes|
 |logging.directory| The directory where the log files will be generated. The directory will be created if not existent. | A string | logs | Yes |
@@ -159,6 +158,7 @@ Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |senderEmail| The email address that will be used as sender for the alerts. | 
 |smtp| A dictionary containing the SMTP configuration. Some parameters are described in `config.yml.example`. For all the options refer to the [nodemailer documentation](https://nodemailer.com/smtp/). | 
 |notifiedEmails| A dictionary containing email addresses grouped by user groups.  (key: group, value: list of emails)| 
@@ -179,3 +179,14 @@ Parameters for this report module:
 |hooks.default| The default user group. Each user group is a WebHook (url). | 
 
 
+#### reportKafka
+
+This report sends the alerts (including the BGP messages triggering them) to Kafka. By default it creates a topic `bgpalerter`.
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|host| Host and port of the Kafka instance/broker (e.g. localhost:9092).| 
+|topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
+ 

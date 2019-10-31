@@ -106,15 +106,14 @@ let config = {
             channels: ["hijack", "newprefix", "visibility", "path"]
         }
     ],
-    checkStaleNotificationsSeconds : 60,
-    notificationIntervalSeconds: 1800,
-    clearNotificationQueueAfterSeconds: 1900,
+    notificationIntervalSeconds: 7200,
+    alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
         zippedArchive: true,
-        maxSize: "20m",
+        maxSize: "80m",
         maxFiles: "14d",
     },
     checkForUpdatesAtBoot: true

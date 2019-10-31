@@ -53,6 +53,7 @@ reports:
 #      - visibility
 #      - path
 #    params:
+#      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
 #      # BGPalerter uses nodemailer.
 #      # The smtp section can be configured with all the parameters available at https://nodemailer.com/smtp/
@@ -86,13 +87,36 @@ reports:
 #        path: '#42cbf5'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
+#
+#  - file: reportKafka
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#    params:
+#      host: localhost:9092
+#      topics:
+#        default: bgpalerter
 
 
-checkStaleNotificationsSeconds: 60
-notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
-clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event which didn't happen again in x seconds
+############################
+# Notification settings:
+# - notificationIntervalSeconds
+#       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
+#       triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce.
+#
+# - alertOnlyOnce - A boolean that, if set to true, will prevent repetitions of the same alert even if the event that
+#       triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored.
+#       If set to true, the signature of all alerts will be cached in order to recognize if they already happened in
+#       the past. This may lead to a memory leak if the amount of alerts is considerable.
 
-# The file containing the monitored prefixes. Please see prefixes.yml for an example
+notificationIntervalSeconds: 7200
+alertOnlyOnce: false
+
+############################
+
+# Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
   - prefixes.yml
@@ -101,7 +125,7 @@ logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
   zippedArchive: true
-  maxSize: 20m
+  maxSize: 80m
   maxFiles: 14d
   
 checkForUpdatesAtBoot: true
