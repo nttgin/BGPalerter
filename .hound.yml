@@ -1,2 +1,2 @@
 jshint:
-  config_file: .jshintrc
+  config_file: .jshintrc.json
