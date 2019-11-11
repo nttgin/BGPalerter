@@ -15,11 +15,11 @@ Below the list of possible parameters. **Remember to prepend them with a `--` in
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
 | -o  | The YAML output file | A string ending in ".yml" | prefixes.yml | Yes |
-| -a  | The AS number(s) you want to generate the list for  | A comma-separated list of integers  | 2914,3333  | No (one among -a, -p, -pf is required) |
+| -a  | The AS number(s) you want to generate the list for  | A comma-separated list of integers  | 2914,3333  | No (one among -a, -p, -l is required) |
 | -e  | Prefixes to exclude from the list | A comma-separated list of prefixes | 165.254.255.0/24,192.147.168.0/24 | No |
 | -i  | Avoid monitoring delegated prefixes. If a more specific prefix is found and it results announced by an AS different from the one declared in -a, then set `ignore: true` and `ignoreMorespecifics: true` | Nothing | | No
-| -p  | Prefixes for which the list will be generated | A comma-separated list of prefixes | 165.254.255.0/24,192.147.168.0/24 | No (one among -a, -p, -pf is required) |
-| -pf  | A file containing the prefixes for which the list will be generated | A text file having a prefix for each line | prefixes.txt | No (one among -a, -p, -pf is required) |
+| -p  | Prefixes for which the list will be generated | A comma-separated list of prefixes | 165.254.255.0/24,192.147.168.0/24 | No (one among -a, -p, -l is required) |
+| -l  | A file containing the prefixes for which the list will be generated | A text file having a prefix for each line | prefixes.txt | No (one among -a, -p, -l is required) |
 
 
 ## <a name="prefixes-fields"></a>Prefixes list fields
