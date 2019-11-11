@@ -57,9 +57,9 @@ const params = yargs
             .nargs('p', 1)
             .describe('p', 'Prefixes to include')
 
-            .alias('pf', 'prefixes-file')
-            .nargs('pf', 1)
-            .describe('pf', 'File containing the prefixes to include')
+            .alias('l', 'prefixes-file')
+            .nargs('l', 1)
+            .describe('l', 'File containing the prefixes to include')
 
             .alias('i', 'ignore-delegated')
             .nargs('i', 0)
@@ -79,16 +79,18 @@ switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./generatePrefixesList");
         let prefixes = null;
-        if (params.p && params.pf) {
-            throw new Error("The argument -p is not compatible with the argument -pf");
+        if (params.pf) {
+            throw new Error("The argument --pf has been deprecated. Use -l instead");
+        }
+        if (params.p && params.l) {
+            throw new Error("The argument -p is not compatible with the argument -l");
         } else if (params.p) {
-            prefixes = params.p.split(",");
-        } else if (params.pf) {
+        } else if (params.l) {
             const fs = require("fs");
-            if (fs.existsSync(params.pf)) {
-                prefixes = fs.readFileSync(params.pf, 'utf8').split(/\r?\n/).filter(i => i && true);
+            if (fs.existsSync(params.l)) {
+                prefixes = fs.readFileSync(params.l, 'utf8').split(/\r?\n/).filter(i => i && true);
             } else {
-                throw new Error("The prefix list file (-pf) is not readable");
+                throw new Error("The prefix list file (-l) is not readable");
             }
         }
 
