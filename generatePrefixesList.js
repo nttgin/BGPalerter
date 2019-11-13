@@ -44,6 +44,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     };
 
     const getAnnouncedMoreSpecifics = (prefix) => {
+        console.log("Processing " + prefix);
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
             params: {
@@ -62,6 +63,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                     prefixes = data.data.data.prefixes
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
+                            console.log("Detected more specific " + i.prefix);
                             return {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
@@ -78,14 +80,17 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     const generateRule = (prefix, asn, ignoreMorespecifics, description, excludeDelegated) =>
         getMultipleOrigins(prefix)
             .then(asns => {
-                const origin = (asns && asns.length) ? asns : [asn];
 
-                generateList[prefix] = {
-                    description: description || "No description provided",
-                    asn: origin.map(i => parseInt(i)),
-                    ignoreMorespecifics: ignoreMorespecifics,
-                    ignore: excludeDelegated
-                };
+                if (asns.length) {
+                    const origin = (asns && asns.length) ? asns : [asn];
+
+                    generateList[prefix] = {
+                        description: description || "No description provided",
+                        asn: origin.map(i => parseInt(i)),
+                        ignoreMorespecifics: ignoreMorespecifics,
+                        ignore: excludeDelegated
+                    };
+                }
             });
 
     const getAnnouncedPrefixes = (asn) => {
