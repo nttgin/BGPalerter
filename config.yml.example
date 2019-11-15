@@ -62,6 +62,7 @@ reports:
 #        host: localhost
 #        port: 25
 #        secure: false # If true the connection will use TLS when connecting to server. If false it will be still possible doing connection upgrade via STARTTLS
+#        ignoreTLS: false # If true TLS will be completely disabled, including STARTTLS. Set this to true if you see certificate errors in the logs.
 #        auth:
 #          user: username
 #          pass: password
