@@ -62,7 +62,7 @@ export default class InputYml extends Input {
                 }
 
                 if (Object.keys(monitoredPrefixesFile).length === 0) {
-                    throw new Error("No prefixes to monitor in " + prefixesFile);
+                    throw new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md");
                 }
 
                 if (this.validate(monitoredPrefixesFile)) {
