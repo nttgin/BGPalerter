@@ -71,9 +71,8 @@ describe("Tests", function() {
                     "connectors",
                     "monitors",
                     "reports",
-                    "checkStaleNotificationsSeconds",
                     "notificationIntervalSeconds",
-                    "clearNotificationQueueAfterSeconds",
+                    "alertOnlyOnce",
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot"
