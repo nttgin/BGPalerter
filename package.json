@@ -47,7 +47,7 @@
     "winston-daily-rotate-file": "^3.9.0",
     "ws": "^7.2.0",
     "yargs": "^14.2.0",
-    "yarn": "^1.19.1"
+    "yarn": "^1.19.2"
   },
   "pkg": {
     "scripts": [
