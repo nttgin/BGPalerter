@@ -55,3 +55,8 @@ logging:
   maxFiles: 14d
 
 checkForUpdatesAtBoot: true
+
+uptimeMonitor:
+  active: true
+  useStatusCodes: true
+  port: 8011

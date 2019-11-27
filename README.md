@@ -43,6 +43,11 @@ Please uncomment the related section and configure according to your needs.
         - [Connectors](docs/configuration.md#connectors)
         - [Monitors](docs/configuration.md#monitors)
         - [Reports](docs/configuration.md#reports)
+            - [reportFile](docs/configuration.md#reportfile)
+            - [reportEmail](docs/configuration.md#reportemail)
+            - [reportSlack](docs/configuration.md#reportslack)
+            - [reportKafka](docs/configuration.md#reportkafka)
+    - [Uptime monitor](docs/uptime-monitor.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
 

@@ -67,7 +67,13 @@ export default class Worker {
         console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
         console.log("Loaded config:", this.configFile);
 
+
         const connectorFactory = new ConnectorFactory();
+
+        if (this.config.uptimeMonitor && this.config.uptimeMonitor.active) {
+            const Uptime = require("./uptime").default;
+            new Uptime(connectorFactory);
+        }
 
         connectorFactory.loadConnectors();
         return connectorFactory.connectConnectors()
