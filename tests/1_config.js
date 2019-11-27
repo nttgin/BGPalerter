@@ -76,7 +76,8 @@ describe("Composition", function() {
                     "alertOnlyOnce",
                     "monitoredPrefixesFiles",
                     "logging",
-                    "checkForUpdatesAtBoot"
+                    "checkForUpdatesAtBoot",
+                    "uptimeMonitor"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
