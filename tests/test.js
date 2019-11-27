@@ -34,7 +34,7 @@ var chai = require("chai");
 var chaiSubset = require('chai-subset');
 var readLastLines = require('read-last-lines');
 var moment = require('moment');
-var model = require('../model');
+var model = require('../src/model');
 const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
@@ -47,9 +47,13 @@ global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 describe("Tests", function() {
     beforeEach(resetCache);
+    var worker = require("../index");
+    var pubSub = worker.pubSub;
+    var config = worker.config;
+    var input = worker.input;
+    var logger = worker.logger;
 
     describe("Software updates check", function () {
-        var pubSub = require("../index");
 
         it("new version detected", function (done) {
 
@@ -62,10 +66,9 @@ describe("Tests", function() {
     });
 
     describe("Configuration loader", function () {
-        var env = require("../env");
 
         it("config structure", function () {
-            expect(env.config).to.have
+            expect(config).to.have
                 .keys([
                     "environment",
                     "connectors",
@@ -77,27 +80,26 @@ describe("Tests", function() {
                     "logging",
                     "checkForUpdatesAtBoot"
                 ]);
-            expect(env.config.connectors[0]).to.have
+            expect(config.connectors[0]).to.have
                 .property('class')
         });
 
         it("loading connectors", function () {
-            expect(env.config.connectors[0]).to
+            expect(config.connectors[0]).to
                 .containSubset({
                     "params": {"testType": "withdrawal"},
                     "name": "tes"
                 });
-            expect(env.config.connectors[0]).to.have
+            expect(config.connectors[0]).to.have
                 .property('class')
         });
 
 
         it("loading monitors", function () {
 
-            expect(env.config.monitors.length).to.equal(5);
+            expect(config.monitors.length).to.equal(5);
 
-
-            expect(env.config.monitors[0]).to
+            expect(config.monitors[0]).to
                 .containSubset({
                     "channel": "hijack",
                     "name": "basic-hijack-detection",
@@ -106,7 +108,7 @@ describe("Tests", function() {
                     }
                 });
 
-            expect(env.config.monitors[1]).to
+            expect(config.monitors[1]).to
                 .containSubset({
                     "channel": "newprefix",
                     "name": "prefix-detection",
@@ -115,7 +117,7 @@ describe("Tests", function() {
                     }
                 });
 
-            expect(env.config.monitors[2]).to
+            expect(config.monitors[2]).to
                 .containSubset({
                     "channel": "visibility",
                     "name": "withdrawal-detection",
@@ -124,7 +126,7 @@ describe("Tests", function() {
                     }
                 });
 
-            expect(env.config.monitors[3]).to
+            expect(config.monitors[3]).to
                 .containSubset({
                     "channel": "path",
                     "name": "path-matching",
@@ -133,19 +135,19 @@ describe("Tests", function() {
                     }
                 });
 
-            expect(env.config.monitors[env.config.monitors.length - 1]).to
+            expect(config.monitors[config.monitors.length - 1]).to
                 .containSubset({
                     "channel": "software-update",
                     "name": "software-update",
                     "params": undefined
                 });
 
-            expect(env.config.monitors[0]).to.have
+            expect(config.monitors[0]).to.have
                 .property('class')
         });
 
         it("loading reports", function () {
-            expect(env.config.reports[0]).to
+            expect(config.reports[0]).to
                 .containSubset({
                     "channels": [
                         "hijack",
@@ -155,21 +157,18 @@ describe("Tests", function() {
                     "params": undefined
                 });
 
-            expect(env.config.reports[0]).to.have
+            expect(config.reports[0]).to.have
                 .property('class')
         });
 
     });
 
-
     describe("Input loader", function () {
-        var env = require("../env");
-
 
         it("loading prefixes", function () {
 
-            expect(env.input.prefixes.length).to.equal(12);
-            expect(JSON.parse(JSON.stringify(env.input))).to
+            expect(input.prefixes.length).to.equal(12);
+            expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
                     "prefixes": [
                         {
@@ -271,17 +270,16 @@ describe("Tests", function() {
 
 
     describe("Logging", function () {
-        var env = require("../env");
 
         it("errors logging on the right file", function (done) {
             const message = "Test message";
-            env.logger
+            logger
                 .log({
                     level: "error",
                     message: message
                 });
 
-            const file = env.config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
@@ -296,13 +294,13 @@ describe("Tests", function() {
 
         it("reports logging on the right file", function (done) {
             const message = "Test message";
-            env.logger
+            logger
                 .log({
                     level: "verbose",
                     message: message
                 });
 
-            const file = env.config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
@@ -318,8 +316,6 @@ describe("Tests", function() {
 
 
     describe("Alerting", function () {
-        var pubSub = require("../index");
-        var env = require("../env");
 
         it("visibility reporting", function(done) {
 

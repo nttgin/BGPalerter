@@ -51,10 +51,10 @@
   },
   "pkg": {
     "scripts": [
-      "./inputs/*.js",
-      "./monitors/*.js",
-      "./reports/*.js",
-      "./connectors/*.js"
+      "./src/inputs/*.js",
+      "./src/monitors/*.js",
+      "./src/reports/*.js",
+      "./src/connectors/*.js"
     ],
     "assets": [
       "./bin/config.yml"
