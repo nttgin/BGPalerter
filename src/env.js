@@ -116,7 +116,12 @@ let config = {
         maxSize: "80m",
         maxFiles: "14d",
     },
-    checkForUpdatesAtBoot: true
+    checkForUpdatesAtBoot: true,
+    uptimeMonitor: {
+        active: false,
+        useStatusCodes: true,
+        port: 8011
+    }
 };
 
 try {

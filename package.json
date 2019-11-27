@@ -42,6 +42,8 @@
     "pkg": "^4.4.0",
     "pubsub-js": "^1.7.0",
     "resnap": "^1.0.1",
+    "restify": "^8.4.0",
+    "restify-errors": "^8.0.1",
     "websocket-stream": "^5.5.0",
     "winston": "^3.2.1",
     "winston-daily-rotate-file": "^4.3.0",

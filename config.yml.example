@@ -130,3 +130,22 @@ logging:
   maxFiles: 14d
   
 checkForUpdatesAtBoot: true
+
+
+############################
+# Uptime monitor settings:
+# The uptime monitor enables an API (http://localhost:8011/status) which shows the current status of BGPalerter
+# If any component reports an invalid state, the "warning" field will be set to true and the HTTP status code will be 500.
+#
+# - active - A boolean that if set to true enables the monitor. When set to false none of the monitoring components
+#       and dependencies are loaded (and no port has to be open).
+# - useStatusCodes - A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the
+#       JSON output provided by the API.
+# - port - The port on which the API will be reachable.
+
+uptimeMonitor:
+  active: false
+  useStatusCodes: true
+  port: 8011
+
+############################
