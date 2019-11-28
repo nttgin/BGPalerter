@@ -49,9 +49,25 @@ export default class MonitorAS extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+        const matchedMessages = alerts.map(alert => alert.matchedMessage);
+        const matchPerPrefix = {};
+        const prefixesOut = [];
 
-        if (peers >= this.thresholdMinPeers) {
+        for (let m of matchedMessages) { // Get the number of peers that triggered the alert for each prefix
+            matchPerPrefix[m.prefix] = matchPerPrefix[m.prefix] || [];
+            matchPerPrefix[m.prefix].push(m.peer);
+        }
+
+        for (let p in matchPerPrefix) { // Check if any of the prefixes went above the thresholdMinPeers
+            const peers = [...new Set(matchPerPrefix[p])];
+            if (peers.length >= this.thresholdMinPeers) {
+                prefixesOut.push(p);
+            }
+        }
+
+        if (prefixesOut.length > 1) {
+            return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
+        } else if (prefixesOut.length === 1) {
             return alerts[0].message;
         }
 
@@ -71,7 +87,7 @@ export default class MonitorAS extends Monitor {
                 if (!matchedPrefixRule) {
                     const text = `${messageOrigin} is announcing ${messagePrefix} but this prefix is not in the configured list of announced prefixes`;
 
-                    this.publishAlert(messageOrigin.getId() + "-" + messagePrefix,
+                    this.publishAlert(messageOrigin.getId().toString(),
                         text,
                         messageOrigin.getId(),
                         matchedRule,

@@ -138,7 +138,7 @@ describe("Composition", function() {
                     "channel": "misconfiguration",
                     "name": "asn-monitor",
                     "params": {
-                        "thresholdMinPeers": 0
+                        "thresholdMinPeers": 2
                     }
                 });
 
