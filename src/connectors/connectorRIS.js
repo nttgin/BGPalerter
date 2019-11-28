@@ -229,7 +229,6 @@ export default class ConnectorRIS extends Connector{
                 throw new Error(`Error during tranform (${this.name}): ` + error.message);
             }
         } else if (message.type === 'ris_error') {
-            console.log(message);
             throw new Error("Error from RIS: " + message.data.message);
         }
 

@@ -32,7 +32,6 @@
 
 var chai = require("chai");
 var chaiSubset = require('chai-subset');
-var model = require('../src/model');
 const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
@@ -493,9 +492,6 @@ describe("Alerting", function () {
             delete expectedData[id];
             if (Object.keys(expectedData).length === 0){
                 done();
-                setTimeout(function () {
-                    process.exit()
-                }, asyncTimeout + 10000);
             }
 
         });
