@@ -120,8 +120,8 @@ export default class InputYml extends Input {
     };
 
     validate = (fileContent) => {
-        let prefixesError;
-        let optionsError;
+        let prefixesError = [];
+        let optionsError = [];
 
         const options = fileContent.options;
 
