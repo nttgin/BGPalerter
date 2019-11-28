@@ -93,7 +93,7 @@ The `options` entry allows the configuration of additional monitoring options di
 
 #### monitorASns
 
-Allows for generic monitoring (not related to specific prefix) of Autonomous Systems. Please, refer to [monitorAS](configuration.md#monitoras) for more information.
+Allows for generic monitoring (not related to specific prefixes) of Autonomous Systems.
 
 An example of monitorASns configuration is:
 
@@ -107,6 +107,7 @@ monitorASns:
 
 The AS2914 and AS3333 will be monitored. The alerts related to AS2914 will be sent to the "ntt" user group and the alerts for AS3333 to the "ripencc" user group.
 
+The monitor in charge of doing this type of detection is [monitorAS (click for more information)](configuration.md#monitoras).
 
 ### Optimized regular expressions for AS path matching
 
