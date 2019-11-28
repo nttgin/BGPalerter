@@ -191,9 +191,6 @@ Parameters for this monitor module:
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
-This monitor is by default disabled. Uncomment the `monitorAS` block in `config.yml` to enable it (see [here](#composition)).
-
-
 
 ### Reports
 
