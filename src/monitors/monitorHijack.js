@@ -37,9 +37,10 @@ export default class MonitorHijack extends Monitor {
     constructor(name, channel, params, env){
         super(name, channel, params, env);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
+        this.updateMonitoredResources();
     };
 
-    updateMonitoredPrefixes = () => {
+    updateMonitoredResources = () => {
         this.monitored = this.input.getMonitoredPrefixes();
     };
 

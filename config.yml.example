@@ -38,6 +38,12 @@ monitors:
     params:
       thresholdMinPeers: 10
 
+  - file: MonitorAS
+    channel: misconfiguration
+    name: asn-monitor
+    params:
+      thresholdMinPeers: 0
+
 reports:
   - file: reportFile
     channels:
@@ -45,6 +51,7 @@ reports:
       - newprefix
       - visibility
       - path
+      - misconfiguration
 
 #  - file: reportEmail
 #    channels:
@@ -52,6 +59,7 @@ reports:
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -73,13 +81,14 @@ reports:
 #        default:
 #          - joe@example.org
 #          - noc@example.org
-#
+
 #  - file: reportSlack
 #    channels:
 #      - hijack
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      colors:
 #        hijack: '#d60b1c'
@@ -88,13 +97,14 @@ reports:
 #        path: '#42cbf5'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
-#
+
 #  - file: reportKafka
 #    channels:
 #      - hijack
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      host: localhost:9092
 #      topics:

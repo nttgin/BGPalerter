@@ -145,14 +145,33 @@ export default class ConnectorRIS extends Connector{
         }
     };
 
+    _subscribeToASns = (input) => {
+        const monitoredASns = input.getMonitoredASns().map(i => i.asn);
+
+        const params = JSON.parse(JSON.stringify(this.params.subscription));
+        for (let asn of monitoredASns){
+
+            console.log("Monitoring AS", asn.getValue());
+            params.path = '' + asn.getValue() + '$';
+
+            this.ws.send(JSON.stringify({
+                type: "ris_subscribe",
+                data: params
+            }));
+        }
+    };
+
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             this.subscription = input;
             try {
-                (this.params.carefulSubscription) ?
-                    this._subscribeToPrefixes(input) :
+                if (this.params.carefulSubscription) {
+                    this._subscribeToPrefixes(input);
+                    this._subscribeToASns(input);
+                } else {
                     this._subscribeToAll(input);
+                }
 
                 resolve(true);
             } catch(error) {
@@ -163,48 +182,56 @@ export default class ConnectorRIS extends Connector{
 
     static transform = (message) => {
         if (message.type === 'ris_message') {
-            message = message.data;
-            const components = [];
-            const announcements = message["announcements"] || [];
-            const aggregator = message["aggregator"] || null;
-            const withdrawals = message["withdrawals"] || [];
-            const peer = message["peer"];
-            let path, originAS;
-            if (message["path"] && message["path"].length) {
-                path = new Path(message["path"].map(i => new AS(i)));
-                originAS = path.getLast();
-	    } else {
-                path = new Path([]);
-                originAS = null;
-            }
+            try {
+                message = message.data;
+                const components = [];
+                const announcements = message["announcements"] || [];
+                const aggregator = message["aggregator"] || null;
+                const withdrawals = message["withdrawals"] || [];
+                const peer = message["peer"];
+                let path, originAS;
+                if (message["path"] && message["path"].length) {
+                    path = new Path(message["path"].map(i => new AS(i)));
+                    originAS = path.getLast();
+                } else {
+                    path = new Path([]);
+                    originAS = null;
+                }
 
-            for (let announcement of announcements) {
-                const nextHop = announcement["next_hop"];
-                const prefixes = announcement["prefixes"] || [];
+                for (let announcement of announcements) {
+                    const nextHop = announcement["next_hop"];
+                    const prefixes = announcement["prefixes"] || [];
 
-                for (let prefix of prefixes) {
+                    for (let prefix of prefixes) {
 
+                        components.push({
+                            type: "announcement",
+                            prefix,
+                            peer,
+                            path,
+                            originAS,
+                            nextHop,
+                            aggregator
+                        })
+                    }
+                }
+
+                for (let prefix of withdrawals) {
                     components.push({
-                        type: "announcement",
+                        type: "withdrawal",
                         prefix,
-                        peer,
-                        path,
-                        originAS,
-                        nextHop,
-                        aggregator
+                        peer
                     })
                 }
-            }
 
-            for (let prefix of withdrawals) {
-                components.push({
-                    type: "withdrawal",
-                    prefix,
-                    peer
-                })
+                return components;
+            } catch (error) {
+                throw new Error(`Error during tranform (${this.name}): ` + error.message);
             }
-
-            return components;
+        } else if (message.type === 'ris_error') {
+            console.log(message);
+            throw new Error("Error from RIS: " + message.data.message);
         }
+
     }
 };

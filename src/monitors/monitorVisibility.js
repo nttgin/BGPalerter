@@ -44,10 +44,10 @@ export default class MonitorVisibility extends Monitor {
             });
             this.thresholdMinPeers = params.threshold;
         }
-        this.updateMonitoredPrefixes();
+        this.updateMonitoredResources();
     };
 
-    updateMonitoredPrefixes = () => {
+    updateMonitoredResources = () => {
         this.monitored = this.input.getMonitoredPrefixes();
         this.monitoredSimpleArray = this.monitored.map(item => item.prefix);
     };

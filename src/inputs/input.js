@@ -37,6 +37,7 @@ export default class Input {
 
     constructor(config){
         this.prefixes = [];
+        this.asns = [];
         this.cache = {};
     };
 
@@ -107,6 +108,10 @@ export default class Input {
         }
 
         return null;
+    };
+
+    getMonitoredASns = () => {
+        throw new Error('The method getMonitoredASns MUST be implemented');
     };
 
 }
