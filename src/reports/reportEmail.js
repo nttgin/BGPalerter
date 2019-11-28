@@ -32,7 +32,6 @@
 
 import Report from "./report";
 import brembo from "brembo";
-import fs from "fs";
 import moment from "moment";
 import nodemailer from "nodemailer";
 import path from "path";
@@ -196,6 +195,9 @@ export default class ReportEmail extends Report {
                 break;
 
             case "path":
+                break;
+
+            case "misconfiguration":
                 break;
 
             default:

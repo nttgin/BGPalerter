@@ -87,6 +87,8 @@ Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
 See in BGPlay:        ${bgplay}';
 
+const templateMisconfiguration = '${summary}';
+
 
 export default class emailTemplates {
 
@@ -112,6 +114,10 @@ export default class emailTemplates {
             {
                 channel: 'visibility',
                 content: templateVisibility
+            },
+            {
+                channel: 'misconfiguration',
+                content: templateMisconfiguration
             }
         ];
 
