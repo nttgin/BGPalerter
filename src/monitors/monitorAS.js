@@ -32,7 +32,7 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorPath extends Monitor {
+export default class MonitorAS extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
@@ -41,7 +41,7 @@ export default class MonitorPath extends Monitor {
     };
 
     updateMonitoredResources = () => {
-        this.monitored = this.input.getMonitoredPrefixes();
+        this.monitored = this.input.getMonitoredASns();
     };
 
     filter = (message) => {
@@ -49,12 +49,26 @@ export default class MonitorPath extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        alerts = alerts.filter(i => i.matchedRule && i.matchedRule.path);
-        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+        const matchedMessages = alerts.map(alert => alert.matchedMessage);
+        const matchPerPrefix = {};
+        const prefixesOut = [];
 
-        if (peers >= this.thresholdMinPeers) {
-            const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
-            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
+        for (let m of matchedMessages) { // Get the number of peers that triggered the alert for each prefix
+            matchPerPrefix[m.prefix] = matchPerPrefix[m.prefix] || [];
+            matchPerPrefix[m.prefix].push(m.peer);
+        }
+
+        for (let p in matchPerPrefix) { // Check if any of the prefixes went above the thresholdMinPeers
+            const peers = [...new Set(matchPerPrefix[p])];
+            if (peers.length >= this.thresholdMinPeers) {
+                prefixesOut.push(p);
+            }
+        }
+
+        if (prefixesOut.length > 1) {
+            return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
+        } else if (prefixesOut.length === 1) {
+            return alerts[0].message;
         }
 
         return false;
@@ -63,51 +77,22 @@ export default class MonitorPath extends Monitor {
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
+            const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix);
+            const matchedRule = this.monitored.filter(i => message.path.getLast().includes(i.asn))[0];
 
-            if (matchedRule && matchedRule.path) {
-                const pathString = message.path.getValues().join(",");
+            if (matchedRule) {
 
-                let expMatch = true;
-                let expNotMatch = true;
-                let correctLength = true;
+                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix);
+                if (!matchedPrefixRule) {
+                    const text = `${messageOrigin} is announcing ${messagePrefix} but this prefix is not in the configured list of announced prefixes`;
 
-                if (matchedRule.path.match) {
-                    expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
-                    if (!expMatch) {
-                        resolve(true);
-                        return;
-                    }
-                }
-
-                if (matchedRule.path.notMatch){
-                    expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
-                    if (!expNotMatch) {
-                        resolve(true);
-                        return;
-                    }
-                }
-
-                if (matchedRule.path.maxLength && message.path.getValues().length > matchedRule.path.maxLength) {
-                    correctLength = false;
-                }
-
-                if (matchedRule.path.minLength && message.path.getValues().length < matchedRule.path.minLength) {
-                    correctLength = false;
-                }
-
-                if (expMatch && expNotMatch &&
-                    ((!matchedRule.path.maxLength && !matchedRule.path.maxLength) || !correctLength)) {
-
-                    this.publishAlert(messagePrefix,
-                        `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
-                        matchedRule.prefix,
+                    this.publishAlert(messageOrigin.getId().toString(),
+                        text,
+                        messageOrigin.getId(),
                         matchedRule,
                         message,
-                        {
-                            lengthViolation: !correctLength
-                        });
+                        {});
                 }
             }
 

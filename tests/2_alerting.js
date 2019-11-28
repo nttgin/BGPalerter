@@ -32,7 +32,6 @@
 
 var chai = require("chai");
 var chaiSubset = require('chai-subset');
-var model = require('../src/model');
 const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
@@ -451,9 +450,48 @@ describe("Alerting", function () {
             delete expectedData[id];
             if (Object.keys(expectedData).length === 0){
                 done();
-                setTimeout(function () {
-                    process.exit()
-                }, asyncTimeout + 10000);
+            }
+        });
+
+    }).timeout(asyncTimeout);
+
+
+
+
+
+    it("asn monitoring reporting", function (done) {
+
+        pubSub.publish("test-type", "misconfiguration");
+
+        const expectedData = {
+            "2914": {
+                id: '2914',
+                origin: 'asn-monitor',
+                affected: 2914,
+                message: 'AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes',
+            }
+        };
+
+        pubSub.subscribe("misconfiguration", function (type, message) {
+
+            message = JSON.parse(JSON.stringify(message));
+            const id = message.id;
+
+            expect(Object.keys(expectedData).includes(id)).to.equal(true);
+            expect(expectedData[id] != null).to.equal(true);
+
+            expect(message).to
+                .containSubset(expectedData[id]);
+
+            expect(message).to.contain
+                .keys([
+                    "latest",
+                    "earliest"
+                ]);
+
+            delete expectedData[id];
+            if (Object.keys(expectedData).length === 0){
+                done();
             }
 
         });

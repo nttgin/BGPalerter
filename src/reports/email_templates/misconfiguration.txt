@@ -1,0 +1,5 @@
+${summary}
+
+
+Top ${pathNumber} most used AS paths:
+${paths}

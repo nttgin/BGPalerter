@@ -31,6 +31,11 @@ You can compose the tool with 3 main components: connectors, monitors, and repor
 * Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
 * Reports send/store the alerts, e.g. by email or to a file.
 
+> In config.yml.example there are all the possible components declarations (similar to the one of the example below). You can enable the various components by uncommenting the related block.
+
+
+Example of composition:
+
 ```yaml
 connectors:
   - file: connectorRIS
@@ -133,9 +138,20 @@ Parameters for this monitor module:
 
 #### monitorNewPrefix
 
-This monitor has the logic to detect unexpected change of configuration in the form of new prefixes announced by the correct AS.
+This monitor has the logic to detect unexpected change of configuration in the form of new more specific prefixes announced by the correct AS.
+
 In particular, it will monitor for all the declared prefixes and will trigger an alert when:
 * A sub-prefix of the monitored prefix starts to be announced by the same AS declared for the prefix.
+
+> Example: 
+> The prefixes list of BGPalerter has an entry such as:
+> ```yaml
+> 50.82.0.0/20:
+>    asn: 58302
+>    description: an example
+>    ignoreMorespecifics: false
+> ```
+> If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g. 50.82.4.0/24) is announced by AS58302.
 
 Parameters for this monitor module:
 
@@ -143,6 +159,37 @@ Parameters for this monitor module:
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
+
+#### monitorAS
+
+This monitor will listen for all announcements produced by the monitored Autonomous Systems and will detect when a prefix, which is not in the monitored prefixes list, is announced.
+This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g. misconfiguration, typo).
+
+
+> Example: 
+> The prefixes list of BGPalerter has an options.monitorASns list declared, such as:
+> ```yaml
+> 50.82.0.0/20:
+>    asn: 58302
+>    description: an example
+>    ignoreMorespecifics: false
+> 
+> options:
+>  monitorASns:
+>    58302:
+>      group: default
+> ```
+> If in config.yml monitorAS is enabled, you will receive alerts every time a prefix not already part of the prefixes list is announced by AS58302.
+> 
+>If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
+
+You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
 
 ### Reports

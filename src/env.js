@@ -98,12 +98,20 @@ let config = {
             params: {
                 thresholdMinPeers: 10
             }
+        },
+        {
+            file: "monitorAS",
+            channel: "misconfiguration",
+            name: "as-monitor",
+            params: {
+                thresholdMinPeers: 2
+            }
         }
     ],
     reports: [
         {
             file: "reportFile",
-            channels: ["hijack", "newprefix", "visibility", "path"]
+            channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration"]
         }
     ],
     notificationIntervalSeconds: 7200,

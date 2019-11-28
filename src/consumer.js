@@ -56,7 +56,7 @@ export default class Consumer {
         try {
             const connector = data.slice(0,3);
             const messagesRaw = JSON.parse(data.slice(4));
-            const messages = this.connectors[connector].transform(messagesRaw);
+            const messages = this.connectors[connector].transform(messagesRaw) || [];
 
             for (let monitor of this.monitors) {
 
@@ -78,7 +78,7 @@ export default class Consumer {
         } catch (error) {
             env.logger.log({
                 level: 'error',
-                message: "Error in parsing data, dispatch method of consumer.js: " + error
+                message: error.message
             });
         }
     };

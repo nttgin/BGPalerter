@@ -50,12 +50,11 @@ export default class Monitor {
             checkStaleNotificationsSeconds: 60,
             clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 3) / 2
         };
-        this.updateMonitoredPrefixes();
         setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000);
     };
 
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredPrefixes();
+    updateMonitoredResources = () => {
+        throw new Error('The method updateMonitoredResources must be implemented in ' + this.name);
     };
 
     monitor = (message) =>

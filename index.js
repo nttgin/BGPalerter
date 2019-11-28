@@ -65,6 +65,14 @@ const params = yargs
             .nargs('i', 0)
             .describe('i', 'Ignore delegated prefixes')
 
+            .alias('s', 'monitor-as')
+            .nargs('s', 1)
+            .describe('s', 'List of monitored ASes to be added for generic monitoring in options.monitorASns.')
+
+            .alias('m', 'monitor-as-origin')
+            .nargs('m', 0)
+            .describe('m', 'Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.')
+
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -77,8 +85,9 @@ const params = yargs
 
 switch(params._[0]) {
     case "generate":
-        const generatePrefixes = require("./generatePrefixesList");
+        const generatePrefixes = require("./src/generatePrefixesList");
         let prefixes = null;
+        let monitoredASes = false;
         if (params.pf) {
             throw new Error("The argument --pf has been deprecated. Use -l instead");
         }
@@ -94,12 +103,21 @@ switch(params._[0]) {
             }
         }
 
+        if (params.s && params.m) {
+            throw new Error("You can specify -s or -m, not both");
+        } else if (params.s) {
+            monitoredASes = (params.s || "").split(",");
+        } else if (params.m) {
+            monitoredASes = true;
+        }
+
         generatePrefixes(
             (params.a) ? params.a.toString().split(",") : null,
             params.o,
             (params.e || "").split(","),
             params.i || false,
-            prefixes
+            prefixes,
+            monitoredASes
         );
 
         break;

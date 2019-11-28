@@ -42,12 +42,14 @@ export default class InputYml extends Input {
     constructor(config){
         super(config);
         this.prefixes = [];
+        this.asns = [];
 
         if (!config.monitoredPrefixesFiles || config.monitoredPrefixesFiles.length === 0) {
             throw new Error("The monitoredPrefixesFiles key is missing in the config file");
         }
 
         const uniquePrefixes = {};
+        const uniqueAsns = {};
         for (let prefixesFile of config.monitoredPrefixesFiles) {
 
             let monitoredPrefixesFile = {};
@@ -67,8 +69,24 @@ export default class InputYml extends Input {
 
                 if (this.validate(monitoredPrefixesFile)) {
 
+                    if (monitoredPrefixesFile.options && monitoredPrefixesFile.options.monitorASns) {
+                        this.asns = Object
+                            .keys(monitoredPrefixesFile.options.monitorASns)
+                            .map(asn => {
+                                if (uniqueAsns[asn]) {
+                                    throw new Error("Duplicate entry for monitored AS " + asn);
+                                }
+                                uniqueAsns[asn] = true;
+                                return Object.assign({
+                                    asn: new AS(asn),
+                                    group: 'default'
+                                }, monitoredPrefixesFile.options.monitorASns[asn]);
+                            });
+                    }
+
                     const monitoredPrefixes = Object
                         .keys(monitoredPrefixesFile)
+                        .filter(i => i !== "options")
                         .map(i => {
                             if (uniquePrefixes[i]) {
                                 throw new Error("Duplicate entry for " + i);
@@ -102,8 +120,24 @@ export default class InputYml extends Input {
     };
 
     validate = (fileContent) => {
-        const errors = Object
+        let prefixesError;
+        let optionsError;
+
+        const options = fileContent.options;
+
+        if (options && options.monitorASns) {
+            optionsError = Object
+                .keys(options.monitorASns)
+                .map(asn => {
+                    if (!new AS(asn).isValid()) {
+                        return "Not a valid AS number in monitorASns";
+                    }
+                });
+        }
+
+        prefixesError = Object
             .keys(fileContent)
+            .filter(i => i !== "options")
             .map(prefix => {
                 const item = fileContent[prefix];
                 let asns;
@@ -165,8 +199,11 @@ export default class InputYml extends Input {
                 }
 
                 return null;
-            })
-            .filter(i => i != null)
+            });
+
+        const errors = [...prefixesError, ...optionsError].filter(i => i != null);
+
+        errors
             .map(error => {
                 throw new Error(error);
             });
@@ -193,4 +230,7 @@ export default class InputYml extends Input {
         return this.prefixes;
     };
 
+    getMonitoredASns = () => {
+        return this.asns;
+    };
 }
