@@ -451,6 +451,65 @@ describe("Alerting", function () {
             delete expectedData[id];
             if (Object.keys(expectedData).length === 0){
                 done();
+            }
+        });
+
+    }).timeout(asyncTimeout);
+
+
+
+
+
+    it("asn monitoring reporting", function (done) {
+
+        pubSub.publish("test-type", "misconfiguration");
+
+        const expectedData = {
+            "2914-2.2.2.2/22": {
+                id: '2914-2.2.2.2/22',
+                origin: 'asn-monitor',
+                affected: 2914,
+                message: 'AS2914 is announcing 2.2.2.2/22 but this prefix is not in the configured list of announced prefixes',
+                data: [
+                    {
+                        extra: {},
+                        matchedRule: {
+                            group: 'default',
+                            asn: [2914],
+                        },
+                        matchedMessage: {
+                            type: 'announcement',
+                            prefix: '2.2.2.2/22',
+                            peer: '124.0.0.3',
+                            path: [1, 2, 3, 4321, 5060, 2914],
+                            originAS: [2914],
+                            nextHop: '124.0.0.3'
+                        }
+                    }
+                ]
+            }
+        };
+
+        pubSub.subscribe("misconfiguration", function (type, message) {
+
+            message = JSON.parse(JSON.stringify(message));
+            const id = message.id;
+
+            expect(Object.keys(expectedData).includes(id)).to.equal(true);
+            expect(expectedData[id] != null).to.equal(true);
+
+            expect(message).to
+                .containSubset(expectedData[id]);
+
+            expect(message).to.contain
+                .keys([
+                    "latest",
+                    "earliest"
+                ]);
+
+            delete expectedData[id];
+            if (Object.keys(expectedData).length === 0){
+                done();
                 setTimeout(function () {
                     process.exit()
                 }, asyncTimeout + 10000);

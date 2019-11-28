@@ -95,7 +95,7 @@ describe("Composition", function() {
 
         it("loading monitors", function () {
 
-            expect(config.monitors.length).to.equal(5);
+            expect(config.monitors.length).to.equal(6);
 
             expect(config.monitors[0]).to
                 .containSubset({
@@ -133,12 +133,22 @@ describe("Composition", function() {
                     }
                 });
 
+            expect(config.monitors[4]).to
+                .containSubset({
+                    "channel": "misconfiguration",
+                    "name": "asn-monitor",
+                    "params": {
+                        "thresholdMinPeers": 0
+                    }
+                });
+
             expect(config.monitors[config.monitors.length - 1]).to
                 .containSubset({
                     "channel": "software-update",
                     "name": "software-update",
                     "params": undefined
                 });
+
 
             expect(config.monitors[0]).to.have
                 .property('class')
@@ -170,6 +180,7 @@ describe("Composition", function() {
         it("loading prefixes", function () {
 
             expect(input.prefixes.length).to.equal(12);
+
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
                     "prefixes": [
@@ -266,6 +277,7 @@ describe("Composition", function() {
                     ]
                 });
 
+            expect(input.asns.length).to.equal(2);
         });
     });
 

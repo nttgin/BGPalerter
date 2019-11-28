@@ -31,6 +31,12 @@ monitors:
     params:
       thresholdMinPeers: 0
 
+  - file: monitorAS
+    channel: misconfiguration
+    name: asn-monitor
+    params:
+      thresholdMinPeers: 0
+
 reports:
   - file: reportFile
     channels:
@@ -38,6 +44,7 @@ reports:
       - newprefix
       - visibility
       - path
+      - misconfiguration
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false
