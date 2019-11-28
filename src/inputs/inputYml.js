@@ -120,22 +120,20 @@ export default class InputYml extends Input {
     };
 
     validate = (fileContent) => {
-        let prefixesError, optionsError = [];
+        let prefixesError;
+        let optionsError;
 
         const options = fileContent.options;
 
-        // if (options && options.monitorASns) {
-        //     optionsError = Object
-        //         .keys(options.monitorASns)
-        //         .map(asn => {
-        //             console.log(new AS("2914").isValid());
-        //             if (!new AS(asn).isValid()) {
-        //                 return "Not a valid AS number in monitorASns";
-        //             }
-        //         });
-        //
-        //     console.log(optionsError);
-        // }
+        if (options && options.monitorASns) {
+            optionsError = Object
+                .keys(options.monitorASns)
+                .map(asn => {
+                    if (!new AS(asn).isValid()) {
+                        return "Not a valid AS number in monitorASns";
+                    }
+                });
+        }
 
         prefixesError = Object
             .keys(fileContent)
@@ -201,13 +199,16 @@ export default class InputYml extends Input {
                 }
 
                 return null;
-            })
-            .filter(i => i != null)
+            });
+
+        const errors = [...prefixesError, ...optionsError].filter(i => i != null);
+
+        errors
             .map(error => {
                 throw new Error(error);
             });
 
-        return [...prefixesError, ...optionsError].length === 0;
+        return errors.length === 0;
     };
 
     _validateRegex = (regex) => {
