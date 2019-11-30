@@ -136,6 +136,36 @@ Parameters for this monitor module:
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
 
+#### monitorPath
+
+This monitor detects BGP updates containing AS_PATH which match particular regular expressions.
+
+> Example: 
+> The prefixes list of BGPalerter has an entry such as:
+> ```yaml
+> 165.254.255.0/24:
+>    asn: 15562
+>    description: an example on path matching
+>    ignoreMorespecifics: false
+>  path:
+>    match: ".*2194,1234$"
+>    notMatch: ".*5054.*"
+>    matchDescription: detected scrubbing center
+> ```
+> An alert will be generated when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
+> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
+
+More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+
+
+
+
 #### monitorNewPrefix
 
 This monitor has the logic to detect unexpected change of configuration in the form of new more specific prefixes announced by the correct AS.
@@ -191,7 +221,7 @@ Parameters for this monitor module:
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
-
+    
 ### Reports
 
 Possible reports are:
