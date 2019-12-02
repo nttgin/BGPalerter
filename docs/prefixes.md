@@ -33,7 +33,7 @@ The prefix list is a file containing a series of blocks like the one below, one 
   description: Rome peering
   asn: 2914
   ignoreMorespecifics: false
-  ignore: false,
+  ignore: false
   group: aUserGroup
   excludeMonitors:
     - withdrawal-detection
