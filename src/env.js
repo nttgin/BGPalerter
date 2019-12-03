@@ -38,7 +38,7 @@ import winston from 'winston';
 import Input from "./inputs/inputYml";
 require('winston-daily-rotate-file');
 const { combine, timestamp, label, printf } = winston.format;
-import {version} from './package.json';
+import {version} from '../package.json';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
@@ -98,12 +98,20 @@ let config = {
             params: {
                 thresholdMinPeers: 10
             }
+        },
+        {
+            file: "monitorAS",
+            channel: "misconfiguration",
+            name: "as-monitor",
+            params: {
+                thresholdMinPeers: 2
+            }
         }
     ],
     reports: [
         {
             file: "reportFile",
-            channels: ["hijack", "newprefix", "visibility", "path"]
+            channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration"]
         }
     ],
     notificationIntervalSeconds: 7200,
@@ -116,7 +124,12 @@ let config = {
         maxSize: "80m",
         maxFiles: "14d",
     },
-    checkForUpdatesAtBoot: true
+    checkForUpdatesAtBoot: true,
+    uptimeMonitor: {
+        active: false,
+        useStatusCodes: true,
+        port: 8011
+    }
 };
 
 try {

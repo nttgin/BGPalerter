@@ -76,6 +76,7 @@ export default class ConnectorFactory {
                             });
 
                             connector.onConnect(message => {
+                                connector.connected = true;
                                 logger.log({
                                     level: 'info',
                                     message: message

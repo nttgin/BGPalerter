@@ -32,14 +32,15 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorHijack extends Monitor {
+export default class MonitorPath extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+        this.updateMonitoredResources();
     };
 
-    updateMonitoredPrefixes = () => {
+    updateMonitoredResources = () => {
         this.monitored = this.input.getMonitoredPrefixes();
     };
 
@@ -48,10 +49,12 @@ export default class MonitorHijack extends Monitor {
     };
 
     squashAlerts = (alerts) => {
+        alerts = alerts.filter(i => i.matchedRule && i.matchedRule.path);
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
         if (peers >= this.thresholdMinPeers) {
-            return alerts[0].message;
+            const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
+            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
         }
 
         return false;
@@ -63,20 +66,49 @@ export default class MonitorHijack extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && !matchedRule.asn.includes(message.originAS)) {
-                const asnText = matchedRule.asn;
+            if (matchedRule && matchedRule.path) {
+                const pathString = message.path.getValues().join(",");
 
-                const text = (message.prefix === matchedRule.prefix) ?
-                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
-                    `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
-                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
+                let expMatch = true;
+                let expNotMatch = true;
+                let correctLength = true;
 
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
+                if (matchedRule.path.match) {
+                    expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
+                    if (!expMatch) {
+                        resolve(true);
+                        return;
+                    }
+                }
+
+                if (matchedRule.path.notMatch){
+                    expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
+                    if (!expNotMatch) {
+                        resolve(true);
+                        return;
+                    }
+                }
+
+                if (matchedRule.path.maxLength && message.path.getValues().length > matchedRule.path.maxLength) {
+                    correctLength = false;
+                }
+
+                if (matchedRule.path.minLength && message.path.getValues().length < matchedRule.path.minLength) {
+                    correctLength = false;
+                }
+
+                if (expMatch && expNotMatch &&
+                    ((!matchedRule.path.maxLength && !matchedRule.path.maxLength) || !correctLength)) {
+
+                    this.publishAlert(messagePrefix,
+                        `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
+                        matchedRule.prefix,
+                        matchedRule,
+                        message,
+                        {
+                            lengthViolation: !correctLength
+                        });
+                }
             }
 
             resolve(true);

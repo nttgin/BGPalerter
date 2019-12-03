@@ -38,6 +38,12 @@ monitors:
     params:
       thresholdMinPeers: 10
 
+  - file: MonitorAS
+    channel: misconfiguration
+    name: asn-monitor
+    params:
+      thresholdMinPeers: 2
+
 reports:
   - file: reportFile
     channels:
@@ -45,6 +51,7 @@ reports:
       - newprefix
       - visibility
       - path
+      - misconfiguration
 
 #  - file: reportEmail
 #    channels:
@@ -52,6 +59,7 @@ reports:
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -62,6 +70,7 @@ reports:
 #        host: localhost
 #        port: 25
 #        secure: false # If true the connection will use TLS when connecting to server. If false it will be still possible doing connection upgrade via STARTTLS
+#        ignoreTLS: false # If true TLS will be completely disabled, including STARTTLS. Set this to true if you see certificate errors in the logs.
 #        auth:
 #          user: username
 #          pass: password
@@ -72,13 +81,14 @@ reports:
 #        default:
 #          - joe@example.org
 #          - noc@example.org
-#
+
 #  - file: reportSlack
 #    channels:
 #      - hijack
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      colors:
 #        hijack: '#d60b1c'
@@ -87,13 +97,14 @@ reports:
 #        path: '#42cbf5'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
-#
+
 #  - file: reportKafka
 #    channels:
 #      - hijack
 #      - newprefix
 #      - visibility
 #      - path
+#      - misconfiguration
 #    params:
 #      host: localhost:9092
 #      topics:
@@ -129,3 +140,22 @@ logging:
   maxFiles: 14d
   
 checkForUpdatesAtBoot: true
+
+
+############################
+# Uptime monitor settings:
+# The uptime monitor enables an API (http://localhost:8011/status) which shows the current status of BGPalerter
+# If any component reports an invalid state, the "warning" field will be set to true and the HTTP status code will be 500.
+#
+# - active - A boolean that if set to true enables the monitor. When set to false none of the monitoring components
+#       and dependencies are loaded (and no port has to be open).
+# - useStatusCodes - A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the
+#       JSON output provided by the API.
+# - port - The port on which the API will be reachable.
+
+uptimeMonitor:
+  active: false
+  useStatusCodes: true
+  port: 8011
+
+############################

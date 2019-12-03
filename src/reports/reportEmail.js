@@ -32,7 +32,6 @@
 
 import Report from "./report";
 import brembo from "brembo";
-import fs from "fs";
 import moment from "moment";
 import nodemailer from "nodemailer";
 import path from "path";
@@ -140,11 +139,12 @@ export default class ReportEmail extends Report {
         };
 
         let matched = null;
+        let pathsCount = {};
+        let sortedPathIndex = null;
 
         switch(channel){
             case "hijack":
-                const pathsCount = {};
-                const pathIndex = content.data
+                content.data
                     .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
                     .forEach(path => {
                         if (!pathsCount[path]){
@@ -153,7 +153,7 @@ export default class ReportEmail extends Report {
                         pathsCount[path] ++;
                     });
 
-                const sortedPathIndex = Object.keys(pathsCount)
+                sortedPathIndex = Object.keys(pathsCount)
                     .map(key => [key, pathsCount[key]] );
 
                 sortedPathIndex.sort((first, second) => second[1] - first[1]);
@@ -196,6 +196,26 @@ export default class ReportEmail extends Report {
                 break;
 
             case "path":
+                break;
+
+            case "misconfiguration":
+                content.data
+                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
+                    .forEach(path => {
+                        if (!pathsCount[path]){
+                            pathsCount[path] = 0;
+                        }
+                        pathsCount[path] ++;
+                    });
+
+                sortedPathIndex = Object.keys(pathsCount)
+                    .map(key => [key, pathsCount[key]] );
+
+                sortedPathIndex.sort((first, second) => second[1] - first[1]);
+                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
+                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
+                    .slice(0, this.params.showPaths)
+                    .map(i => i[0]).join("\n") : "Disabled";
                 break;
 
             default:

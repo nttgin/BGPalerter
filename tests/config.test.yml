@@ -31,6 +31,12 @@ monitors:
     params:
       thresholdMinPeers: 0
 
+  - file: monitorAS
+    channel: misconfiguration
+    name: asn-monitor
+    params:
+      thresholdMinPeers: 2
+
 reports:
   - file: reportFile
     channels:
@@ -38,10 +44,10 @@ reports:
       - newprefix
       - visibility
       - path
+      - misconfiguration
 
-checkStaleNotificationsSeconds: 60
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
-clearNotificationQueueAfterSeconds: 1900 # Stop with the alert for an event which didn't happen again in x seconds
+alertOnlyOnce: false
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
@@ -56,3 +62,8 @@ logging:
   maxFiles: 14d
 
 checkForUpdatesAtBoot: true
+
+uptimeMonitor:
+  active: true
+  useStatusCodes: true
+  port: 8011

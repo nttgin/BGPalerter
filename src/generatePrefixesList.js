@@ -4,8 +4,9 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes) {
+module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes) {
     const generateList = {};
+    const allOrigins = {};
     let someNotValidatedPrefixes = false;
 
     if (!asnList && !prefixes) {
@@ -44,6 +45,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     };
 
     const getAnnouncedMoreSpecifics = (prefix) => {
+        console.log("Generating monitoring rule for", prefix);
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
             params: {
@@ -62,6 +64,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                     prefixes = data.data.data.prefixes
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
+                            console.log("Detected more specific " + i.prefix);
                             return {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
@@ -78,14 +81,21 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     const generateRule = (prefix, asn, ignoreMorespecifics, description, excludeDelegated) =>
         getMultipleOrigins(prefix)
             .then(asns => {
-                const origin = (asns && asns.length) ? asns : [asn];
 
-                generateList[prefix] = {
-                    description: description || "No description provided",
-                    asn: origin.map(i => parseInt(i)),
-                    ignoreMorespecifics: ignoreMorespecifics,
-                    ignore: excludeDelegated
-                };
+                if (asns.length) {
+                    const origin = (asns && asns.length) ? asns : [asn];
+
+                    for (let o of origin) {
+                        allOrigins[o] = true;
+                    }
+
+                    generateList[prefix] = {
+                        description: description || "No description provided",
+                        asn: origin.map(i => parseInt(i)),
+                        ignoreMorespecifics: ignoreMorespecifics,
+                        ignore: excludeDelegated
+                    };
+                }
             });
 
     const getAnnouncedPrefixes = (asn) => {
@@ -178,13 +188,32 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                     console.log("Cannot download more specific prefixes", e);
                 })
         })
-        .then(() => {
+        .then(() => { // Check
             return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
                     console.log("ROA check failed due to error", e);
                 })
         })
-        .then(() => {
+        .then(() => { // Add the options for monitorASns
+
+            const generateMonitoredAsObject = function (list) {
+                generateList.options = generateList.options || {};
+                generateList.options.monitorASns = generateList.options.monitorASns || {};
+                for (let monitoredAs of list) {
+                    console.log("Generating generic monitoring rule for AS", monitoredAs);
+                    generateList.options.monitorASns[monitoredAs] = {
+                        group: 'default'
+                    };
+                }
+            };
+            if (monitoredASes === true) {
+                generateMonitoredAsObject(Object.keys(allOrigins));
+            } else if (monitoredASes.length) {
+                generateMonitoredAsObject(monitoredASes);
+            }
+            // Otherwise nothing
+        })
+        .then(() => { // write everything into the file
             const yamlContent = yaml.dump(generateList);
             fs.writeFileSync(outputFile, yamlContent);
 

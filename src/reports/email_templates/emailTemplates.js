@@ -87,11 +87,16 @@ Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
 See in BGPlay:        ${bgplay}';
 
+const templateMisconfiguration = '${summary}\n\
+\n\
+Top ${pathNumber} most used AS paths:\n\
+${paths}';
+
 
 export default class emailTemplates {
 
     constructor(logger) {
-        const directory = 'reports/email_templates/';
+        const directory = 'src/reports/email_templates/';
         const templateFiles = [
             {
                 channel: 'hijack',
@@ -112,6 +117,10 @@ export default class emailTemplates {
             {
                 channel: 'visibility',
                 content: templateVisibility
+            },
+            {
+                channel: 'misconfiguration',
+                content: templateMisconfiguration
             }
         ];
 

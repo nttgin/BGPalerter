@@ -1,12 +1,12 @@
 {
   "name": "bgpalerter",
-  "version": "1.21.0",
+  "version": "1.22.0",
   "description": "",
   "main": "index.js",
   "bin": "index.js",
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "./node_modules/.bin/mocha tests --require @babel/register",
+    "test": "./node_modules/.bin/mocha --exit tests --require @babel/register",
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
@@ -16,16 +16,16 @@
   "author": "Massimo Candela",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.7.0",
-    "@babel/core": "^7.7.2",
-    "@babel/node": "^7.7.0",
-    "@babel/plugin-proposal-class-properties": "^7.7.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
-    "@babel/preset-env": "^7.7.1",
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "mocha": "^6.2.2",
-    "nodemon": "^1.19.4",
+    "nodemon": "^2.0.1",
     "read-last-lines": "^1.7.1"
   },
   "dependencies": {
@@ -42,19 +42,21 @@
     "pkg": "^4.4.0",
     "pubsub-js": "^1.7.0",
     "resnap": "^1.0.1",
+    "restify": "^8.5.0",
+    "restify-errors": "^8.0.1",
     "websocket-stream": "^5.5.0",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^3.9.0",
+    "winston-daily-rotate-file": "^4.3.0",
     "ws": "^7.2.0",
-    "yargs": "^14.2.0",
-    "yarn": "^1.19.1"
+    "yargs": "^15.0.2",
+    "yarn": "^1.21.0"
   },
   "pkg": {
     "scripts": [
-      "./inputs/*.js",
-      "./monitors/*.js",
-      "./reports/*.js",
-      "./connectors/*.js"
+      "./src/inputs/*.js",
+      "./src/monitors/*.js",
+      "./src/reports/*.js",
+      "./src/connectors/*.js"
     ],
     "assets": [
       "./bin/config.yml"

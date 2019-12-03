@@ -32,42 +32,30 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorVisibility extends Monitor {
+export default class MonitorHijack extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 10;
-        if (params.threshold) {
-            this.logger.log({
-                level: 'error',
-                message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
-            });
-            this.thresholdMinPeers = params.threshold;
-        }
-        this.updateMonitoredPrefixes();
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
+        this.updateMonitoredResources();
     };
 
-    updateMonitoredPrefixes = () => {
+    updateMonitoredResources = () => {
         this.monitored = this.input.getMonitoredPrefixes();
-        this.monitoredSimpleArray = this.monitored.map(item => item.prefix);
     };
 
     filter = (message) => {
-        // Based on exact match only
-        return message.type === 'withdrawal'
-            && this.monitoredSimpleArray.includes(message.prefix);
+        return message.type === 'announcement';
     };
 
     squashAlerts = (alerts) => {
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
         if (peers >= this.thresholdMinPeers) {
-            return (peers === 1) ?
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}.` :
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers.`;
-        } else {
-            return false;
+            return alerts[0].message;
         }
+
+        return false;
     };
 
     monitor = (message) =>
@@ -76,12 +64,16 @@ export default class MonitorVisibility extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && matchedRule.prefix === messagePrefix) {
+            if (matchedRule && !matchedRule.asn.includes(message.originAS)) {
+                const asnText = matchedRule.asn;
 
-                let key = matchedRule.prefix;
+                const text = (message.prefix === matchedRule.prefix) ?
+                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
+                    `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
+                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
 
-                this.publishAlert(key,
-                    `The prefix ${matchedRule.prefix} has been withdrawn.`,
+                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
+                    text,
                     matchedRule.asn.getId(),
                     matchedRule,
                     message,

@@ -57,13 +57,21 @@ const params = yargs
             .nargs('p', 1)
             .describe('p', 'Prefixes to include')
 
-            .alias('pf', 'prefixes-file')
-            .nargs('pf', 1)
-            .describe('pf', 'File containing the prefixes to include')
+            .alias('l', 'prefixes-file')
+            .nargs('l', 1)
+            .describe('l', 'File containing the prefixes to include')
 
             .alias('i', 'ignore-delegated')
             .nargs('i', 0)
             .describe('i', 'Ignore delegated prefixes')
+
+            .alias('s', 'monitor-as')
+            .nargs('s', 1)
+            .describe('s', 'List of monitored ASes to be added for generic monitoring in options.monitorASns.')
+
+            .alias('m', 'monitor-as-origin')
+            .nargs('m', 0)
+            .describe('m', 'Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.')
 
             .demandOption(['o']);
     })
@@ -77,19 +85,30 @@ const params = yargs
 
 switch(params._[0]) {
     case "generate":
-        const generatePrefixes = require("./generatePrefixesList");
+        const generatePrefixes = require("./src/generatePrefixesList");
         let prefixes = null;
-        if (params.p && params.pf) {
-            throw new Error("The argument -p is not compatible with the argument -pf");
+        let monitoredASes = false;
+        if (params.pf) {
+            throw new Error("The argument --pf has been deprecated. Use -l instead");
+        }
+        if (params.p && params.l) {
+            throw new Error("The argument -p is not compatible with the argument -l");
         } else if (params.p) {
-            prefixes = params.p.split(",");
-        } else if (params.pf) {
+        } else if (params.l) {
             const fs = require("fs");
-            if (fs.existsSync(params.pf)) {
-                prefixes = fs.readFileSync(params.pf, 'utf8').split(/\r?\n/).filter(i => i && true);
+            if (fs.existsSync(params.l)) {
+                prefixes = fs.readFileSync(params.l, 'utf8').split(/\r?\n/).filter(i => i && true);
             } else {
-                throw new Error("The prefix list file (-pf) is not readable");
+                throw new Error("The prefix list file (-l) is not readable");
             }
+        }
+
+        if (params.s && params.m) {
+            throw new Error("You can specify -s or -m, not both");
+        } else if (params.s) {
+            monitoredASes = (params.s || "").split(",");
+        } else if (params.m) {
+            monitoredASes = true;
         }
 
         generatePrefixes(
@@ -97,12 +116,13 @@ switch(params._[0]) {
             params.o,
             (params.e || "").split(","),
             params.i || false,
-            prefixes
+            prefixes,
+            monitoredASes
         );
 
         break;
 
     default: // Run monitor
-        const Worker = require("./worker").default;
-        module.exports = new Worker(params.c).pubSub;
+        const Worker = require("./src/worker").default;
+        module.exports = new Worker(params.c);
 }

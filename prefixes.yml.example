@@ -15,3 +15,11 @@
   asn: 15562
   ignoreMorespecifics: false
   ignore: false
+
+
+options:
+  monitorASns:
+    2914:
+      group: default
+    3333:
+      group: default

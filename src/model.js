@@ -36,7 +36,7 @@ export class AS {
         }
 
         if (this.isValid()) {
-            this.numbers.map(i => parseInt(i));
+            this.numbers = this.numbers.map(i => parseInt(i));
         }
     }
 
@@ -51,7 +51,7 @@ export class AS {
 
                     try {
                         const intAsn = parseInt(asn);
-                        if (intAsn !== asn) {
+                        if (intAsn != asn) {
                             return false;
                         }
                         asn = intAsn;

@@ -32,16 +32,16 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorNewPrefix extends Monitor {
+export default class MonitorAS extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
-        this.updateMonitoredPrefixes();
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+        this.updateMonitoredResources();
     };
 
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredMoreSpecifics();
+    updateMonitoredResources = () => {
+        this.monitored = this.input.getMonitoredASns();
     };
 
     filter = (message) => {
@@ -49,9 +49,25 @@ export default class MonitorNewPrefix extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+        const matchedMessages = alerts.map(alert => alert.matchedMessage);
+        const matchPerPrefix = {};
+        const prefixesOut = [];
 
-        if (peers >= this.thresholdMinPeers) {
+        for (let m of matchedMessages) { // Get the number of peers that triggered the alert for each prefix
+            matchPerPrefix[m.prefix] = matchPerPrefix[m.prefix] || [];
+            matchPerPrefix[m.prefix].push(m.peer);
+        }
+
+        for (let p in matchPerPrefix) { // Check if any of the prefixes went above the thresholdMinPeers
+            const peers = [...new Set(matchPerPrefix[p])];
+            if (peers.length >= this.thresholdMinPeers) {
+                prefixesOut.push(p);
+            }
+        }
+
+        if (prefixesOut.length > 1) {
+            return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
+        } else if (prefixesOut.length === 1) {
             return alerts[0].message;
         }
 
@@ -61,18 +77,23 @@ export default class MonitorNewPrefix extends Monitor {
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
+            const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix);
+            const matchedRule = this.monitored.filter(i => message.path.getLast().includes(i.asn))[0];
 
-            if (matchedRule && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
+            if (matchedRule) {
 
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
+                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix);
+                if (!matchedPrefixRule) {
+                    const text = `${messageOrigin} is announcing ${messagePrefix} but this prefix is not in the configured list of announced prefixes`;
+
+                    this.publishAlert(messageOrigin.getId().toString(),
+                        text,
+                        messageOrigin.getId(),
+                        matchedRule,
+                        message,
+                        {});
+                }
             }
 
             resolve(true);

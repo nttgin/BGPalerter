@@ -83,3 +83,10 @@
     match: ".*2914$"
     minLength: 2
     matchDescription: test description
+
+options:
+  monitorASns:
+    2914:
+      group: default
+    3333:
+      group: default

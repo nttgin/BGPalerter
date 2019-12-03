@@ -16,7 +16,11 @@ The following are common parameters which it is possible to specify in the confi
 |logging.zippedArchive| Indicates if when a file gets rotates it has to be zipped or not. | A boolean | true | Yes |
 |logging.maxSize| Indicates the maximum file size allowed before to be rotated (by adding .number ad the end). This allows to rotate files when logRotatePattern still the same but the file is too big | A string (indicating an amount and a unit of measure) | 20m | Yes |
 |logger.maxFiles| Indicates the maximum amount of files or the maximum amount of days the files are retained. When this threshold is passed, files get deleted. | A string (a number or an amount of days ending with "d") | 14d | Yes |
-|checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes | 
+|checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
+|uptimeMonitor| A dictionary of parameters containing the configuration for the uptime monitor feature. The API showing the status of BGPalerter is available at The API is reachable at `http://localhost:8011/status`| | | No | 
+|uptimeMonitor.active| A boolean that if set to true enables the monitor. When set to false none of the monitoring components and dependencies are loaded (and no port has to be open).| A boolean | true | No | 
+|uptimeMonitor.useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. | A boolean | true | No | 
+|uptimeMonitor.port| The port on which the API will be reachable.| An integer | 8011 | No | 
 
 
 ## Composition
@@ -26,6 +30,11 @@ You can compose the tool with 3 main components: connectors, monitors, and repor
 * Connectors retrieve/listen to the data from different sources and transform them to a common format.
 * Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
 * Reports send/store the alerts, e.g. by email or to a file.
+
+> In config.yml.example there are all the possible components declarations (similar to the one of the example below). You can enable the various components by uncommenting the related block.
+
+
+Example of composition:
 
 ```yaml
 connectors:
@@ -127,11 +136,26 @@ Parameters for this monitor module:
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 
 
-#### monitorNewPrefix
+#### monitorPath
 
-This monitor has the logic to detect unexpected change of configuration in the form of new prefixes announced by the correct AS.
-In particular, it will monitor for all the declared prefixes and will trigger an alert when:
-* A sub-prefix of the monitored prefix starts to be announced by the same AS declared for the prefix.
+This monitor detects BGP updates containing AS_PATH which match particular regular expressions.
+
+> Example: 
+> The prefixes list of BGPalerter has an entry such as:
+> ```yaml
+> 165.254.255.0/24:
+>    asn: 15562
+>    description: an example on path matching
+>    ignoreMorespecifics: false
+>  path:
+>    match: ".*2194,1234$"
+>    notMatch: ".*5054.*"
+>    matchDescription: detected scrubbing center
+> ```
+> An alert will be generated when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
+> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
+
+More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
 
 Parameters for this monitor module:
 
@@ -141,6 +165,63 @@ Parameters for this monitor module:
 
 
 
+
+#### monitorNewPrefix
+
+This monitor has the logic to detect unexpected change of configuration in the form of new more specific prefixes announced by the correct AS.
+
+In particular, it will monitor for all the declared prefixes and will trigger an alert when:
+* A sub-prefix of the monitored prefix starts to be announced by the same AS declared for the prefix.
+
+> Example: 
+> The prefixes list of BGPalerter has an entry such as:
+> ```yaml
+> 50.82.0.0/20:
+>    asn: 58302
+>    description: an example
+>    ignoreMorespecifics: false
+> ```
+> If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g. 50.82.4.0/24) is announced by AS58302.
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+
+
+#### monitorAS
+
+This monitor will listen for all announcements produced by the monitored Autonomous Systems and will detect when a prefix, which is not in the monitored prefixes list, is announced.
+This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g. misconfiguration, typo).
+
+
+> Example: 
+> The prefixes list of BGPalerter has an options.monitorASns list declared, such as:
+> ```yaml
+> 50.82.0.0/20:
+>    asn: 58302
+>    description: an example
+>    ignoreMorespecifics: false
+> 
+> options:
+>  monitorASns:
+>    58302:
+>      group: default
+> ```
+> If in config.yml monitorAS is enabled, you will receive alerts every time a prefix not already part of the prefixes list is announced by AS58302.
+> 
+>If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
+
+You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+
+    
 ### Reports
 
 Possible reports are:
