@@ -38,7 +38,7 @@ monitors:
     params:
       thresholdMinPeers: 10
 
-  - file: MonitorAS
+  - file: monitorAS
     channel: misconfiguration
     name: asn-monitor
     params:
