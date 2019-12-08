@@ -1,20 +1,22 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Bug report
+about: Create a bug report
 title: ''
-labels: enhancement
+labels: bug
 assignees: ''
 
 ---
 
-**Describe what you would like to achieve**
-A clear and concise description of what you want to happen.
-
-**Describe why the current solution (if any) is not satisfactory**
-A clear and concise description.
+**Describe the bug**
+A clear and concise description of what the bug is.
 
 **Provide an example**
 Provide an example in terms of prefixes and BGP messages. Possibly provide a snippet of config.yml and prefixes.yml.
+
+**Expected behavior**
+A clear and concise description of what you expected to happen.
+
+**Are you using the binary or the source code?**
 
 
 **Your information**
