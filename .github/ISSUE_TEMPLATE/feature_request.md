@@ -18,6 +18,4 @@ Provide an example in terms of prefixes and BGP messages. Possibly provide a sni
 
 
 **Your information**
-Provide your name and your AS/company [1].
-
-[1] See Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/
+Provide your name and your AS/company (see Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/).

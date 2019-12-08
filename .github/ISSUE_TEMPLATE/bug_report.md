@@ -20,6 +20,4 @@ A clear and concise description of what you expected to happen.
 
 
 **Your information**
-Provide your name and your AS/company [1].
-
-[1] See Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/
+Provide your name and your AS/company (see Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/).
