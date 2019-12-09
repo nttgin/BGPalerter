@@ -39,7 +39,7 @@
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.0",
     "path": "^0.12.7",
-    "pkg": "^4.4.0",
+    "pkg": "^4.4.1",
     "pubsub-js": "^1.7.0",
     "resnap": "^1.0.1",
     "restify": "^8.5.0",
