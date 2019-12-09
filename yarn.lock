@@ -3505,10 +3505,10 @@ object-copy@^0.1.0:
     define-property "^0.2.5"
     kind-of "^3.0.3"
 
-object-hash@^1.3.0:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-1.3.1.tgz#fde452098a951cb145f039bb7d455449ddc126df"
-  integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
+object-hash@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/object-hash/-/object-hash-2.0.1.tgz#cef18a0c940cc60aa27965ecf49b782cbf101d96"
+  integrity sha512-HgcGMooY4JC2PBt9sdUdJ6PMzpin+YtY3r/7wg0uTifP+HJWW8rammseSEHuyt0UeShI183UGssCJqm1bJR7QA==
 
 object-keys@^1.0.11, object-keys@^1.0.12:
   version "1.1.1"
@@ -5087,13 +5087,13 @@ widest-line@^2.0.0:
   dependencies:
     string-width "^2.1.1"
 
-winston-daily-rotate-file@^4.3.0:
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-4.3.0.tgz#318bd220e596818127cb158390f902b7c3c2d86b"
-  integrity sha512-YlGYkWuXG91WhWabtX0cXIuwfAv8Zv6eVCMBs+xErtxOLNLNr0HO8XMk3SyKq3ZLc9Gii8UIEWhEWHy4ZyENfA==
+winston-daily-rotate-file@^4.3.1:
+  version "4.3.1"
+  resolved "https://registry.yarnpkg.com/winston-daily-rotate-file/-/winston-daily-rotate-file-4.3.1.tgz#6a317aba329ee6eb5053a9ff0560bb31196a09ee"
+  integrity sha512-E2Mdour0XuXhZ2pnoWrVXvIQD6MiYW4IxOsDJqYlTCbkNNxY++fyvg3qNZeQsNcAEcOpBamh/+Dl7qoK8i45yA==
   dependencies:
     file-stream-rotator "^0.5.5"
-    object-hash "^1.3.0"
+    object-hash "^2.0.1"
     triple-beam "^1.3.0"
     winston-transport "^4.2.0"
 
