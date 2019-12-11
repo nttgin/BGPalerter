@@ -59,7 +59,6 @@ export default class ReportSyslog extends Report {
                 if (this.connected) {
                     resolve(true);
                 } else {
-                    console.log("connecting");
                     this.client = syslog.createClient(this.host, this.options);
                     this.connected = true;
 
@@ -90,7 +89,6 @@ export default class ReportSyslog extends Report {
             .then(() => {
                 const message = this._getMessage(channel, content);
 
-                console.log(message);
                 this.client.log(message, {}, error => {
                     if (error) {
                         this.logger.log({
