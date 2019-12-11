@@ -268,6 +268,20 @@ Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
-|host| Host and port of the Kafka instance/broker (e.g. localhost:9092).| 
+|host| Host of the Kafka instance/broker (e.g. localhost).| 
+|port| Port of the Kafka instance/broker (e.g. 9092).| 
 |topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
+ 
+ #### reportSyslog
+ 
+This report module sends the alerts on Syslog.
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
+|host| Host of the Syslog server (e.g. localhost).| 
+|port| Port of the Syslog server  (e.g. 514).| 
+|templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
  

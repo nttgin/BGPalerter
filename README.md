@@ -47,6 +47,7 @@ Please uncomment the related section and configure according to your needs.
             - [reportEmail](docs/configuration.md#reportemail)
             - [reportSlack](docs/configuration.md#reportslack)
             - [reportKafka](docs/configuration.md#reportkafka)
+            - [reportSyslog](docs/configuration.md#reportsyslog)
     - [Uptime monitoring](docs/uptime-monitor.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
