@@ -40,9 +40,9 @@ export default class ReportSyslog extends Report {
         this.client = null;
         this.connected = false;
         this.connecting = null;
-        this.host = [ params.hostname || "localhost", params.port ].filter(i => i != null).join(":");
+        this.host = params.host;
         this.options = {
-            syslogHostname: params.hostname,
+            syslogHostname: params.host,
             transport: syslog.Transport.Udp,
             port: params.port
         };
