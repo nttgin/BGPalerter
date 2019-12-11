@@ -178,3 +178,5 @@ uptimeMonitor:
   port: 8011
 
 ############################
+
+pidFile: bgpalerter.pid

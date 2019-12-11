@@ -67,3 +67,5 @@ uptimeMonitor:
   active: true
   useStatusCodes: true
   port: 8011
+
+pidFile: bgpalerter.pid

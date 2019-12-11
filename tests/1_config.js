@@ -77,7 +77,8 @@ describe("Composition", function() {
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot",
-                    "uptimeMonitor"
+                    "uptimeMonitor",
+                    "pidFile"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
@@ -326,6 +327,21 @@ describe("Composition", function() {
                     done();
                 });
         });
+
+        it("write pid file", function (done) {
+            const file = config.pidFile;
+            expect("bgpalerter.pid").to.equal(file);
+
+            if (file) {
+                readLastLines
+                    .read(file, 1)
+                    .then((line) => {
+                        expect(parseInt(line)).to.equal(process.pid);
+                        done();
+                    });
+            }
+        });
+
     });
 
 });

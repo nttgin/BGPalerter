@@ -33,6 +33,7 @@
 import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
+import fs from "fs";
 
 export default class Worker {
     constructor(configFile) {
@@ -63,10 +64,20 @@ export default class Worker {
     }
 
     master = (worker) => {
-
         console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
         console.log("Loaded config:", this.configFile);
 
+        // Write pid on a file
+        if (this.config.pidFile) {
+            try {
+                fs.writeFileSync(this.config.pidFile, process.pid);
+            } catch (error) {
+                this.logger.log({
+                    level: 'error',
+                    message: "Cannot write pid file: " + error
+                });
+            }
+        }
 
         const connectorFactory = new ConnectorFactory();
 

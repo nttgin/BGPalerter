@@ -129,7 +129,8 @@ let config = {
         active: false,
         useStatusCodes: true,
         port: 8011
-    }
+    },
+    pidFile: "bgpalerter.pid"
 };
 
 
