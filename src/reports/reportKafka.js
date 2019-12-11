@@ -40,7 +40,7 @@ export default class ReportKafka extends Report {
         this.client = null;
         this.producer = null;
         this.connected = false;
-        this.host = this.params.host;
+        this.host = [ this.params.host || "localhost", this.params.port ].filter(i => i != null).join(":");
         this.topics = this.params.topics;
         this.connecting = null;
     }

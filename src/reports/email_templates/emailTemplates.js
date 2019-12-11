@@ -92,6 +92,7 @@ const templateMisconfiguration = '${summary}\n\
 Top ${pathNumber} most used AS paths:\n\
 ${paths}';
 
+const defaultTemplate = '${summary}';
 
 export default class emailTemplates {
 
@@ -151,7 +152,7 @@ export default class emailTemplates {
     }
 
     getTemplate = (channel) => {
-        return this.indexedFiles[channel];
+        return this.indexedFiles[channel] || defaultTemplate;
     };
 
 };

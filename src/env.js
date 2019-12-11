@@ -139,7 +139,6 @@ if (fs.existsSync(vector.configFile)) {
     } catch (error) {
         throw new Error("The file " + vector.configFile + " is not valid yml: " + error.message.split(":")[0]);
     }
-
 } else {
     console.log("Impossible to load config.yml. A default configuration file has been generated.");
     fs.writeFileSync(defaultConfigFilePath, yaml.dump(config))
