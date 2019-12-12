@@ -106,9 +106,28 @@ reports:
 #      - path
 #      - misconfiguration
 #    params:
-#      host: localhost:9092
+#      host: localhost
+#      port: 9092
 #      topics:
 #        default: bgpalerter
+
+#  - file: reportSyslog
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - asn-monitor
+#      - misconfiguration
+#    params:
+#      host: localhost
+#      port: 514
+#      templates:
+#        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
+#        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
+#        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
+#        visibility: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${earliest}|${latest}|${peers}"
+
 
 
 ############################
@@ -159,3 +178,5 @@ uptimeMonitor:
   port: 8011
 
 ############################
+
+pidFile: bgpalerter.pid

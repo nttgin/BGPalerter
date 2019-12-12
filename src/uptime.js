@@ -55,6 +55,7 @@ export default class Uptime {
 
     activate = () => {
         this.server = restify.createServer();
+        this.server.pre(restify.pre.sanitizePath());
         this.server.get('/status', this.respond);
         this.server.head('/status', this.respond);
         this.server.listen(env.config.uptimeMonitor.port, () => {});

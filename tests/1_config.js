@@ -35,7 +35,6 @@ var chaiSubset = require('chai-subset');
 var readLastLines = require('read-last-lines');
 var moment = require('moment');
 var model = require('../src/model');
-const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
@@ -49,7 +48,6 @@ describe("Composition", function() {
     describe("Software updates check", function () {
         it("new version detected", function (done) {
 
-            beforeEach(resetCache);
             var worker = require("../index");
             var pubSub = worker.pubSub;
 
@@ -61,7 +59,6 @@ describe("Composition", function() {
     });
 
     describe("Configuration loader", function () {
-        beforeEach(resetCache);
         var worker = require("../index");
         var config = worker.config;
 
@@ -77,7 +74,8 @@ describe("Composition", function() {
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot",
-                    "uptimeMonitor"
+                    "uptimeMonitor",
+                    "pidFile"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
@@ -172,8 +170,6 @@ describe("Composition", function() {
     });
 
     describe("Input loader", function () {
-
-        beforeEach(resetCache);
         var worker = require("../index");
         var input = worker.input;
 
@@ -282,8 +278,6 @@ describe("Composition", function() {
     });
 
     describe("Logging", function () {
-
-        beforeEach(resetCache);
         var worker = require("../index");
         var config = worker.config;
         var logger = worker.logger;
@@ -326,6 +320,21 @@ describe("Composition", function() {
                     done();
                 });
         });
+
+        it("write pid file", function (done) {
+            const file = config.pidFile;
+            expect("bgpalerter.pid").to.equal(file);
+
+            if (file) {
+                readLastLines
+                    .read(file, 1)
+                    .then((line) => {
+                        expect(parseInt(line)).to.equal(process.pid);
+                        done();
+                    });
+            }
+        });
+
     });
 
 });

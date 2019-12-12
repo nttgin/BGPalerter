@@ -116,7 +116,6 @@ export default class InputYml extends Input {
         this.prefixes = this.prefixes.sort((a, b) => {
             return ipUtils.sortByPrefixLength(b.prefix, a.prefix);
         });
-
     };
 
     validate = (fileContent) => {
@@ -210,6 +209,7 @@ export default class InputYml extends Input {
 
         return errors.length === 0;
     };
+
 
     _validateRegex = (regex) => {
         if (regex) {

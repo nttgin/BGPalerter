@@ -34,7 +34,6 @@ var chai = require("chai");
 var chaiSubset = require('chai-subset');
 var axios = require('axios');
 var model = require('../src/model');
-const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;

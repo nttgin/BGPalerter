@@ -32,7 +32,6 @@
 
 var chai = require("chai");
 var chaiSubset = require('chai-subset');
-const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
 
@@ -42,8 +41,6 @@ global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 
 describe("Alerting", function () {
-
-    beforeEach(resetCache);
     var worker = require("../index");
     var pubSub = worker.pubSub;
 

@@ -31,57 +31,52 @@
  */
 
 import Report from "./report";
-import kafka from "kafka-node";
+import syslog from "syslog-client";
 
-export default class ReportKafka extends Report {
+export default class ReportSyslog extends Report {
 
-    constructor(channels,params, env) {
+    constructor(channels, params, env) {
         super(channels, params, env);
         this.client = null;
-        this.producer = null;
         this.connected = false;
-        this.host = [ this.params.host || "localhost", this.params.port ].filter(i => i != null).join(":");
-        this.topics = this.params.topics;
         this.connecting = null;
+        this.host = params.host;
+        this.options = {
+            syslogHostname: params.host,
+            transport: syslog.Transport.Udp,
+            port: params.port
+        };
     }
 
-    _getTopic = (channel) => {
-        const topic = this.topics[channel] || this.topics['default'];
-        if (!topic) {
-            this.logger.log({
-                level: 'error',
-                message: 'No topic available for alert channel: ' + channel
-            });
-            return false;
-        } else {
-            return topic;
-        }
+
+    _getMessage = (channel, content) => {
+        return this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], this.getContext(channel, content));
     };
 
-    _connectToKafka = () => {
+    _connectToSyslog = () => {
         if (!this.connecting) {
             this.connecting = new Promise((resolve, reject) => {
                 if (this.connected) {
                     resolve(true);
                 } else {
-                    this.client = new kafka.KafkaClient({kafkaHost: this.host});
-                    this.producer = new kafka.HighLevelProducer(this.client);
+                    this.client = syslog.createClient(this.host, this.options);
+                    this.connected = true;
 
-
-                    this.producer.setMaxListeners(0);
-                    this.producer
-                        .on('ready', () => {
-                            this.connected = true;
-                            resolve(true);
+                    this.client.on("close", function () {
+                        this.logger.log({
+                            level: 'error',
+                            message: 'Syslog disconnected: ' + error
                         });
+                    });
 
-                    this.producer
-                        .on('error', (error) => {
-                            this.logger.log({
-                                level: 'error',
-                                message: 'Kafka connector error: ' + error
-                            });
+                    this.client.on("error", function () {
+                        this.logger.log({
+                            level: 'error',
+                            message: 'Syslog: ' + error
                         });
+                    });
+
+                    resolve(true);
                 }
             });
         }
@@ -89,34 +84,20 @@ export default class ReportKafka extends Report {
         return this.connecting;
     };
 
-    _sendOutcome = (error, data) => {
-        this.logger.log({
-            level: 'error',
-            message: 'Kafka error during send: ' + JSON.stringify(data)
-        });
-    };
-
-    _getPayload = (topic, channel, message) => {
-        return [{
-            topic: topic,
-            messages: JSON.stringify(message),
-            key: channel,
-            attributes: 1,
-            timestamp: Date.now()
-        }];
-    };
-
     report = (channel, content) => {
-        return this._connectToKafka()
+        return this._connectToSyslog()
             .then(() => {
-                const topic = this._getTopic(channel);
-                this.producer.send(this._getPayload(topic, channel, content), this._sendOutcome);
-            })
-            .catch(error => {
-                this.logger.log({
-                    level: 'error',
-                    message: 'Kafka disconnected: ' + error
+                const message = this._getMessage(channel, content);
+
+                this.client.log(message, {}, error => {
+                    if (error) {
+                        this.logger.log({
+                            level: 'error',
+                            message: 'Syslog: ' + error
+                        });
+                    }
                 });
             });
-    }
+    };
+
 }

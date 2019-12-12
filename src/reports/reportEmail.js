@@ -31,10 +31,7 @@
  */
 
 import Report from "./report";
-import brembo from "brembo";
-import moment from "moment";
 import nodemailer from "nodemailer";
-import path from "path";
 import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
@@ -112,117 +109,8 @@ export default class ReportEmail extends Report {
         return [];
     };
 
-    _getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {
-        const bgplayTimeOffset = 5 * 60; // 5 minutes
-        return brembo.build("https://stat.ripe.net/", {
-            path: ["widget", "bgplay"],
-            params: {
-                "w.resource": prefix,
-                "w.ignoreReannouncements": true,
-                "w.starttime": moment(start).utc().unix() - bgplayTimeOffset,
-                "w.endtime": moment(end).utc().unix(),
-                "w.rrcs": rrcs.join(","),
-                "w.instant": null,
-                "w.type": "bgp",
-
-            }
-        }).replace("?", "#");
-    };
-
     getEmailText = (channel, content) => {
-        let context = {
-            summary: content.message,
-            earliest: moment(content.earliest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            latest: moment(content.latest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            channel,
-            type: content.origin,
-        };
-
-        let matched = null;
-        let pathsCount = {};
-        let sortedPathIndex = null;
-
-        switch(channel){
-            case "hijack":
-                content.data
-                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-                    .forEach(path => {
-                        if (!pathsCount[path]){
-                            pathsCount[path] = 0;
-                        }
-                        pathsCount[path] ++;
-                    });
-
-                sortedPathIndex = Object.keys(pathsCount)
-                    .map(key => [key, pathsCount[key]] );
-
-                sortedPathIndex.sort((first, second) => second[1] - first[1]);
-
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAS;
-                context.newprefix = content.data[0].matchedMessage.prefix;
-                context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
-                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
-                    .slice(0, this.params.showPaths)
-                    .map(i => i[0]).join("\n") : "Disabled";
-                break;
-
-            case "visibility":
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                break;
-
-            case "newprefix":
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAS;
-                context.newprefix = content.data[0].matchedMessage.prefix;
-                context.bgplay = this._getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                break;
-
-            case "software-update":
-                break;
-
-            case "path":
-                break;
-
-            case "misconfiguration":
-                content.data
-                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-                    .forEach(path => {
-                        if (!pathsCount[path]){
-                            pathsCount[path] = 0;
-                        }
-                        pathsCount[path] ++;
-                    });
-
-                sortedPathIndex = Object.keys(pathsCount)
-                    .map(key => [key, pathsCount[key]] );
-
-                sortedPathIndex.sort((first, second) => second[1] - first[1]);
-                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
-                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
-                    .slice(0, this.params.showPaths)
-                    .map(i => i[0]).join("\n") : "Disabled";
-                break;
-
-            default:
-                return false;
-        }
-
-        return (this.templates[channel]) ? this.templates[channel].replace(/\${([^}]*)}/g, (r,k)=>context[k]) : false;
+        return this.parseTemplate(this.templates[channel], this.getContext(channel, content));
     };
 
     _sendEmail = (email) => {
