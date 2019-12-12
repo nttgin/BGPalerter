@@ -41,7 +41,6 @@
     "path": "^0.12.7",
     "pkg": "^4.4.1",
     "pubsub-js": "^1.7.0",
-    "resnap": "^1.0.1",
     "restify": "^8.5.0",
     "restify-errors": "^8.0.1",
     "syslog-client": "^1.1.1",

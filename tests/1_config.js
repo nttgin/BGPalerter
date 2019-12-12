@@ -35,7 +35,6 @@ var chaiSubset = require('chai-subset');
 var readLastLines = require('read-last-lines');
 var moment = require('moment');
 var model = require('../src/model');
-const resetCache = require('resnap')();
 chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
@@ -49,7 +48,6 @@ describe("Composition", function() {
     describe("Software updates check", function () {
         it("new version detected", function (done) {
 
-            beforeEach(resetCache);
             var worker = require("../index");
             var pubSub = worker.pubSub;
 
@@ -61,7 +59,6 @@ describe("Composition", function() {
     });
 
     describe("Configuration loader", function () {
-        beforeEach(resetCache);
         var worker = require("../index");
         var config = worker.config;
 
@@ -173,8 +170,6 @@ describe("Composition", function() {
     });
 
     describe("Input loader", function () {
-
-        beforeEach(resetCache);
         var worker = require("../index");
         var input = worker.input;
 
@@ -283,8 +278,6 @@ describe("Composition", function() {
     });
 
     describe("Logging", function () {
-
-        beforeEach(resetCache);
         var worker = require("../index");
         var config = worker.config;
         var logger = worker.logger;

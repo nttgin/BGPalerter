@@ -4236,11 +4236,6 @@ require-main-filename@^2.0.0:
   resolved "https://registry.yarnpkg.com/require-main-filename/-/require-main-filename-2.0.0.tgz#d0b329ecc7cc0f61649f62215be69af54aa8989b"
   integrity sha512-NKN5kMDylKuldxYLSUfrbo5Tuzh4hd+2E8NPPX02mZtn1VuREQToYe/ZdlJy+J3uCpfaiGF05e7B8W0iXbQHmg==
 
-resnap@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/resnap/-/resnap-1.0.1.tgz#699157cd351d129f2f70497f1720686a8ab833d9"
-  integrity sha512-INWHhTlHwkl0h9m1MMYBgZmatCLoQwMmeijEyTjEOPXcBBgCfAxskSNAUDLL/lO1PB+evr5FsJ8Y8K+GLkpV3A==
-
 resolve-url@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/resolve-url/-/resolve-url-0.2.1.tgz#2c637fe77c893afd2a663fe21aa9080068e2052a"
