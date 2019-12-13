@@ -17,10 +17,8 @@ The following are common parameters which it is possible to specify in the confi
 |logging.maxSize| Indicates the maximum file size allowed before to be rotated (by adding .number ad the end). This allows to rotate files when logRotatePattern still the same but the file is too big | A string (indicating an amount and a unit of measure) | 20m | Yes |
 |logger.maxFiles| Indicates the maximum amount of files or the maximum amount of days the files are retained. When this threshold is passed, files get deleted. | A string (a number or an amount of days ending with "d") | 14d | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
-|uptimeMonitor| A dictionary of parameters containing the configuration for the uptime monitor feature. The API showing the status of BGPalerter is available at The API is reachable at `http://localhost:8011/status`| | | No | 
-|uptimeMonitor.active| A boolean that if set to true enables the monitor. When set to false none of the monitoring components and dependencies are loaded (and no port has to be open).| A boolean | true | No | 
-|uptimeMonitor.useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. | A boolean | true | No | 
-|uptimeMonitor.port| The port on which the API will be reachable.| An integer | 8011 | No | 
+|uptimeMonitors| A list of modules allowing various way to check for the status of BGPalerter (e.g. API, heartbeat). See [here](uptime-monitor.md) for more information. | | | No | 
+
 
 
 ## Composition

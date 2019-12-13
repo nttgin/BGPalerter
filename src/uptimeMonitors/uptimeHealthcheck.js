@@ -39,7 +39,7 @@ export default class UptimeHealthcheck extends Uptime {
     constructor(connectors, params){
         super(connectors, params);
 
-        setInterval(this.check, params.intervalSecond * 1000);
+        setInterval(this.check, params.intervalSeconds * 1000);
     };
 
     check = () => {
