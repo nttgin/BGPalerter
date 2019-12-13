@@ -48,17 +48,19 @@ describe("Uptime Monitor", function() {
     var config = worker.config;
 
     it("uptime config", function () {
-        expect(config.uptimeMonitor).to.have
-            .keys([
-                "active",
-                "useStatusCodes",
-                "port"
-            ]);
+        expect(config.uptimeMonitors[0]).to
+            .containSubset({
+                params: {
+                    useStatusCodes: true,
+                    host: null,
+                    port: 8011
+                }
+            });
     });
 
     it("API format and header", function (done) {
 
-        const port = config.uptimeMonitor.port;
+        const port = config.uptimeMonitors[0].params.port;
 
         axios({
             method: 'get',
