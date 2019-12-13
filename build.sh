@@ -11,7 +11,7 @@ cp package.json build/package.json
 
 cd build
 
-npm install
+npm install --silent
 
 #./node_modules/.bin/pkg . --targets node10-win-x64 --output ../bin/bgpalerter-win-x64
 
