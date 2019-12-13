@@ -30,56 +30,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import env from "./env";
+import Uptime from "./uptime";
 import restify from "restify";
-import errors from "restify-errors";
+import env from "../env";
 
-export default class Uptime {
+export default class UptimeApi extends Uptime {
 
-    constructor(connectors){
+    constructor(connectors, params){
+        super(connectors, params);
         this.server = null;
-
         this.connectors = connectors;
-        this.activate();
+        try {
+            this.server = restify.createServer();
+            this.server.pre(restify.pre.sanitizePath());
+            this.server.get('/status', this.respond);
+            this.server.head('/status', this.respond);
+            if (params.host) {
+                this.server.listen(params.port, params.host);
+            } else {
+                this.server.listen(params.port);
+            }
+        } catch (error) {
+            env.logger.log({
+                level: 'error',
+                message: error
+            });
+        }
     };
 
     respond = (req, res, next) => {
         res.contentType = 'json';
         const response = this.getCurrentStatus();
-        if (env.config.uptimeMonitor.useStatusCodes && response.warning) {
+        if (this.params.useStatusCodes && response.warning) {
             res.status(500);
         }
         res.send(response);
         next();
-    };
-
-    activate = () => {
-        this.server = restify.createServer();
-        this.server.pre(restify.pre.sanitizePath());
-        this.server.get('/status', this.respond);
-        this.server.head('/status', this.respond);
-        this.server.listen(env.config.uptimeMonitor.port, () => {});
-    };
-
-    getCurrentStatus = () => {
-        const connectors = this.connectors
-            .getConnectors()
-            .filter(connector => {
-                return connector.constructor.name != "ConnectorSwUpdates";
-            })
-            .map(connector => {
-                return {
-                    name: connector.constructor.name,
-                    connected: connector.connected
-                };
-            });
-
-        const disconnected = connectors.some(connector => !connector.connected);
-        return {
-            warning: disconnected,
-            connectors,
-        };
-
     };
 
 }

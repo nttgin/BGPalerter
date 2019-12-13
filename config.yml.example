@@ -180,3 +180,17 @@ uptimeMonitor:
 ############################
 
 pidFile: bgpalerter.pid
+
+
+#uptimeMonitors:
+#  - file: uptimeApi
+#    params:
+#      useStatusCodes: true
+#      host: null
+#      port: 8011
+#
+#  - file: uptimeHealthcheck
+#    params:
+#      url: url_to_poll
+#      intervalSeconds: 300
+#      method: get

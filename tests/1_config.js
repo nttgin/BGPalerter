@@ -74,7 +74,7 @@ describe("Composition", function() {
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot",
-                    "uptimeMonitor",
+                    "uptimeMonitors",
                     "pidFile"
                 ]);
             expect(config.connectors[0]).to.have

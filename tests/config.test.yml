@@ -63,9 +63,11 @@ logging:
 
 checkForUpdatesAtBoot: true
 
-uptimeMonitor:
-  active: true
-  useStatusCodes: true
-  port: 8011
+uptimeMonitors:
+  - file: uptimeApi
+    params:
+      useStatusCodes: true
+      host: null
+      port: 8011
 
 pidFile: bgpalerter.pid

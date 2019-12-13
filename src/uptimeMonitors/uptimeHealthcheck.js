@@ -30,48 +30,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var axios = require('axios');
-var model = require('../src/model');
-chai.use(chaiSubset);
-var expect = chai.expect;
-var AS = model.AS;
+import Uptime from "./uptime";
+import axios from "axios";
+import env from "../env";
 
-var asyncTimeout = 20000;
-global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+export default class UptimeHealthcheck extends Uptime {
 
-describe("Uptime Monitor", function() {
+    constructor(connectors, params){
+        super(connectors, params);
 
-    var worker = require("../index");
-    var config = worker.config;
+        setInterval(this.check, params.intervalSeconds * 1000);
+    };
 
-    it("uptime config", function () {
-        expect(config.uptimeMonitors[0]).to
-            .containSubset({
-                params: {
-                    useStatusCodes: true,
-                    host: null,
-                    port: 8011
-                }
-            });
-    });
+    check = () => {
+        const method = ["get", "post"].includes(this.params.method) ? this.params.method : "get";
+        const status = this.getCurrentStatus();
 
-    it("API format and header", function (done) {
+        if (status.warning === false) {
+            const query = {
+                url: this.params.url,
+                method,
+                responseType: 'json'
+            };
 
-        const port = config.uptimeMonitors[0].params.port;
+            if (this.params.method === "post") {
+                query.data = status;
+            }
 
-        axios({
-            method: 'get',
-            responseType: 'json',
-            url: `http://localhost:${port}/status`
-        })
-            .then(data => {
-                expect(data.status).to.equal(200);
-                expect(data.data.warning).to.equal(false);
-                done();
-            });
+            axios(query)
+                .catch(error => {
+                    env.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                });
+        }
+    };
 
-    }).timeout(asyncTimeout);
-});
+
+}
+
+

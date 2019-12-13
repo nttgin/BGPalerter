@@ -125,11 +125,6 @@ let config = {
         maxFiles: "14d",
     },
     checkForUpdatesAtBoot: true,
-    uptimeMonitor: {
-        active: false,
-        useStatusCodes: true,
-        port: 8011
-    },
     pidFile: "bgpalerter.pid"
 };
 

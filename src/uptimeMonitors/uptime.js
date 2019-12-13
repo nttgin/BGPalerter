@@ -30,48 +30,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var axios = require('axios');
-var model = require('../src/model');
-chai.use(chaiSubset);
-var expect = chai.expect;
-var AS = model.AS;
+export default class Uptime {
 
-var asyncTimeout = 20000;
-global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+    constructor(connectors, params){
+        this.connectors = connectors;
+        this.params = params;
+    };
 
-describe("Uptime Monitor", function() {
 
-    var worker = require("../index");
-    var config = worker.config;
-
-    it("uptime config", function () {
-        expect(config.uptimeMonitors[0]).to
-            .containSubset({
-                params: {
-                    useStatusCodes: true,
-                    host: null,
-                    port: 8011
-                }
-            });
-    });
-
-    it("API format and header", function (done) {
-
-        const port = config.uptimeMonitors[0].params.port;
-
-        axios({
-            method: 'get',
-            responseType: 'json',
-            url: `http://localhost:${port}/status`
-        })
-            .then(data => {
-                expect(data.status).to.equal(200);
-                expect(data.data.warning).to.equal(false);
-                done();
+    getCurrentStatus = () => {
+        const connectors = this.connectors
+            .getConnectors()
+            .filter(connector => {
+                return connector.constructor.name != "ConnectorSwUpdates";
+            })
+            .map(connector => {
+                return {
+                    name: connector.constructor.name,
+                    connected: connector.connected
+                };
             });
 
-    }).timeout(asyncTimeout);
-});
+        const disconnected = connectors.some(connector => !connector.connected);
+        return {
+            warning: disconnected,
+            connectors,
+        };
+
+    };
+
+}
+
+
