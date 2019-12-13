@@ -81,6 +81,13 @@ export default class Worker {
 
         const connectorFactory = new ConnectorFactory();
 
+        if (this.config.uptimeMonitor) {
+            this.logger.log({
+                level: 'error',
+                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/uptime-monitor.md"
+            });
+        }
+
         if (this.config.uptimeMonitors) {
             for (let uptimeEntry of this.config.uptimeMonitors) {
                 const UptimeModule = require("./uptimeMonitors/" + uptimeEntry.file).default;
