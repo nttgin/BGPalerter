@@ -81,9 +81,9 @@ export default class Worker {
 
         const connectorFactory = new ConnectorFactory();
 
-        if (this.config.uptimeMonitor && this.config.uptimeMonitor.active) {
-            const Uptime = require("./uptime").default;
-            new Uptime(connectorFactory);
+        for (let uptimeEntry of this.config.uptimeMonitors) {
+            const UptimeModule = require("./uptimeMonitors/" + uptimeEntry.file).default;
+            new UptimeModule(connectorFactory, uptimeEntry.params);
         }
 
         connectorFactory.loadConnectors();

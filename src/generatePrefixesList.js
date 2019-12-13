@@ -41,7 +41,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 }
 
                 return asns;
-            })
+            });
     };
 
     const getAnnouncedMoreSpecifics = (prefix) => {
