@@ -1,4 +1,4 @@
-[![Build Status](https://api.travis-ci.org/nttgin/bgpalerter.svg)](https://travis-ci.org/nttgin/bgpalerter)
+[![Build Status](https://travis-ci.org/nttgin/BGPalerter.svg?branch=master)](https://travis-ci.org/nttgin/BGPalerter)
 ![Dependabot Status](https://badgen.net/dependabot/nttgin/BGPalerter/?icon=dependabot)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 [![Known Vulnerabilities](https://snyk.io/test/github/nttgin/BGPalerter/badge.svg?targetFile=package.json)](https://snyk.io/test/github/nttgin/BGPalerter?targetFile=package.json)
