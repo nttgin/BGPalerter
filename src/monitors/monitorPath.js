@@ -66,7 +66,7 @@ export default class MonitorPath extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && matchedRule.path) {
+            if (matchedRule && !matchedRule.ignore && matchedRule.path) {
                 const pathString = message.path.getValues().join(",");
 
                 let expMatch = true;

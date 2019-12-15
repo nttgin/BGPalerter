@@ -90,7 +90,7 @@ export default class Input {
 
         for (let p of this.prefixes) {
             if (p.prefix === prefix) {
-                return (p.ignore) ? null : p;
+                return p;
             } else {
                 if (!this.cache[p.prefix]) {
                     this.cache[p.prefix] = ipUtils.getNetmask(p.prefix);
