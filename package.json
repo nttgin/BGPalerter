@@ -38,7 +38,7 @@
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.1",
     "path": "^0.12.7",
-    "pkg": "^4.4.1",
+    "pkg": "^4.4.2",
     "pubsub-js": "^1.7.0",
     "restify": "^8.5.0",
     "syslog-client": "^1.1.1",
