@@ -38,14 +38,14 @@
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.1",
     "path": "^0.12.7",
-    "pkg": "^4.4.1",
+    "pkg": "^4.4.2",
     "pubsub-js": "^1.7.0",
-    "restify": "^8.5.0",
+    "restify": "^8.5.1",
     "syslog-client": "^1.1.1",
     "websocket-stream": "^5.5.0",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.3.1",
-    "ws": "^7.2.0",
+    "winston-daily-rotate-file": "^4.4.0",
+    "ws": "^7.2.1",
     "yargs": "^15.0.2"
   },
   "pkg": {
