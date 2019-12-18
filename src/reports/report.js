@@ -137,6 +137,7 @@ export default class Report {
                 break;
 
             case "misconfiguration":
+                context.asn = content.data[0].matchedRule.asn.toString();
                 content.data
                     .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
                     .forEach(path => {
