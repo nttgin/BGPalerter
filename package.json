@@ -10,6 +10,7 @@
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
+    "inspect": "node --inspect --require @babel/register index.js",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
