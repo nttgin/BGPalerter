@@ -18,8 +18,7 @@ The following are common parameters which it is possible to specify in the confi
 |logger.maxFiles| Indicates the maximum amount of files or the maximum amount of days the files are retained. When this threshold is passed, files get deleted. | A string (a number or an amount of days ending with "d") | 14d | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
 |uptimeMonitors| A list of modules allowing various way to check for the status of BGPalerter (e.g. API, heartbeat). See [here](uptime-monitor.md) for more information. | | | No | 
-
-
+|sentryDSN| The DSN corresponding to the Sentry project to send the runtime exceptions to. | `https://<key>@<sentry-server-address-or-nameserver>/<project>` | `https://bgpalerter@sentry.io/1` | No |
 
 ## Composition
 
@@ -282,4 +281,3 @@ Parameters for this report module:
 |host| Host of the Syslog server (e.g. localhost).| 
 |port| Port of the Syslog server  (e.g. 514).| 
 |templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
- 

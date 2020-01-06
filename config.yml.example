@@ -176,3 +176,10 @@ checkForUpdatesAtBoot: true
 #      method: get
 
 pidFile: bgpalerter.pid
+
+############################
+#
+# sentryDSN: https://<key>@sentry.io/<project>
+#
+# Create a new project for monitoring BGPalerter on your Sentry server and grab
+# the generated DSN.

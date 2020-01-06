@@ -125,7 +125,8 @@ let config = {
         maxFiles: "14d",
     },
     checkForUpdatesAtBoot: true,
-    pidFile: "bgpalerter.pid"
+    pidFile: "bgpalerter.pid",
+    sentryDSN: null
 };
 
 
