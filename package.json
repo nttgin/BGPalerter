@@ -25,7 +25,7 @@
     "@babel/preset-env": "^7.7.7",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "nodemon": "^2.0.1",
     "read-last-lines": "^1.7.1"
   },
