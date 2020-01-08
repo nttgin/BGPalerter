@@ -138,10 +138,10 @@ reports:
 #      - misconfiguration
 #    params:
 #      severity:
-#        hijack: 0
-#        newprefix: 2
-#        visibility: 4
-#        path: 7
+#        hijack: critical
+#        newprefix: informational
+#        visibility: debug
+#        path: trace
 #      resource_templates:
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"

@@ -69,7 +69,7 @@ export default class ReportAlerta extends Report {
 
         const severity = (this.params && this.params.severity && this.params.severity[message])
             ? this.params.severity[message]
-            : 5; // informational level
+            : "informational"; // informational level
         const context = this.getContext(message, content);
 
         axios({
