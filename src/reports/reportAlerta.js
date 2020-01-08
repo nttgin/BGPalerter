@@ -65,19 +65,6 @@ export default class ReportAlerta extends Report {
 
     }
 
-    _getResourceText = (message, context) => {
-
-        switch(message){
-            case "hijack", "visibility", "newprefix":
-                return context.prefix + " @ " + context.asn;
-                break;
-
-            default:
-                return message;
-        }
-
-    };
-
     _createAlertaAlert = (url, message, content) => {
 
         const severity = (this.params && this.params.severity && this.params.severity[message])
@@ -92,7 +79,7 @@ export default class ReportAlerta extends Report {
             resposnseType: "json",
             data: {
                 event: message,
-                resource: this._getResourceText(message, context),
+                resource: this.parseTemplate(this.params.resource_templates[message] || this.params.resource_templates["default"], context),
                 text: content.message,
                 service: [(this.params.service || "BGPalerter")],
                 attributes: context,

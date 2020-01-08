@@ -142,6 +142,11 @@ reports:
 #        newprefix: 2
 #        visibility: 4
 #        path: 7
+#      resource_templates:
+#        default: "${type}"
+#        hijack: "hijack::${prefix}@@${asn}"
+#        newprefix: "newprefix::${prefix}@@${asn}"
+#        visibility: "visibility::${prefix}@@${asn}"
 #      urls:
 #        default: _YOUR_ALERTA_API_URL_
 
