@@ -292,6 +292,7 @@ Parameters for this report module:
 |Parameter| Description |
 |---|---|
 |severity| The alert severity, e.g., ``critical``. See https://docs.alerta.io/en/latest/api/alert.html#alert-severities for the list of possible values. |
+|environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
 |key| Optional, the Alerta API key to use for authenticated requests. |
 |token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
 |resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details. |

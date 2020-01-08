@@ -38,7 +38,7 @@ export default class ReportAlerta extends Report {
     constructor(channels, params, env) {
         super(channels, params, env);
 
-        this.environment = env.environment;
+        this.environment = this.params.environment || env.environment;
         this.enabled = true;
         if (!this.params.urls || !Object.keys(this.params.urls).length){
             this.logger.log({
