@@ -48,18 +48,18 @@ export default class Worker {
         this.configFile = env.configFile;
 
 
-        // if (this.config.environment === "test") {
+        if (this.config.environment === "test") {
 
             this.master();
             new Consumer();
 
-        // } else {
-        //     if (cluster.isMaster) {
-        //         this.master(cluster.fork());
-        //     } else {
-        //         new Consumer();
-        //     }
-        // }
+        } else {
+            if (cluster.isMaster) {
+                this.master(cluster.fork());
+            } else {
+                new Consumer();
+            }
+        }
 
     }
 
