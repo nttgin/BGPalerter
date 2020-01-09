@@ -100,7 +100,7 @@ describe("Alerting", function () {
                 id: '15562-4-165.254.255.0/25',
                 origin: 'basic-hijack-detection',
                 affected: 15562,
-                message: 'A new prefix 165.254.255.0/25 is announced by AS4, and AS15562. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
+                message: 'A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
                 data: [
                     {
                         extra: {},
@@ -177,7 +177,7 @@ describe("Alerting", function () {
 
         };
 
-        pubSub.subscribe("hijack", function (type, message) {
+        pubSub.subscribe("hijack", (type, message) => {
 
             message = JSON.parse(JSON.stringify(message));
 
@@ -185,7 +185,6 @@ describe("Alerting", function () {
 
             expect(Object.keys(expectedData).includes(id)).to.equal(true);
             expect(expectedData[id] != null).to.equal(true);
-
 
             expect(message).to
                 .containSubset(expectedData[id]);
