@@ -33,7 +33,8 @@
 import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
-import pubSub from 'pubsub-js';
+// import pubSub from 'pubsub-js';
+import PubSub from './pubSub';
 import winston from 'winston';
 import Input from "./inputs/inputYml";
 require('winston-daily-rotate-file');
@@ -251,6 +252,6 @@ const input = new Input(config);
 vector.config = config;
 vector.logger = wlogger;
 vector.input = input;
-vector.pubSub = pubSub;
+vector.pubSub = new PubSub();
 
 module.exports = vector;

@@ -38,19 +38,24 @@ export default class Monitor {
         this.pubSub = env.pubSub;
         this.logger = env.logger;
         this.input = env.input;
-        this.params = params;
+        this.params = params || {};
+        this.maxDataSamples = this.params.maxDataSamples || 1000;
         this.name = name;
         this.channel = channel;
         this.monitored = [];
         this.alerts = {};
         this.sent = {};
+        this.truncated = {};
+        this.fadeOff = {};
 
         this.internalConfig = {
-            notificationIntervalSeconds: this.config.notificationIntervalSeconds,
-            checkStaleNotificationsSeconds: 60,
-            clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 3) / 2
+            notificationInterval: this.config.notificationIntervalSeconds * 1000,
+            checkStaleNotifications: 60 * 1000,
+            fadeOff:  5 * 60 * 1000,
+            clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 1000 * 3) / 2
         };
-        setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000);
+
+        setInterval(this._publish, this.internalConfig.checkStaleNotifications);
     };
 
     updateMonitoredResources = () => {
@@ -70,73 +75,85 @@ export default class Monitor {
         throw new Error('The method squashAlerts must be implemented in ' + this.name);
     };
 
-    _squash = (alerts) => {
+    _squash = (id) => {
 
+        const alerts = this.alerts[id];
         const message = this.squashAlerts(alerts);
 
         if (message) {
             const firstAlert = alerts[0];
-            const id = firstAlert.id;
             let earliest = Infinity;
             let latest = -Infinity;
 
             for (let alert of alerts) {
-
                 earliest = Math.min(alert.timestamp, earliest);
                 latest = Math.max(alert.timestamp, latest);
-
-                if (id !== alert.id) {
-                    throw new Error('Squash MUST receive a list of events all with the same ID.');
-                }
             }
 
             return {
                 id,
+                truncated: this.truncated[id],
                 origin: this.name,
                 earliest,
                 latest,
                 affected: firstAlert.affected,
                 message,
-                data: alerts.map(a => {
-                    return {
-                        extra: a.extra,
-                        matchedRule: a.matchedRule,
-                        matchedMessage: a.matchedMessage,
-                        timestamp: a.timestamp
-                    };
-                })
+                data: alerts
+                // .map(a => {
+                //     return {
+                //         extra: a.extra,
+                //         matchedRule: a.matchedRule,
+                //         matchedMessage: a.matchedMessage,
+                //         timestamp: a.timestamp
+                //     };
+                // })
             }
         }
     };
 
-    publishAlert = (id, message, affected, matchedRule, matchedMessage, extra) => {
+    publishAlert = (id, affected, matchedRule, matchedMessage, extra) => {
 
         const context = {
-            id,
+            // id,
             timestamp: new Date().getTime(),
-            message,
             affected,
             matchedRule,
             matchedMessage,
             extra
         };
 
-        if (!this.alerts[id]) {
-            this.alerts[id] = [];
-        }
+        if (this.config.alertOnlyOnce && this.sent[id]) {
 
-        this.alerts[id].push(context);
+            return false;
 
-        if (!this.sent[id]) {
-            this._publish();
+        } else {
+
+            this.alerts[id] = this.alerts[id] || [];
+            this.alerts[id].push(context);
+
+            // Check if for each alert group the maxDataSamples parameter is respected
+            if (!this.truncated[id] && this.alerts[id].length > this.maxDataSamples) {
+                this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+                this.alerts[id] = this.alerts[id].slice(-this.maxDataSamples); // Truncate
+            }
+
+            if (!this.sent[id]) {
+                this._publish(id);
+            }
+
+            return true;
         }
     };
 
     _clean = (group) => {
         if (this.config.alertOnlyOnce) {
             delete this.alerts[group.id];
-        } else if (this.config.alertOnlyOnce && new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
+            delete this.fadeOff[group.id];
+            delete this.truncated[group.id];
+        } else if (new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
             delete this.alerts[group.id];
+            delete this.fadeOff[group.id];
+            delete this.truncated[group.id];
             delete this.sent[group.id];
 
             return true;
@@ -153,7 +170,7 @@ export default class Monitor {
         } else if (lastTimeSent) {
 
             const isThereSomethingNew = lastTimeSent < group.latest;
-            const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.internalConfig.notificationIntervalSeconds * 1000);
+            const isItTimeToSend = new Date().getTime() > lastTimeSent + this.internalConfig.notificationIntervalSeconds;
 
             return isThereSomethingNew && isItTimeToSend;
         } else {
@@ -161,18 +178,37 @@ export default class Monitor {
         }
     };
 
-    _publish = () => {
+    _publish = (id) => {
 
-        for (let id in this.alerts) {
-            const group = this._squash(this.alerts[id]);
+        const now = new Date().getTime();
+        let alerts;
 
-            if (group) {
-                if (this._checkLastSent(group)) {
-                    this.sent[group.id] = new Date().getTime();
-                    this._publishOnChannel(group);
+        if (id) {
+            alerts = { [id]: this.alerts[id] };
+        } else {
+            alerts = this.alerts;
+        }
+
+        for (let id in alerts) {
+
+            if (now > this.fadeOff[id] + this.internalConfig.fadeOff) {
+                delete this.fadeOff[id];
+                delete this.alerts[id];
+                delete this.truncated[id];
+            } else {
+
+                const group = this._squash(id);
+
+                if (group) {
+                    if (this._checkLastSent(group)) {
+                        this.sent[group.id] = now;
+                        this._publishOnChannel(group);
+                    }
+
+                    this._clean(group);
+                } else {
+                    this.fadeOff[id] = this.fadeOff[id] || now;
                 }
-
-                this._clean(group);
             }
         }
 
