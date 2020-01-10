@@ -129,7 +129,26 @@ reports:
 #        visibility: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${earliest}|${latest}|${peers}"
 #        misconfiguration: "++BGPalerter-3-${type}: ${summary}|${asn}|${prefix}|${earliest}|${latest}"
 
-
+#  - file: reportAlerta
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#    params:
+#      severity:
+#        hijack: critical
+#        newprefix: informational
+#        visibility: debug
+#        path: trace
+#      resource_templates:
+#        default: "${type}"
+#        hijack: "hijack::${prefix}@@${asn}"
+#        newprefix: "newprefix::${prefix}@@${asn}"
+#        visibility: "visibility::${prefix}@@${asn}"
+#      urls:
+#        default: _YOUR_ALERTA_API_URL_
 
 ############################
 # Notification settings:
