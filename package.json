@@ -35,6 +35,7 @@
     "brembo": "^2.0.3",
     "event-stream": "^4.0.1",
     "ip-address": "^6.2.0",
+    "ip-sub": "^1.0.2",
     "js-yaml": "^3.13.1",
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.1",
