@@ -3,26 +3,31 @@ export class Path {
         this.value = listAS;
     };
 
-    getLast = () => {
+    getLast (){
         return this.value[this.value.length - 1];
     };
 
-    toString = () => {
+    toString () {
         return JSON.stringify(this.toJSON());
     };
 
-    getValues = () => {
+    getValues () {
         return this.value.map(i => i.getValue());
     };
 
-    toJSON = () => this.getValues();
+    toJSON () {
+        return this.getValues();
+    }
 }
 
 
 export class AS {
+    static _instances = {};
+
     constructor(numbers) {
         this.numbers = null;
         this.ASset = false;
+        this._instanceIndex = 0;
 
         if (["string", "number"].includes(typeof(numbers))) {
             this.numbers = [ numbers ];
@@ -38,13 +43,20 @@ export class AS {
         if (this.isValid()) {
             this.numbers = this.numbers.map(i => parseInt(i));
         }
+
+        const key = this.numbers.join("-");
+        if (!!AS._instances[key]) {
+            return AS._instances[key];
+        }
+
+        AS._instances[key] = this;
     }
 
-    getId = () => {
+    getId () {
         return (this.numbers.length === 1) ? this.numbers[0] : this.numbers.sort().join("-");
     };
 
-    isValid = () => {
+    isValid () {
         return this.numbers.length > 0 &&
             this.numbers
                 .every(asn => {
@@ -64,7 +76,7 @@ export class AS {
             [...new Set(this.numbers.map(i => parseInt(i)))].length === this.numbers.length;
     };
 
-    includes = (ASn) => {
+    includes (ASn){
 
         for (let a of ASn.numbers) {
             if (!this.numbers.includes(a)) {
@@ -75,19 +87,19 @@ export class AS {
         return true;
     };
 
-    isASset = () => {
+    isASset () {
         return this.ASset;
     };
 
-    getValue = () => {
-        return (this.numbers.length > 1) ? this.numbers : this.numbers[0]
+    getValue () {
+        return (this.numbers.length > 1) ? this.numbers : this.numbers[0];
     };
 
-    toString = () => {
+    toString() {
         return this.numbers.map(i => "AS" + i).join(", and ");
     };
 
-    toJSON = () => {
+    toJSON () {
         return this.numbers;
     }
 }

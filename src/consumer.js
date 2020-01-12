@@ -74,7 +74,6 @@ export default class Consumer {
                         });
                 }
             }
-
         } catch (error) {
             env.logger.log({
                 level: 'error',

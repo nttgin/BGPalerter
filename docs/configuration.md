@@ -119,6 +119,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
 
 
 #### monitorVisibility
@@ -132,7 +133,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
 
 #### monitorPath
 
@@ -160,7 +161,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
 
 
 
@@ -186,7 +187,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
 
 #### monitorAS
 
@@ -218,7 +219,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
     
 ### Reports
 

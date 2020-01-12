@@ -101,7 +101,6 @@ export default class MonitorPath extends Monitor {
                     ((!matchedRule.path.maxLength && !matchedRule.path.maxLength) || !correctLength)) {
 
                     this.publishAlert(messagePrefix,
-                        `Matched ${matchedRule.path.matchDescription} on prefix ${messagePrefix}, path: ${message.path}`,
                         matchedRule.prefix,
                         matchedRule,
                         message,

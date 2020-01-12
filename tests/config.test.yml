@@ -46,6 +46,7 @@ reports:
       - path
       - misconfiguration
 
+
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false
 

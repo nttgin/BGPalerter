@@ -81,7 +81,6 @@ export default class MonitorVisibility extends Monitor {
                 let key = matchedRule.prefix;
 
                 this.publishAlert(key,
-                    `The prefix ${matchedRule.prefix} has been withdrawn.`,
                     matchedRule.asn.getId(),
                     matchedRule,
                     message,
