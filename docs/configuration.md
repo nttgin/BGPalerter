@@ -256,7 +256,7 @@ Parameters for this report module:
 |---|---|
 |colors| A dictionary having as key the event channel and as value a hex color (string). These colors will be used to make messages in Slack distinguishable. | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
-|hooks.default| The default user group. Each user group is a WebHook (url). | 
+|hooks.default| The WebHook (URL) of the default user group.| 
 
 
 #### reportKafka
@@ -296,6 +296,6 @@ Parameters for this report module:
 |environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
 |key| Optional, the Alerta API key to use for authenticated requests. |
 |token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
-|resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details. |
+|resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
 |urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
-|urls.default| The default user group. Each user group is an Alerta API URL. |
+|urls.default| The Alerta API URL of the default user group. |
