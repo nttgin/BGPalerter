@@ -177,7 +177,7 @@ describe("Alerting", function () {
 
         };
 
-        pubSub.subscribe("hijack", (type, message) => {
+        pubSub.subscribe("hijack", function(type, message){
 
             message = JSON.parse(JSON.stringify(message));
 
