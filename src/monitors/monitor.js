@@ -43,19 +43,20 @@ export default class Monitor {
         this.name = name;
         this.channel = channel;
         this.monitored = [];
-        this.alerts = {};
-        this.sent = {};
-        this.truncated = {};
-        this.fadeOff = {};
+
+        this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
+        this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>
+        this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples
+        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
 
         this.internalConfig = {
             notificationInterval: this.config.notificationIntervalSeconds * 1000,
-            checkStaleNotifications: 60 * 1000,
-            fadeOff:  5 * 60 * 1000,
+            checkFadeOffGroups: 30 * 1000,
+            fadeOff:  10 * 60 * 1000,
             clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 1000 * 3) / 2
         };
 
-        setInterval(this._publish, this.internalConfig.checkStaleNotifications);
+        setInterval(this._publishFadeOffGroups, this.internalConfig.checkFadeOffGroups);
     };
 
     updateMonitoredResources = () => {
@@ -99,34 +100,22 @@ export default class Monitor {
                 affected: firstAlert.affected,
                 message,
                 data: alerts
-                // .map(a => {
-                //     return {
-                //         extra: a.extra,
-                //         matchedRule: a.matchedRule,
-                //         matchedMessage: a.matchedMessage,
-                //         timestamp: a.timestamp
-                //     };
-                // })
             }
         }
     };
 
     publishAlert = (id, affected, matchedRule, matchedMessage, extra) => {
-
+        const now = new Date().getTime();
         const context = {
-            // id,
-            timestamp: new Date().getTime(),
+            timestamp: now,
             affected,
             matchedRule,
             matchedMessage,
             extra
         };
 
-        if (this.config.alertOnlyOnce && this.sent[id]) {
-
-            return false;
-
-        } else {
+        if (!this.sent[id] ||
+            (!this.config.alertOnlyOnce && now > (this.sent[id] + this.internalConfig.notificationInterval))) {
 
             this.alerts[id] = this.alerts[id] || [];
             this.alerts[id].push(context);
@@ -137,24 +126,7 @@ export default class Monitor {
                 this.alerts[id] = this.alerts[id].slice(-this.maxDataSamples); // Truncate
             }
 
-            if (!this.sent[id]) {
-                this._publish(id);
-            }
-
-            return true;
-        }
-    };
-
-    _clean = (group) => {
-        if (this.config.alertOnlyOnce) {
-            delete this.alerts[group.id];
-            delete this.fadeOff[group.id];
-            delete this.truncated[group.id];
-        } else if (new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
-            delete this.alerts[group.id];
-            delete this.fadeOff[group.id];
-            delete this.truncated[group.id];
-            delete this.sent[group.id];
+            this._publishGroupId(id, now);
 
             return true;
         }
@@ -162,56 +134,44 @@ export default class Monitor {
         return false;
     };
 
-    _checkLastSent = (group) => {
-        const lastTimeSent = this.sent[group.id];
+    _publishFadeOffGroups = () => {
+        const now = new Date().getTime();
 
-        if (lastTimeSent && this.config.alertOnlyOnce) {
-            return false;
-        } else if (lastTimeSent) {
+        for (let id in this.fadeOff) {
+            this._publishGroupId(id, now);
+        }
 
-            const isThereSomethingNew = lastTimeSent < group.latest;
-            const isItTimeToSend = new Date().getTime() > lastTimeSent + this.internalConfig.notificationIntervalSeconds;
-
-            return isThereSomethingNew && isItTimeToSend;
-        } else {
-            return true;
+        if (!this.config.alertOnlyOnce) {
+            for (let id in this.alerts) {
+                if (now > (this.sent[id] + this.internalConfig.notificationInterval)) {
+                    delete this.sent[id];
+                }
+            }
         }
     };
 
-    _publish = (id) => {
+    _publishGroupId = (id, now) => {
+        const group = this._squash(id);
 
-        const now = new Date().getTime();
-        let alerts;
+        if (group) {
+            this._publishOnChannel(group);
+            this.sent[id] = now;
 
-        if (id) {
-            alerts = { [id]: this.alerts[id] };
-        } else {
-            alerts = this.alerts;
-        }
+            delete this.alerts[id];
+            delete this.fadeOff[id];
+            delete this.truncated[id];
 
-        for (let id in alerts) {
+        } else if (this.fadeOff[id]) {
 
             if (now > this.fadeOff[id] + this.internalConfig.fadeOff) {
                 delete this.fadeOff[id];
                 delete this.alerts[id];
                 delete this.truncated[id];
-            } else {
-
-                const group = this._squash(id);
-
-                if (group) {
-                    if (this._checkLastSent(group)) {
-                        this.sent[group.id] = now;
-                        this._publishOnChannel(group);
-                    }
-
-                    this._clean(group);
-                } else {
-                    this.fadeOff[id] = this.fadeOff[id] || now;
-                }
             }
-        }
 
+        } else {
+            this.fadeOff[id] = this.fadeOff[id] || now;
+        }
     };
 
     _publishOnChannel = (alert) => {

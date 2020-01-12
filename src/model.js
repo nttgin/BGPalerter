@@ -22,29 +22,7 @@ export class Path {
 
 
 export class AS {
-    // static _maxInstances = 500000;
     static _instances = {};
-    //
-    // static _getInstance (id) {
-    //     const instance = AS._instances[id];
-    //     if (instance) {
-    //         instance._instanceIndex = 0;
-    //
-    //         for (const instanceId in AS._instances) {
-    //             const i = AS._instances[instanceId];
-    //             i._instanceIndex++;
-    //             if (i._instanceIndex > AS._maxInstances) {
-    //                 delete AS._instances[instanceId];
-    //             }
-    //         }
-    //     }
-    //     return instance;
-    // };
-    //
-    // static _setInstance (id, instance) {
-    //     AS._instances[id] = instance;
-    // };
-
 
     constructor(numbers) {
         this.numbers = null;

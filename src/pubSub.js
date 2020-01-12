@@ -1,12 +1,12 @@
 export default class PubSub{
     constructor() {
         this.callbacks = {};
-    }
+    };
 
     subscribe(channel, callback) {
         this.callbacks[channel] = this.callbacks[channel] || [];
         this.callbacks[channel].push(callback);
-    }
+    };
 
     publish(channel, content) {
         const callbacks = this.callbacks[channel];
@@ -17,6 +17,6 @@ export default class PubSub{
             })
                 .catch(console.log);
         }
-    }
+    };
 
 }
