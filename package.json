@@ -25,15 +25,14 @@
     "@babel/preset-env": "^7.7.7",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "nodemon": "^2.0.1",
     "read-last-lines": "^1.7.1"
   },
   "dependencies": {
-    "axios": "^0.19.0",
+    "axios": "^0.19.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
-    "event-stream": "^4.0.1",
     "ip-address": "^6.2.0",
     "ip-sub": "^1.0.3",
     "js-yaml": "^3.13.1",
@@ -43,11 +42,10 @@
     "pkg": "^4.4.2",
     "restify": "^8.5.1",
     "syslog-client": "^1.1.1",
-    "websocket-stream": "^5.5.0",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.4.0",
+    "winston-daily-rotate-file": "^4.4.1",
     "ws": "^7.2.1",
-    "yargs": "^15.0.2"
+    "yargs": "^15.1.0"
   },
   "pkg": {
     "scripts": [

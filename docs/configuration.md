@@ -271,7 +271,7 @@ Parameters for this report module:
 |port| Port of the Kafka instance/broker (e.g. 9092).| 
 |topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
  
- #### reportSyslog
+#### reportSyslog
  
 This report module sends the alerts on Syslog.
 
@@ -283,4 +283,19 @@ Parameters for this report module:
 |host| Host of the Syslog server (e.g. localhost).| 
 |port| Port of the Syslog server  (e.g. 514).| 
 |templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
- 
+
+#### reportAlerta
+
+This report module sends alerts to [Alerta](https://alerta.io/).
+
+Parameters for this report module:
+
+|Parameter| Description |
+|---|---|
+|severity| The alert severity, e.g., ``critical``. See https://docs.alerta.io/en/latest/api/alert.html#alert-severities for the list of possible values. |
+|environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
+|key| Optional, the Alerta API key to use for authenticated requests. |
+|token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
+|resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details. |
+|urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
+|urls.default| The default user group. Each user group is an Alerta API URL. |
