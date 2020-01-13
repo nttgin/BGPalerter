@@ -6,7 +6,7 @@ export default class MonitorRPKI extends Monitor {
     constructor(name, channel, params, env){
         super(name, channel, params, env);
         this.updateMonitoredPrefixes();
-        this.rpki = rpki.preCache(60);
+        rpki.preCache(60);
     };
 
     updateMonitoredPrefixes = () => {
@@ -34,7 +34,7 @@ export default class MonitorRPKI extends Monitor {
 
             if (matchedRule) {
 
-                    rpki.validate(prefix, origin, true)
+                    resolve(rpki.validate(prefix, origin, true)
                         .then((result) => {
 
                             if (result.valid === false) {
@@ -51,10 +51,11 @@ export default class MonitorRPKI extends Monitor {
                                     { covering: result.covering });
                             }
 
-                        })
+                        }));
+            } else {
+                resolve(true);
             }
 
-            resolve(true);
         });
 
 
