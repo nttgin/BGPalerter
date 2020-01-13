@@ -61,11 +61,17 @@ export default class Worker {
             }
         }
 
-    }
+    };
+
+    _singleProcessSend (message) {
+        return this.pubSub.publish("data", message);
+    };
 
     master = (worker) => {
-        console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
-        console.log("Loaded config:", this.configFile);
+        if (!worker) {
+            console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
+            console.log("Loaded config:", this.configFile);
+        }
 
         // Write pid on a file
         if (this.config.pidFile) {
@@ -99,18 +105,14 @@ export default class Worker {
         return connectorFactory.connectConnectors()
             .then(() => {
 
-                for (const connector of connectorFactory.getConnectors()) {
+                    for (const connector of connectorFactory.getConnectors()) {
 
-                    if (worker){
-                        connector.onMessage((message) => {
-                            worker.send(connector.name + "-" + message);
-                        });
-                    } else {
-                        connector.onMessage((message) => {
-                            this.pubSub.publish("data", connector.name + "-" + message);
-                        });
+                        if (worker){
+                            connector.onMessage(worker.send.bind(worker));
+                        } else {
+                            connector.onMessage(this._singleProcessSend);
+                        }
                     }
-                }
             })
             .then(() => connectorFactory.subscribeConnectors(this.input))
             .catch(error => {

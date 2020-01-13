@@ -65,8 +65,9 @@ export default class Connector {
     };
 
     _message = (message) => {
+        const msg = this.name + "-" + message;
         if (this.messageCallback)
-            this.messageCallback(message);
+            this.messageCallback(msg);
     };
 
     _connect = (message) => {
