@@ -55,6 +55,7 @@ let config = {
             params: {
                 carefulSubscription: true,
                 url: "wss://ris-live.ripe.net/v1/ws/",
+                perMessageDeflate: true,
                 subscription: {
                     moreSpecific: true,
                     type: "UPDATE",

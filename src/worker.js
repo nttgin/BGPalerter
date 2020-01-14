@@ -48,7 +48,7 @@ export default class Worker {
         this.configFile = env.configFile;
 
 
-        if (this.config.environment === "test") {
+        if (!this.config.multiProcess) {
 
             this.master();
             new Consumer();
@@ -61,6 +61,11 @@ export default class Worker {
             }
         }
 
+    };
+
+
+    _multiProcessSend (message) {
+        this.send(message);
     };
 
     _singleProcessSend (message) {
@@ -108,7 +113,7 @@ export default class Worker {
                     for (const connector of connectorFactory.getConnectors()) {
 
                         if (worker){
-                            connector.onMessage(worker.send.bind(worker));
+                            connector.onMessage(this._multiProcessSend.bind(worker));
                         } else {
                             connector.onMessage(this._singleProcessSend);
                         }

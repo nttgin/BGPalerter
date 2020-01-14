@@ -75,7 +75,8 @@ describe("Composition", function() {
                     "logging",
                     "checkForUpdatesAtBoot",
                     "uptimeMonitors",
-                    "pidFile"
+                    "pidFile",
+                    "multiProcess"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
