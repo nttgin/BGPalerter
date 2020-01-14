@@ -76,7 +76,9 @@ export default class ConnectorRIS extends Connector{
                 });
 
                 this.ws.on('message', this._message);
-                this.ws.on('close', this._close);
+                this.ws.on('close', (error) => {
+                    this._close("RIPE RIS disconnected (error: " + error + "). Please, provide a feedback to rislive@ripe.net on the importance of the reliability of this service.");
+                });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
 
@@ -100,7 +102,7 @@ export default class ConnectorRIS extends Connector{
             // Nothing to do here
         }
         // Reconnect
-        setTimeout(this._reconnect, 5000);
+        setTimeout(this._reconnect, 10000);
     };
 
     _subscribeToAll = (input) => {
