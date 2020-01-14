@@ -22,7 +22,7 @@
     "@babel/node": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
-    "@babel/preset-env": "^7.8.2",
+    "@babel/preset-env": "^7.8.3",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "mocha": "^7.0.0",
