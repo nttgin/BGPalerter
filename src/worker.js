@@ -49,7 +49,7 @@ export default class Worker {
         this.configFile = env.configFile;
 
 
-        if (this.config.environment === "test" || this.config.singleProcess) {
+        if (this.config.singleProcess) {
 
             this.master();
             new Consumer();

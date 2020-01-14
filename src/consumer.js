@@ -59,9 +59,9 @@ export default class Consumer {
 
     dispatch = (data) => {
         try {
-            const connector = data.slice(0,3);
+            const connector =   data.slice(0,3);
             const messagesRaw = JSON.parse(data.slice(4));
-            const messages = this.connectors[connector].transform(messagesRaw) || [];
+            const messages = [].concat.apply([],messagesRaw.map(this.connectors[connector].transform)) || [];
 
             for (let monitor of this.monitors) {
 

@@ -71,12 +71,10 @@ export default class Connector {
     _sendBatch = () => {
         clearTimeout(this.timerBatch);
         delete this.timerBatch;
-        if (this.batch.length) {
-            const msg = this.name + "-" + '[' + this.batch.join(',') + ']';
-            this.batch = [];
-            if (this.messageCallback)
-                this.messageCallback(msg);
+        if (this.messageCallback && this.batch.length) {
+            this.messageCallback(this.name + "-" + '[' + this.batch.join(',') + ']');
         }
+        this.batch = [];
     };
 
     _message = (message) => {

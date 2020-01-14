@@ -72,3 +72,5 @@ uptimeMonitors:
       port: 8011
 
 pidFile: bgpalerter.pid
+compressedPipe: false
+singleProcess: true
