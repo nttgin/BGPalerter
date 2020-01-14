@@ -55,6 +55,7 @@ let config = {
             params: {
                 carefulSubscription: true,
                 url: "wss://ris-live.ripe.net/v1/ws/",
+                perMessageDeflate: false,
                 subscription: {
                     moreSpecific: true,
                     type: "UPDATE",
@@ -125,7 +126,8 @@ let config = {
         maxFiles: "14d",
     },
     checkForUpdatesAtBoot: true,
-    pidFile: "bgpalerter.pid"
+    pidFile: "bgpalerter.pid",
+    compressedPipe: false
 };
 
 

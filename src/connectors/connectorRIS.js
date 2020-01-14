@@ -72,7 +72,7 @@ export default class ConnectorRIS extends Connector{
         new Promise((resolve, reject) => {
             try {
                 this.ws = new WebSocket(this.url, {
-                    perMessageDeflate: false
+                    perMessageDeflate: this.params.perMessageDeflate
                 });
 
                 this.ws.on('message', this._message);

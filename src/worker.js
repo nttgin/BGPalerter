@@ -34,6 +34,7 @@ import Consumer from "./consumer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 import fs from "fs";
+import LZString from "lz-string";
 
 export default class Worker {
     constructor(configFile) {
@@ -48,7 +49,7 @@ export default class Worker {
         this.configFile = env.configFile;
 
 
-        if (this.config.environment === "test") {
+        if (this.config.environment === "test" || this.config.singleProcess) {
 
             this.master();
             new Consumer();
@@ -61,6 +62,14 @@ export default class Worker {
             }
         }
 
+    };
+
+    _multiProcessSendCompressed (message) {
+        this.send(LZString.compress(message));
+    };
+
+    _multiProcessSend (message) {
+        this.send(message);
     };
 
     _singleProcessSend (message) {
@@ -108,7 +117,9 @@ export default class Worker {
                     for (const connector of connectorFactory.getConnectors()) {
 
                         if (worker){
-                            connector.onMessage(worker.send.bind(worker));
+                            connector.onMessage((this.config.compressedPipe)
+                                ? this._multiProcessSendCompressed.bind(worker)
+                                : this._multiProcessSend.bind(worker));
                         } else {
                             connector.onMessage(this._singleProcessSend);
                         }

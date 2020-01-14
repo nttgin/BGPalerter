@@ -31,6 +31,7 @@
  */
 
 import env from "./env";
+import LZString from "lz-string";
 
 export default class Consumer {
 
@@ -46,10 +47,14 @@ export default class Consumer {
         this.reports = env.config.reports
             .map(report => new report.class(report.channels, report.params, env));
 
-        process.on('message', this.dispatch);
+        process.on('message', (env.config.compressedPipe) ? this._compressedDispatch : this.dispatch);
         env.pubSub.subscribe('data', (type, data) => {
             this.dispatch(data);
         });
+    };
+
+    _compressedDispatch = (data) => {
+        return this.dispatch(LZString.decompress(data));
     };
 
     dispatch = (data) => {
