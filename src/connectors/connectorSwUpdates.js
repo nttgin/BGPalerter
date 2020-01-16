@@ -52,12 +52,12 @@ export default class ConnectorSwUpdates extends Connector{
         })
             .then(data => {
                 if (data && data.data && data.data.version && data.data.version !== this.version){
-                    this._message(JSON.stringify({
+                    this._message({
                         type: "software-update",
                         currentVersion: this.version,
                         newVersion: data.data.version,
                         repo: "https://github.com/nttgin/BGPalerter"
-                    }));
+                    });
                 }
             })
             .catch(() => {

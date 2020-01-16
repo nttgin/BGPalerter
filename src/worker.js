@@ -105,11 +105,19 @@ export default class Worker {
 
                     if (worker){
                         connector.onMessage((message) => {
-                            worker.send(message);
+                            // worker.send(connector.name + '-' + message);
+                            worker.send({
+                                connector: connector.name,
+                                message
+                            });
                         });
                     } else {
                         connector.onMessage((message) => {
-                            this.pubSub.publish("data", message);
+                            // this.pubSub.publish("data", connector.name + '-' + message);
+                            this.pubSub.publish("data", {
+                                connector: connector.name,
+                                message
+                            });
                         });
                     }
                 }

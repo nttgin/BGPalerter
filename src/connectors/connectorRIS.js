@@ -41,7 +41,7 @@ export default class ConnectorRIS extends Connector{
         super(name, params, env);
         this.ws = null;
         this.subscription = null;
-        setInterval(this._ping, 10000);
+        setInterval(this._ping, 5000);
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -55,8 +55,7 @@ export default class ConnectorRIS extends Connector{
     _ping = () => {
         if (this.ws) {
             try {
-                this.ws.ping(() => {
-                });
+                this.ws.ping();
             } catch (e) {
                 // Nothing to do here
             }
@@ -68,6 +67,10 @@ export default class ConnectorRIS extends Connector{
         this._connect(this.name + ' connector connected');
     };
 
+    _messageToJson = (message) => {
+        this._message(JSON.parse(message));
+    };
+
     connect = () =>
         new Promise((resolve, reject) => {
             try {
@@ -75,7 +78,7 @@ export default class ConnectorRIS extends Connector{
                     perMessageDeflate: this.params.perMessageDeflate
                 });
 
-                this.ws.on('message', this._message);
+                this.ws.on('message', this._messageToJson);
                 this.ws.on('close', (error) => {
                     this._close("RIPE RIS disconnected (error: " + error + "). Please, provide a feedback to rislive@ripe.net on the importance of the reliability of this service.");
                 });

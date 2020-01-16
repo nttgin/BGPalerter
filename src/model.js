@@ -27,7 +27,7 @@ export class AS {
     constructor(numbers) {
         this.numbers = null;
         this.ASset = false;
-        this._instanceIndex = 0;
+        this._valid = null;
 
         if (["string", "number"].includes(typeof(numbers))) {
             this.numbers = [ numbers ];
@@ -57,23 +57,27 @@ export class AS {
     };
 
     isValid () {
-        return this.numbers.length > 0 &&
-            this.numbers
-                .every(asn => {
+        if (this._valid === null) {
+            this._valid = this.numbers.length > 0 &&
+                this.numbers
+                    .every(asn => {
 
-                    try {
-                        const intAsn = parseInt(asn);
-                        if (intAsn != asn) {
+                        try {
+                            const intAsn = parseInt(asn);
+                            if (intAsn != asn) {
+                                return false;
+                            }
+                            asn = intAsn;
+                        } catch (e) {
                             return false;
                         }
-                        asn = intAsn;
-                    } catch (e) {
-                        return false;
-                    }
 
-                    return asn > 0 && asn <= 4294967295;
-                }) &&
-            [...new Set(this.numbers.map(i => parseInt(i)))].length === this.numbers.length;
+                        return asn > 0 && asn <= 4294967295;
+                    }) &&
+                [...new Set(this.numbers.map(i => parseInt(i)))].length === this.numbers.length;
+        }
+
+        return this._valid;
     };
 
     includes (ASn){

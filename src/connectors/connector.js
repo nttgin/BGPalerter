@@ -44,9 +44,6 @@ export default class Connector {
         this.connectCallback = null;
         this.errorCallback = null;
         this.disconnectCallback = null;
-
-        this.batch = [];
-        setInterval(this._sendBatch, 500);
     }
 
     connect = () =>
@@ -67,15 +64,9 @@ export default class Connector {
             this.disconnectCallback(message);
     };
 
-    _sendBatch = () => {
-        if (this.messageCallback && this.batch.length) {
-            this.messageCallback(this.name + "-" + '[' + this.batch.join(',') + ']');
-        }
-        this.batch = [];
-    };
-
     _message = (message) => {
-        this.batch.push(message);
+        if (this.messageCallback)
+            this.messageCallback(message);
     };
 
     _connect = (message) => {

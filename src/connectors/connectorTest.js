@@ -304,7 +304,7 @@ export default class ConnectorTest extends Connector{
 
             this.timer = setInterval(() => {
                 updates.forEach(update => {
-                    this._message(JSON.stringify(update));
+                    this._message(update);
                     if (type === 'visibility') {
                         let peer = update.data.peer.split('.');
                         peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
