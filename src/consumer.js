@@ -36,6 +36,7 @@ export default class Consumer {
 
     constructor(){
         this.connectors = {};
+
         for (let connector of env.config.connectors) {
             this.connectors[connector.name] = connector.class
         }
@@ -50,15 +51,12 @@ export default class Consumer {
         env.pubSub.subscribe('data', (type, data) => {
             this.dispatch(data);
         });
-    };
 
+    };
 
     dispatch = (data) => {
         try {
-            // const connector =   data.slice(0, 3);
-            // const messagesRaw = JSON.parse(data.slice(4));
-
-            const connector =   data.connector;
+            const connector = data.connector;
             const messagesRaw = data.message;
             const messages = this.connectors[connector].transform(messagesRaw) || [];
 

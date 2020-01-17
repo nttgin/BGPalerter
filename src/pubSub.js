@@ -9,7 +9,7 @@ export default class PubSub{
     };
 
     publish(channel, content) {
-        const callbacks = this.callbacks[channel];
+        const callbacks = this.callbacks[channel] || [];
         for (let clb of callbacks) {
             new Promise(function(resolve, reject){
                 clb(channel, content);
