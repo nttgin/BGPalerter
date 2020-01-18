@@ -117,7 +117,7 @@ export default class FileLogger {
             delete this.staleTimer;
         }
 
-        if (this.backlog.length > this.backlogSize) {
+        if (this.backlog.length >= this.backlogSize) {
             this.flush();
         } else {
             this.staleTimer = setTimeout(this.flushAndClose, 1000);
