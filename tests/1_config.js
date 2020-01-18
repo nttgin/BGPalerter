@@ -76,7 +76,8 @@ describe("Composition", function() {
                     "checkForUpdatesAtBoot",
                     "uptimeMonitors",
                     "pidFile",
-                    "multiProcess"
+                    "multiProcess",
+                    "maxMessagesPerSecond"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
@@ -161,7 +162,7 @@ describe("Composition", function() {
                         "newprefix",
                         "visibility"
                     ],
-                    "params": undefined
+                    "params": {}
                 });
 
             expect(config.reports[0]).to.have
@@ -295,7 +296,7 @@ describe("Composition", function() {
             readLastLines
                 .read(file, 1)
                 .then((line) => {
-                    const lineMessage = line.split(" ").slice(3, 5).join(" ").trim();
+                    const lineMessage = line.split(" ").slice(2, 4).join(" ").trim();
 
                     expect(lineMessage).to
                         .equal(message);
@@ -316,7 +317,7 @@ describe("Composition", function() {
             readLastLines
                 .read(file, 1)
                 .then((line) => {
-                    const lineMessage = line.split(" ").slice(3, 5).join(" ").trim();
+                    const lineMessage = line.split(" ").slice(2, 5).join(" ").trim();
                     expect(lineMessage).to.equal(message);
                     done();
                 });

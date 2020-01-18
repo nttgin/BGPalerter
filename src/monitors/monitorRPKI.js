@@ -35,32 +35,25 @@ export default class MonitorRPKI extends Monitor {
             if (matchedRule) {
 
                 this.cache
-                    .then(() => {
+                    .then(() => rpki.validate(prefix, origin, true))
+                    .then((result) => {
 
+                        if (result.valid === false) {
+                            const key = "a" + [prefix, origin]
+                                .join("AS")
+                                .replace(/\./g, "_")
+                                .replace(/\:/g, "_")
+                                .replace(/\//g, "_");
+
+                            this.publishAlert(key,
+                                prefix,
+                                matchedRule,
+                                message,
+                                { covering: result.covering });
+                        }
                     });
-                    this.cache
-                        .then(() => rpki.validate(prefix, origin, true))
-                        .then((result) => {
-
-                            if (result.valid === false) {
-                                const key = "a" + [prefix, origin]
-                                    .join("AS")
-                                    .replace(/\./g, "_")
-                                    .replace(/\:/g, "_")
-                                    .replace(/\//g, "_");
-
-                                this.publishAlert(key,
-                                    prefix,
-                                    matchedRule,
-                                    message,
-                                    { covering: result.covering });
-                            }
-
-                            resolve(true);
-                        });
-            } else {
-                resolve(true);
             }
+            resolve(true);
 
         });
 

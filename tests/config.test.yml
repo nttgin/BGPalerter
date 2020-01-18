@@ -45,7 +45,9 @@ reports:
       - visibility
       - path
       - misconfiguration
-
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false
@@ -57,10 +59,11 @@ monitoredPrefixesFiles:
 
 logging:
   directory: logs
-  logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
-  zippedArchive: true
-  maxSize: 20m
-  maxFiles: 14d
+  logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
+  backlogSize: 1
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
 
 checkForUpdatesAtBoot: true
 
@@ -73,3 +76,4 @@ uptimeMonitors:
 
 pidFile: bgpalerter.pid
 multiProcess: false
+maxMessagesPerSecond: 6000

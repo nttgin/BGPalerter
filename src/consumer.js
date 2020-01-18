@@ -42,10 +42,10 @@ export default class Consumer {
         }
 
         this.monitors = env.config.monitors
-            .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params, env));
+            .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params || {}, env));
 
         this.reports = env.config.reports
-            .map(report => new report.class(report.channels, report.params, env));
+            .map(report => new report.class(report.channels, report.params || {}, env));
 
         process.on('message', this.dispatch);
         env.pubSub.subscribe('data', (type, data) => {
@@ -54,26 +54,29 @@ export default class Consumer {
 
     };
 
-    dispatch = (data) => {
+    dispatch = (buffer) => {
         try {
-            const connector = data.connector;
-            const messagesRaw = data.message;
-            const messages = this.connectors[connector].transform(messagesRaw) || [];
+            for (let data of buffer){
 
-            for (let monitor of this.monitors) {
+                const connector = data.connector;
+                const messagesRaw = data.message;
+                const messages = this.connectors[connector].transform(messagesRaw) || [];
 
-                // Blocking filtering to reduce stack usage
-                for (const message of messages.filter(monitor.filter)) {
+                for (let monitor of this.monitors) {
 
-                    // Promise call to reduce waiting times
-                    monitor
-                        .monitor(message)
-                        .catch(error => {
-                            env.logger.log({
-                                level: 'error',
-                                message: error
+                    // Blocking filtering to reduce stack usage
+                    for (const message of messages.filter(monitor.filter)) {
+
+                        // Promise call to reduce waiting times
+                        monitor
+                            .monitor(message)
+                            .catch(error => {
+                                env.logger.log({
+                                    level: 'error',
+                                    message: error
+                                });
                             });
-                        });
+                    }
                 }
             }
         } catch (error) {

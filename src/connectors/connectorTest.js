@@ -86,7 +86,7 @@ export default class ConnectorTest extends Connector{
                         {
                             data: {
                                 announcements: [{
-                                    prefixes: ["2a00:5884:ffff:/48"],
+                                    prefixes: ["2a00:5884:ffff::/48"],
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
@@ -157,7 +157,7 @@ export default class ConnectorTest extends Connector{
                         {
                             data: {
                                 announcements: [{
-                                    prefixes: ["2a00:5884:ffff:/48"],
+                                    prefixes: ["2a00:5884:ffff::/48"],
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
@@ -219,7 +219,7 @@ export default class ConnectorTest extends Connector{
                         },
                         {
                             data: {
-                                withdrawals: ["2a00:5884:ffff:/48"],
+                                withdrawals: ["2a00:5884:ffff::/48"],
                                 peer: "124.0.0.2"
                             },
                             type: "ris_message"
