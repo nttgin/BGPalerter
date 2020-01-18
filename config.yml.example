@@ -176,9 +176,9 @@ checkForUpdatesAtBoot: true
 
 ############################
 # Process monitoring settings:
-# Uncomment or add classes under uptimeMonitors if you want to monitor or send logs about the status of the BGPalerter process
+# Uncomment or add classes under processMonitors if you want to monitor or send logs about the status of the BGPalerter process
 
-#uptimeMonitors:
+#processMonitors:
 #  - file: uptimeApi
 #    params:
 #      useStatusCodes: true

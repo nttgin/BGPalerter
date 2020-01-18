@@ -69,7 +69,7 @@ logging:
 
 checkForUpdatesAtBoot: true
 
-uptimeMonitors:
+processMonitors:
   - file: uptimeApi
     params:
       useStatusCodes: true

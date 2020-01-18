@@ -74,7 +74,7 @@ describe("Composition", function() {
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot",
-                    "uptimeMonitors",
+                    "processMonitors",
                     "pidFile",
                     "multiProcess",
                     "maxMessagesPerSecond",

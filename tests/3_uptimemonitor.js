@@ -48,7 +48,7 @@ describe("Uptime Monitor", function() {
     var config = worker.config;
 
     it("uptime config", function () {
-        expect(config.uptimeMonitors[0]).to
+        expect(config.processMonitors[0]).to
             .containSubset({
                 params: {
                     useStatusCodes: true,
@@ -60,7 +60,7 @@ describe("Uptime Monitor", function() {
 
     it("API format and header", function (done) {
 
-        const port = config.uptimeMonitors[0].params.port;
+        const port = config.processMonitors[0].params.port;
 
         axios({
             method: 'get',

@@ -50,7 +50,7 @@ Please uncomment the related section and configure according to your needs.
             - [reportKafka](docs/configuration.md#reportkafka)
             - [reportSyslog](docs/configuration.md#reportsyslog)
             - [reportAlerta](docs/configuration.md#reportalerta)
-    - [Uptime monitoring](docs/uptime-monitor.md)
+    - [Process/Uptime monitoring](docs/process-monitors.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
 

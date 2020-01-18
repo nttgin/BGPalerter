@@ -52,7 +52,7 @@
       "./src/monitors/*.js",
       "./src/reports/*.js",
       "./src/connectors/*.js",
-      "./src/uptimeMonitors/*.js"
+      "./src/processMonitors/*.js"
     ],
     "assets": [
       "./bin/config.yml"

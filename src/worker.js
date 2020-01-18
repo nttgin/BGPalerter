@@ -85,13 +85,13 @@ export default class Worker {
         if (this.config.uptimeMonitor) {
             this.logger.log({
                 level: 'error',
-                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/uptime-monitor.md"
+                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/process-monitors.md"
             });
         }
 
-        if (this.config.uptimeMonitors) {
-            for (let uptimeEntry of this.config.uptimeMonitors) {
-                const UptimeModule = require("./uptimeMonitors/" + uptimeEntry.file).default;
+        if (this.config.processMonitors) {
+            for (let uptimeEntry of this.config.processMonitors) {
+                const UptimeModule = require("./processMonitors/" + uptimeEntry.file).default;
                 new UptimeModule(connectorFactory, uptimeEntry.params);
             }
         }
