@@ -31,6 +31,7 @@
  */
 
 import Consumer from "./consumer";
+import LossyBuffer from "./lossyBuffer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 import fs from "fs";
@@ -95,25 +96,27 @@ export default class Worker {
             }
         }
 
+        const bufferCleaningInterval = 300;
+        const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond/(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
         return connectorFactory.connectConnectors()
             .then(() => {
 
                 for (const connector of connectorFactory.getConnectors()) {
 
+                    connector.onMessage((message) => {
+                        buffer.add({
+                            connector: connector.name,
+                            message
+                        });
+                    });
                     if (worker){
-                        connector.onMessage((message) => {
-                            worker.send({
-                                connector: connector.name,
-                                message
-                            });
+                        buffer.onData((message) => {
+                            worker.send(message);
                         });
                     } else {
-                        connector.onMessage((message) => {
-                            this.pubSub.publish("data", {
-                                connector: connector.name,
-                                message
-                            });
+                        buffer.onData((message) => {
+                            this.pubSub.publish("data", message);
                         });
                     }
 

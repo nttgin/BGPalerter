@@ -34,10 +34,10 @@ import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
 import PubSub from './pubSub';
-import winston from 'winston';
+import FileLogger from './fileLogger';
 import Input from "./inputs/inputYml";
-require('winston-daily-rotate-file');
-const { combine, timestamp, label, printf } = winston.format;
+// require('winston-daily-rotate-file');
+// const { combine, timestamp, label, printf } = winston.format;
 import {version} from '../package.json';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
@@ -141,56 +141,43 @@ if (fs.existsSync(vector.configFile)) {
     fs.writeFileSync(defaultConfigFilePath, yaml.dump(config))
 }
 
-const formatLine = printf(({ level, message, label, timestamp }) => `${timestamp} [${label}] ${level}: ${message}`);
-const verboseFilter  = winston.format((info, opts) => info.level === 'verbose' ? info : false);
-const transportError = new (winston.transports.DailyRotateFile)({
-    filename: config.logging.directory  +'/error-%DATE%.log',
-    datePattern: config.logging.logRotatePattern,
-    zippedArchive: config.logging.zippedArchive,
-    maxSize: config.logging.maxSize,
-    maxFiles: config.logging.maxFiles,
-    level: 'info',
-    timestamp: true,
-    eol: '\n',
-    json: false,
-    format: combine(
-        label({ label: config.environment}),
-        timestamp(),
-        formatLine
-    )
+const errorTransport = new FileLogger({
+    logRotatePattern: config.logging.logRotatePattern,
+    filename: '/error-%DATE%.log',
+    directory: config.logging.directory,
+    backlogSize: config.logging.backlogSize,
+    maxRetainedFiles: config.logging.maxRetainedFiles,
+    maxFileSizeMB: config.logging.maxFileSizeMB,
+    compressOnRotation: config.logging.compressOnRotation,
+    label: config.environment,
+    format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
-const transportReports = new (winston.transports.DailyRotateFile)({
-    filename: config.logging.directory + '/reports-%DATE%.log',
-    datePattern: config.logging.logRotatePattern,
-    zippedArchive: config.logging.zippedArchive,
-    maxSize: config.logging.maxSize,
-    maxFiles: config.logging.maxFiles,
-    level: 'verbose',
-    timestamp: true,
-    eol: '\n',
-    json: false,
-    format: combine(
-        verboseFilter(),
-        label({ label: config.environment}),
-        timestamp(),
-        formatLine
-    )
+const verboseTransport = new FileLogger({
+    logRotatePattern: config.logging.logRotatePattern,
+    filename: '/reports-%DATE%.log',
+    directory: config.logging.directory,
+    backlogSize: config.logging.backlogSize,
+    maxRetainedFiles: config.logging.maxRetainedFiles,
+    maxFileSizeMB: config.logging.maxFileSizeMB,
+    compressOnRotation: config.logging.compressOnRotation,
+    label: config.environment,
+    format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
-const winstonTransports = [
-    transportError,
-    transportReports
-];
+const loggerTransports = {
+    verbose: verboseTransport,
+    error: errorTransport,
+    info: errorTransport
+};
 
-if (config.environment !== 'production') {
-    const consoleTransport = new winston.transports.Console({
-        format: winston.format.simple()
-    });
-    winstonTransports.push(consoleTransport);
-}
+const wlogger = {
+    log:
+        function(data){
+            return loggerTransports[data.level].log(data);
+        }
+};
 
-const wlogger = winston.createLogger({ transports: winstonTransports });
 
 config.monitors = (config.monitors || []);
 config.monitors.push({
