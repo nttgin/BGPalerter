@@ -52,13 +52,20 @@ export default class ReportFile extends Report {
     }
 
     writeDataOnFile = (message) => {
-        const timestamp = `${message.earliest}-${message.latest}`;
-        this.latestTimestamps.push(timestamp);
-        const count = this.latestTimestamps.filter(i => i === timestamp).length;
-        this.latestTimestamps = this.latestTimestamps.slice(-this.timestampsBacklogSize);
-        const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
+        try {
+            const timestamp = `${message.earliest}-${message.latest}`;
+            this.latestTimestamps.push(timestamp);
+            const count = this.latestTimestamps.filter(i => i === timestamp).length;
+            this.latestTimestamps = this.latestTimestamps.slice(-this.timestampsBacklogSize);
+            const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
 
-        fs.writeFileSync(filename, JSON.stringify(message));
+            fs.writeFileSync(filename, JSON.stringify(message));
+        } catch (error) {
+            this.logger.log({
+                level: 'error',
+                message: error
+            });
+        }
     };
 
     report = (message, content) => {
