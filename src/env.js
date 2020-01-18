@@ -119,9 +119,10 @@ let config = {
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
-        zippedArchive: true,
-        maxSize: "80m",
-        maxFiles: "14d",
+        backlogSize: 1000,
+        maxRetainedFiles: 10,
+        maxFileSizeMB: 15,
+        compressOnRotation: false,
     },
     checkForUpdatesAtBoot: true,
     pidFile: "bgpalerter.pid",

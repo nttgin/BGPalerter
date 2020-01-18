@@ -170,7 +170,7 @@ logging:
   backlogSize: 1000  #Advanced option, read the doc
   maxRetainedFiles: 10
   maxFileSizeMB: 15
-  compressOnRotation: true
+  compressOnRotation: false
   
 checkForUpdatesAtBoot: true
 
