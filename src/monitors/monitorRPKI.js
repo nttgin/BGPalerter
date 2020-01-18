@@ -34,10 +34,6 @@ export default class MonitorRPKI extends Monitor {
 
             if (matchedRule) {
 
-                this.cache
-                    .then(() => {
-
-                    });
                     this.cache
                         .then(() => rpki.validate(prefix, origin, true))
                         .then((result) => {
