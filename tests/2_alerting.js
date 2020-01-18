@@ -122,11 +122,11 @@ describe("Alerting", function () {
                     }
                 ]
             },
-            "208585-2a00:5884:ffff:/48": {
-                id: '208585-2a00:5884:ffff:/48',
+            "208585-2a00:5884:ffff::/48": {
+                id: '208585-2a00:5884:ffff::/48',
                 origin: 'basic-hijack-detection',
                 affected: "204092-45",
-                message: 'A new prefix 2a00:5884:ffff:/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
+                message: 'A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
                 data: [
                     {
                         extra: {},
@@ -139,7 +139,7 @@ describe("Alerting", function () {
                         },
                         matchedMessage: {
                             type: "announcement",
-                            prefix: "2a00:5884:ffff:/48",
+                            prefix: "2a00:5884:ffff::/48",
                             peer: "124.0.0.3",
                             path: [1, 2, 3, 208585],
                             originAS: [208585],
@@ -292,11 +292,11 @@ describe("Alerting", function () {
                         }
                     ]
                 },
-            "204092-2a00:5884:ffff:/48": {
-                id: '204092-2a00:5884:ffff:/48',
+            "204092-2a00:5884:ffff::/48": {
+                id: '204092-2a00:5884:ffff::/48',
                 origin: 'prefix-detection',
                 affected: "204092-45",
-                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff:/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
+                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
                 data: [
                     {
                         extra: {},
@@ -309,7 +309,7 @@ describe("Alerting", function () {
                         },
                         matchedMessage: {
                             type: 'announcement',
-                            prefix: '2a00:5884:ffff:/48',
+                            prefix: '2a00:5884:ffff::/48',
                             peer: '124.0.0.3',
                             path: [ 1, 2, 3, 204092 ],
                             originAS: [204092],
