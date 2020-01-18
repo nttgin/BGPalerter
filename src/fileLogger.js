@@ -23,6 +23,11 @@ export default class FileLogger {
 
         this.wstream = null;
 
+
+        if (!fs.existsSync(this.directory)){
+            fs.mkdirSync(this.directory);
+        }
+
         this.setCurrentFile();
     };
 

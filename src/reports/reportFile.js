@@ -59,6 +59,10 @@ export default class ReportFile extends Report {
             this.latestTimestamps = this.latestTimestamps.slice(-this.timestampsBacklogSize);
             const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
 
+            if (!fs.existsSync(this.alertsDirectory)) {
+                fs.mkdirSync(this.alertsDirectory);
+            }
+
             fs.writeFileSync(filename, JSON.stringify(message));
         } catch (error) {
             this.logger.log({
