@@ -1,4 +1,4 @@
-# Uptime monitoring
+# Process monitoring
 
 Since version 1.22.0 it is possible to monitor the status of the BGPalerter process.
 
