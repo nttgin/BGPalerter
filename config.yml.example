@@ -190,7 +190,10 @@ checkForUpdatesAtBoot: true
 #      url: url_to_poll
 #      intervalSeconds: 300
 #      method: get
-
+#
+#  - file: sentryModule
+#    params:
+#      dsn: https://<key>@sentry.io/<project>
 
 
 ############################

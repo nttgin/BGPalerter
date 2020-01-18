@@ -18,6 +18,10 @@ processMonitors:
       url: url_to_poll
       intervalSeconds: 300
       method: get
+
+  - file: sentryModule
+    params:
+      dsn: https://<key>@sentry.io/<project>
 ```
 
 
@@ -98,8 +102,25 @@ Parameters for this module are:
 |method| The method used for the HTTP request. It can be `get` or `post`. | 
 
 
+## sentryModule
 
+The sentryModule is a component that allows the monitoring of the BGPalerter process for runtime exceptions. 
+Useful especially for testing new experimental modules.
 
+To enable this feature, create a new project on your Sentry server and grab the generated DSN.
 
+In `config.yml` the sentryModule is declared as:
 
+```yaml
+processMonitors:
 
+  - file: sentryModule
+    params:
+      dsn: https://<key>@sentry.io/<project>
+```
+
+Parameters for this module are:
+
+|Parameter| Description| 
+|---|---|
+|dsn| The DSN where the logs will be sent. | 
