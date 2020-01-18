@@ -1,4 +1,4 @@
-# Uptime monitoring
+# Process monitoring
 
 Since version 1.22.0 it is possible to monitor the status of the BGPalerter process.
 
@@ -6,7 +6,7 @@ There are various approaches for monitoring the status of BGPalerter, each imple
 You can declare the modules you want to load/enable in `config.yml`, as follows:
 
 ```yaml
-uptimeMonitors:
+processMonitors:
   - file: uptimeApi
     params:
       useStatusCodes: true
@@ -44,7 +44,7 @@ The following is an example of the API output.
 In `config.yml` the uptimeApi is declared as:
 
 ```yaml
-uptimeMonitors:
+processMonitors:
 
   - file: uptimeApi
     params:
@@ -77,7 +77,7 @@ If there is any warning about any component activated in BGPalerter, the heartbe
 In `config.yml` the uptimeHealthcheck is declared as:
 
 ```yaml
-uptimeMonitors:
+processMonitors:
 
   - file: uptimeHealthcheck
     params:

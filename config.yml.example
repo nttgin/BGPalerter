@@ -1,11 +1,10 @@
-environment: production
-
 connectors:
   - file: connectorRIS
     name: ris
     params:
       carefulSubscription: true
       url: wss://ris-live.ripe.net/v1/ws/
+      perMessageDeflate: true
       subscription:
         moreSpecific: true
         type: UPDATE
@@ -52,6 +51,9 @@ reports:
       - visibility
       - path
       - misconfiguration
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
 
 #  - file: reportEmail
 #    channels:
@@ -129,6 +131,26 @@ reports:
 #        visibility: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${earliest}|${latest}|${peers}"
 #        misconfiguration: "++BGPalerter-3-${type}: ${summary}|${asn}|${prefix}|${earliest}|${latest}"
 
+#  - file: reportAlerta
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#    params:
+#      severity:
+#        hijack: critical
+#        newprefix: informational
+#        visibility: debug
+#        path: trace
+#      resource_templates:
+#        default: "${type}"
+#        hijack: "hijack::${prefix}@@${asn}"
+#        newprefix: "newprefix::${prefix}@@${asn}"
+#        visibility: "visibility::${prefix}@@${asn}"
+#      urls:
+#        default: _YOUR_ALERTA_API_URL_
 
 
 ############################
@@ -137,32 +159,26 @@ reports:
 #       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
 #       triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce.
 #
-# - alertOnlyOnce - A boolean that, if set to true, will prevent repetitions of the same alert even if the event that
-#       triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored.
-#       If set to true, the signature of all alerts will be cached in order to recognize if they already happened in
-#       the past. This may lead to a memory leak if the amount of alerts is considerable.
 
 notificationIntervalSeconds: 7200
-alertOnlyOnce: false
 
-############################
-
-# Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
-# This is an array (use new lines and dashes!)
-monitoredPrefixesFiles:
-  - prefixes.yml
 
 logging:
   directory: logs
-  logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
-  zippedArchive: true
-  maxSize: 80m
-  maxFiles: 14d
+  logRotatePattern: YYYY-MM-DD
+  backlogSize: 1000  #Advanced option, read the doc
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
   
 checkForUpdatesAtBoot: true
 
 
-#uptimeMonitors:
+############################
+# Process monitoring settings:
+# Uncomment or add classes under processMonitors if you want to monitor or send logs about the status of the BGPalerter process
+
+#processMonitors:
 #  - file: uptimeApi
 #    params:
 #      useStatusCodes: true
@@ -175,11 +191,26 @@ checkForUpdatesAtBoot: true
 #      intervalSeconds: 300
 #      method: get
 
-pidFile: bgpalerter.pid
+
 
 ############################
-#
-# sentryDSN: https://<key>@sentry.io/<project>
-#
-# Create a new project for monitoring BGPalerter on your Sentry server and grab
-# the generated DSN.
+# Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
+# This is an array (use new lines and dashes!)
+
+monitoredPrefixesFiles:
+  - prefixes.yml
+
+
+
+############################
+# Advanced settings (Don't touch here!)
+# Please, refer to the documentation for knowing the meaning of the following parameters.
+
+alertOnlyOnce: false
+fadeOffSeconds: 360
+checkFadeOffGroupsSeconds: 30
+pidFile: bgpalerter.pid
+maxMessagesPerSecond: 6000
+multiProcess: false
+environment: production
+

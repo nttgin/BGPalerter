@@ -74,8 +74,12 @@ describe("Composition", function() {
                     "monitoredPrefixesFiles",
                     "logging",
                     "checkForUpdatesAtBoot",
-                    "uptimeMonitors",
-                    "pidFile"
+                    "processMonitors",
+                    "pidFile",
+                    "multiProcess",
+                    "maxMessagesPerSecond",
+                    "fadeOffSeconds",
+                    "checkFadeOffGroupsSeconds"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
@@ -160,7 +164,7 @@ describe("Composition", function() {
                         "newprefix",
                         "visibility"
                     ],
-                    "params": undefined
+                    "params": {}
                 });
 
             expect(config.reports[0]).to.have
@@ -175,7 +179,7 @@ describe("Composition", function() {
 
         it("loading prefixes", function () {
 
-            expect(input.prefixes.length).to.equal(12);
+            expect(input.prefixes.length).to.equal(13);
 
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
@@ -269,6 +273,16 @@ describe("Composition", function() {
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": ["prefix-detection"]
+                        },
+                        {
+                            "asn": [15562],
+                            "description": "test fade off",
+                            "ignoreMorespecifics": false,
+                            "prefix": "165.24.225.0/24",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         }
                     ]
                 });
@@ -294,7 +308,7 @@ describe("Composition", function() {
             readLastLines
                 .read(file, 1)
                 .then((line) => {
-                    const lineMessage = line.split(" ").slice(3, 5).join(" ").trim();
+                    const lineMessage = line.split(" ").slice(2, 4).join(" ").trim();
 
                     expect(lineMessage).to
                         .equal(message);
@@ -315,7 +329,7 @@ describe("Composition", function() {
             readLastLines
                 .read(file, 1)
                 .then((line) => {
-                    const lineMessage = line.split(" ").slice(3, 5).join(" ").trim();
+                    const lineMessage = line.split(" ").slice(2, 5).join(" ").trim();
                     expect(lineMessage).to.equal(message);
                     done();
                 });

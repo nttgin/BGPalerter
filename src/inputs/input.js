@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ipUtils from "../ipUtils";
+import ipUtils from "ip-sub";
 
 export default class Input {
 

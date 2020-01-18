@@ -41,7 +41,7 @@ export default class ConnectorRIS extends Connector{
         super(name, params, env);
         this.ws = null;
         this.subscription = null;
-        this.pingTimer = null;
+        setInterval(this._ping, 5000);
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -50,28 +50,40 @@ export default class ConnectorRIS extends Connector{
             }
         });
 
-    }
+    };
+
+    _ping = () => {
+        if (this.ws) {
+            try {
+                this.ws.ping();
+            } catch (e) {
+                // Nothing to do here
+            }
+        }
+    };
+
+    _openConnect = (resolve) => {
+        resolve(true);
+        this._connect(this.name + ' connector connected');
+    };
+
+    _messageToJson = (message) => {
+        this._message(JSON.parse(message));
+    };
 
     connect = () =>
         new Promise((resolve, reject) => {
             try {
-                this.ws = new WebSocket(this.url);
-
-                this.pingTimer = setInterval(() => {
-                    try {
-                        this.ws.ping(() => {});
-                    } catch (e) {
-                        // Nothing to do here
-                    }
-                }, 5000);
-
-                this.ws.on('message', this._message);
-                this.ws.on('close', this._close);
-                this.ws.on('error', this._error);
-                this.ws.on('open', () => {
-                    resolve(true);
-                    this._connect(this.name + ' connector connected');
+                this.ws = new WebSocket(this.url, {
+                    perMessageDeflate: this.params.perMessageDeflate
                 });
+
+                this.ws.on('message', this._messageToJson);
+                this.ws.on('close', (error) => {
+                    this._close("RIPE RIS disconnected (error: " + error + "). Please, provide a feedback to rislive@ripe.net on the importance of the reliability of this service.");
+                });
+                this.ws.on('error', this._error);
+                this.ws.on('open', this._openConnect.bind(null, resolve));
 
             } catch(error) {
                 this._error(error);
@@ -79,20 +91,21 @@ export default class ConnectorRIS extends Connector{
             }
         });
 
+    _reconnect = () => {
+        this.connect()
+            .then(this.subscribe.bind(null, this.subscription));
+    };
+
     _close = (error) => {
         this._disconnect(error);
-        clearInterval(this.pingTimer);
-
+        try {
+            this.ws.terminate();
+            delete this.ws;
+        } catch(e) {
+            // Nothing to do here
+        }
         // Reconnect
-        setTimeout(() => {
-            try {
-                this.ws.terminate();
-            } catch(e) {
-                // Nothing to do here
-            }
-            this.connect()
-                .then(() => this.subscribe(this.subscription));
-        }, 5000);
+        setTimeout(this._reconnect, 10000);
     };
 
     _subscribeToAll = (input) => {

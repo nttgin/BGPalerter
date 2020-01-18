@@ -31,6 +31,7 @@
  */
 
 import Consumer from "./consumer";
+import LossyBuffer from "./lossyBuffer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 import fs from "fs";
@@ -52,7 +53,7 @@ export default class Worker {
             Sentry.init({ dsn: env.sentryDSN });
         }
 
-        if (this.config.environment === "test") {
+        if (!this.config.multiProcess) {
 
             this.master();
             new Consumer();
@@ -65,7 +66,7 @@ export default class Worker {
             }
         }
 
-    }
+    };
 
     master = (worker) => {
         console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
@@ -88,32 +89,42 @@ export default class Worker {
         if (this.config.uptimeMonitor) {
             this.logger.log({
                 level: 'error',
-                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/uptime-monitor.md"
+                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/process-monitors.md"
             });
         }
 
-        if (this.config.uptimeMonitors) {
-            for (let uptimeEntry of this.config.uptimeMonitors) {
-                const UptimeModule = require("./uptimeMonitors/" + uptimeEntry.file).default;
+        if (this.config.processMonitors) {
+            for (let uptimeEntry of this.config.processMonitors) {
+                const UptimeModule = require("./processMonitors/" + uptimeEntry.file).default;
                 new UptimeModule(connectorFactory, uptimeEntry.params);
             }
         }
 
+        const bufferCleaningInterval = 300;
+        this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
+        const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond /(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
         return connectorFactory.connectConnectors()
             .then(() => {
 
                 for (const connector of connectorFactory.getConnectors()) {
 
+                    connector.onMessage((message) => {
+                        buffer.add({
+                            connector: connector.name,
+                            message
+                        });
+                    });
                     if (worker){
-                        connector.onMessage((message) => {
-                            worker.send(connector.name + "-" + message);
+                        buffer.onData((message) => {
+                            worker.send(message);
                         });
                     } else {
-                        connector.onMessage((message) => {
-                            this.pubSub.publish("data", connector.name + "-" + message);
+                        buffer.onData((message) => {
+                            this.pubSub.publish("data", message);
                         });
                     }
+
                 }
             })
             .then(() => connectorFactory.subscribeConnectors(this.input))

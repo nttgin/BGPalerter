@@ -35,6 +35,7 @@ Please uncomment the related section and configure according to your needs.
 - [Installation](docs/installation.md)
     - [Run from binary](docs/installation.md#running-bgpalerter-from-binaries)
     - [Run from source code](docs/installation.md#running-bgpalerter-from-the-source-code)
+    - [Run in Docker](docs/installation.md#running-bgpalerter-in-docker)
 - [Monitored prefixes list](docs/prefixes.md#prefixes)
     - [Generate prefix list](docs/prefixes.md#generate)
     - [Prefix attributes description](docs/prefixes.md#prefixes-fields)
@@ -48,7 +49,8 @@ Please uncomment the related section and configure according to your needs.
             - [reportSlack](docs/configuration.md#reportslack)
             - [reportKafka](docs/configuration.md#reportkafka)
             - [reportSyslog](docs/configuration.md#reportsyslog)
-    - [Uptime monitoring](docs/uptime-monitor.md)
+            - [reportAlerta](docs/configuration.md#reportalerta)
+    - [Process/Uptime monitoring](docs/process-monitors.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
 
