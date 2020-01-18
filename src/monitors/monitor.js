@@ -93,7 +93,7 @@ export default class Monitor {
 
             return {
                 id,
-                truncated: this.truncated[id],
+                truncated: this.truncated[id] || false,
                 origin: this.name,
                 earliest,
                 latest,

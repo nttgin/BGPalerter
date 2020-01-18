@@ -53,7 +53,9 @@ reports:
       - visibility
       - path
       - misconfiguration
-
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
 #  - file: reportEmail
 #    channels:
 #      - hijack
@@ -170,10 +172,11 @@ alertOnlyOnce: false
 
 logging:
   directory: logs
-  logRotatePattern: YYYY-MM-DD  # Whenever the pattern changes, a new file is created and the old one rotated
-  zippedArchive: true
-  maxSize: 80m
-  maxFiles: 14d
+  logRotatePattern: YYYY-MM-DD
+  backlogSize: 1000
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
   
 checkForUpdatesAtBoot: true
 

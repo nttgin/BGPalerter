@@ -31,19 +31,44 @@
  */
 
 import Report from "./report";
+import fs from "fs";
 
 export default class ReportFile extends Report {
 
     constructor(channels, params, env) {
         super(channels, params, env);
+
+        this.persistAlerts = params.persistAlertData;
+        this.alertsDirectory = params.alertDataDirectory;
+        if (this.persistAlerts && !this.alertsDirectory) {
+            this.persistAlerts = false;
+            this.logger.log({
+                level: 'error',
+                message: "Cannot persist alert data, the parameter alertDataDirectory is missing."
+            });
+        }
+        this.latestTimestamps = [];
+        this.timestampsBacklogSize = 100;
     }
 
+    writeDataOnFile = (message) => {
+        const timestamp = `${message.earliest}-${message.latest}`;
+        this.latestTimestamps.push(timestamp);
+        const count = this.latestTimestamps.filter(i => i === timestamp).length;
+        this.latestTimestamps = this.latestTimestamps.slice(-this.timestampsBacklogSize);
+        const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
+
+        fs.writeFileSync(filename, JSON.stringify(message));
+    };
+
     report = (message, content) => {
-        setTimeout(() => {
-            this.logger.log({
-                level: 'verbose',
-                message: content.message
-            });
-        })
+        this.logger.log({
+            level: 'verbose',
+            message: content.message
+        });
+
+        if (this.persistAlerts) {
+            this.writeDataOnFile(content);
+        }
     }
 }
