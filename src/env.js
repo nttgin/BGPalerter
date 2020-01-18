@@ -36,8 +36,6 @@ import path from "path";
 import PubSub from './pubSub';
 import FileLogger from './fileLogger';
 import Input from "./inputs/inputYml";
-// require('winston-daily-rotate-file');
-// const { combine, timestamp, label, printf } = winston.format;
 import {version} from '../package.json';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');

@@ -48,6 +48,10 @@ export default class Worker {
         this.version = env.version;
         this.configFile = env.configFile;
 
+        if (env.sentryDSN) {
+            const Sentry = require('@sentry/node');
+            Sentry.init({ dsn: env.sentryDSN });
+        }
 
         if (!this.config.multiProcess) {
 

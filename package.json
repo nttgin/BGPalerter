@@ -44,7 +44,8 @@
     "rpki-validator": "^1.0.9",
     "syslog-client": "^1.1.1",
     "ws": "^7.2.1",
-    "yargs": "^15.1.0"
+    "yargs": "^15.1.0",
+    "@sentry/node": "^5.10.2"
   },
   "pkg": {
     "scripts": [
