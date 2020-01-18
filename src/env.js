@@ -113,7 +113,7 @@ let config = {
             channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration"]
         }
     ],
-    notificationIntervalSeconds: 7200,
+    notificationIntervalSeconds: 14400,
     alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
     logging: {

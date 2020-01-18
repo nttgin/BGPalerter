@@ -158,10 +158,10 @@ reports:
 # Notification settings:
 # - notificationIntervalSeconds
 #       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
-#       triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce.
+#       triggered it is not yet solved.
 #
 
-notificationIntervalSeconds: 7200
+notificationIntervalSeconds: 14400
 
 
 logging:
@@ -198,7 +198,7 @@ checkForUpdatesAtBoot: true
 
 
 ############################
-# Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
+# The files containing the monitored prefixes. Please see prefixes.yml for an example.
 # This is an array (use new lines and dashes!)
 
 monitoredPrefixesFiles:
@@ -208,7 +208,7 @@ monitoredPrefixesFiles:
 
 ############################
 # Advanced settings (Don't touch here!)
-# Please, refer to the documentation for knowing the meaning of the following parameters.
+# Please, refer to the documentation to know the meaning of the following parameters.
 
 alertOnlyOnce: false
 fadeOffSeconds: 360
