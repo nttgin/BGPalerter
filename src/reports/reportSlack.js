@@ -57,11 +57,15 @@ export default class ReportSlack extends Report {
 
     }
 
-    _sendSlackMessage = (url, message, content) => {
-
-        const color = (this.params && this.params.colors && this.params.colors[message])
-            ? this.params.colors[message]
+    _sendSlackMessage = (url, channel, content, context) => {
+        let message = content.message;
+        const color = (this.params && this.params.colors && this.params.colors[channel])
+            ? this.params.colors[channel]
             : '#4287f5';
+
+        if (this.params.showPaths > 0) {
+            message += `${content.message}. Top ${context.pathNumber} most used AS paths: \n ${context.paths}`;
+        }
 
         axios({
             url: url,
@@ -71,8 +75,8 @@ export default class ReportSlack extends Report {
                 attachments: [
                     {
                         color: color,
-                        title: message,
-                        text: content.message
+                        title: channel,
+                        text: message
                     }
                 ]
             }
@@ -85,15 +89,16 @@ export default class ReportSlack extends Report {
             })
     };
 
-    report = (message, content) => {
+    report = (channel, content) => {
         if (this.enabled){
+            const context = this.getContext(channel, content);
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
             groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there are no groups defined, send to all of them
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {
-                    this._sendSlackMessage(this.params.hooks[group], message, content);
+                    this._sendSlackMessage(this.params.hooks[group], channel, content, context);
                 }
             }
         }

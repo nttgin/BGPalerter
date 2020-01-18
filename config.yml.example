@@ -92,6 +92,7 @@ reports:
 #      - path
 #      - misconfiguration
 #    params:
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
 #        hijack: '#d60b1c'
 #        newprefix: '#fa9548'
