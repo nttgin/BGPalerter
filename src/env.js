@@ -143,7 +143,7 @@ if (fs.existsSync(vector.configFile)) {
 
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
-    filename: '/error-%DATE%.log',
+    filename: 'error-%DATE%.log',
     directory: config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
@@ -155,7 +155,7 @@ const errorTransport = new FileLogger({
 
 const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
-    filename: '/reports-%DATE%.log',
+    filename: 'reports-%DATE%.log',
     directory: config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
