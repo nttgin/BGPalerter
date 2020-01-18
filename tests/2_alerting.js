@@ -35,11 +35,11 @@ var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 var expect = chai.expect;
 
-var asyncTimeout = 20000;
+let asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
-
+let visibilityDone = false;
 describe("Alerting", function () {
     var worker = require("../index");
     var pubSub = worker.pubSub;
@@ -65,26 +65,29 @@ describe("Alerting", function () {
 
         pubSub.subscribe("visibility", function (type, message) {
 
-            message = JSON.parse(JSON.stringify(message));
+            if (!visibilityDone) {
+                message = JSON.parse(JSON.stringify(message));
 
-            const id = message.id;
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    done();
+                    visibilityDone = true;
+                }
             }
 
         });
@@ -453,8 +456,6 @@ describe("Alerting", function () {
 
 
 
-
-
     it("asn monitoring reporting", function (done) {
 
         pubSub.publish("test-type", "misconfiguration");
@@ -489,10 +490,54 @@ describe("Alerting", function () {
             if (Object.keys(expectedData).length === 0){
                 done();
             }
-
         });
 
+    }).timeout(asyncTimeout);
 
+
+    it("fading alerting", function (done) {
+
+        pubSub.publish("test-type", "fade-off");
+
+        let notReceived = true;
+        // const expectedData = {
+        //     "165.24.225.0/24": {
+        //         id: '165.24.225.0/24',
+        //         truncated: false,
+        //         origin: 'withdrawal-detection',
+        //         affected: 15562,
+        //         message: 'The prefix 165.24.225.0/24 (test fade in) has been withdrawn. It is no longer visible from 4 peers.',
+        //         data: [
+        //             {
+        //                 affected: 15562,
+        //                 extra: {}
+        //             },
+        //             {
+        //                 affected: 15562,
+        //                 extra: {}
+        //             },
+        //             {
+        //                 affected: 15562,
+        //                 extra: {}
+        //             },
+        //             {
+        //                 affected: 15562,
+        //                 extra: {}
+        //             }
+        //         ]
+        //     }
+        //
+        // };
+
+        setTimeout(() => {
+            if (notReceived){
+                done();
+            }
+        }, 15000);
+
+        pubSub.subscribe("visibility", function (type, message) {
+            notReceived = false;
+        });
 
     }).timeout(asyncTimeout);
 

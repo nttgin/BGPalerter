@@ -77,7 +77,9 @@ describe("Composition", function() {
                     "uptimeMonitors",
                     "pidFile",
                     "multiProcess",
-                    "maxMessagesPerSecond"
+                    "maxMessagesPerSecond",
+                    "fadeOffSeconds",
+                    "checkFadeOffGroupsSeconds"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
@@ -177,7 +179,7 @@ describe("Composition", function() {
 
         it("loading prefixes", function () {
 
-            expect(input.prefixes.length).to.equal(12);
+            expect(input.prefixes.length).to.equal(13);
 
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
@@ -271,6 +273,16 @@ describe("Composition", function() {
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": ["prefix-detection"]
+                        },
+                        {
+                            "asn": [15562],
+                            "description": "test fade off",
+                            "ignoreMorespecifics": false,
+                            "prefix": "165.24.225.0/24",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
                         }
                     ]
                 });

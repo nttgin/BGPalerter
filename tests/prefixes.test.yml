@@ -84,6 +84,11 @@
     minLength: 2
     matchDescription: test description
 
+165.24.225.0/24:
+  description: test fade off
+  asn: 15562
+  ignoreMorespecifics: false
+
 options:
   monitorASns:
     2914:

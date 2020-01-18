@@ -50,6 +50,47 @@ export default class ConnectorTest extends Connector{
             resolve(true);
         });
 
+    _fadeOffTest = (fade) => {
+        const updates = [
+            {
+                data: {
+                    withdrawals: ["165.24.225.0/24"],
+                    peer: "124.0.0.1"
+                },
+                type: "ris_message"
+            },
+            {
+                data: {
+                    withdrawals: ["165.24.225.0/24"],
+                    peer: "124.0.0.2"
+                },
+                type: "ris_message"
+            },
+            {
+                data: {
+                    withdrawals: ["165.24.225.0/24"],
+                    peer: "124.0.0.3"
+                },
+                type: "ris_message"
+            },
+            {
+                data: {
+                    withdrawals: ["165.24.225.0/24"],
+                    peer: "124.0.0.4"
+                },
+                type: "ris_message"
+            }
+        ];
+
+        this._message(updates[0]);
+        this._message(updates[1]);
+        this._message(updates[2]);
+
+        setTimeout(() => {
+            this._message(updates[3]);
+        }, (this.config.fadeOffSeconds + ((fade) ? -4 : 4)) * 1000); // depending on "fade" it goes in our out of the fading period
+    };
+
     subscribe = (params) =>
         new Promise((resolve, reject) => {
             resolve(true);
@@ -59,6 +100,12 @@ export default class ConnectorTest extends Connector{
             let updates;
 
             switch (type) {
+                case "fade-off":
+                    return this._fadeOffTest(false);
+
+                case "fade-in":
+                    return this._fadeOffTest(true);
+
                 case "hijack":
                     updates = [
                         {
