@@ -56,6 +56,7 @@ reports:
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
+
 #  - file: reportEmail
 #    channels:
 #      - hijack
@@ -173,7 +174,7 @@ alertOnlyOnce: false
 logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD
-  backlogSize: 1000
+  backlogSize: 1000  #Advanced option, read the doc
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: true
@@ -200,7 +201,7 @@ checkForUpdatesAtBoot: true
 ############################
 
 pidFile: bgpalerter.pid
-
+maxMessagesPerSecond: 6000
 multiProcess: false
 
 ############################
