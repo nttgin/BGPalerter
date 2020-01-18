@@ -55,6 +55,9 @@ reports:
     channels:
       - hijack
       - path
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
 ```
 
 Each monitor declaration is composed of:
@@ -229,6 +232,15 @@ Possible reports are:
 
 This report module is the default one. It sends the alerts as verbose logs.
 To configure the logs see the [configuration introduction](configuration.md).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.| 
+|alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. | 
+
+
 
 #### reportEmail
 
