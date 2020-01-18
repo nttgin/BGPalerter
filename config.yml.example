@@ -1,5 +1,3 @@
-environment: production
-
 connectors:
   - file: connectorRIS
     name: ris
@@ -161,15 +159,9 @@ reports:
 #       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
 #       triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce.
 #
-# - alertOnlyOnce - A boolean that, if set to true, will prevent repetitions of the same alert even if the event that
-#       triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored.
-#       If set to true, the signature of all alerts will be cached in order to recognize if they already happened in
-#       the past. This may lead to a memory leak if the amount of alerts is considerable.
 
 notificationIntervalSeconds: 7200
-alertOnlyOnce: false
 
-############################
 
 logging:
   directory: logs
@@ -180,6 +172,7 @@ logging:
   compressOnRotation: true
   
 checkForUpdatesAtBoot: true
+
 
 ############################
 # Process monitoring settings:
@@ -198,11 +191,7 @@ checkForUpdatesAtBoot: true
 #      intervalSeconds: 300
 #      method: get
 
-############################
 
-pidFile: bgpalerter.pid
-maxMessagesPerSecond: 6000
-multiProcess: false
 
 ############################
 # Below the files containing the monitored prefixes. Please see prefixes.yml for an example.
@@ -210,3 +199,18 @@ multiProcess: false
 
 monitoredPrefixesFiles:
   - prefixes.yml
+
+
+
+############################
+# Advanced settings (Don't touch here!)
+# Please, refer to the documentation for knowing the meaning of the following parameters.
+
+alertOnlyOnce: false
+fadeOffSeconds: 360
+checkFadeOffGroupsSeconds: 30
+pidFile: bgpalerter.pid
+maxMessagesPerSecond: 6000
+multiProcess: false
+environment: production
+

@@ -126,7 +126,9 @@ let config = {
         maxFiles: "14d",
     },
     checkForUpdatesAtBoot: true,
-    pidFile: "bgpalerter.pid"
+    pidFile: "bgpalerter.pid",
+    fadeOffSeconds: 360,
+    checkFadeOffGroupsSeconds: 30
 };
 
 

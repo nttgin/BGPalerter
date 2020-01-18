@@ -6,7 +6,6 @@ The following are common parameters which it is possible to specify in the confi
 
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
-|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |notificationIntervalSeconds|Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce. | An integer | 1800 | Yes |
 |monitoredPrefixesFiles| The [list](docs/prefixes.md#array) of files containing the prefixes to monitor. See [here](docs/prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
 |logging| A dictionary of parameters containing the configuration for the file logging. | || Yes|
@@ -23,12 +22,14 @@ The following are advanced parameters, please don't touch them if you are not do
 
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
+|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
 |logging.backlogSize| Indicates the buffer dimension (number of alerts) before flushing it on the disk. This parameter plays a role only when receiving thousand of alerts per second in order to prevent IO starvation, in all other cases (e.g. production monitoring) it is irrelevant. | An integer | 15 | Yes | 
-|maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any practical rate. This may be useful for research measurements on the entire address space. | An intefer | 6000 | No | 
+|maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any practical rate. This may be useful for research measurements on the entire address space. | An integer | 6000 | No | 
 |multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
-
+|fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g. not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
+|checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
 
 
 
@@ -128,6 +129,10 @@ In particular, it will monitor for all the declared prefixes and will trigger an
 * A more specific of the prefix has been announced by an AS which is different from the ones specified.
 * The BGP update declares an AS_SET as origin and at least one of the AS in the AS_SET is not specified in the configuration.
 
+Example of alert:
+> The prefix 2a00:5884::/32 (description associated with the prefix) is announced by AS15563 instead of AS204092
+
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
@@ -141,6 +146,9 @@ Parameters for this monitor module:
 This monitor has the logic to detect loss of visibility.
 In particular, it will monitor for all the declared prefixes and will trigger an alert when:
 * The prefix is not visible anymore from at least `thresholdMinPeers` peers.
+
+Example of alert:
+> The prefix 165.254.225.0/24 (description associated with the prefix) has been withdrawn. It is no longer visible from 4 peers
 
 Parameters for this monitor module:
 
@@ -170,6 +178,9 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 
 More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
 
+Example of alert:
+> Matched "an example on path matching" on prefix 98.5.4.3/22 (including length violation) 1 times
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
@@ -195,6 +206,11 @@ In particular, it will monitor for all the declared prefixes and will trigger an
 >    ignoreMorespecifics: false
 > ```
 > If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g. 50.82.4.0/24) is announced by AS58302.
+
+
+Example of alert:
+> A new prefix 165.254.255.0/25 is announced by AS15562. It should be instead 165.254.255.0/24 (description associated with the prefix) announced by AS15562
+
 
 Parameters for this monitor module:
 
@@ -227,6 +243,10 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 >If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
 You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
+
+
+Example of alert:
+> AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes
 
 Parameters for this monitor module:
 

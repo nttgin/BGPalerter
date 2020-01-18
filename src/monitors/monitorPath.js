@@ -54,7 +54,7 @@ export default class MonitorPath extends Monitor {
 
         if (peers >= this.thresholdMinPeers) {
             const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
-            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times.`;
+            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times`;
         }
 
         return false;

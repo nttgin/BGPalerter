@@ -53,13 +53,13 @@ describe("Alerting", function () {
                 id: '165.254.225.0/24',
                 origin: 'withdrawal-detection',
                 affected: 15562,
-                message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers.'
+                message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers'
             },
             "2a00:5884::/32": {
                 id: '2a00:5884::/32',
                 origin: 'withdrawal-detection',
                 affected: "204092-45",
-                message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers.'
+                message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers'
             }
         };
 
@@ -216,7 +216,7 @@ describe("Alerting", function () {
                 id: '1234-175.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test).',
+                message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test)',
                 data: [
                     {
                         extra: {},
@@ -244,7 +244,7 @@ describe("Alerting", function () {
                 id: '1234-170.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test).',
+                message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test)',
                 data: [
                     {
                         extra: {},
@@ -273,7 +273,7 @@ describe("Alerting", function () {
                     id: '15562-165.254.255.0/25',
                     origin: 'prefix-detection',
                     affected: 15562,
-                    message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2).',
+                    message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2)',
                     data: [
                         {
                             extra: {},
@@ -299,7 +299,7 @@ describe("Alerting", function () {
                 id: '204092-2a00:5884:ffff::/48',
                 origin: 'prefix-detection',
                 affected: "204092-45",
-                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
+                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test)',
                 data: [
                     {
                         extra: {},
@@ -362,7 +362,7 @@ describe("Alerting", function () {
                 id: '98.5.4.3/22',
                 origin: 'path-matching',
                 affected: "98.5.4.3/22",
-                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times.',
+                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times',
                 data: [
                     {
                         extra: {
@@ -397,7 +397,7 @@ describe("Alerting", function () {
                 id: '99.5.4.3/22',
                 origin: 'path-matching',
                 affected: "99.5.4.3/22",
-                message: 'Matched test description on prefix 99.5.4.3/22 1 times.',
+                message: 'Matched test description on prefix 99.5.4.3/22 1 times',
                 data: [
                     {
                         extra: {
@@ -500,34 +500,6 @@ describe("Alerting", function () {
         pubSub.publish("test-type", "fade-off");
 
         let notReceived = true;
-        // const expectedData = {
-        //     "165.24.225.0/24": {
-        //         id: '165.24.225.0/24',
-        //         truncated: false,
-        //         origin: 'withdrawal-detection',
-        //         affected: 15562,
-        //         message: 'The prefix 165.24.225.0/24 (test fade in) has been withdrawn. It is no longer visible from 4 peers.',
-        //         data: [
-        //             {
-        //                 affected: 15562,
-        //                 extra: {}
-        //             },
-        //             {
-        //                 affected: 15562,
-        //                 extra: {}
-        //             },
-        //             {
-        //                 affected: 15562,
-        //                 extra: {}
-        //             },
-        //             {
-        //                 affected: 15562,
-        //                 extra: {}
-        //             }
-        //         ]
-        //     }
-        //
-        // };
 
         setTimeout(() => {
             if (notReceived){

@@ -37,7 +37,6 @@ export default class ConnectorSwUpdates extends Connector{
 
     constructor(name, params, env) {
         super(name, params, env);
-        this.timer = null;
     }
 
     connect = () =>
@@ -73,7 +72,7 @@ export default class ConnectorSwUpdates extends Connector{
             if (this.config.checkForUpdatesAtBoot){
                 this._checkForUpdates();
             }
-            this.timer = setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
+            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);
         });
 

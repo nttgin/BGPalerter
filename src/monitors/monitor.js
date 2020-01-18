@@ -50,10 +50,9 @@ export default class Monitor {
         this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
 
         this.internalConfig = {
-            notificationInterval: this.config.notificationIntervalSeconds * 1000,
-            checkFadeOffGroups: 30 * 1000,
-            fadeOff:  10 * 60 * 1000,
-            clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 1000 * 3) / 2
+            notificationInterval: (this.config.notificationIntervalSeconds || 7200) * 1000,
+            checkFadeOffGroups: this.config.checkFadeOffGroupsSeconds || 30 * 1000,
+            fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };
 
         setInterval(this._publishFadeOffGroups, this.internalConfig.checkFadeOffGroups);

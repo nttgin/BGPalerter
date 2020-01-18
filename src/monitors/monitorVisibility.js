@@ -63,8 +63,8 @@ export default class MonitorVisibility extends Monitor {
 
         if (peers >= this.thresholdMinPeers) {
             return (peers === 1) ?
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}.` :
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers.`;
+                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}` :
+                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers`;
         } else {
             return false;
         }
