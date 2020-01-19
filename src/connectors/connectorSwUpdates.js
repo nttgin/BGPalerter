@@ -32,6 +32,7 @@
 
 import Connector from "./connector";
 import axios from "axios";
+import semver from "semver";
 
 export default class ConnectorSwUpdates extends Connector{
 
@@ -50,7 +51,7 @@ export default class ConnectorSwUpdates extends Connector{
             url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
         })
             .then(data => {
-                if (data && data.data && data.data.version && data.data.version !== this.version){
+                if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
                     this._message({
                         type: "software-update",
                         currentVersion: this.version,
