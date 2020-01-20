@@ -100,7 +100,7 @@ export default class Worker {
             }
         }
 
-        const bufferCleaningInterval = 300;
+        const bufferCleaningInterval = 200;
         this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
         const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond /(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
