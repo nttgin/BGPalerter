@@ -55,7 +55,21 @@ export default class Input {
         return false;
     };
 
+    sanitizePrefixList = () => {
+        this.prefixes.forEach(item => {
+            if (item.prefix.includes(':')){
+                item.prefix = ipUtils.expandIPv6(item.prefix);
+            }
+        });
+
+        if ([...new Set(this.prefixes.map(i => i.prefix))].length !== this.prefixes.length) {
+            throw new Error("The prefix list contains duplicates");
+        }
+    };
+
     getMonitoredLessSpecifics = () => {
+        this.sanitizePrefixList();
+
         if (!this.prefixes.length) {
             return [];
         }
@@ -67,7 +81,6 @@ export default class Input {
         const lessSpecifics = [];
 
         lessSpecifics.push(prefixes[prefixes.length - 1]);
-
 
         for (let p1 of prefixes.slice(0, -1)) {
             if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
@@ -87,6 +100,7 @@ export default class Input {
     };
 
     getMoreSpecificMatch = (prefix) => {
+        this.sanitizePrefixList();
 
         for (let p of this.prefixes) {
             if (p.prefix === prefix) {
