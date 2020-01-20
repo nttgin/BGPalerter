@@ -41,7 +41,8 @@ export default class ConnectorRIS extends Connector{
         super(name, params, env);
         this.ws = null;
         this.subscription = null;
-        setInterval(this._ping, 5000);
+        this.pingInterval = 5000;
+        setInterval(this._ping, this.pingInterval);
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -60,6 +61,13 @@ export default class ConnectorRIS extends Connector{
                 // Nothing to do here
             }
         }
+    };
+
+    _pingReceived = () => {
+        if (this.closeTimeout) {
+            clearTimeout(this.closeTimeout);
+        }
+        this.closeTimeout = setTimeout(this._close, this.pingInterval * 3);
     };
 
     _openConnect = (resolve) => {
@@ -84,6 +92,7 @@ export default class ConnectorRIS extends Connector{
                 });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
+                this.ws.on('pong', this._pingReceived);
 
             } catch(error) {
                 this._error(error);
@@ -141,20 +150,31 @@ export default class ConnectorRIS extends Connector{
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-        for (let p of monitoredPrefixes){
-            if (p.path && p.path.match){
-                const regex = this._optimizedPathMatch(p.path.match);
-                if (regex) {
-                    params.path = regex;
-                }
-            }
-            console.log("Monitoring", p.prefix);
-            params.prefix = p.prefix;
 
+
+        if (monitoredPrefixes.filter(i => i.prefix === '0:0:0:0:0:0:0:0/0' || i.prefix === '0.0.0.0/0').length === 2){
+            delete params.prefix;
+            console.log("Monitoring everything");
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
             }));
+        } else {
+            for (let p of monitoredPrefixes) {
+                if (p.path && p.path.match) {
+                    const regex = this._optimizedPathMatch(p.path.match);
+                    if (regex) {
+                        params.path = regex;
+                    }
+                }
+                console.log("Monitoring", p.prefix);
+                params.prefix = p.prefix;
+
+                this.ws.send(JSON.stringify({
+                    type: "ris_subscribe",
+                    data: params
+                }));
+            }
         }
     };
 
