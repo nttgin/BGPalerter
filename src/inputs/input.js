@@ -58,7 +58,8 @@ export default class Input {
     sanitizePrefixList = () => {
         this.prefixes.forEach(item => {
             if (item.prefix.includes(':')){
-                item.prefix = ipUtils.expandIPv6(item.prefix);
+                const components = item.prefix.split("/");
+                item.prefix = ipUtils.expandIPv6(components[0]) + '/' + components[1];
             }
         });
 
@@ -68,7 +69,6 @@ export default class Input {
     };
 
     getMonitoredLessSpecifics = () => {
-        this.sanitizePrefixList();
 
         if (!this.prefixes.length) {
             return [];
@@ -100,7 +100,6 @@ export default class Input {
     };
 
     getMoreSpecificMatch = (prefix) => {
-        this.sanitizePrefixList();
 
         for (let p of this.prefixes) {
             if (p.prefix === prefix) {

@@ -223,10 +223,12 @@ export default class InputYml extends Input {
     };
 
     getMonitoredMoreSpecifics = () => {
+        this.sanitizePrefixList();
         return this.prefixes.filter(p => !p.ignoreMorespecifics);
     };
 
     getMonitoredPrefixes = () => {
+        this.sanitizePrefixList();
         return this.prefixes;
     };
 
