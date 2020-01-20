@@ -6,7 +6,20 @@ export default class MonitorRPKI extends Monitor {
     constructor(name, channel, params, env){
         super(name, channel, params, env);
         this.updateMonitoredPrefixes();
-        this.cache = rpki.preCache(60);
+        this.validationQueue = [];
+
+        rpki.preCache(60)
+            .then(() => {
+                setInterval(this.validateBatch, 400);
+            })
+
+    };
+
+    validateBatch = () => {
+        const queue = this.validationQueue;
+        this.validationQueue = [];
+
+        queue.forEach(this.validate);
     };
 
     updateMonitoredPrefixes = () => {
@@ -26,36 +39,38 @@ export default class MonitorRPKI extends Monitor {
         return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
     };
 
-    monitor = (message) =>
-        new Promise((resolve, reject) => {
-            const prefix = message.prefix;
-            const origin = message.originAS.getValue();
-            const matchedRule = this.input.getMoreSpecificMatch(prefix);
 
-            if (matchedRule) {
+    validate = ({ message, matchedRule} ) => {
+        const prefix = message.prefix;
+        const origin = message.originAS.getValue();
 
-                this.cache
-                    .then(() => rpki.validate(prefix, origin, true))
-                    .then((result) => {
+        const result = rpki.validateFromCacheSync(prefix, origin, true);
 
-                        if (result.valid === false) {
-                            const key = "a" + [prefix, origin]
-                                .join("AS")
-                                .replace(/\./g, "_")
-                                .replace(/\:/g, "_")
-                                .replace(/\//g, "_");
+        if (result.valid === false) {
+            const key = "a" + [prefix, origin]
+                .join("AS")
+                .replace(/\./g, "_")
+                .replace(/\:/g, "_")
+                .replace(/\//g, "_");
 
-                            this.publishAlert(key,
-                                prefix,
-                                matchedRule,
-                                message,
-                                { covering: result.covering });
-                        }
-                    });
-            }
-            resolve(true);
+            this.publishAlert(key,
+                prefix,
+                matchedRule,
+                message,
+                { covering: result.covering });
+        }
+    };
 
-        });
+
+    monitor = (message) => {
+        const prefix = message.prefix;
+        const matchedRule = this.input.getMoreSpecificMatch(prefix);
+
+        if (matchedRule) {
+            this.validationQueue.push({ message, matchedRule });
+        }
+        return Promise.resolve(true);
+    };
 
 
 
