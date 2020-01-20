@@ -28,7 +28,7 @@ export default class FileLogger {
             fs.mkdirSync(this.directory);
         }
 
-        this.setCurrentFile();
+        this._currentFile = this.getCurrentFile();
     };
 
     getRotatedFileName = (number) => {
@@ -36,7 +36,7 @@ export default class FileLogger {
     };
 
     rotateOldFiles = () => {
-        for (let n=this.maxRetainedFiles; n > 0; n--) {
+        for (let n=this.maxRetainedFiles; n >= 0; n--) {
             const fileName = this.getRotatedFileName(n);
 
             if (fs.existsSync(fileName)) {
@@ -51,7 +51,7 @@ export default class FileLogger {
         try {
 
             let files = fs.readdirSync(this.directory)
-                .filter(i => i.indexOf('.log') > 0 && i.indexOf('.tmp') === -1)
+                .filter(i => i.indexOf('.log') > 0)
                 .sort((file1, file2) => {
                     const v1 = file1.replace('.gz', '').split('.').pop();
                     const v2 = file2.replace('.gz', '').split('.').pop();
@@ -77,33 +77,27 @@ export default class FileLogger {
     };
 
     rotate = () => {
-        if (this.hasToBeRotated()) {
+        this.close();
+        const currentRotatedFile = this.getRotatedFileName(0);
+        const firstRotatedFile = this.getRotatedFileName(1);
+        fs.renameSync(this._currentFile, currentRotatedFile);
 
-            this.close();
-
-            const tmpFile = this._currentFile + ".tmp";
-            fs.renameSync(this._currentFile, tmpFile);
-            this.open();
-            const newFile = this.getRotatedFileName(1);
-
-            this.rotateOldFiles();
-            this.applyFileNumberLimit();
-            if (this.compressOnRotation) {
-
-                fs.writeFileSync(newFile, zlib.gzipSync(fs.readFileSync(tmpFile, 'utf8')));
-                fs.unlinkSync(tmpFile);
-            } else {
-                fs.renameSync(tmpFile, newFile);
-            }
+        this.rotateOldFiles();
+        if (this.compressOnRotation) {
+            fs.writeFileSync(firstRotatedFile, zlib.gzipSync(fs.readFileSync(firstRotatedFile, 'utf8')));
         }
+
+        this.applyFileNumberLimit();
+        this.open();
     };
 
-    setCurrentFile = () => {
-        const file = this.directory + '/' + this.filename.replace("%DATE%", moment().format(this.logRotatePattern));
-        const changed =  this._currentFile && this._currentFile === file;
-        this._currentFile = file;
+    getCurrentFile = () => {
+        return this.directory + '/' + this.filename.replace("%DATE%", moment().format(this.logRotatePattern));
+    };
 
-        return changed;
+    currentFileChanged = () => {
+        const file = this.getCurrentFile();
+        return this._currentFile && this._currentFile !== file;
     };
 
     defaultFormat = (json) => {
@@ -111,22 +105,32 @@ export default class FileLogger {
     };
 
     log = (data) => {
-        this.backlog
-            .push(this.format({
-                timestamp: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                data
-            }));
 
         if (this.staleTimer) {
             clearTimeout(this.staleTimer);
             delete this.staleTimer;
         }
 
-        if (this.backlog.length >= this.backlogSize) {
+        if (this.currentFileChanged()) {
             this.flush();
+            this.rotate();
         } else {
-            this.staleTimer = setTimeout(this.flushAndClose, 1000);
+
+            if (this.backlog.length >= this.backlogSize) {
+                this.flush();
+                if (this.hasToBeRotated()){
+                    this.rotate();
+                }
+            } else {
+                this.staleTimer = setTimeout(this.flushAndClose, 1000);
+            }
         }
+
+        this.backlog
+            .push(this.format({
+                timestamp: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+                data
+            }));
 
     };
 
@@ -142,11 +146,10 @@ export default class FileLogger {
             this.open();
         }
         fs.appendFileSync(this.wstream, string, 'utf8');
-
-        this.rotate();
     };
 
     open = () => {
+        this._currentFile = this.getCurrentFile();
         this.wstream = fs.openSync(this._currentFile, 'a');
     };
 
