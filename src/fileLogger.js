@@ -106,6 +106,12 @@ export default class FileLogger {
 
     log = (data) => {
 
+        const item = this.format({
+            timestamp: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+            data
+        });
+
+
         if (this.staleTimer) {
             clearTimeout(this.staleTimer);
             delete this.staleTimer;
@@ -114,7 +120,12 @@ export default class FileLogger {
         if (this.currentFileChanged()) {
             this.flush();
             this.rotate();
+
+            this.backlog.push(item);
+
         } else {
+
+            this.backlog.push(item);
 
             if (this.backlog.length >= this.backlogSize) {
                 this.flush();
@@ -126,11 +137,7 @@ export default class FileLogger {
             }
         }
 
-        this.backlog
-            .push(this.format({
-                timestamp: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
-                data
-            }));
+
 
     };
 
