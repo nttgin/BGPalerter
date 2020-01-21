@@ -42,7 +42,7 @@
     "path": "^0.12.7",
     "pkg": "^4.4.2",
     "restify": "^8.5.1",
-    "rpki-validator": "^1.0.10",
+    "rpki-validator": "^1.0.11",
     "semver": "^7.1.1",
     "syslog-client": "^1.1.1",
     "ws": "^7.2.1",
