@@ -34,6 +34,7 @@ import WebSocket from "ws";
 import Connector from "./connector";
 import { AS, Path } from "../model";
 import brembo from "brembo";
+import ipUtils from "ip-sub";
 
 export default class ConnectorRIS extends Connector{
 
@@ -150,6 +151,13 @@ export default class ConnectorRIS extends Connector{
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
+
+        monitoredPrefixes.forEach(item => {
+            if (item.prefix.includes(':')){
+                const components = item.prefix.split("/");
+                item.prefix = ipUtils.expandIPv6(components[0]) + '/' + components[1];
+            }
+        });
 
 
         if (monitoredPrefixes.filter(i => i.prefix === '0:0:0:0:0:0:0:0/0' || i.prefix === '0.0.0.0/0').length === 2){

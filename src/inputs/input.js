@@ -55,19 +55,6 @@ export default class Input {
         return false;
     };
 
-    sanitizePrefixList = () => {
-        this.prefixes.forEach(item => {
-            if (item.prefix.includes(':')){
-                const components = item.prefix.split("/");
-                item.prefix = ipUtils.expandIPv6(components[0]) + '/' + components[1];
-            }
-        });
-
-        if ([...new Set(this.prefixes.map(i => i.prefix))].length !== this.prefixes.length) {
-            throw new Error("The prefix list contains duplicates");
-        }
-    };
-
     getMonitoredLessSpecifics = () => {
 
         if (!this.prefixes.length) {
