@@ -60,7 +60,7 @@
       "./bin/config.yml"
     ],
     "targets": [
-      "node13"
+      "node12"
     ]
   }
 }
