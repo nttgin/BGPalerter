@@ -86,10 +86,17 @@ export default class ConnectorFactory {
                             connector.onDisconnect(error => {
                                 connector.connected = false;
 
-                                logger.log({
-                                    level: 'error',
-                                    message: error
-                                });
+                                if (error) {
+                                    logger.log({
+                                        level: 'error',
+                                        message: error
+                                    });
+                                } else {
+                                    logger.log({
+                                        level: 'info',
+                                        message: connector.name + ' disconnected'
+                                    });
+                                }
                             });
 
 

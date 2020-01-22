@@ -93,7 +93,7 @@ export default class ConnectorRIS extends Connector{
                 });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
-                this.ws.on('pong', this._pingReceived);
+                this.ws.on('ping', this._pingReceived);
 
             } catch(error) {
                 this._error(error);
@@ -110,7 +110,7 @@ export default class ConnectorRIS extends Connector{
         this._disconnect(error);
         try {
             this.ws.terminate();
-            delete this.ws;
+            this.ws.removeAllListeners();
         } catch(e) {
             // Nothing to do here
         }
@@ -169,12 +169,12 @@ export default class ConnectorRIS extends Connector{
             }));
         } else {
             for (let p of monitoredPrefixes) {
-                if (p.path && p.path.match) {
-                    const regex = this._optimizedPathMatch(p.path.match);
-                    if (regex) {
-                        params.path = regex;
-                    }
-                }
+                // if (p.path && p.path.match) {
+                //     const regex = this._optimizedPathMatch(p.path.match);
+                //     if (regex) {
+                //         params.path = regex;
+                //     }
+                // }
                 console.log("Monitoring", p.prefix);
                 params.prefix = p.prefix;
 
