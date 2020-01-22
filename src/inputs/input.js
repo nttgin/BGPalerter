@@ -61,20 +61,16 @@ export default class Input {
             return [];
         }
 
-        const prefixes = this.prefixes.sort((a, b) => {
-            return ipUtils.sortByPrefixLength(a.prefix, b.prefix);
-        });
-
         const lessSpecifics = [];
-
+        let prefixes = this.prefixes;
         lessSpecifics.push(prefixes[prefixes.length - 1]);
 
-        for (let p1 of prefixes.slice(0, -1)) {
+        for (let n=prefixes.length - 2; n>=0; n--) {
+            const p1 = prefixes[n];
             if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
                 lessSpecifics.push(p1);
             }
         }
-
         return lessSpecifics;
     };
 
