@@ -11,6 +11,8 @@ To start development see how to install the source [here](installation.md#runnin
 
 * `npm run test` to run the tests
 
+* `npm run inspect` to run the application with the inspect flag, which allows profiling in Chrome (chrome://inspect).
+
 * `npm run build` to compile and build OS native applications
 
 * `npm run generate-prefixes -- --a ASN(S) --o OUTPUT_FILE` to generate the monitored prefixes file
