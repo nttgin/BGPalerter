@@ -26,7 +26,7 @@ The following are advanced parameters, please don't touch them if you are not do
 |alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
 |logging.backlogSize| Indicates the buffer dimension (number of alerts) before flushing it on the disk. This parameter plays a role only when receiving thousand of alerts per second in order to prevent IO starvation, in all other cases (e.g. production monitoring) it is irrelevant. | An integer | 15 | Yes | 
-|maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any practical rate. This may be useful for research measurements on the entire address space. | An integer | 6000 | No | 
+|maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any production rate. Changing this value may be useful only for research measurements on the entire address space. | An integer | 6000 | No | 
 |multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
 |fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g. not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
 |checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
@@ -138,7 +138,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 #### monitorVisibility
@@ -155,7 +155,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorPath
 
@@ -186,7 +186,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 
@@ -217,7 +217,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorAS
 
@@ -253,7 +253,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
     
 ### Reports
 
