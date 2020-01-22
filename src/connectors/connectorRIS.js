@@ -89,7 +89,7 @@ export default class ConnectorRIS extends Connector{
 
                 this.ws.on('message', this._messageToJson);
                 this.ws.on('close', (error) => {
-                    this._close("RIPE RIS disconnected (error: " + error + "). Please, provide a feedback to rislive@ripe.net on the importance of the reliability of this service.");
+                    this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
                 });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
