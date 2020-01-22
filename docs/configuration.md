@@ -138,7 +138,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 #### monitorVisibility
@@ -155,7 +155,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorPath
 
@@ -186,7 +186,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 
@@ -217,7 +217,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorAS
 
@@ -253,7 +253,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert. Default to 1000. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
     
 ### Reports
 
