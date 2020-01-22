@@ -230,6 +230,8 @@ export default class ConnectorRIS extends Connector{
                 const aggregator = message["aggregator"] || null;
                 const withdrawals = message["withdrawals"] || [];
                 const peer = message["peer"];
+                const communities = message["community"] || [];
+                const timestamp = message["timestamp"] * 1000;
                 let path, originAS;
                 if (message["path"] && message["path"].length) {
                     path = new Path(message["path"].map(i => new AS(i)));
@@ -252,7 +254,9 @@ export default class ConnectorRIS extends Connector{
                             path,
                             originAS,
                             nextHop,
-                            aggregator
+                            aggregator,
+                            timestamp,
+                            communities
                         })
                     }
                 }
@@ -261,7 +265,8 @@ export default class ConnectorRIS extends Connector{
                     components.push({
                         type: "withdrawal",
                         prefix,
-                        peer
+                        peer,
+                        timestamp
                     })
                 }
 
