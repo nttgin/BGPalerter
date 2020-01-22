@@ -38,19 +38,24 @@ export default class Monitor {
         this.pubSub = env.pubSub;
         this.logger = env.logger;
         this.input = env.input;
-        this.params = params;
+        this.params = params || {};
+        this.maxDataSamples = this.params.maxDataSamples || 1000;
         this.name = name;
         this.channel = channel;
         this.monitored = [];
-        this.alerts = {};
-        this.sent = {};
+
+        this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
+        this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>
+        this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples
+        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
 
         this.internalConfig = {
-            notificationIntervalSeconds: this.config.notificationIntervalSeconds,
-            checkStaleNotificationsSeconds: 60,
-            clearNotificationQueueAfterSeconds: (this.config.notificationIntervalSeconds * 3) / 2
+            notificationInterval: (this.config.notificationIntervalSeconds || 14400) * 1000,
+            checkFadeOffGroups: this.config.checkFadeOffGroupsSeconds || 30 * 1000,
+            fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };
-        setInterval(this._publish, this.internalConfig.checkStaleNotificationsSeconds * 1000);
+
+        setInterval(this._publishFadeOffGroups, this.internalConfig.checkFadeOffGroups);
     };
 
     updateMonitoredResources = () => {
@@ -70,74 +75,57 @@ export default class Monitor {
         throw new Error('The method squashAlerts must be implemented in ' + this.name);
     };
 
-    _squash = (alerts) => {
+    _squash = (id) => {
 
+        const alerts = this.alerts[id];
         const message = this.squashAlerts(alerts);
 
         if (message) {
             const firstAlert = alerts[0];
-            const id = firstAlert.id;
             let earliest = Infinity;
             let latest = -Infinity;
 
             for (let alert of alerts) {
-
                 earliest = Math.min(alert.timestamp, earliest);
                 latest = Math.max(alert.timestamp, latest);
-
-                if (id !== alert.id) {
-                    throw new Error('Squash MUST receive a list of events all with the same ID.');
-                }
             }
 
             return {
                 id,
+                truncated: this.truncated[id] || false,
                 origin: this.name,
                 earliest,
                 latest,
                 affected: firstAlert.affected,
                 message,
-                data: alerts.map(a => {
-                    return {
-                        extra: a.extra,
-                        matchedRule: a.matchedRule,
-                        matchedMessage: a.matchedMessage,
-                        timestamp: a.timestamp
-                    };
-                })
+                data: alerts
             }
         }
     };
 
-    publishAlert = (id, message, affected, matchedRule, matchedMessage, extra) => {
-
+    publishAlert = (id, affected, matchedRule, matchedMessage, extra) => {
+        const now = new Date().getTime();
         const context = {
-            id,
-            timestamp: new Date().getTime(),
-            message,
+            timestamp: now,
             affected,
             matchedRule,
             matchedMessage,
             extra
         };
 
-        if (!this.alerts[id]) {
-            this.alerts[id] = [];
-        }
+        if (!this.sent[id] ||
+            (!this.config.alertOnlyOnce && now > (this.sent[id] + this.internalConfig.notificationInterval))) {
 
-        this.alerts[id].push(context);
+            this.alerts[id] = this.alerts[id] || [];
+            this.alerts[id].push(context);
 
-        if (!this.sent[id]) {
-            this._publish();
-        }
-    };
+            // Check if for each alert group the maxDataSamples parameter is respected
+            if (!this.truncated[id] && this.alerts[id].length > this.maxDataSamples) {
+                this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+                this.alerts[id] = this.alerts[id].slice(-this.maxDataSamples); // Truncate
+            }
 
-    _clean = (group) => {
-        if (this.config.alertOnlyOnce) {
-            delete this.alerts[group.id];
-        } else if (this.config.alertOnlyOnce && new Date().getTime() > group.latest + (this.internalConfig.clearNotificationQueueAfterSeconds * 1000)) {
-            delete this.alerts[group.id];
-            delete this.sent[group.id];
+            this._publishGroupId(id, now);
 
             return true;
         }
@@ -145,37 +133,44 @@ export default class Monitor {
         return false;
     };
 
-    _checkLastSent = (group) => {
-        const lastTimeSent = this.sent[group.id];
+    _publishFadeOffGroups = () => {
+        const now = new Date().getTime();
 
-        if (lastTimeSent && this.config.alertOnlyOnce) {
-            return false;
-        } else if (lastTimeSent) {
+        for (let id in this.fadeOff) {
+            this._publishGroupId(id, now);
+        }
 
-            const isThereSomethingNew = lastTimeSent < group.latest;
-            const isItTimeToSend = new Date().getTime() > lastTimeSent + (this.internalConfig.notificationIntervalSeconds * 1000);
-
-            return isThereSomethingNew && isItTimeToSend;
-        } else {
-            return true;
+        if (!this.config.alertOnlyOnce) {
+            for (let id in this.alerts) {
+                if (now > (this.sent[id] + this.internalConfig.notificationInterval)) {
+                    delete this.sent[id];
+                }
+            }
         }
     };
 
-    _publish = () => {
+    _publishGroupId = (id, now) => {
+        const group = this._squash(id);
 
-        for (let id in this.alerts) {
-            const group = this._squash(this.alerts[id]);
+        if (group) {
+            this._publishOnChannel(group);
+            this.sent[id] = now;
 
-            if (group) {
-                if (this._checkLastSent(group)) {
-                    this.sent[group.id] = new Date().getTime();
-                    this._publishOnChannel(group);
-                }
+            delete this.alerts[id];
+            delete this.fadeOff[id];
+            delete this.truncated[id];
 
-                this._clean(group);
+        } else if (this.fadeOff[id]) {
+
+            if (now > this.fadeOff[id] + this.internalConfig.fadeOff) {
+                delete this.fadeOff[id];
+                delete this.alerts[id];
+                delete this.truncated[id];
             }
-        }
 
+        } else {
+            this.fadeOff[id] = this.fadeOff[id] || now;
+        }
     };
 
     _publishOnChannel = (alert) => {

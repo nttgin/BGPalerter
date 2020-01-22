@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ipUtils from "../ipUtils";
+import ipUtils from "ip-sub";
 
 export default class Input {
 
@@ -56,6 +56,7 @@ export default class Input {
     };
 
     getMonitoredLessSpecifics = () => {
+
         if (!this.prefixes.length) {
             return [];
         }
@@ -67,7 +68,6 @@ export default class Input {
         const lessSpecifics = [];
 
         lessSpecifics.push(prefixes[prefixes.length - 1]);
-
 
         for (let p1 of prefixes.slice(0, -1)) {
             if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
@@ -90,7 +90,7 @@ export default class Input {
 
         for (let p of this.prefixes) {
             if (p.prefix === prefix) {
-                return (p.ignore) ? null : p;
+                return p;
             } else {
                 if (!this.cache[p.prefix]) {
                     this.cache[p.prefix] = ipUtils.getNetmask(p.prefix);

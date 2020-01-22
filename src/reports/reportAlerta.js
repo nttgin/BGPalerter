@@ -33,52 +33,58 @@
 import Report from "./report";
 import axios from "axios";
 
-export default class ReportSlack extends Report {
+export default class ReportAlerta extends Report {
 
     constructor(channels, params, env) {
         super(channels, params, env);
 
-
+        this.environment = this.params.environment || env.environment;
         this.enabled = true;
-        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
+        if (!this.params.urls || !Object.keys(this.params.urls).length){
             this.logger.log({
                 level: 'error',
-                message: "Slack reporting is not enabled: no group is defined"
+                message: "Alerta reporting is not enabled: no group is defined"
             });
             this.enabled = false;
         } else {
-            if (!this.params.hooks["default"]) {
+            if (!this.params.urls["default"]) {
                 this.logger.log({
                     level: 'error',
-                    message: "In hooks, for reportSlack, a group named 'default' is required for communications to the admin."
+                    message: "In urls, for reportAlerta, a group named 'default' is required for communications to the admin."
                 });
             }
         }
 
-    }
-
-    _sendSlackMessage = (url, channel, content, context) => {
-        let message = content.message;
-        const color = (this.params && this.params.colors && this.params.colors[channel])
-            ? this.params.colors[channel]
-            : '#4287f5';
-
-        if (this.params.showPaths > 0) {
-            message += `${content.message}. Top ${context.pathNumber} most used AS paths: \n ${context.paths}`;
+        this.headers = {};
+        if (this.params.key){
+            this.headers.Authorization = "Key " + this.params.key;
+        }
+        if (this.params.token){
+            this.headers.Authorization = "Bearer " + this.params.token;
         }
 
+    }
+
+    _createAlertaAlert = (url, message, content) => {
+
+        const severity = (this.params && this.params.severity && this.params.severity[message])
+            ? this.params.severity[message]
+            : "informational"; // informational level
+        const context = this.getContext(message, content);
+
         axios({
-            url: url,
+            url: url + "/alert",
             method: "POST",
+            headers: this.headers,
             resposnseType: "json",
             data: {
-                attachments: [
-                    {
-                        color: color,
-                        title: channel,
-                        text: message
-                    }
-                ]
+                event: message,
+                resource: this.parseTemplate(this.params.resource_templates[message] || this.params.resource_templates["default"], context),
+                text: content.message,
+                service: [(this.params.service || "BGPalerter")],
+                attributes: context,
+                severity: severity,
+                environment: this.environment
             }
         })
             .catch((error) => {
@@ -89,16 +95,15 @@ export default class ReportSlack extends Report {
             })
     };
 
-    report = (channel, content) => {
+    report = (message, content) => {
         if (this.enabled){
-            const context = this.getContext(channel, content);
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there are no groups defined, send to all of them
+            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.urls); // If there are no groups defined, send to all of them
 
             for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendSlackMessage(this.params.hooks[group], channel, content, context);
+                if (this.params.urls[group]) {
+                    this._createAlertaAlert(this.params.urls[group], message, content);
                 }
             }
         }

@@ -52,7 +52,11 @@ export default class MonitorNewPrefix extends Monitor {
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
         if (peers >= this.thresholdMinPeers) {
-            return alerts[0].message;
+            const message = alerts[0].matchedMessage;
+            const matchedRule = alerts[0].matchedRule;
+
+            return `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description})`;
+
         }
 
         return false;
@@ -64,11 +68,9 @@ export default class MonitorNewPrefix extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
-                const text = `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}).`;
+            if (matchedRule && !matchedRule.ignore && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
 
                 this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
                     matchedRule.asn.getId(),
                     matchedRule,
                     message,

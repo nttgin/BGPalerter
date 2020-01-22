@@ -94,12 +94,13 @@ switch(params._[0]) {
         if (params.p && params.l) {
             throw new Error("The argument -p is not compatible with the argument -l");
         } else if (params.p) {
+            prefixes = params.p.split(",");
         } else if (params.l) {
             const fs = require("fs");
             if (fs.existsSync(params.l)) {
                 prefixes = fs.readFileSync(params.l, 'utf8').split(/\r?\n/).filter(i => i && true);
             } else {
-                throw new Error("The prefix list file (-l) is not readable");
+                throw new Error("The prefix list fil\e (-l) is not readable");
             }
         }
 

@@ -68,10 +68,21 @@ export default class MonitorAS extends Monitor {
         if (prefixesOut.length > 1) {
             return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
         } else if (prefixesOut.length === 1) {
-            return alerts[0].message;
+           return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
+
         }
 
         return false;
+    };
+
+    _getMonitoredAS = (message) => {
+        const monitored = this.monitored;
+
+        for (let m of monitored) {
+            if (message.originAS.includes(m.asn)) {
+                return m;
+            }
+        }
     };
 
     monitor = (message) =>
@@ -79,16 +90,14 @@ export default class MonitorAS extends Monitor {
 
             const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this.monitored.filter(i => message.path.getLast().includes(i.asn))[0];
+            const matchedRule = this._getMonitoredAS(message);
 
             if (matchedRule) {
 
                 const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix);
                 if (!matchedPrefixRule) {
-                    const text = `${messageOrigin} is announcing ${messagePrefix} but this prefix is not in the configured list of announced prefixes`;
 
                     this.publishAlert(messageOrigin.getId().toString(),
-                        text,
                         messageOrigin.getId(),
                         matchedRule,
                         message,

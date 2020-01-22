@@ -30,55 +30,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import env from "./env";
-import restify from "restify";
-import errors from "restify-errors";
+import * as Sentry from '@sentry/node';
 
-export default class Uptime {
+export default class SentryModule {
 
-    constructor(connectors){
-        this.server = null;
+    constructor(connectors, params){
 
-        this.connectors = connectors;
-        this.activate();
-    };
-
-    respond = (req, res, next) => {
-        res.contentType = 'json';
-        const response = this.getCurrentStatus();
-        if (env.config.uptimeMonitor.useStatusCodes && response.warning) {
-            res.status(500);
+        if (params.dsn){
+            Sentry.init({ dsn: params.dsn });
         }
-        res.send(response);
-        next();
-    };
-
-    activate = () => {
-        this.server = restify.createServer();
-        this.server.pre(restify.pre.sanitizePath());
-        this.server.get('/status', this.respond);
-        this.server.head('/status', this.respond);
-        this.server.listen(env.config.uptimeMonitor.port, () => {});
-    };
-
-    getCurrentStatus = () => {
-        const connectors = this.connectors
-            .getConnectors()
-            .filter(connector => {
-                return connector.constructor.name != "ConnectorSwUpdates";
-            })
-            .map(connector => {
-                return {
-                    name: connector.constructor.name,
-                    connected: connector.connected
-                };
-            });
-
-        const disconnected = connectors.some(connector => !connector.connected);
-        return {
-            warning: disconnected,
-            connectors,
-        };
 
     };
 

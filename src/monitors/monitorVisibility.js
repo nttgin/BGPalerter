@@ -63,8 +63,8 @@ export default class MonitorVisibility extends Monitor {
 
         if (peers >= this.thresholdMinPeers) {
             return (peers === 1) ?
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}.` :
-                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers.`;
+                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) it's no longer visible (withdrawn) from the peer ${alerts[0].matchedMessage.peer}` :
+                `The prefix ${alerts[0].matchedMessage.prefix} (${alerts[0].matchedRule.description}) has been withdrawn. It is no longer visible from ${peers} peers`;
         } else {
             return false;
         }
@@ -76,12 +76,11 @@ export default class MonitorVisibility extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && matchedRule.prefix === messagePrefix) {
+            if (matchedRule && !matchedRule.ignore && matchedRule.prefix === messagePrefix) {
 
                 let key = matchedRule.prefix;
 
                 this.publishAlert(key,
-                    `The prefix ${matchedRule.prefix} has been withdrawn.`,
                     matchedRule.asn.getId(),
                     matchedRule,
                     message,

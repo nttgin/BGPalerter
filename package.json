@@ -1,6 +1,6 @@
 {
   "name": "bgpalerter",
-  "version": "1.22.0",
+  "version": "1.23.0",
   "description": "",
   "main": "index.js",
   "bin": "index.js",
@@ -10,57 +10,61 @@
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
+    "inspect": "node --inspect --require @babel/register index.js",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
   "author": "Massimo Candela",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.7.5",
-    "@babel/core": "^7.7.5",
-    "@babel/node": "^7.7.4",
-    "@babel/plugin-proposal-class-properties": "^7.7.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.7.4",
-    "@babel/preset-env": "^7.7.6",
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/node": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
-    "mocha": "^6.2.2",
+    "mocha": "^7.0.0",
     "nodemon": "^2.0.1",
-    "read-last-lines": "^1.7.1"
+    "read-last-lines": "^1.7.2"
   },
   "dependencies": {
-    "axios": "^0.19.0",
-    "babel-upgrade": "^1.0.1",
+    "@sentry/node": "^5.11.1",
+    "axios": "^0.19.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
-    "event-stream": "^4.0.1",
-    "ip-address": "^6.1.0",
+    "ip-address": "^6.2.0",
+    "ip-sub": "^1.0.4",
     "js-yaml": "^3.13.1",
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.1",
     "path": "^0.12.7",
-    "pkg": "^4.4.1",
-    "pubsub-js": "^1.7.0",
-    "restify": "^8.5.0",
+    "pkg": "^4.4.2",
+    "restify": "^8.5.1",
+    "rpki-validator": "^1.0.11",
+    "semver": "^7.1.1",
     "syslog-client": "^1.1.1",
-    "websocket-stream": "^5.5.0",
-    "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.3.1",
-    "ws": "^7.2.0",
-    "yargs": "^15.0.2"
+    "ws": "^7.2.1",
+    "yargs": "^15.1.0"
   },
   "pkg": {
     "scripts": [
       "./src/inputs/*.js",
       "./src/monitors/*.js",
       "./src/reports/*.js",
-      "./src/connectors/*.js"
+      "./src/connectors/*.js",
+      "./src/processMonitors/*.js"
     ],
     "assets": [
       "./bin/config.yml"
     ],
     "targets": [
-      "node10"
+      "node12"
     ]
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
   }
 }

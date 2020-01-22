@@ -52,7 +52,14 @@ export default class MonitorHijack extends Monitor {
         const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
         if (peers >= this.thresholdMinPeers) {
-            return alerts[0].message;
+            const matchedRule = alerts[0].matchedRule;
+            const message = alerts[0].matchedMessage;
+            const asnText = matchedRule.asn;
+
+            return (message.prefix === matchedRule.prefix) ?
+                `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
+                `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
+                `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
         }
 
         return false;
@@ -64,16 +71,9 @@ export default class MonitorHijack extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix);
 
-            if (matchedRule && !matchedRule.asn.includes(message.originAS)) {
-                const asnText = matchedRule.asn;
-
-                const text = (message.prefix === matchedRule.prefix) ?
-                    `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
-                    `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
-                    `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
+            if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
 
                 this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    text,
                     matchedRule.asn.getId(),
                     matchedRule,
                     message,

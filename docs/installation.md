@@ -21,7 +21,6 @@ If you enable email reporting, download also the directory `reports/email_templa
 
 ## Running BGPalerter from the source code
 
-
 1. Git clone this repo.
 
 2. Install Node.js (version >= 10.16) and npm ([installing node and npm](https://nodejs.org/en/download/)).
@@ -29,3 +28,14 @@ If you enable email reporting, download also the directory `reports/email_templa
 3. Execute `npm install` to install all dependencies.
 
 4. Run `npm run watch-and-serve` to run the application. At every file change it will self-reload.
+
+
+## Running BGPalerter in Docker
+
+BGPalerter is available in Docker Hub [here](https://hub.docker.com/r/nttgin/bgpalerter/tags).
+
+There are two main builds:
+* `latest` stable version for production monitoring;
+* `dev` reflects the last commit in the `dev` branch. Use this only for development purposes.
+
+Additionally, each release has its own build in case you want to revet back to an older version.

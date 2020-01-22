@@ -30,54 +30,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Connector from "./connector";
+import Uptime from "./uptime";
 import axios from "axios";
-import semver from "semver";
+import env from "../env";
 
-export default class ConnectorSwUpdates extends Connector{
+export default class UptimeHealthcheck extends Uptime {
 
-    constructor(name, params, env) {
-        super(name, params, env);
-    }
+    constructor(connectors, params){
+        super(connectors, params);
 
-    connect = () =>
-        new Promise((resolve, reject) => {
-            resolve(true);
-        });
-
-    _checkForUpdates = () => {
-        return axios({
-            responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
-        })
-            .then(data => {
-                if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
-                    this._message({
-                        type: "software-update",
-                        currentVersion: this.version,
-                        newVersion: data.data.version,
-                        repo: "https://github.com/nttgin/BGPalerter"
-                    });
-                }
-            })
-            .catch(() => {
-                this.logger.log({
-                    level: 'error',
-                    message: "It was not possible to check for software updates"
-                });
-            });
+        setInterval(this.check, params.intervalSeconds * 1000);
     };
 
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
-                this._checkForUpdates();
-            }
-            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
-            resolve(true);
-        });
+    check = () => {
+        const method = ["get", "post"].includes(this.params.method) ? this.params.method : "get";
+        const status = this.getCurrentStatus();
 
-    static transform = (message) => {
-        return [ message ];
-    }
-};
+        if (status.warning === false) {
+            const query = {
+                url: this.params.url,
+                method,
+                responseType: 'json'
+            };
+
+            if (this.params.method === "post") {
+                query.data = status;
+            }
+
+            axios(query)
+                .catch(error => {
+                    env.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                });
+        }
+    };
+
+
+}
+
+

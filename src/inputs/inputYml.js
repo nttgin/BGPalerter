@@ -33,8 +33,8 @@
 import yaml from "js-yaml";
 import fs from "fs";
 import Input from "./input";
-import ipUtils from "../ipUtils";
-import { AS, Path } from "../model";
+import ipUtils from "ip-sub";
+import { AS } from "../model";
 
 
 export default class InputYml extends Input {

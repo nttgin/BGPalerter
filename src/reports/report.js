@@ -80,21 +80,27 @@ export default class Report {
         let pathsCount = {};
         let sortedPathIndex = null;
 
+        content.data
+            .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
+            .forEach(path => {
+                if (!pathsCount[path]){
+                    pathsCount[path] = 0;
+                }
+                pathsCount[path] ++;
+            });
+
+        sortedPathIndex = Object.keys(pathsCount)
+            .map(key => [key, pathsCount[key]] );
+
+        sortedPathIndex.sort((first, second) => second[1] - first[1]);
+        context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
+        context.paths = (this.params.showPaths > 0) ? sortedPathIndex
+            .slice(0, this.params.showPaths)
+            .map(i => i[0]).join("\n") : "Disabled";
+
         switch(channel){
             case "hijack":
-                content.data
-                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-                    .forEach(path => {
-                        if (!pathsCount[path]){
-                            pathsCount[path] = 0;
-                        }
-                        pathsCount[path] ++;
-                    });
 
-                sortedPathIndex = Object.keys(pathsCount)
-                    .map(key => [key, pathsCount[key]] );
-
-                sortedPathIndex.sort((first, second) => second[1] - first[1]);
 
                 matched = content.data[0].matchedRule;
                 context.prefix = matched.prefix;
@@ -104,10 +110,7 @@ export default class Report {
                 context.neworigin = content.data[0].matchedMessage.originAS;
                 context.newprefix = content.data[0].matchedMessage.prefix;
                 context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
-                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
-                    .slice(0, this.params.showPaths)
-                    .map(i => i[0]).join("\n") : "Disabled";
+
                 break;
 
             case "visibility":
@@ -137,23 +140,8 @@ export default class Report {
                 break;
 
             case "misconfiguration":
-                content.data
-                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-                    .forEach(path => {
-                        if (!pathsCount[path]){
-                            pathsCount[path] = 0;
-                        }
-                        pathsCount[path] ++;
-                    });
+                context.asn = content.data[0].matchedRule.asn.toString();
 
-                sortedPathIndex = Object.keys(pathsCount)
-                    .map(key => [key, pathsCount[key]] );
-
-                sortedPathIndex.sort((first, second) => second[1] - first[1]);
-                context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
-                context.paths = (this.params.showPaths > 0) ? sortedPathIndex
-                    .slice(0, this.params.showPaths)
-                    .map(i => i[0]).join("\n") : "Disabled";
                 break;
 
             default:

@@ -35,11 +35,11 @@ var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 var expect = chai.expect;
 
-var asyncTimeout = 20000;
+let asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
-
+let visibilityDone = false;
 describe("Alerting", function () {
     var worker = require("../index");
     var pubSub = worker.pubSub;
@@ -53,38 +53,41 @@ describe("Alerting", function () {
                 id: '165.254.225.0/24',
                 origin: 'withdrawal-detection',
                 affected: 15562,
-                message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers.'
+                message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers'
             },
             "2a00:5884::/32": {
                 id: '2a00:5884::/32',
                 origin: 'withdrawal-detection',
                 affected: "204092-45",
-                message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers.'
+                message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers'
             }
         };
 
         pubSub.subscribe("visibility", function (type, message) {
 
-            message = JSON.parse(JSON.stringify(message));
+            if (!visibilityDone) {
+                message = JSON.parse(JSON.stringify(message));
 
-            const id = message.id;
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    done();
+                    visibilityDone = true;
+                }
             }
 
         });
@@ -100,7 +103,7 @@ describe("Alerting", function () {
                 id: '15562-4-165.254.255.0/25',
                 origin: 'basic-hijack-detection',
                 affected: 15562,
-                message: 'A new prefix 165.254.255.0/25 is announced by AS4, and AS15562. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
+                message: 'A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
                 data: [
                     {
                         extra: {},
@@ -122,11 +125,11 @@ describe("Alerting", function () {
                     }
                 ]
             },
-            "208585-2a00:5884:ffff:/48": {
-                id: '208585-2a00:5884:ffff:/48',
+            "208585-2a00:5884:ffff::/48": {
+                id: '208585-2a00:5884:ffff::/48',
                 origin: 'basic-hijack-detection',
                 affected: "204092-45",
-                message: 'A new prefix 2a00:5884:ffff:/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
+                message: 'A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
                 data: [
                     {
                         extra: {},
@@ -139,7 +142,7 @@ describe("Alerting", function () {
                         },
                         matchedMessage: {
                             type: "announcement",
-                            prefix: "2a00:5884:ffff:/48",
+                            prefix: "2a00:5884:ffff::/48",
                             peer: "124.0.0.3",
                             path: [1, 2, 3, 208585],
                             originAS: [208585],
@@ -177,7 +180,7 @@ describe("Alerting", function () {
 
         };
 
-        pubSub.subscribe("hijack", function (type, message) {
+        pubSub.subscribe("hijack", function(type, message){
 
             message = JSON.parse(JSON.stringify(message));
 
@@ -185,7 +188,6 @@ describe("Alerting", function () {
 
             expect(Object.keys(expectedData).includes(id)).to.equal(true);
             expect(expectedData[id] != null).to.equal(true);
-
 
             expect(message).to
                 .containSubset(expectedData[id]);
@@ -214,7 +216,7 @@ describe("Alerting", function () {
                 id: '1234-175.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test).',
+                message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test)',
                 data: [
                     {
                         extra: {},
@@ -242,7 +244,7 @@ describe("Alerting", function () {
                 id: '1234-170.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test).',
+                message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test)',
                 data: [
                     {
                         extra: {},
@@ -271,7 +273,7 @@ describe("Alerting", function () {
                     id: '15562-165.254.255.0/25',
                     origin: 'prefix-detection',
                     affected: 15562,
-                    message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2).',
+                    message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2)',
                     data: [
                         {
                             extra: {},
@@ -293,11 +295,11 @@ describe("Alerting", function () {
                         }
                     ]
                 },
-            "204092-2a00:5884:ffff:/48": {
-                id: '204092-2a00:5884:ffff:/48',
+            "204092-2a00:5884:ffff::/48": {
+                id: '204092-2a00:5884:ffff::/48',
                 origin: 'prefix-detection',
                 affected: "204092-45",
-                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff:/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test).',
+                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test)',
                 data: [
                     {
                         extra: {},
@@ -310,7 +312,7 @@ describe("Alerting", function () {
                         },
                         matchedMessage: {
                             type: 'announcement',
-                            prefix: '2a00:5884:ffff:/48',
+                            prefix: '2a00:5884:ffff::/48',
                             peer: '124.0.0.3',
                             path: [ 1, 2, 3, 204092 ],
                             originAS: [204092],
@@ -360,7 +362,7 @@ describe("Alerting", function () {
                 id: '98.5.4.3/22',
                 origin: 'path-matching',
                 affected: "98.5.4.3/22",
-                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times.',
+                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times',
                 data: [
                     {
                         extra: {
@@ -395,7 +397,7 @@ describe("Alerting", function () {
                 id: '99.5.4.3/22',
                 origin: 'path-matching',
                 affected: "99.5.4.3/22",
-                message: 'Matched test description on prefix 99.5.4.3/22 1 times.',
+                message: 'Matched test description on prefix 99.5.4.3/22 1 times',
                 data: [
                     {
                         extra: {
@@ -454,8 +456,6 @@ describe("Alerting", function () {
 
 
 
-
-
     it("asn monitoring reporting", function (done) {
 
         pubSub.publish("test-type", "misconfiguration");
@@ -490,10 +490,26 @@ describe("Alerting", function () {
             if (Object.keys(expectedData).length === 0){
                 done();
             }
-
         });
 
+    }).timeout(asyncTimeout);
 
+
+    it("fading alerting", function (done) {
+
+        pubSub.publish("test-type", "fade-off");
+
+        let notReceived = true;
+
+        setTimeout(() => {
+            if (notReceived){
+                done();
+            }
+        }, 15000);
+
+        pubSub.subscribe("visibility", function (type, message) {
+            notReceived = false;
+        });
 
     }).timeout(asyncTimeout);
 

@@ -30,54 +30,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Connector from "./connector";
-import axios from "axios";
-import semver from "semver";
+import Uptime from "./uptime";
+import restify from "restify";
+import env from "../env";
 
-export default class ConnectorSwUpdates extends Connector{
+export default class UptimeApi extends Uptime {
 
-    constructor(name, params, env) {
-        super(name, params, env);
-    }
-
-    connect = () =>
-        new Promise((resolve, reject) => {
-            resolve(true);
-        });
-
-    _checkForUpdates = () => {
-        return axios({
-            responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
-        })
-            .then(data => {
-                if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
-                    this._message({
-                        type: "software-update",
-                        currentVersion: this.version,
-                        newVersion: data.data.version,
-                        repo: "https://github.com/nttgin/BGPalerter"
-                    });
-                }
-            })
-            .catch(() => {
-                this.logger.log({
-                    level: 'error',
-                    message: "It was not possible to check for software updates"
-                });
+    constructor(connectors, params){
+        super(connectors, params);
+        this.server = null;
+        this.connectors = connectors;
+        try {
+            this.server = restify.createServer();
+            this.server.pre(restify.pre.sanitizePath());
+            this.server.get('/status', this.respond);
+            this.server.head('/status', this.respond);
+            if (params.host) {
+                this.server.listen(params.port, params.host);
+            } else {
+                this.server.listen(params.port);
+            }
+        } catch (error) {
+            env.logger.log({
+                level: 'error',
+                message: error
             });
+        }
     };
 
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
-                this._checkForUpdates();
-            }
-            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
-            resolve(true);
-        });
+    respond = (req, res, next) => {
+        res.contentType = 'json';
+        const response = this.getCurrentStatus();
+        if (this.params.useStatusCodes && response.warning) {
+            res.status(500);
+        }
+        res.send(response);
+        next();
+    };
 
-    static transform = (message) => {
-        return [ message ];
-    }
-};
+}
+
+

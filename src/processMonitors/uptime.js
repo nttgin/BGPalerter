@@ -30,54 +30,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Connector from "./connector";
-import axios from "axios";
-import semver from "semver";
+export default class Uptime {
 
-export default class ConnectorSwUpdates extends Connector{
-
-    constructor(name, params, env) {
-        super(name, params, env);
-    }
-
-    connect = () =>
-        new Promise((resolve, reject) => {
-            resolve(true);
-        });
-
-    _checkForUpdates = () => {
-        return axios({
-            responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
-        })
-            .then(data => {
-                if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
-                    this._message({
-                        type: "software-update",
-                        currentVersion: this.version,
-                        newVersion: data.data.version,
-                        repo: "https://github.com/nttgin/BGPalerter"
-                    });
-                }
-            })
-            .catch(() => {
-                this.logger.log({
-                    level: 'error',
-                    message: "It was not possible to check for software updates"
-                });
-            });
+    constructor(connectors, params){
+        this.connectors = connectors;
+        this.params = params;
     };
 
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
-                this._checkForUpdates();
-            }
-            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
-            resolve(true);
-        });
 
-    static transform = (message) => {
-        return [ message ];
-    }
-};
+    getCurrentStatus = () => {
+        const connectors = this.connectors
+            .getConnectors()
+            .filter(connector => {
+                return connector.constructor.name != "ConnectorSwUpdates";
+            })
+            .map(connector => {
+                return {
+                    name: connector.constructor.name,
+                    connected: connector.connected
+                };
+            });
+
+        const disconnected = connectors.some(connector => !connector.connected);
+        return {
+            warning: disconnected,
+            connectors,
+        };
+
+    };
+
+}
+
+

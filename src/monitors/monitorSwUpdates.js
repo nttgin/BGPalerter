@@ -43,14 +43,15 @@ export default class MonitorSwUpdates extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-        return alerts[0].message;
+        const message = alerts[0].matchedMessage;
+
+        return `A new version of BGPalerter is available. Current version: ${message.currentVersion} new version: ${message.newVersion}. Please, go to: ${message.repo}`;
     };
 
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
             this.publishAlert("software-update",
-                `A new version of BGPalerter is available. Current version: ${message.currentVersion} new version: ${message.newVersion}. Please, go to: ${message.repo}`,
                 "bgpalerter",
                 {
                     group: "default"

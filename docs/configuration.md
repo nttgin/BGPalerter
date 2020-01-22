@@ -6,21 +6,31 @@ The following are common parameters which it is possible to specify in the confi
 
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
-|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |notificationIntervalSeconds|Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce. | An integer | 1800 | Yes |
-|alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert even if the event that triggered it is not yet solved. In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |monitoredPrefixesFiles| The [list](docs/prefixes.md#array) of files containing the prefixes to monitor. See [here](docs/prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
 |logging| A dictionary of parameters containing the configuration for the file logging. | || Yes|
 |logging.directory| The directory where the log files will be generated. The directory will be created if not existent. | A string | logs | Yes |
 |logging.logRotatePattern| A pattern with date placeholders indicating the name of the file. This pattern will also indicate when a log file is rotated. | A string with date placeholders (YYYY, MM, DD, ss, hh) | YYYY-MM-DD | Yes |
-|logging.zippedArchive| Indicates if when a file gets rotates it has to be zipped or not. | A boolean | true | Yes |
-|logging.maxSize| Indicates the maximum file size allowed before to be rotated (by adding .number ad the end). This allows to rotate files when logRotatePattern still the same but the file is too big | A string (indicating an amount and a unit of measure) | 20m | Yes |
-|logger.maxFiles| Indicates the maximum amount of files or the maximum amount of days the files are retained. When this threshold is passed, files get deleted. | A string (a number or an amount of days ending with "d") | 14d | Yes |
+|logging.compressOnRotation| Indicates if when a file gets rotates it has to be compressed or not. | A boolean | true | Yes |
+|logging.maxFileSizeMB| Indicates the maximum file size in MB allowed before to be rotated. This allows to rotate files when logRotatePattern still the same but the file is too big | An integer | 15 | Yes |
+|logger.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
-|uptimeMonitor| A dictionary of parameters containing the configuration for the uptime monitor feature. The API showing the status of BGPalerter is available at The API is reachable at `http://localhost:8011/status`| | | No | 
-|uptimeMonitor.active| A boolean that if set to true enables the monitor. When set to false none of the monitoring components and dependencies are loaded (and no port has to be open).| A boolean | true | No | 
-|uptimeMonitor.useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. | A boolean | true | No | 
-|uptimeMonitor.port| The port on which the API will be reachable.| An integer | 8011 | No | 
+|processMonitors| A list of modules allowing various way to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
+|sentryDSN| The DSN corresponding to the Sentry project to send the runtime exceptions to. | `https://<key>@<sentry-server-address-or-nameserver>/<project>` | `https://bgpalerter@sentry.io/1` | No |
+
+The following are advanced parameters, please don't touch them if you are not doing research/experiments.
+
+| Parameter | Description  | Expected format | Example  |  Required |
+|---|---|---|---|---|
+|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
+|alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
+|pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
+|logging.backlogSize| Indicates the buffer dimension (number of alerts) before flushing it on the disk. This parameter plays a role only when receiving thousand of alerts per second in order to prevent IO starvation, in all other cases (e.g. production monitoring) it is irrelevant. | An integer | 15 | Yes | 
+|maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any production rate. Changing this value may be useful only for research measurements on the entire address space. | An integer | 6000 | No | 
+|multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
+|fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g. not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
+|checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
+
 
 
 ## Composition
@@ -57,6 +67,9 @@ reports:
     channels:
       - hijack
       - path
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
 ```
 
 Each monitor declaration is composed of:
@@ -116,11 +129,16 @@ In particular, it will monitor for all the declared prefixes and will trigger an
 * A more specific of the prefix has been announced by an AS which is different from the ones specified.
 * The BGP update declares an AS_SET as origin and at least one of the AS in the AS_SET is not specified in the configuration.
 
+Example of alert:
+> The prefix 2a00:5884::/32 (description associated with the prefix) is announced by AS15563 instead of AS204092
+
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 #### monitorVisibility
@@ -129,12 +147,15 @@ This monitor has the logic to detect loss of visibility.
 In particular, it will monitor for all the declared prefixes and will trigger an alert when:
 * The prefix is not visible anymore from at least `thresholdMinPeers` peers.
 
+Example of alert:
+> The prefix 165.254.225.0/24 (description associated with the prefix) has been withdrawn. It is no longer visible from 4 peers
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorPath
 
@@ -157,12 +178,15 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 
 More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
 
+Example of alert:
+> Matched "an example on path matching" on prefix 98.5.4.3/22 (including length violation) 1 times
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
 
@@ -183,12 +207,17 @@ In particular, it will monitor for all the declared prefixes and will trigger an
 > ```
 > If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g. 50.82.4.0/24) is announced by AS58302.
 
+
+Example of alert:
+> A new prefix 165.254.255.0/25 is announced by AS15562. It should be instead 165.254.255.0/24 (description associated with the prefix) announced by AS15562
+
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorAS
 
@@ -215,12 +244,16 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 
 You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
 
+
+Example of alert:
+> AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
     
 ### Reports
 
@@ -230,6 +263,15 @@ Possible reports are:
 
 This report module is the default one. It sends the alerts as verbose logs.
 To configure the logs see the [configuration introduction](configuration.md).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.| 
+|alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. | 
+
+
 
 #### reportEmail
 
@@ -257,7 +299,7 @@ Parameters for this report module:
 |---|---|
 |colors| A dictionary having as key the event channel and as value a hex color (string). These colors will be used to make messages in Slack distinguishable. | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
-|hooks.default| The default user group. Each user group is a WebHook (url). | 
+|hooks.default| The WebHook (URL) of the default user group.| 
 
 
 #### reportKafka
@@ -272,7 +314,7 @@ Parameters for this report module:
 |port| Port of the Kafka instance/broker (e.g. 9092).| 
 |topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
  
- #### reportSyslog
+#### reportSyslog
  
 This report module sends the alerts on Syslog.
 
@@ -284,4 +326,20 @@ Parameters for this report module:
 |host| Host of the Syslog server (e.g. localhost).| 
 |port| Port of the Syslog server  (e.g. 514).| 
 |templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
- 
+
+#### reportAlerta
+
+This report module sends alerts to [Alerta](https://alerta.io/).
+
+Parameters for this report module:
+
+|Parameter| Description |
+|---|---|
+|severity| The alert severity, e.g., ``critical``. See https://docs.alerta.io/en/latest/api/alert.html#alert-severities for the list of possible values. |
+|environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
+|key| Optional, the Alerta API key to use for authenticated requests. |
+|token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
+|resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
+|urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
+|urls.default| The Alerta API URL of the default user group. |
+
