@@ -90,7 +90,7 @@ export default class ReportSlack extends Report {
     };
 
     report = (channel, content) => {
-        if (this.enabled){
+        if (this.enabled) {
             const context = this.getContext(channel, content);
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 

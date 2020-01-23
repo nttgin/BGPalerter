@@ -78,30 +78,34 @@ export default class Report {
 
         let matched = null;
         let pathsCount = {};
-        let sortedPathIndex = null;
+        let sortedPathIndex;
 
-        content.data
-            .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-            .forEach(path => {
-                if (!pathsCount[path]){
-                    pathsCount[path] = 0;
-                }
-                pathsCount[path] ++;
-            });
+        if (this.params.showPaths > 0) {
+            content.data
+                .filter(i => !!i.matchedMessage && !!i.matchedMessage.path)
+                .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
+                .forEach(path => {
+                    if (!pathsCount[path]) {
+                        pathsCount[path] = 0;
+                    }
+                    pathsCount[path]++;
+                });
 
-        sortedPathIndex = Object.keys(pathsCount)
-            .map(key => [key, pathsCount[key]] );
+            sortedPathIndex = Object.keys(pathsCount)
+                .map(key => [key, pathsCount[key]]);
 
-        sortedPathIndex.sort((first, second) => second[1] - first[1]);
-        context.pathNumber = (this.params.showPaths > 0) ? Math.min(this.params.showPaths, sortedPathIndex.length) : "";
-        context.paths = (this.params.showPaths > 0) ? sortedPathIndex
-            .slice(0, this.params.showPaths)
-            .map(i => i[0]).join("\n") : "Disabled";
+            sortedPathIndex.sort((first, second) => second[1] - first[1]);
+            context.pathNumber = Math.min(this.params.showPaths, sortedPathIndex.length);
+            context.paths = sortedPathIndex
+                .slice(0, this.params.showPaths)
+                .map(i => i[0]).join("\n");
+        } else {
+            context.pathNumber = "";
+            context.paths = "Disabled";
+        }
 
         switch(channel){
             case "hijack":
-
-
                 matched = content.data[0].matchedRule;
                 context.prefix = matched.prefix;
                 context.description = matched.description;

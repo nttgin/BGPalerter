@@ -107,10 +107,12 @@ export default class ConnectorFactory {
                                     resolve(true);
                                 })
                                 .catch((error) => {
-                                    env.logger.log({
-                                        level: 'error',
-                                        message: error
-                                    });
+                                    if (error) {
+                                        env.logger.log({
+                                            level: 'error',
+                                            message: error
+                                        });
+                                    }
                                     resolve(false);
                                 })
                         }))));

@@ -72,6 +72,9 @@ export default class ConnectorRIS extends Connector{
     };
 
     _openConnect = (resolve) => {
+        if (this.connectionFailedTimer) {
+            clearTimeout(this.connectionFailedTimer);
+        }
         resolve(true);
         this._connect(this.name + ' connector connected');
     };
@@ -87,8 +90,18 @@ export default class ConnectorRIS extends Connector{
                     perMessageDeflate: this.params.perMessageDeflate
                 });
 
+                this.connectionFailedTimer = setTimeout(() => {
+                    this.ws.terminate();
+                    this.ws.removeAllListeners();
+                    this.connect();
+                    reject("RIPE RIS connection failed. Trying again...");
+                }, 20000);
+
                 this.ws.on('message', this._messageToJson);
                 this.ws.on('close', (error) => {
+                    if (this.connectionFailedTimer) {
+                        clearTimeout(this.connectionFailedTimer);
+                    }
                     this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
                 });
                 this.ws.on('error', this._error);
