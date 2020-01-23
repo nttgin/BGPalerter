@@ -7,3 +7,4 @@ build/
 logs/
 .DS_Store
 bgpalerter.pid
+alertdata/
