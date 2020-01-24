@@ -24,7 +24,7 @@ export default class LossyBuffer {
             this.alertOnce = true;
             this.logger.log({
                 level: 'error',
-                message: "The data rate is too high, messages are getting dropped due to full buffer. Increase connectorsBufferSize if you think your machine could handle more."
+                message: "The data rate is too high, messages are getting dropped due to full buffer. Increase the buffer size if you think your machine could handle more."
             });
         }
 
