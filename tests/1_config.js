@@ -179,7 +179,7 @@ describe("Composition", function() {
 
         it("loading prefixes", function () {
 
-            expect(input.prefixes.length).to.equal(13);
+            expect(input.prefixes.length).to.equal(14);
 
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
@@ -279,6 +279,16 @@ describe("Composition", function() {
                             "description": "test fade off",
                             "ignoreMorespecifics": false,
                             "prefix": "165.24.225.0/24",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
+                        },
+                        {
+                            "asn": [65000],
+                            "description": "exact matching test",
+                            "ignoreMorespecifics": false,
+                            "prefix": "2001:db8:123::/48",
                             "group": "default",
                             "ignore": false,
                             "excludeMonitors" : [],

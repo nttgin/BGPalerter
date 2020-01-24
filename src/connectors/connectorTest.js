@@ -277,6 +277,13 @@ export default class ConnectorTest extends Connector{
                                 peer: "124.0.0.2"
                             },
                             type: "ris_message"
+                        },
+                        {
+                            data: {
+                                withdrawals: ["2001:db8:123::/48"],
+                                peer: "124.0.0.2"
+                            },
+                            type: "ris_message"
                         }
                     ];
                     break;

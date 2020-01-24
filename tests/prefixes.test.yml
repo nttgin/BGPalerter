@@ -89,6 +89,11 @@
   asn: 15562
   ignoreMorespecifics: false
 
+2001:db8:123::/48:
+  description: exact matching test
+  asn: 65000
+  ignoreMorespecifics: false
+
 options:
   monitorASns:
     2914:

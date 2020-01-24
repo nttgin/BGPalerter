@@ -165,29 +165,24 @@ export default class ConnectorRIS extends Connector{
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
 
-        monitoredPrefixes.forEach(item => {
-            if (item.prefix.includes(':')){
-                const components = item.prefix.split("/");
-                item.prefix = ipUtils.expandIPv6(components[0]) + '/' + components[1];
-            }
-        });
 
+        if (monitoredPrefixes
+            .filter(
+                i => (ipUtils._isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils._isEqualPrefix(i.prefix,'0.0.0.0/0'))
+            ).length === 2) {
 
-        if (monitoredPrefixes.filter(i => i.prefix === '0:0:0:0:0:0:0:0/0' || i.prefix === '0.0.0.0/0').length === 2){
             delete params.prefix;
+
             console.log("Monitoring everything");
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
             }));
+
         } else {
+
             for (let p of monitoredPrefixes) {
-                // if (p.path && p.path.match) {
-                //     const regex = this._optimizedPathMatch(p.path.match);
-                //     if (regex) {
-                //         params.path = regex;
-                //     }
-                // }
+
                 console.log("Monitoring", p.prefix);
                 params.prefix = p.prefix;
 
