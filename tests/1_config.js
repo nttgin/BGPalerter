@@ -287,7 +287,7 @@ describe("Composition", function() {
                         {
                             "asn": [65000],
                             "description": "exact matching test",
-                            "ignoreMorespecifics": false,
+                            "ignoreMorespecifics": true,
                             "prefix": "2001:db8:123::/48",
                             "group": "default",
                             "ignore": false,
@@ -297,7 +297,7 @@ describe("Composition", function() {
                     ]
                 });
 
-            expect(input.asns.length).to.equal(2);
+            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 65000 ]);
         });
     });
 

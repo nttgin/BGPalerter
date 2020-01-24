@@ -320,7 +320,40 @@ export default class ConnectorTest extends Connector{
                         {
                             data: {
                                 announcements: [{
-                                    prefixes: ["2.2.2.5/22"],
+                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.10",
+                                path: [1, 2, 3, 4321, 65000]
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.9",
+                                path: [1, 2, 3, 4321, 65000]
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                    next_hop: "124.0.0.3"
+                                }],
+                                peer: "124.0.0.3",
+                                path: [1, 2, 3, 4321, 65000]
+                            },
+                            type: "ris_message"
+                        },
+                        {
+                            data: {
+                                announcements: [{
+                                    prefixes: ["2.2.2.5/22", "2001:db9:123::/49"],
                                     next_hop: "124.0.0.3"
                                 }],
                                 peer: "124.0.0.3",
@@ -331,7 +364,7 @@ export default class ConnectorTest extends Connector{
                         {
                             data: {
                                 announcements: [{
-                                    prefixes: ["2.2.2.3/22"],
+                                    prefixes: ["2.2.2.3/22", "2001:db9:123::/49"],
                                     next_hop: "124.0.0.5"
                                 }],
                                 peer: "124.0.0.6",

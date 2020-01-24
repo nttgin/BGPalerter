@@ -82,7 +82,7 @@ export default class Input {
         throw new Error('The method getMonitoredPrefixes MUST be implemented');
     };
 
-    getMoreSpecificMatch = (prefix) => {
+    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
 
         for (let p of this.prefixes) {
             if (ipUtils._isEqualPrefix(p.prefix, prefix)) { // Used internal method to avoid validation overhead
@@ -94,10 +94,10 @@ export default class Input {
                 const p2 = ipUtils.getNetmask(prefix);
 
                 if (ipUtils.isSubnetBinary(this.cache[p.prefix], p2)) {
-                    if (p.ignoreMorespecifics){
-                        return null;
-                    } else {
+                    if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
                         return p;
+                    } else {
+                        return null;
                     }
                 }
             }
