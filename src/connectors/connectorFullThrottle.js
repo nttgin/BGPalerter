@@ -41,11 +41,11 @@ export default class ConnectorFullThrottle extends Connector{
             {
                 data: {
                     announcements: [{
-                        prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
+                        prefixes: ["175.254.205.0/25", "170.254.205.0/25", "2001:db8:123::/48"],
                         next_hop: "124.0.0.3"
                     }],
                     peer: "124.0.0.3",
-                    path: [1, 2, 3, 4321]
+                    path: [1, 2, 3, 65000]
                 },
                 type: "ris_message"
             },

@@ -64,7 +64,7 @@ export default class MonitorRPKI extends Monitor {
 
     monitor = (message) => {
         const prefix = message.prefix;
-        const matchedRule = this.input.getMoreSpecificMatch(prefix);
+        const matchedRule = this.input.getMoreSpecificMatch(prefix, false);
 
         if (matchedRule) {
             this.validationQueue.push({ message, matchedRule });

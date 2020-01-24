@@ -180,8 +180,8 @@ export default class Monitor {
         return alert;
     };
 
-    getMoreSpecificMatch = (prefix) => {
-        const matched = this.input.getMoreSpecificMatch(prefix);
+    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
+        const matched = this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
 
         if (matched) {
             if (matched.includeMonitors.length > 0 && !matched.includeMonitors.includes(this.name)) {

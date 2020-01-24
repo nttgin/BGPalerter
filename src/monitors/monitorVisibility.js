@@ -76,7 +76,7 @@ export default class MonitorVisibility extends Monitor {
         new Promise((resolve, reject) => {
 
             const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix);
+            const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 
             if (matchedRule && !matchedRule.ignore && ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 

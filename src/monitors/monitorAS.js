@@ -94,10 +94,9 @@ export default class MonitorAS extends Monitor {
 
             if (matchedRule) {
 
-                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix);
+                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
                 if (!matchedPrefixRule) {
-
-                    this.publishAlert(messageOrigin.getId().toString(),
+                    this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
                         matchedRule,
                         message,

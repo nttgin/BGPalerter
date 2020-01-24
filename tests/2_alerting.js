@@ -39,7 +39,6 @@ let asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
-let visibilityDone = false;
 describe("Alerting", function () {
     var worker = require("../index");
     var pubSub = worker.pubSub;
@@ -69,9 +68,10 @@ describe("Alerting", function () {
             }
         };
 
+        let visibilityTestCompleted = false;
         pubSub.subscribe("visibility", function (type, message) {
 
-            if (!visibilityDone) {
+            if (!visibilityTestCompleted) {
                 message = JSON.parse(JSON.stringify(message));
 
                 const id = message.id;
@@ -91,8 +91,10 @@ describe("Alerting", function () {
 
                 delete expectedData[id];
                 if (Object.keys(expectedData).length === 0) {
-                    done();
-                    visibilityDone = true;
+                    setTimeout(() => {
+                        visibilityTestCompleted = true;
+                        done();
+                    }, 5000);
                 }
             }
 
@@ -185,30 +187,34 @@ describe("Alerting", function () {
             }
 
         };
-
+        let hijackTestCompleted = false
         pubSub.subscribe("hijack", function(type, message){
 
-            message = JSON.parse(JSON.stringify(message));
+            if (!hijackTestCompleted) {
+                message = JSON.parse(JSON.stringify(message));
 
-            const id = message.id;
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        hijackTestCompleted = true;
+                        done();
+                    }, 5000);
+                }
             }
-
         });
 
     }).timeout(asyncTimeout);
@@ -330,29 +336,34 @@ describe("Alerting", function () {
 
         };
 
+        let newprefixTestCompleted = false;
         pubSub.subscribe("newprefix", function (type, message) {
 
-            message = JSON.parse(JSON.stringify(message));
+            if (!newprefixTestCompleted) {
+                message = JSON.parse(JSON.stringify(message));
 
-            const id = message.id;
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        newprefixTestCompleted = true;
+                        done();
+                    }, 5000);
+                }
             }
-
         });
 
 
@@ -435,26 +446,32 @@ describe("Alerting", function () {
             },
         };
 
+        let pathTestCompleted = false;
         pubSub.subscribe("path", function (type, message) {
 
-            message = JSON.parse(JSON.stringify(message));
-            const id = message.id;
+            if (!pathTestCompleted) {
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        pathTestCompleted = true;
+                        done();
+                    }, 5000);
+                }
             }
         });
 
@@ -467,34 +484,47 @@ describe("Alerting", function () {
         pubSub.publish("test-type", "misconfiguration");
 
         const expectedData = {
-            "2914": {
-                id: '2914',
+            "2914-2.2.2.3/22": {
+                id:  "2914-2.2.2.3/22",
                 origin: 'asn-monitor',
                 affected: 2914,
                 message: 'AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes',
+            },
+            "2914-2001:db9:123::/49": {
+                id: '2914-2001:db9:123::/49',
+                origin: 'asn-monitor',
+                affected: 2914,
+                message: 'AS2914 is announcing 2001:db9:123::/49 but this prefix is not in the configured list of announced prefixes',
             }
         };
 
+        let misconfigurationTestCompleted = false;
         pubSub.subscribe("misconfiguration", function (type, message) {
 
-            message = JSON.parse(JSON.stringify(message));
-            const id = message.id;
+            if (!misconfigurationTestCompleted) {
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
 
-            expect(Object.keys(expectedData).includes(id)).to.equal(true);
-            expect(expectedData[id] != null).to.equal(true);
+                // console.log(expectedData, message);
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
 
-            expect(message).to
-                .containSubset(expectedData[id]);
+                expect(message).to
+                    .containSubset(expectedData[id]);
 
-            expect(message).to.contain
-                .keys([
-                    "latest",
-                    "earliest"
-                ]);
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
 
-            delete expectedData[id];
-            if (Object.keys(expectedData).length === 0){
-                done();
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        misconfigurationTestCompleted = true;
+                        done();
+                    }, 5000);
+                }
             }
         });
 

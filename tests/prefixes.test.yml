@@ -92,10 +92,12 @@
 2001:db8:123::/48:
   description: exact matching test
   asn: 65000
-  ignoreMorespecifics: false
+  ignoreMorespecifics: true
 
 options:
   monitorASns:
+    65000:
+      group: default
     2914:
       group: default
     3333:
