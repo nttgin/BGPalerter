@@ -60,6 +60,12 @@ describe("Alerting", function () {
                 origin: 'withdrawal-detection',
                 affected: "204092-45",
                 message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers'
+            },
+            "2001:db8:123::/48": {
+                id: '2001:db8:123::/48',
+                origin: 'withdrawal-detection',
+                affected: 65000,
+                message: 'The prefix 2001:db8:123::/48 (exact matching test) has been withdrawn. It is no longer visible from 4 peers'
             }
         };
 

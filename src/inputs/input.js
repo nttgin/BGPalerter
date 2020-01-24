@@ -85,7 +85,7 @@ export default class Input {
     getMoreSpecificMatch = (prefix) => {
 
         for (let p of this.prefixes) {
-            if (p.prefix === prefix) {
+            if (ipUtils._isEqualPrefix(p.prefix, prefix)) { // Used internal method to avoid validation overhead
                 return p;
             } else {
                 if (!this.cache[p.prefix]) {
