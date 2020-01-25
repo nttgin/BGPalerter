@@ -15,6 +15,3 @@ markComment: >
   This issue has been automatically marked as stale and it will be closed soon.
   This mechanism helps to prioritize feature requests which received more support from the community.
   If you want to open again this issue you have to provide a Pull Request.
-
-# Comment to post when closing a stale issue. Set to `false` to disable
-closeComment: true
