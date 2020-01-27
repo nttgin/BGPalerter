@@ -343,3 +343,14 @@ Parameters for this report module:
 |urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
 |urls.default| The Alerta API URL of the default user group. |
 
+#### reportWebex
+
+This report module sends alerts on [Webex Teams](https://teams.webex.com).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|hooks| A dictionary containing Webex Teams WebHooks grouped by user group (key: group, value: WebHook).| 
+|hooks.default| The WebHook (URL) of the default user group.| 
+
