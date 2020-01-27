@@ -153,6 +153,16 @@ reports:
 #      urls:
 #        default: _YOUR_ALERTA_API_URL_
 
+#  - file: reportWebex
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      hooks:
+#        default: _YOUR_WEBEX_WEBHOOK_URL_
+
 
 ############################
 # Notification settings:
