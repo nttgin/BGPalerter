@@ -16,7 +16,6 @@ The following are common parameters which it is possible to specify in the confi
 |logger.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
 |processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
-|sentryDSN| The DSN corresponding to the Sentry project to send the runtime exceptions to. | A string in the format https://key@sentry-server/project| https://bgpalerter@ sentry.io/1 | No |
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 
