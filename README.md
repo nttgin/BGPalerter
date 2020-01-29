@@ -14,7 +14,7 @@ It can deliver alerts on files, by email, on slack, and more.
 
 ## TL;DR
 > This section is useful if you don't care about the source code but you just want to run the monitor.
-If you want to know more about the source code (which is completely open) please see the following sections.
+Instead, if you want to run the source code (which is completely open) or develop, please read directly the documentation.
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
@@ -27,7 +27,9 @@ If you want to know more about the source code (which is completely open) please
 5. See the alerts in `logs/reports-YYYY-MM-DD.log` (e.g. `tail -f logs/reports*`)
 
 In `config.yml.example` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
-Please uncomment the related section and configure according to your needs.
+Please uncomment the related section and configure according to your needs. 
+
+Read the documentation below for more options.
 
 
 ## Documentation
