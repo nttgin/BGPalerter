@@ -1,6 +1,6 @@
 # RIPE RIS disconnections
 
-Sometimes among the error logs you will find a RIS disconnection logs (usually error 1006).
+Sometimes among the error logs you will find RIS disconnection logs (usually error 1006).
 
 The following causes are possible:
 
