@@ -297,6 +297,7 @@ Parameters for this report module:
 |Parameter| Description| 
 |---|---|
 |colors| A dictionary having as key the event channel and as value a hex color (string). These colors will be used to make messages in Slack distinguishable. | 
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
 
