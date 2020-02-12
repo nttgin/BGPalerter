@@ -38,7 +38,7 @@ export default class ReportAlerta extends Report {
     constructor(channels, params, env) {
         super(channels, params, env);
 
-        this.environment = this.params.environment || env.environment;
+        this.environment = env.config.environment;
         this.enabled = true;
         if (!this.params.urls || !Object.keys(this.params.urls).length){
             this.logger.log({
@@ -79,9 +79,9 @@ export default class ReportAlerta extends Report {
             resposnseType: "json",
             data: {
                 event: message,
-                resource: this.parseTemplate(this.params.resource_templates[message] || this.params.resource_templates["default"], context),
+                resource: this.parseTemplate(this.params.resourceTemplates[message] || this.params.resourceTemplates["default"], context),
                 text: content.message,
-                service: [(this.params.service || "BGPalerter")],
+                service: ["BGPalerter"],
                 attributes: context,
                 severity: severity,
                 environment: this.environment
