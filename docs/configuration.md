@@ -330,6 +330,7 @@ Parameters for this report module:
 #### reportAlerta
 
 This report module sends alerts to [Alerta](https://alerta.io/).
+Alerta is an open-source and easy to install dashboard that allows you to collect and monitor color-coded alerts.
 
 Parameters for this report module:
 
@@ -342,6 +343,9 @@ Parameters for this report module:
 |resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
 |urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
 |urls.default| The Alerta API URL of the default user group. |
+
+> If you receive a 403 error in the BGPalerter error logs, try to check if you correctly set the ALLOWED_ENVIRONMENTS in /etc/alertad.conf. 
+> In particular set ALLOWED_ENVIRONMENTS=['Production','Development'].
 
 #### reportWebex
 
