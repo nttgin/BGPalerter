@@ -56,7 +56,6 @@ export default class ReportAlerta extends Report {
         }
 
         this.headers = {
-            'Content-Type': 'application/json'
         };
         if (this.params.key){
             this.headers.Authorization = "Key " + this.params.key;
