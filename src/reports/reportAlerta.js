@@ -55,7 +55,9 @@ export default class ReportAlerta extends Report {
             }
         }
 
-        this.headers = {};
+        this.headers = {
+            'Content-Type': 'application/json'
+        };
         if (this.params.key){
             this.headers.Authorization = "Key " + this.params.key;
         }
@@ -65,21 +67,33 @@ export default class ReportAlerta extends Report {
 
     }
 
-    _createAlertaAlert = (url, message, content) => {
+    _createAlertaAlert = (url, channel, content) => {
 
-        const severity = (this.params && this.params.severity && this.params.severity[message])
-            ? this.params.severity[message]
+        const severity = (this.params && this.params.severity && this.params.severity[channel])
+            ? this.params.severity[channel]
             : "informational"; // informational level
-        const context = this.getContext(message, content);
+        const context = this.getContext(channel, content);
+
+        if (this.params.resource_templates) {
+            this.logger.log({
+                level: 'info',
+                message: "The resource_templates parameter will be soon deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
+            });
+        }
+
+        const resource = this.params.resourceTemplates[channel] ||
+            this.params.resource_templates[channel] ||
+            this.params.resourceTemplates["default"] ||
+            this.params.resource_templates["default"];
 
         axios({
             url: url + "/alert",
             method: "POST",
             headers: this.headers,
-            resposnseType: "json",
+            responseType: "json",
             data: {
-                event: message,
-                resource: this.parseTemplate(this.params.resourceTemplates[message] || this.params.resourceTemplates["default"], context),
+                event: channel,
+                resource: this.parseTemplate(resource, context),
                 text: content.message,
                 service: ["BGPalerter"],
                 attributes: context,
@@ -95,7 +109,7 @@ export default class ReportAlerta extends Report {
             })
     };
 
-    report = (message, content) => {
+    report = (channel, content) => {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
@@ -103,7 +117,7 @@ export default class ReportAlerta extends Report {
 
             for (let group of groups) {
                 if (this.params.urls[group]) {
-                    this._createAlertaAlert(this.params.urls[group], message, content);
+                    this._createAlertaAlert(this.params.urls[group], channel, content);
                 }
             }
         }
