@@ -145,6 +145,10 @@ export default class InputYml extends Input {
                     return "Not a valid prefix: " + prefix;
                 }
 
+
+                if (this.config.environment === "research") {
+                    item.asn = item.asn || 0;
+                }
                 if (["string", "number"].includes(typeof(item.asn))) {
                     asns = [item.asn];
                 } else if (item.asn instanceof Array) {
@@ -152,6 +156,7 @@ export default class InputYml extends Input {
                 } else {
                     return "Not a valid AS number for: " + prefix;
                 }
+
 
                 if (!new AS(asns).isValid()) {
                     return "Not a valid AS number for: " + prefix;

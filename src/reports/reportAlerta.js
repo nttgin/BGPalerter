@@ -65,12 +65,12 @@ export default class ReportAlerta extends Report {
 
     }
 
-    _createAlertaAlert = (url, message, content) => {
+    _createAlertaAlert = (url, channel, content) => {
 
-        const severity = (this.params && this.params.severity && this.params.severity[message])
-            ? this.params.severity[message]
+        const severity = (this.params && this.params.severity && this.params.severity[channel])
+            ? this.params.severity[channel]
             : "informational"; // informational level
-        const context = this.getContext(message, content);
+        const context = this.getContext(channel, content);
 
         axios({
             url: url + "/alert",
@@ -78,8 +78,8 @@ export default class ReportAlerta extends Report {
             headers: this.headers,
             resposnseType: "json",
             data: {
-                event: message,
-                resource: this.parseTemplate(this.params.resourceTemplates[message] || this.params.resourceTemplates["default"], context),
+                event: channel,
+                resource: this.parseTemplate(this.params.resourceTemplates[channel] || this.params.resourceTemplates["default"], context),
                 text: content.message,
                 service: ["BGPalerter"],
                 attributes: context,
