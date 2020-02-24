@@ -72,7 +72,7 @@ export class AS {
                             return false;
                         }
 
-                        return asn > 0 && asn <= 4294967295;
+                        return asn >= 0 && asn <= 4294967295;
                     }) &&
                 [...new Set(this.numbers.map(i => parseInt(i)))].length === this.numbers.length;
         }

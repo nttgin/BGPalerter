@@ -145,7 +145,7 @@ reports:
 #        newprefix: informational
 #        visibility: debug
 #        path: trace
-#      resource_templates:
+#      resourceTemplates:
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"
 #        newprefix: "newprefix::${prefix}@@${asn}"

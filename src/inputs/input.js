@@ -39,6 +39,7 @@ export default class Input {
         this.prefixes = [];
         this.asns = [];
         this.cache = {};
+        this.config = config;
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
