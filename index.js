@@ -107,7 +107,7 @@ switch(params._[0]) {
         if (params.s && params.m) {
             throw new Error("You can specify -s or -m, not both");
         } else if (params.s) {
-            monitoredASes = (params.s || "").split(",");
+            monitoredASes = (params.s) ? params.s.toString().split(",") : null;
         } else if (params.m) {
             monitoredASes = true;
         }
