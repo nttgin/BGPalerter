@@ -41,6 +41,9 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 }
 
                 return asns;
+            })
+            .catch(() => {
+                console.log("RIPEstat prefix-overview query failed: cannot retrieve information for " + prefix);
             });
     };
 
@@ -75,6 +78,9 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
 
                 return prefixes;
             })
+            .catch(() => {
+                console.log("RIPEstat related-prefixes query failed: cannot retrieve information for " + prefix);
+            });
 
     };
 
@@ -161,6 +167,9 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                     someNotValidatedPrefixes = true;
                 }
             })
+            .catch(() => {
+                console.log("RIPEstat rpki-validation query failed: cannot retrieve information for " + prefix);
+            });
     };
 
     const getBaseRules = () => {
@@ -176,7 +185,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     return getBaseRules()
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
-            return batchPromises(20, prefixes, prefix => {
+            return batchPromises(10, prefixes, prefix => {
                 return getAnnouncedMoreSpecifics(prefix)
                     .then((items) => Promise
                         .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))))
@@ -207,7 +216,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 }
             };
             if (monitoredASes === true) {
-                generateMonitoredAsObject(Object.keys(allOrigins));
+                generateMonitoredAsObject(asnList);
             } else if (monitoredASes.length) {
                 generateMonitoredAsObject(monitoredASes);
             }
