@@ -37,6 +37,7 @@ import PubSub from './pubSub';
 import FileLogger from './fileLogger';
 import Input from "./inputs/inputYml";
 import {version} from '../package.json';
+import axios from 'axios';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
@@ -139,7 +140,19 @@ if (fs.existsSync(vector.configFile)) {
     }
 } else {
     console.log("Impossible to load config.yml. A default configuration file has been generated.");
-    fs.writeFileSync(defaultConfigFilePath, yaml.dump(config))
+
+    axios({
+        url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example',
+        method: 'GET',
+        responseType: 'blob', // important
+    })
+        .then((response) => {
+            fs.writeFileSync(defaultConfigFilePath, response.data);
+        })
+        .catch(() => {
+            fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
+        })
+
 }
 
 const errorTransport = new FileLogger({
