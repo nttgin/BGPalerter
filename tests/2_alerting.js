@@ -505,7 +505,6 @@ describe("Alerting", function () {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
-                // console.log(expectedData, message);
                 expect(Object.keys(expectedData).includes(id)).to.equal(true);
                 expect(expectedData[id] != null).to.equal(true);
 

@@ -215,6 +215,10 @@ export default class ConnectorRIS extends Connector{
         new Promise((resolve, reject) => {
             this.subscription = input;
             try {
+                input.onChange(() => {
+                    this._close();
+                });
+
                 if (this.params.carefulSubscription) {
                     this._subscribeToPrefixes(input);
                     this._subscribeToASns(input);

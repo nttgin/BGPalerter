@@ -32,6 +32,7 @@
  */
 
 import ipUtils from "ip-sub";
+import inquirer from "inquirer";
 
 export default class Input {
 
@@ -40,6 +41,19 @@ export default class Input {
         this.asns = [];
         this.cache = {};
         this.config = config;
+        this.callbacks = [];
+
+        setTimeout(() => {
+            this.loadPrefixes()
+                .then(() => {
+                    this._change();
+                })
+                .catch(error => {
+                    console.log(error);
+                    process.exit();
+                });
+        }, 200);
+
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
@@ -54,6 +68,16 @@ export default class Input {
         }
 
         return false;
+    };
+
+    onChange = (callback) => {
+        this.callbacks.push(callback);
+    };
+
+    _change = () => {
+      for (let call of this.callbacks) {
+          call();
+      }
     };
 
     getMonitoredLessSpecifics = () => {
@@ -109,6 +133,73 @@ export default class Input {
 
     getMonitoredASns = () => {
         throw new Error('The method getMonitoredASns MUST be implemented');
+    };
+
+    loadPrefixes = () => {
+        throw new Error('The method loadPrefixes MUST be implemented');
+    };
+
+    save = () => {
+        throw new Error('The method save MUST be implemented');
+    };
+
+    generate = () => {
+        return inquirer
+            .prompt([
+                {
+                    type: 'confirm',
+                    name: 'continue',
+                    message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
+                    default: true
+                }
+            ])
+            .then((answer) => {
+                if (answer.continue) {
+                    return inquirer
+                        .prompt([
+                            {
+                                type: 'input',
+                                name: 'asns',
+                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g. 2914,3333)",
+                                default: true,
+                                validate: function(value) {
+                                    const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
+                                    return asns.length > 0;
+                                }
+                            },
+
+                            {
+                                type: 'confirm',
+                                name: 'i',
+                                message: "Are there sub-prefixes delegated to other ASes? (e.g. sub-prefixes announced by customers)",
+                                default: true
+                            },
+
+                            {
+                                type: 'confirm',
+                                name: 'm',
+                                message: "Do you want to be notified when your AS is announcing a new prefix?",
+                                default: true
+                            }
+                        ])
+                        .then((answer) => {
+                            const generatePrefixes = require("../generatePrefixesList");
+                            const asns = answer.asns.split(",");
+                            return generatePrefixes(
+                                asns,
+                                "prefixes.yml",
+                                [],
+                                answer.i,
+                                null,
+                                answer.m ? asns : []
+                            );
+                        });
+                } else {
+                    throw new Error("Nothing to monitor.");
+                }
+            });
+
+
     };
 
 }

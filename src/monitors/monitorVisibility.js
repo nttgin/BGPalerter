@@ -33,7 +33,6 @@
 import Monitor from "./monitor";
 import ipUtils from "ip-sub";
 
-
 export default class MonitorVisibility extends Monitor {
 
     constructor(name, channel, params, env){

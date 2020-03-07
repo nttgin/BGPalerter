@@ -38,8 +38,6 @@ const params = yargs
     .command('$0', 'Run BGPalerter (default)', function () {
     })
     .example('$0 run -c config.yml', 'Run BGPalerter')
-
-
     .command('generate', 'Generate prefixes to monitor', function () {
         yargs.alias('o', 'output')
             .nargs('o', 1)
@@ -76,8 +74,6 @@ const params = yargs
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
-
-
     .help('h')
     .alias('h', 'help')
     .epilog('Copyright (c) 2019, NTT Ltd')
@@ -100,7 +96,7 @@ switch(params._[0]) {
             if (fs.existsSync(params.l)) {
                 prefixes = fs.readFileSync(params.l, 'utf8').split(/\r?\n/).filter(i => i && true);
             } else {
-                throw new Error("The prefix list fil\e (-l) is not readable");
+                throw new Error("The prefix list file (-l) is not readable");
             }
         }
 

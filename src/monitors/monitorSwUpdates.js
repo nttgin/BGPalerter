@@ -38,6 +38,10 @@ export default class MonitorSwUpdates extends Monitor {
         super(name, channel, params, env);
     };
 
+    updateMonitoredResources = () => {
+        // throw new Error('The method updateMonitoredResources must be implemented in ' + this.name);
+    };
+
     filter = (message) => {
         return message.type === 'software-update';
     };

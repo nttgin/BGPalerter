@@ -5,7 +5,9 @@ export default class MonitorRPKI extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.updateMonitoredPrefixes();
+        this.input.onChange(() => {
+            this.updateMonitoredResources();
+        });
         this.validationQueue = [];
 
         rpki.preCache(60)

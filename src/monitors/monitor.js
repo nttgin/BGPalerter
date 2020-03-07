@@ -56,6 +56,10 @@ export default class Monitor {
         };
 
         setInterval(this._publishFadeOffGroups, this.internalConfig.checkFadeOffGroups);
+
+        this.input.onChange(() => {
+            this.updateMonitoredResources();
+        });
     };
 
     updateMonitoredResources = () => {
