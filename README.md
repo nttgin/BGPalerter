@@ -19,7 +19,7 @@ Instead, if you want to run the source code (which is completely open) or develo
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
 2. Execute the binary (e.g. `chmod 700 bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first time you run it, the auto-configuration will start.
+The first time you run it, the auto-configuration will start.
 
 If something happens (e.g. a hijack) you will see the alerts in `logs/reports-YYYY-MM-DD.log`. 
 In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
