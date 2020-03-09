@@ -5,7 +5,7 @@
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
 2. Execute the binary (e.g. `chmod 700 bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first time you run it, the auto-configuration will start.
+The first time you run it, the auto-configuration will start.
 
 ## Running BGPalerter from binaries - All steps
 
@@ -20,7 +20,7 @@
 4. Auto-configure it: `./bgpalerter-linux-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
 5. Run it: `./bgpalerter-linux-x64`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the terminal
+Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the terminal
 
 #### Mac
 
