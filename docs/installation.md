@@ -24,13 +24,13 @@ Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the 
 
 #### Mac
 
-1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-mac-x64).
+1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-macos-x64).
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Make the binary executable (e.g. `chmod 700 bgpalerter-mac-x64`)
+3. Make the binary executable (e.g. `chmod 700 bgpalerter-macos-x64`)
 
-4. Auto-configure it: `./bgpalerter-mac-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
+4. Auto-configure it: `./bgpalerter-macos-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
 5. Run it: `./bgpalerter-mac-x64`
 
