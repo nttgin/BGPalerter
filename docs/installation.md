@@ -1,23 +1,49 @@
 # Installation
 
+## Running BGPalerter from binaries - Quick Setup
 
-## Running BGPalerter from binaries
+1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS).
+2. Execute the binary (e.g. `chmod 700 bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first time you run it, the auto-configuration will start.
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` and [`prefixes.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/prefixes.yml.example) as `prefixes.yml`, and place them in the same directory of the executable (if you skip this step, some default configuration files will be generated during the first execution).
+## Running BGPalerter from binaries - All steps
 
-3. Modify `prefixes.yml` and add the prefixes you want to monitor (or see below how to auto generate this file).
+#### Linux
 
-4. Run the executable (e.g. `chmod 700 bgpalerter-linux-x64 && nohup ./bgpalerter-linux-x64 &`).
+1. Download the binary:  `wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64`
 
-5. See the alerts in `logs/reports-YYYY-MM-DD.log` (e.g. `tail -f logs/reports*`)
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-In `config.yml.example` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
-Please uncomment the related section and configure according to your needs.
+3. Make the binary executable (e.g. `chmod 700 bgpalerter-linux-x64`)
 
-If you enable email reporting, download also the directory `reports/email_templates` in the same directory of the executable.
+4. Auto-configure it: `./bgpalerter-linux-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
+5. Run it: `./bgpalerter-linux-x64`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the terminal
+
+#### Mac
+
+1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-mac-x64).
+
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
+
+3. Make the binary executable (e.g. `chmod 700 bgpalerter-mac-x64`)
+
+4. Auto-configure it: `./bgpalerter-mac-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
+
+5. Run it: `./bgpalerter-mac-x64`
+
+
+#### Windows
+
+1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-win-x64.exe).
+
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
+
+3. Open cmd (press `ctrl + R` and type `cmd`) and go on the directory where you downloaded the binary (usually `cd C:\Users\_USER_\Downloads`)
+
+4. Run it: `bgpalerter-win-x64.exe`
 
 ## Running BGPalerter from the source code
 

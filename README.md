@@ -12,25 +12,21 @@ It can deliver alerts on files, by email, on slack, and more.
 
 ![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
-## TL;DR
+## TL;DR (1 minute setup)
 > This section is useful if you don't care about the source code but you just want to run the monitor.
 Instead, if you want to run the source code (which is completely open) or develop, please read directly the documentation.
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` and [`prefixes.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/prefixes.yml.example) as `prefixes.yml`, and place them in the same directory of the executable (if you skip this step, some default configuration files will be generated during the first execution)
+2. Execute the binary (e.g. `chmod 700 bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first time you run it, the auto-configuration will start.
 
-3. Modify `prefixes.yml` and add the prefixes you want to monitor (or see below how to auto generate this file)
-
-4. Run the executable (e.g. `chmod 700 bgpalerter-linux-x64 && nohup ./bgpalerter-linux-x64 &`)
-
-5. See the alerts in `logs/reports-YYYY-MM-DD.log` (e.g. `tail -f logs/reports*`)
-
-In `config.yml.example` you can find other reporting mechanisms (e.g. email and slack) in addition to logging to files. 
+If something happens (e.g. a hijack) you will see the alerts in `logs/reports-YYYY-MM-DD.log`. 
+In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
 Please uncomment the related section and configure according to your needs. 
 
+If the installation doesn't go smoothly, read [here](docs/installation.md).  
 Read the documentation below for more options.
-
 
 ## Documentation
 
