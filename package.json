@@ -35,7 +35,7 @@
     "axios": "^0.19.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
-    "inquirer": "^7.0.6",
+    "inquirer": "^7.1.0",
     "ip-address": "^6.2.0",
     "ip-sub": "^1.0.5",
     "js-yaml": "^3.13.1",
