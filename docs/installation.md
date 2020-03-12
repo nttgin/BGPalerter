@@ -32,7 +32,7 @@ Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the 
 
 4. Auto-configure it: `./bgpalerter-macos-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
-5. Run it: `./bgpalerter-mac-x64`
+5. Run it: `./bgpalerter-macos-x64`
 
 
 #### Windows
@@ -41,7 +41,7 @@ Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the 
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Open cmd (press `ctrl + R` and type `cmd`) and go on the directory where you downloaded the binary (usually `cd C:\Users\_USER_\Downloads`)
+3. Open cmd (press `ctrl + R` and type `cmd`) and `cd` on the directory where you downloaded the binary (usually `cd C:\Users\_USER_\Downloads`)
 
 4. Run it: `bgpalerter-win-x64.exe`
 
