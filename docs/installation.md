@@ -49,7 +49,7 @@ Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the 
 
 1. Git clone this repo.
 
-2. Install Node.js (version >= 10.16) and npm ([installing node and npm](https://nodejs.org/en/download/)).
+2. Install Node.js (version >= 10.16) and npm ([installing node and npm](node.md)).
 
 3. Execute `npm install` to install all dependencies.
 
