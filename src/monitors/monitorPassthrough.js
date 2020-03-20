@@ -7,6 +7,10 @@ export default class monitorPassthrough extends Monitor {
         this.count = 0;
     };
 
+    updateMonitoredResources = () => {
+        // nothing
+    };
+
     filter = () => {
         return true
     };
