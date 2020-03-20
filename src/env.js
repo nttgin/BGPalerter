@@ -52,6 +52,7 @@ let config = {
             file: "connectorRIS",
             name: "ris",
             params: {
+                reconnectTimeoutSeconds: 10,
                 carefulSubscription: true,
                 url: "wss://ris-live.ripe.net/v1/ws/",
                 perMessageDeflate: true,

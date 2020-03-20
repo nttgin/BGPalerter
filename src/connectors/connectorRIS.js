@@ -43,6 +43,9 @@ export default class ConnectorRIS extends Connector{
         this.ws = null;
         this.subscription = null;
         this.pingInterval = 5000;
+        this.params.reconnectTimeoutSeconds = this.params.reconnectTimeoutSeconds || 10;
+        this.reconnectTimeout = this.params.reconnectTimeoutSeconds * 1000;
+
         setInterval(this._ping, this.pingInterval);
 
         this.url = brembo.build(this.params.url, {
@@ -72,10 +75,9 @@ export default class ConnectorRIS extends Connector{
     };
 
     _openConnect = (resolve) => {
-        if (this.connectionFailedTimer) {
-            clearTimeout(this.connectionFailedTimer);
-        }
+        this.connected = true;
         resolve(true);
+        this.reconnectTimeout = this.params.reconnectTimeoutSeconds * 1000;
         this._connect(this.name + ' connector connected');
     };
 
@@ -90,19 +92,15 @@ export default class ConnectorRIS extends Connector{
                     perMessageDeflate: this.params.perMessageDeflate
                 });
 
-                this.connectionFailedTimer = setTimeout(() => {
-                    this.ws.terminate();
-                    this.ws.removeAllListeners();
-                    this.connect();
-                    reject("RIPE RIS connection failed. Trying again...");
-                }, 20000);
-
                 this.ws.on('message', this._messageToJson);
                 this.ws.on('close', (error) => {
-                    if (this.connectionFailedTimer) {
-                        clearTimeout(this.connectionFailedTimer);
-                    }
-                    this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+
+                    const message = (this.connected) ?
+                        "RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md" :
+                        "It was not possible to establish a connection with RIPE RIS";
+
+                    this._close(message);
+
                 });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
@@ -119,16 +117,22 @@ export default class ConnectorRIS extends Connector{
             .then(this.subscribe.bind(null, this.subscription));
     };
 
+    _getTimeoutReconnect = () => {
+        this.reconnectTimeout += (this.reconnectTimeout / 2);
+        return Math.min(120000, this.reconnectTimeout);
+    };
+
     _close = (error) => {
         this._disconnect(error);
         try {
             this.ws.terminate();
             this.ws.removeAllListeners();
+            this.connected = false;
         } catch(e) {
             // Nothing to do here
         }
         // Reconnect
-        setTimeout(this._reconnect, 10000);
+        setTimeout(this._reconnect, this._getTimeoutReconnect());
     };
 
     _subscribeToAll = (input) => {

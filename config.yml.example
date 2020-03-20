@@ -5,6 +5,7 @@ connectors:
       carefulSubscription: true
       url: wss://ris-live.ripe.net/v1/ws/
       perMessageDeflate: true
+      reconnectTimeoutSeconds: 10
       subscription:
         moreSpecific: true
         type: UPDATE
