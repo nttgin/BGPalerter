@@ -112,6 +112,8 @@ Parameters for this connector module:
 |---|---|
 |url| WebSocket end-point of RIS, which currently is `wss://ris-live.ripe.net/v1/ws/` |
 |subscription| Dictionary containing the parameters required by RIS. Refer to the [official documentation](https://ris-live.ripe.net/) for details.|
+|carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
+|perMessageDeflate| Enable gzip compression on the connection. |
 
 #### connectorTest
 
