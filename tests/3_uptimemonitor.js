@@ -71,6 +71,9 @@ describe("Uptime Monitor", function() {
                 expect(data.status).to.equal(200);
                 expect(data.data.warning).to.equal(false);
                 done();
+            })
+            .catch(error => {
+                console.log(error);
             });
 
     }).timeout(asyncTimeout);

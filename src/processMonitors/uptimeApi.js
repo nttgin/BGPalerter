@@ -40,6 +40,7 @@ export default class UptimeApi extends Uptime {
         super(connectors, params);
         this.server = null;
         this.connectors = connectors;
+
         try {
             this.server = restify.createServer();
             this.server.pre(restify.pre.sanitizePath());

@@ -60,6 +60,7 @@ export default class Connector {
     };
 
     _disconnect = (message) => {
+        this.connected = false;
         if (this.disconnectCallback)
             this.disconnectCallback(message);
     };
@@ -70,6 +71,7 @@ export default class Connector {
     };
 
     _connect = (message) => {
+        this.connected = true;
         if (this.connectCallback)
             this.connectCallback(message);
     };

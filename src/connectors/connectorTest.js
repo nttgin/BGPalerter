@@ -45,10 +45,10 @@ export default class ConnectorTest extends Connector{
         });
     }
 
-    connect = () =>
-        new Promise((resolve, reject) => {
-            resolve(true);
-        });
+    connect = () => {
+        this._connect("Test connector connected");
+        return Promise.resolve();
+    };
 
     _fadeOffTest = (fade) => {
         const updates = [
@@ -91,316 +91,314 @@ export default class ConnectorTest extends Connector{
         }, (this.config.fadeOffSeconds + ((fade) ? -4 : 4)) * 1000); // depending on "fade" it goes in our out of the fading period
     };
 
-    subscribe = (params) =>
-        new Promise((resolve, reject) => {
-            resolve(true);
+    subscribe = (params) => {
+        const type = params.type || this.params.testType;
 
-            const type = params.type || this.params.testType;
+        let updates;
 
-            let updates;
+        switch (type) {
+            case "fade-off":
+                return this._fadeOffTest(false);
 
-            switch (type) {
-                case "fade-off":
-                    return this._fadeOffTest(false);
+            case "fade-in":
+                return this._fadeOffTest(true);
 
-                case "fade-in":
-                    return this._fadeOffTest(true);
-
-                case "hijack":
-                    updates = [
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 4321]
-                            },
-                            type: "ris_message"
+            case "hijack":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 4321]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["165.254.255.0/25"],
-                                    next_hop: "124.0.0.2"
-                                }],
-                                peer: "124.0.0.2",
-                                path: [1, 2, 3, [4, 15562]]
-                            },
-                            type: "ris_message"
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["165.254.255.0/25"],
+                                next_hop: "124.0.0.2"
+                            }],
+                            peer: "124.0.0.2",
+                            path: [1, 2, 3, [4, 15562]]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884:ffff::/48"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 208585]
-                            },
-                            type: "ris_message"
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884:ffff::/48"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 208585]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884::/32"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, [204092, 45]]
-                            },
-                            type: "ris_message"
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884::/32"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, [204092, 45]]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884::/32"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, [15563]]
-                            },
-                            type: "ris_message"
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884::/32"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, [15563]]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884::/32"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 204092]
-                            },
-                            type: "ris_message"
-                        }
-                    ];
-                    break;
-
-                case "newprefix":
-                    updates = [
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["165.254.255.0/25"],
-                                    next_hop: "124.0.0.2"
-                                }],
-                                peer: "124.0.0.2",
-                                path: [1, 2, 3, 15562]
-                            },
-                            type: "ris_message"
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884::/32"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 204092]
                         },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884::/32"],
-                                    next_hop: "124.0.0.2"
-                                }],
-                                peer: "124.0.0.2",
-                                path: [1, 2, 3, [45]]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a00:5884:ffff::/48"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 204092]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a0e:f40::/32"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 204092]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a0e:240::/32"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 1345]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 1234]
-                            },
-                            type: "ris_message"
-                        }
-                    ];
-                    break;
-
-                case "visibility":
-                    updates = [
-                        {
-                            data: {
-                                withdrawals: ["165.254.225.0/24"],
-                                peer: "124.0.0.2"
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                withdrawals: ["2a00:5884::/32"],
-                                peer: "124.0.0.2"
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                withdrawals: ["2a00:5884:ffff::/48"],
-                                peer: "124.0.0.2"
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                withdrawals: ["2a0e:f40::/32"],
-                                peer: "124.0.0.2"
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                withdrawals: ["2001:db8:123::/48"],
-                                peer: "124.0.0.2"
-                            },
-                            type: "ris_message"
-                        }
-                    ];
-                    break;
-
-                case "path":
-                    updates = [
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["94.5.4.3/22", "98.5.4.3/22", "99.5.4.3/22"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 4321, 5060, 2914]
-                            },
-                            type: "ris_message"
-                        }
-                    ];
-                    break;
-
-                case "misconfiguration":
-                    updates = [
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2.2.2.3/22"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.4",
-                                path: [1, 2, 3, 4321, 5060, 2914]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.10",
-                                path: [1, 2, 3, 4321, 65000]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.9",
-                                path: [1, 2, 3, 4321, 65000]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 4321, 65000]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2.2.2.5/22", "2001:db9:123::/49"],
-                                    next_hop: "124.0.0.3"
-                                }],
-                                peer: "124.0.0.3",
-                                path: [1, 2, 3, 4321, 5060, 2914]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2.2.2.3/22", "2001:db9:123::/49"],
-                                    next_hop: "124.0.0.5"
-                                }],
-                                peer: "124.0.0.6",
-                                path: [1, 2, 3, 4321, 5060, 2914]
-                            },
-                            type: "ris_message"
-                        },
-                        {
-                            data: {
-                                announcements: [{
-                                    prefixes: ["2a0e:240::/32"],
-                                    next_hop: "124.0.0.5"
-                                }],
-                                peer: "124.0.0.6",
-                                path: [1, 2, 3, 4321, 5060, 2914]
-                            },
-                            type: "ris_message"
-                        }
-                    ];
-                    break;
-                default:
-                    return;
-            }
-
-            this.timer = setInterval(() => {
-                updates.forEach(update => {
-                    this._message(update);
-                    if (type === 'visibility') {
-                        let peer = update.data.peer.split('.');
-                        peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
-                        update.data.peer = peer.join(".");
+                        type: "ris_message"
                     }
-                });
-            }, 1000);
+                ];
+                break;
 
-        });
+            case "newprefix":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["165.254.255.0/25"],
+                                next_hop: "124.0.0.2"
+                            }],
+                            peer: "124.0.0.2",
+                            path: [1, 2, 3, 15562]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884::/32"],
+                                next_hop: "124.0.0.2"
+                            }],
+                            peer: "124.0.0.2",
+                            path: [1, 2, 3, [45]]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a00:5884:ffff::/48"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 204092]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a0e:f40::/32"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 204092]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a0e:240::/32"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 1345]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 1234]
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
+
+            case "visibility":
+                updates = [
+                    {
+                        data: {
+                            withdrawals: ["165.254.225.0/24"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            withdrawals: ["2a00:5884::/32"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            withdrawals: ["2a00:5884:ffff::/48"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            withdrawals: ["2a0e:f40::/32"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            withdrawals: ["2001:db8:123::/48"],
+                            peer: "124.0.0.2"
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
+
+            case "path":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["94.5.4.3/22", "98.5.4.3/22", "99.5.4.3/22"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
+
+            case "misconfiguration":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2.2.2.3/22"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.4",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.10",
+                            path: [1, 2, 3, 4321, 65000]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.9",
+                            path: [1, 2, 3, 4321, 65000]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 4321, 65000]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2.2.2.5/22", "2001:db9:123::/49"],
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2.2.2.3/22", "2001:db9:123::/49"],
+                                next_hop: "124.0.0.5"
+                            }],
+                            peer: "124.0.0.6",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["2a0e:240::/32"],
+                                next_hop: "124.0.0.5"
+                            }],
+                            peer: "124.0.0.6",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
+            default:
+                return;
+        }
+
+        this.timer = setInterval(() => {
+            updates.forEach(update => {
+                this._message(update);
+                if (type === 'visibility') {
+                    let peer = update.data.peer.split('.');
+                    peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
+                    update.data.peer = peer.join(".");
+                }
+            });
+        }, 1000);
+
+        return Promise.resolve();
+    };
 
     static transform = (message) => {
         if (message.type === 'ris_message') {

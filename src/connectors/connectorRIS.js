@@ -75,7 +75,6 @@ export default class ConnectorRIS extends Connector{
     };
 
     _openConnect = (resolve) => {
-        this.connected = true;
         resolve(true);
         this.reconnectTimeout = this._defaultReconnectTimeout;
         this._connect(this.name + ' connector connected');
@@ -136,7 +135,6 @@ export default class ConnectorRIS extends Connector{
     _close = (error) => {
         this._disconnect(error);
         try {
-            this.connected = false;
             this.ws.terminate();
             this.ws.removeAllListeners();
         } catch(e) {
