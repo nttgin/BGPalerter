@@ -56,82 +56,72 @@ export default class ConnectorFactory {
         }
     };
 
-    connectConnectors = () =>
+    _connectConnector = (connector) => {
+
+        connector.onError(error => {
+            logger.log({
+                level: 'error',
+                message: error
+            });
+        });
+
+        connector.onConnect(message => {
+            logger.log({
+                level: 'info',
+                message: message
+            });
+        });
+
+        connector.onDisconnect(error => {
+            if (error) {
+                logger.log({
+                    level: 'error',
+                    message: error
+                });
+            } else {
+                logger.log({
+                    level: 'info',
+                    message: connector.name + ' disconnected'
+                });
+            }
+        });
+
+        return connector.connect()
+            .catch(error => {
+                // If not connected log the error and move on
+                if (error) {
+                    logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                }
+            });
+    };
+
+    connectConnectors = (params) =>
         new Promise((resolve, reject) => {
             const connectors = this.getConnectors();
 
             if (connectors.length === 0) {
                 reject(new Error("No connections available"));
-
             } else {
-                resolve(Promise.all(connectors
-                    .map(connector =>
-                        new Promise((resolve, reject) => {
-
-                            connector.onError(error => {
-                                logger.log({
-                                    level: 'error',
-                                    message: error
-                                });
-                            });
-
-                            connector.onConnect(message => {
-                                connector.connected = true;
-                                logger.log({
-                                    level: 'info',
-                                    message: message
-                                });
-                            });
-
-                            connector.onDisconnect(error => {
-                                connector.connected = false;
-
+                const calls = connectors
+                    .map(connector => {
+                        return this._connectConnector(connector)
+                            .then(() => {
+                                connector.subscribe(params);
+                            })
+                            .catch((error) => {
                                 if (error) {
                                     logger.log({
                                         level: 'error',
                                         message: error
                                     });
-                                } else {
-                                    logger.log({
-                                        level: 'info',
-                                        message: connector.name + ' disconnected'
-                                    });
                                 }
-                            });
+                            })
+                    });
 
-
-                            connector
-                                .connect()
-                                .then(() => {
-                                    connector.connected = true;
-                                    resolve(true);
-                                })
-                                .catch((error) => {
-                                    if (error) {
-                                        env.logger.log({
-                                            level: 'error',
-                                            message: error
-                                        });
-                                    }
-                                    resolve(false);
-                                })
-                        }))));
+                resolve(Promise.all(calls));
             }
         });
-
-    subscribeConnectors = (params, callback) =>
-        new Promise((resolve, reject) => {
-
-            const connectors = this.getConnectors();
-
-            if (connectors.length === 0) {
-                reject(new Error("No connections available"));
-            } else {
-                const connectorList = connectors
-                    .map(connector => connector.subscribe(params));
-
-                resolve(Promise.all(connectorList));
-            }
-
-        })
 }

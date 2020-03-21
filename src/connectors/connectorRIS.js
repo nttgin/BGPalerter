@@ -43,8 +43,8 @@ export default class ConnectorRIS extends Connector{
         this.ws = null;
         this.subscription = null;
         this.pingInterval = 5000;
-        this.params.reconnectTimeoutSeconds = this.params.reconnectTimeoutSeconds || 10;
-        this.reconnectTimeout = this.params.reconnectTimeoutSeconds * 1000;
+        this._defaultReconnectTimeout = 10000;
+        this.reconnectTimeout = this._defaultReconnectTimeout;
 
         setInterval(this._ping, this.pingInterval);
 
@@ -77,7 +77,7 @@ export default class ConnectorRIS extends Connector{
     _openConnect = (resolve) => {
         this.connected = true;
         resolve(true);
-        this.reconnectTimeout = this.params.reconnectTimeoutSeconds * 1000;
+        this.reconnectTimeout = this._defaultReconnectTimeout;
         this._connect(this.name + ' connector connected');
     };
 
@@ -95,26 +95,37 @@ export default class ConnectorRIS extends Connector{
                 this.ws.on('message', this._messageToJson);
                 this.ws.on('close', (error) => {
 
-                    const message = (this.connected) ?
-                        "RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md" :
-                        "It was not possible to establish a connection with RIPE RIS";
-
-                    this._close(message);
-
+                    if (this.connected) {
+                        this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+                    } else {
+                        this._close("It was not possible to establish a connection with RIPE RIS");
+                        reject();
+                    }
                 });
                 this.ws.on('error', this._error);
                 this.ws.on('open', this._openConnect.bind(null, resolve));
                 this.ws.on('ping', this._pingReceived);
-
             } catch(error) {
                 this._error(error);
-                resolve(false);
+                reject(error);
             }
         });
 
     _reconnect = () => {
         this.connect()
-            .then(this.subscribe.bind(null, this.subscription));
+            .then(() => {
+                if (this.subscription) {
+                    this.subscribe(this.subscription);
+                }
+            })
+            .catch(error => {
+                if (error) {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                }
+            });
     };
 
     _getTimeoutReconnect = () => {
@@ -125,9 +136,9 @@ export default class ConnectorRIS extends Connector{
     _close = (error) => {
         this._disconnect(error);
         try {
+            this.connected = false;
             this.ws.terminate();
             this.ws.removeAllListeners();
-            this.connected = false;
         } catch(e) {
             // Nothing to do here
         }
@@ -168,7 +179,6 @@ export default class ConnectorRIS extends Connector{
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-
 
         if (monitoredPrefixes
             .filter(

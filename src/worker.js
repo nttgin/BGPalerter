@@ -104,9 +104,8 @@ export default class Worker {
         this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
         const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond /(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
-        return connectorFactory.connectConnectors()
+        return connectorFactory.connectConnectors(this.input)
             .then(() => {
-
                 for (const connector of connectorFactory.getConnectors()) {
 
                     connector.onMessage((message) => {
@@ -127,7 +126,6 @@ export default class Worker {
 
                 }
             })
-            .then(() => connectorFactory.subscribeConnectors(this.input))
             .catch(error => {
                 this.logger.log({
                     level: 'error',
