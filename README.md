@@ -50,6 +50,7 @@ Read the documentation below for more options.
             - [reportAlerta](docs/configuration.md#reportalerta)
             - [reportWebex](docs/configuration.md#reportwebex)
     - [Process/Uptime monitoring](docs/process-monitors.md)
+    - [Notification user groups](docs/usergroups.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
 

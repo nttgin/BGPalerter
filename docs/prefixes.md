@@ -71,7 +71,7 @@ Below the complete list of attributes (the dot notation is used to represent yml
 | path.matchDescription | The description that will be reported in the alert in case the regex test results in a match. | A string | No |
 | path.maxLength | The maximum length allowed for an AS path. Longer paths will trigger an alert. | A number | No |
 | path.minLength | The minimum length allowed for an AS path. Shorter paths will trigger an alert. | A number | No |
-| group | The name of the group that will receive alerts about this monitored prefix. By default all alerts are sent to the "default" group. | A string | No |
+| group | The name of the group that will receive alerts about this monitored prefix. By default all alerts are sent to the "default" group. See [here](usergroups.md).| A string | No |
 
 
 ### Options entry
