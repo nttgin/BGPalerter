@@ -45,7 +45,7 @@
     "js-yaml": "^3.13.1",
     "kafka-node": "^5.0.0",
     "minimist": "^1.2.5",
-    "nodemailer": "^6.4.5",
+    "nodemailer": "^6.4.6",
     "path": "^0.12.7",
     "restify": "^8.5.1",
     "rpki-validator": "^1.0.13",
