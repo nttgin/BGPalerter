@@ -163,6 +163,21 @@ reports:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
 
+#  - file: reportHTTP
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#    params:
+#      templates:
+#        default: '{"text": "${summary}"}'
+#      headers:
+#      isTemplateJSON: true
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      hooks:
+#        default: _YOUR_WEBHOOK_URL_
 
 ############################
 # Notification settings:
