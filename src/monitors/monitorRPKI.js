@@ -17,6 +17,10 @@ export default class MonitorRPKI extends Monitor {
 
     };
 
+    updateMonitoredResources = () => {
+        // nothing
+    };
+
     validateBatch = () => {
         const queue = this.validationQueue;
         this.validationQueue = [];
