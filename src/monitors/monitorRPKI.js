@@ -28,10 +28,6 @@ export default class MonitorRPKI extends Monitor {
         queue.forEach(this.validate);
     };
 
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredPrefixes();
-    };
-
     filter = (message) => {
         return message.type === 'announcement' && message.originAS.numbers.length == 1;
     };
