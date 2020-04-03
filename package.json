@@ -41,7 +41,7 @@
     "brembo": "^2.0.3",
     "inquirer": "^7.1.0",
     "ip-address": "^6.3.0",
-    "ip-sub": "^1.0.6",
+    "ip-sub": "^1.0.7",
     "js-yaml": "^3.13.1",
     "kafka-node": "^5.0.0",
     "minimist": "^1.2.5",
