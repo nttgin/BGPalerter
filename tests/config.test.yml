@@ -68,6 +68,8 @@ logging:
   compressOnRotation: true
 
 checkForUpdatesAtBoot: true
+checkForUpdates: true
+checkForUpdatesInterval: 432000000
 
 processMonitors:
   - file: uptimeApi

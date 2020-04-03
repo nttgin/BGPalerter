@@ -44,7 +44,6 @@ global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 describe("Composition", function() {
-
     describe("Software updates check", function () {
         it("new version detected", function (done) {
 
@@ -79,7 +78,9 @@ describe("Composition", function() {
                     "multiProcess",
                     "maxMessagesPerSecond",
                     "fadeOffSeconds",
-                    "checkFadeOffGroupsSeconds"
+                    "checkFadeOffGroupsSeconds",
+                    "checkForUpdates",
+                    "checkForUpdatesInterval"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')

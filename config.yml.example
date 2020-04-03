@@ -182,7 +182,9 @@ logging:
   maxFileSizeMB: 15
   compressOnRotation: false
   
-checkForUpdatesAtBoot: true
+checkForUpdatesAtBoot: false
+checkForUpdatesInterval: 432000000 #  1000 * 3600 * 24 * 5 // Check every 5 days
+checkForUpdates: false
 
 
 ############################

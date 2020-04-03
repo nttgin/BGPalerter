@@ -1,10 +1,6 @@
-# -- trivial container for bgpalerter
-FROM node:12-alpine as build
+FROM ubuntu
 
-WORKDIR /opt/bgpalerter
-COPY . .
+COPY setup_build_environment.sh /app/setup_build_environment.sh
+RUN /app/setup_build_environment.sh
+WORKDIR /app
 
-RUN npm install
-
-ENTRYPOINT ["npm"]
-CMD ["run", "serve"]

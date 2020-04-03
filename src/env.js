@@ -47,6 +47,7 @@ const vector = {
 };
 let config = {
     environment: "production",
+
     connectors: [
         {
             file: "connectorRIS",
@@ -125,7 +126,9 @@ let config = {
         maxFileSizeMB: 15,
         compressOnRotation: false,
     },
-    checkForUpdatesAtBoot: true,
+    checkForUpdatesAtBoot: false,
+    checkForUpdatesInterval: 1000 * 3600 * 24 * 5,  // Check every 5 days
+    checkForUpdates: false,
     pidFile: "bgpalerter.pid",
     fadeOffSeconds: 360,
     checkFadeOffGroupsSeconds: 30
@@ -140,19 +143,6 @@ if (fs.existsSync(vector.configFile)) {
     }
 } else {
     console.log("Impossible to load config.yml. A default configuration file has been generated.");
-
-    axios({
-        url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example',
-        method: 'GET',
-        responseType: 'blob', // important
-    })
-        .then((response) => {
-            fs.writeFileSync(defaultConfigFilePath, response.data);
-        })
-        .catch(() => {
-            fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
-        })
-
 }
 
 const errorTransport = new FileLogger({

@@ -70,10 +70,19 @@ export default class ConnectorSwUpdates extends Connector{
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
-                this._checkForUpdates();
+            // The functional test cases require this to be logged to stdout, because STDOUT is captured and
+            // parse to verify the BGPAlerter configuration.  This is distinct from the log stream that generates
+            // ./log/error... ./log/reports... because these files are not cleared after each BGPAlerter restart
+            if (this.config.checkForUpdates) {
+                console.log("Software updates enabled");
+                if (this.config.checkForUpdatesAtBoot){
+                    this._checkForUpdates();
+                }
+                setInterval(this._checkForUpdates, this.config.checkForUpdatesInterval); // Check every 5 days
             }
-            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
+            else {
+                console.log("Software updates disabled");
+            }
             resolve(true);
         });
 
