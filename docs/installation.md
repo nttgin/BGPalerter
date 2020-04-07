@@ -4,7 +4,7 @@
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-2. Execute the binary (e.g. `chmod 700 bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
+2. Execute the binary (e.g. `chmod +x bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
 The first time you run it, the auto-configuration will start.
 
 ## Running BGPalerter from binaries - All steps
@@ -15,7 +15,7 @@ The first time you run it, the auto-configuration will start.
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Make the binary executable (e.g. `chmod 700 bgpalerter-linux-x64`)
+3. Make the binary executable (e.g. `chmod +x bgpalerter-linux-x64`)
 
 4. Auto-configure it: `./bgpalerter-linux-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
@@ -28,7 +28,7 @@ Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the 
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Make the binary executable (e.g. `chmod 700 bgpalerter-macos-x64`)
+3. Make the binary executable (e.g. `chmod +x bgpalerter-macos-x64`)
 
 4. Auto-configure it: `./bgpalerter-macos-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
