@@ -125,7 +125,7 @@ reports:
 #    params:
 #      host: localhost
 #      port: 514
-#      templates:
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
 #        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
 #        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
@@ -145,7 +145,7 @@ reports:
 #        newprefix: informational
 #        visibility: debug
 #        path: trace
-#      resourceTemplates:
+#      resourceTemplates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"
 #        newprefix: "newprefix::${prefix}@@${asn}"
@@ -171,7 +171,7 @@ reports:
 #      - path
 #      - misconfiguration
 #    params:
-#      templates:
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: '{"text": "${summary}"}'
 #      headers:
 #      isTemplateJSON: true

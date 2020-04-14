@@ -342,7 +342,7 @@ Parameters for this report module:
 |environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
 |key| Optional, the Alerta API key to use for authenticated requests. |
 |token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
-|resource_templates| A dictionary of string templates for each BGPalerter channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
+|resourceTemplates| A dictionary of string templates for each channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template.|
 |urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
 |urls.default| The Alerta API URL of the default user group. |
 
@@ -359,4 +359,20 @@ Parameters for this report module:
 |---|---|
 |hooks| A dictionary containing Webex Teams WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
+
+#### reportHTTP
+
+This report module sends alerts on a generic HTTP end-point.
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|hooks| A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
+|hooks.default| The URL of the default user group.| 
+|templates| A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
+|isTemplateJSON| A boolean defining if the template provided above are JSON or plain string |
+|headers| Additional headers to use in the GET request. For example for authentication.|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
+
 
