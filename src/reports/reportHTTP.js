@@ -38,19 +38,19 @@ export default class ReportHTTP extends Report {
     constructor(channels, params, env) {
         super(channels, params, env);
 
-
+        this.name = "reportHTTP" || this.params.name;
         this.enabled = true;
         if (!this.params.hooks || !Object.keys(this.params.hooks).length){
             this.logger.log({
                 level: 'error',
-                message: "HTTP reporting is not enabled: no group is defined"
+                message: `${this.name} reporting is not enabled: no group is defined`
             });
             this.enabled = false;
         } else {
             if (!this.params.hooks["default"]) {
                 this.logger.log({
                     level: 'error',
-                    message: "In hooks, for reportHTTP, a group named 'default' is required for communications to the admin."
+                    message: `In hooks, for ${this.name}, a group named 'default' is required for communications to the admin.`
                 });
             }
         }
