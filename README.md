@@ -49,6 +49,7 @@ Read the documentation below for more options.
             - [reportSyslog](docs/configuration.md#reportsyslog)
             - [reportAlerta](docs/configuration.md#reportalerta)
             - [reportWebex](docs/configuration.md#reportwebex)
+            - [reportHTTP](docs/configuration.md#reporthttp)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
 - [More information for developers](docs/develop.md)
