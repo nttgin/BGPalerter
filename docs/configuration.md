@@ -7,7 +7,7 @@ The following are common parameters which it is possible to specify in the confi
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
 |notificationIntervalSeconds|Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that triggered it is not yet solved. Please, don't set this value to Infinity, use instead alertOnlyOnce. | An integer | 1800 | Yes |
-|monitoredPrefixesFiles| The [list](docs/prefixes.md#array) of files containing the prefixes to monitor. See [here](docs/prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
+|monitoredPrefixesFiles| The [list](prefixes.md#array) of files containing the prefixes to monitor. See [here](prefixes.md#prefixes) for more informations. | A list of strings (valid .yml files) | -prefixes.yml | Yes |
 |logging| A dictionary of parameters containing the configuration for the file logging. | || Yes|
 |logging.directory| The directory where the log files will be generated. The directory will be created if not existent. | A string | logs | Yes |
 |logging.logRotatePattern| A pattern with date placeholders indicating the name of the file. This pattern will also indicate when a log file is rotated. | A string with date placeholders (YYYY, MM, DD, ss, hh) | YYYY-MM-DD | Yes |
