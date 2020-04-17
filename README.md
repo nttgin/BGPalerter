@@ -9,7 +9,7 @@ You just run it. You don't need to provide any data source or connect it to anyt
 
 It can deliver alerts on files, by email, on slack, and more.
 
-![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
+![BGPalerter](docs/img/bgpalerter_github_image.png)
 
 > The tool connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
@@ -29,6 +29,8 @@ Please uncomment the related section and configure according to your needs.
 
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
 Read the documentation below for more options.
+
+[Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md).
 
 ## Documentation
 
@@ -57,3 +59,4 @@ Read the documentation below for more options.
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
     - [Report context](docs/context.md)
+    - [Release process](docs/release-process.md)
