@@ -58,5 +58,6 @@ Read the documentation below for more options.
     - [Notification user groups](docs/usergroups.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
+    - [Git flow](docs/release-process.md#git-flow)
     - [Report context](docs/context.md)
     - [Release process](docs/release-process.md)

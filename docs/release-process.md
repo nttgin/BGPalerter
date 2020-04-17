@@ -46,22 +46,6 @@ Minor releases are anyway tested and deployed for the monitoring of our network.
 
 A minor release can also be released as a part of the normal release cycle in case there are no new features to justify a major release. 
 
-
-## Git flow
-
-1) The development happens in the `dev` branch.
-2) When a set of feature is defined as the next release candidate, the `dev` branch is branched to create the `release` branch which contains the release candidate code.
-3) The release candidate is tested as described above.
-4) After the test period, the release candidate is promoted to pre-release:
-    1) The source is tagged with a tag reporting the release number
-    2) It is compiled and released in the [release tab](https://github.com/nttgin/BGPalerter/releases)
-5) The pre-release is tested
-6) After the test period, the pre-released is marked as latest and released as stable.
-    1) Clients will be notified of the new release.
-7) The `release` branch is merged in `master` and after deleted.
-
-All pull requests must happen against the `dev` branch (or rebased during review). If needed they will be cherry-picked in the `release` branch.
-
 ### Dependencies
 We use [Dependabot](https://dependabot.com/) to automatically check for newer version of the dependencies used by BGPalerter.
 The dependencies used are listed in [package.json](https://github.com/nttgin/BGPalerter/blob/dev/package.json). 
@@ -81,3 +65,19 @@ We currently use the following automation on the repository:
 * [Hound](https://houndci.com/) to check code correctness and style. 
 * [Snyk](https://snyk.io/) to check for vulnerabilities in pull requests.
 * [GitHub Security Alerts](https://github.com/nttgin/BGPalerter/network/alerts) to check for vulnerabilities on the entire repository.
+
+
+# Git flow
+
+1) The development happens in the `dev` branch.
+2) When a set of feature is defined as the next release candidate, the `dev` branch is branched to create the `release` branch which contains the release candidate code.
+3) The release candidate is tested as described above.
+4) After the test period, the release candidate is promoted to pre-release:
+    1) The source is tagged with a tag reporting the release number
+    2) It is compiled and released in the [release tab](https://github.com/nttgin/BGPalerter/releases)
+5) The pre-release is tested
+6) After the test period, the pre-released is marked as latest and released as stable.
+    1) Clients will be notified of the new release.
+7) The `release` branch is merged in `master` and after deleted.
+
+All pull requests must happen against the `dev` branch (or rebased during review). If needed they will be cherry-picked in the `release` branch.
