@@ -48,8 +48,19 @@ A minor release can also be released as a part of the normal release cycle in ca
 
 
 ## Git flow
-TODO
 
+1) The development happens in the `dev` branch.
+2) When a set of feature is defined as the next release candidate, the `dev` branch is branched to create the `release` branch which contains the release candidate code.
+3) The release candidate is tested as described above.
+4) After the test period, the release candidate is promoted to pre-release:
+    1) The source is tagged with a tag reporting the release number
+    2) It is compiled and released in the [release tab](https://github.com/nttgin/BGPalerter/releases)
+5) The pre-release is tested
+6) After the test period, the pre-released is marked as latest and released as stable.
+    1) Clients will be notified of the new release.
+7) The `release` branch is merged in `master` and after deleted.
+
+All pull requests must happen against the `dev` branch (or rebased during review). If needed they will be cherry-picked in the `release` branch.
 
 ### Dependencies
 We use [Dependabot](https://dependabot.com/) to automatically check for newer version of the dependencies used by BGPalerter.
