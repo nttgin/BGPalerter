@@ -27,7 +27,7 @@ Additionally, pre-releases are not announced and not notified as updates.
 
 Pre-releases are anyway tested and considered "stable". Consider installing a pre-release if you want to try the latest features.
 
-### Release
+## Release
 We finally create a new release after the pre-release passes the 1 week test period.
 A release appears in the [release tab](https://github.com/nttgin/BGPalerter/releases) and it is marked with a green label "latest release".  
 The availability of a new release is notified.
