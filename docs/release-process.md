@@ -1,7 +1,7 @@
 # Release process
 
-We use BGPalerter in production to monitor our network, one of the biggest network in the world.
-It is essential for us to make sure BGPalerter is reliable and secure. As is essential for us, it is also essential for the many organizations that are currently relying on BGPalerter for their monitoring.
+We use BGPalerter in production to monitor our network.
+It's essential for us to make sure BGPalerter is reliable and secure. As it is essential for us, it is also essential for the many organizations that are currently relying on BGPalerter for their monitoring.
 For this reason, we want to summarize in this document our efforts in this matter.
 
 The image below shows the flow for releasing a new version of BGPalerter

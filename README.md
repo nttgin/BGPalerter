@@ -30,7 +30,7 @@ Please uncomment the related section and configure according to your needs.
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
 Read the documentation below for more options.
 
-[Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md).
+[Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md)
 
 ## Documentation
 
