@@ -61,3 +61,4 @@ Read the documentation below for more options.
     - [Git flow](docs/release-process.md#git-flow)
     - [Report context](docs/context.md)
     - [Release process](docs/release-process.md)
+- [BGPalerter for researchers](docs/research.md)

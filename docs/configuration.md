@@ -21,7 +21,7 @@ The following are advanced parameters, please don't touch them if you are not do
 
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
-|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
+|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. The value "research" is explained [here](research.md). Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
 |logging.backlogSize| Indicates the buffer dimension (number of alerts) before flushing it on the disk. This parameter plays a role only when receiving thousand of alerts per second in order to prevent IO starvation, in all other cases (e.g. production monitoring) it is irrelevant. | An integer | 15 | Yes | 
