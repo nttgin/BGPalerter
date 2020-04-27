@@ -10,10 +10,16 @@ export default class MonitorRPKI extends Monitor {
         });
         this.validationQueue = [];
 
-        rpki.preCache(60)
+        rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
             .then(() => {
                 setInterval(this.validateBatch, 400);
             })
+            .catch(() => {
+                this.logger.log({
+                    level: 'error',
+                    message: "One of the VRPs lists cannot be downloaded. Anyway, the RPKI monitoring should be working."
+                });
+            });
 
     };
 
@@ -29,7 +35,7 @@ export default class MonitorRPKI extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement' && message.originAS.numbers.length == 1;
+        return message.type === 'announcement' && message.originAS.numbers.length === 1;
     };
 
     squashAlerts = (alerts) => {
@@ -38,7 +44,11 @@ export default class MonitorRPKI extends Monitor {
         const covering = (alerts[0].extra.covering && alerts[0].extra.covering[0]) ? alerts[0].extra.covering[0] : false;
         const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
 
-        return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
+        if (!covering && this.params.checkUncovered) {
+            return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA.`;
+        } else {
+            return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
+        }
     };
 
 
@@ -48,29 +58,42 @@ export default class MonitorRPKI extends Monitor {
 
         const result = rpki.validateFromCacheSync(prefix, origin, true);
 
-        if (result.valid === false) {
+        if (result) {
             const key = "a" + [prefix, origin]
                 .join("AS")
                 .replace(/\./g, "_")
                 .replace(/\:/g, "_")
                 .replace(/\//g, "_");
 
-            this.publishAlert(key,
-                prefix,
-                matchedRule,
-                message,
-                { covering: result.covering });
+            if (result.valid === false) {
+                this.publishAlert(key,
+                    prefix,
+                    matchedRule,
+                    message,
+                    { covering: result.covering });
+            } else if (result.valid === null && this.params.checkUncovered) {
+                this.publishAlert(key,
+                    prefix,
+                    matchedRule,
+                    message,
+                     {covering: null });
+            }
         }
     };
 
 
     monitor = (message) => {
-        const prefix = message.prefix;
-        const matchedRule = this.input.getMoreSpecificMatch(prefix, false);
 
-        if (matchedRule) {
-            this.validationQueue.push({ message, matchedRule });
+        const prefix = message.prefix;
+        const matchedASRule = this._getMonitoredAS(message);
+        const matchedPrefixRule = this.input.getMoreSpecificMatch(prefix, false);
+
+        if (matchedPrefixRule) {
+            this.validationQueue.push({ message, matchedPrefixRule });
+        } else if (matchedASRule) {
+            this.validationQueue.push({ message, matchedASRule });
         }
+
         return Promise.resolve(true);
     };
 
