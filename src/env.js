@@ -148,9 +148,10 @@ if (fs.existsSync(vector.configFile)) {
     })
         .then((response) => {
             fs.writeFileSync(defaultConfigFilePath, response.data);
+            yaml.safeLoad(fs.readFileSync(defaultConfigFilePath, 'utf8')); // Test readability and format
         })
         .catch(() => {
-            fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
+            fs.writeFileSync(defaultConfigFilePath, yaml.dump(config)); // Download failed, write simple default config
         })
 
 }
