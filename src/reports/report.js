@@ -145,11 +145,20 @@ export default class Report {
 
             case "misconfiguration":
                 context.asn = content.data[0].matchedRule.asn.toString();
+                break;
 
+            case "rpki":
+                matched = content.data[0].matchedRule;
+                context.asn = matched.asn.toString();
+                context.prefix = matched.prefix;
+                context.description = matched.description;
                 break;
 
             default:
-                return false;
+                matched = content.data[0].matchedRule;
+                context.prefix = matched.prefix;
+                context.description = matched.description;
+                context.asn = matched.asn.toString();
         }
 
         return context;
