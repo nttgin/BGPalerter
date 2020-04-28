@@ -131,6 +131,7 @@ let config = {
     checkFadeOffGroupsSeconds: 30
 };
 
+const ymlBasicConfig = yaml.dump(config);
 
 if (fs.existsSync(vector.configFile)) {
     try {
@@ -148,9 +149,10 @@ if (fs.existsSync(vector.configFile)) {
     })
         .then((response) => {
             fs.writeFileSync(defaultConfigFilePath, response.data);
+            yaml.safeLoad(fs.readFileSync(defaultConfigFilePath, 'utf8')); // Test readability and format
         })
         .catch(() => {
-            fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
+            fs.writeFileSync(defaultConfigFilePath, ymlBasicConfig); // Download failed, write simple default config
         })
 
 }
