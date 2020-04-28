@@ -81,6 +81,15 @@ export default class MonitorRPKI extends Monitor {
         }
     };
 
+    _getMonitoredAS = (message) => {
+        const monitored = this.monitored;
+
+        for (let m of monitored) {
+            if (message.originAS.includes(m.asn)) {
+                return m;
+            }
+        }
+    };
 
     monitor = (message) => {
 
