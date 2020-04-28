@@ -35,7 +35,7 @@ var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 var expect = chai.expect;
 
-let asyncTimeout = 20000;
+let asyncTimeout = 2000000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
@@ -477,8 +477,6 @@ describe("Alerting", function () {
 
     }).timeout(asyncTimeout);
 
-
-
     it("asn monitoring reporting", function (done) {
 
         pubSub.publish("test-type", "misconfiguration");
@@ -529,6 +527,58 @@ describe("Alerting", function () {
 
     }).timeout(asyncTimeout);
 
+    it("RPKI monitoring", function (done) {
+
+        pubSub.publish("test-type", "rpki");
+
+        const expectedData = {
+
+
+        "a103_21_244_0_24AS13335": {
+            id:  "a103_21_244_0_24AS13335",
+                origin: 'rpki-monitor',
+                affected: '103.21.244.0/24',
+                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Accepted with AS path: [1,2,3,4321,13335].  Valid ROA: origin AS0 prefix 103.21.244.0/23 max length 23',
+        },
+
+        "a8_8_8_8_22AS2914": {
+                id:  "a8_8_8_8_22AS2914",
+                origin: 'rpki-monitor',
+                affected: '8.8.8.8/22',
+                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA.',
+            }
+        };
+
+        let rpkiTestCompleted = false;
+        pubSub.subscribe("rpki-monitor", function (type, message) {
+
+            if (!rpkiTestCompleted) {
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+                expect(message).to
+                    .containSubset(expectedData[id]);
+
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
+
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        rpkiTestCompleted = true;
+                        done();
+                    }, 5000);
+                }
+            }
+        });
+
+    }).timeout(asyncTimeout);
 
     it("fading alerting", function (done) {
 

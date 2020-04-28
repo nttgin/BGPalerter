@@ -97,7 +97,7 @@ describe("Composition", function() {
 
         it("loading monitors", function () {
 
-            expect(config.monitors.length).to.equal(6);
+            expect(config.monitors.length).to.equal(7);
 
             expect(config.monitors[0]).to
                 .containSubset({
@@ -141,6 +141,18 @@ describe("Composition", function() {
                     "name": "asn-monitor",
                     "params": {
                         "thresholdMinPeers": 2
+                    }
+                });
+
+            expect(config.monitors[5]).to
+                .containSubset({
+                    "channel": "rpki-monitor",
+                    "name": "rpki-monitor",
+                    "params": {
+                        "thresholdMinPeers": 1,
+                        "preCacheROAs": false,
+                        "refreshVrpListMinutes": 15,
+                        "checkUncovered": true
                     }
                 });
 
@@ -297,7 +309,7 @@ describe("Composition", function() {
                     ]
                 });
 
-            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 65000 ]);
+            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 13335, 65000 ]);
         });
     });
 

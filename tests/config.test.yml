@@ -37,6 +37,16 @@ monitors:
     params:
       thresholdMinPeers: 2
 
+  - file: monitorRPKI
+    channel: rpki-monitor
+    name: rpki-monitor
+    params:
+      thresholdMinPeers: 1
+      preCacheROAs: false
+      refreshVrpListMinutes: 15
+      checkUncovered: true
+
+
 reports:
   - file: reportFile
     channels:
@@ -45,14 +55,12 @@ reports:
       - visibility
       - path
       - misconfiguration
+      - rpki-monitor
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
 
-notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
-alertOnlyOnce: false
-fadeOffSeconds: 10
-checkFadeOffGroupsSeconds: 2
+
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
@@ -76,6 +84,11 @@ processMonitors:
       host: null
       port: 8011
 
+
+notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
+alertOnlyOnce: false
+fadeOffSeconds: 10
+checkFadeOffGroupsSeconds: 2
 pidFile: bgpalerter.pid
 multiProcess: false
 maxMessagesPerSecond: 6000
