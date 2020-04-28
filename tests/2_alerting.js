@@ -544,7 +544,7 @@ describe("Alerting", function () {
                 id:  "a8_8_8_8_22AS2914",
                 origin: 'rpki-monitor',
                 affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA.',
+                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA. Accepted with AS path: [1,2,3,4321,5060,2914]',
             }
         };
 
