@@ -149,7 +149,10 @@ export default class Report {
                 break;
 
             default:
-                return false;
+                matched = content.data[0].matchedRule;
+                context.prefix = matched.prefix;
+                context.description = matched.description;
+                context.asn = matched.asn.toString();
         }
 
         return context;
