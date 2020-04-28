@@ -281,7 +281,7 @@ invalid;
 >      group: default
 > ```
 > If in config.yml monitorRPKI is enabled, you will receive alerts every time:
->  * 50.82.0.0/20 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
+>  * 103.21.244.0/24 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
 >  * AS13335 announces something that is not covered by ROAs or the announcement is RPKI invalid;
 
 
