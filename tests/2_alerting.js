@@ -533,7 +533,6 @@ describe("Alerting", function () {
 
         const expectedData = {
 
-
         "a103_21_244_0_24AS13335": {
             id:  "a103_21_244_0_24AS13335",
                 origin: 'rpki-monitor',
