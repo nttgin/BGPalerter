@@ -41,7 +41,7 @@ export default class MonitorAS extends Monitor {
     };
 
     updateMonitoredResources = () => {
-        this.monitored = this.input.getMonitoredASns();
+        // nothing
     };
 
     filter = (message) => {
@@ -75,22 +75,12 @@ export default class MonitorAS extends Monitor {
         return false;
     };
 
-    _getMonitoredAS = (message) => {
-        const monitored = this.monitored;
-
-        for (let m of monitored) {
-            if (message.originAS.includes(m.asn)) {
-                return m;
-            }
-        }
-    };
-
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
             const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this._getMonitoredAS(message);
+            const matchedRule = this.getMonitoredAsMatch(messageOrigin);
 
             if (matchedRule) {
 
