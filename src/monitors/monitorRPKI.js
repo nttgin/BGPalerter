@@ -45,23 +45,9 @@ export default class MonitorRPKI extends Monitor {
 
     squashAlerts = (alerts) => {
 
-        const matchedMessages = alerts.map(alert => alert.matchedMessage);
-        const matchPerPrefix = {};
-        const prefixesOut = [];
+        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
-        for (let m of matchedMessages) { // Get the number of peers that triggered the alert for each prefix
-            matchPerPrefix[m.prefix] = matchPerPrefix[m.prefix] || [];
-            matchPerPrefix[m.prefix].push(m.peer);
-        }
-
-        for (let p in matchPerPrefix) { // Check if any of the prefixes went above the thresholdMinPeers
-            const peers = [...new Set(matchPerPrefix[p])];
-            if (peers.length >= this.thresholdMinPeers) {
-                prefixesOut.push(p);
-            }
-        }
-
-        if (prefixesOut.length > 0) {
+        if (peers >= this.thresholdMinPeers) {
             const firstAlert = alerts[0];
             const message = firstAlert.matchedMessage;
             const extra = firstAlert.extra;
