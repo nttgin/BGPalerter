@@ -262,8 +262,10 @@ Parameters for this monitor module:
 This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
 involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
 
-This monitor is particularly useful while you are deploying RPKI since it will let you know if any of your announcements are 
-invalid, and after RPKI deployment, in order to be sure that all future BGP configuration will be covered by ROAs.
+This monitor is particularly useful when:
+* you are deploying RPKI, since it will let you know if any of your announcements are 
+invalid;
+* after you deployed RPKI, in order to be sure that all future BGP configurations will be covered by ROAs.
 
 > Example: 
 > The prefixes list of BGPalerter has an options.monitorASns list declared, such as:
