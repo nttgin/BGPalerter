@@ -106,12 +106,21 @@ let config = {
             params: {
                 thresholdMinPeers: 2
             }
+        },
+        {
+            file: "monitorRPKI",
+            channel: "rpki",
+            name: "rpki-monitor",
+            params: {
+                thresholdMinPeers: 1,
+                checkUncovered: false
+            }
         }
     ],
     reports: [
         {
             file: "reportFile",
-            channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration"]
+            channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration", "rpki"]
         }
     ],
     notificationIntervalSeconds: 14400,
