@@ -222,11 +222,8 @@ Parameters for this monitor module:
 
 #### monitorAS
 
-This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
-involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
-
-This monitor is particularly useful while you are deploying RPKI since it will let you know if any of your announcements are 
-invalid, and after RPKI deployment, in order to be sure that all future BGP configuration will be covered by ROAs.
+This monitor will listen for all announcements produced by the monitored Autonomous Systems and will detect when a prefix, which is not in the monitored prefixes list, is announced.
+This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g. misconfiguration, typo).
 
 
 > Example: 
@@ -262,9 +259,11 @@ Parameters for this monitor module:
     
 #### monitorRPKI
 
-This monitor will listen for all announcements produced by the monitored Autonomous Systems and will detect when a prefix, which is not in the monitored prefixes list, is announced.
-This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g. misconfiguration, typo).
+This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
+involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
 
+This monitor is particularly useful while you are deploying RPKI since it will let you know if any of your announcements are 
+invalid, and after RPKI deployment, in order to be sure that all future BGP configuration will be covered by ROAs.
 
 > Example: 
 > The prefixes list of BGPalerter has an options.monitorASns list declared, such as:
@@ -291,11 +290,12 @@ Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
 |preCacheROAs| This parameter allows to download locally VRPs lists. This is suggested in the case you want to validate many BGP updates (e.g. for research purposes). For normal production monitoring do NOT set this parameter. |
 |refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
-    
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+
     
 ### Reports
 
