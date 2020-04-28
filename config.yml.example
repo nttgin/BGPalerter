@@ -160,6 +160,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
 
