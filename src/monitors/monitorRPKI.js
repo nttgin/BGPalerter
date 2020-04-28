@@ -8,30 +8,34 @@ export default class MonitorRPKI extends Monitor {
         this.input.onChange(() => {
             this.updateMonitoredResources();
         });
+
         this.validationQueue = [];
 
-        rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
-            .then(() => {
-                setInterval(this.validateBatch, 400);
-            })
-            .catch(() => {
-                this.logger.log({
-                    level: 'error',
-                    message: "One of the VRPs lists cannot be downloaded. Anyway, the RPKI monitoring should be working."
+        if (this.params.preCacheROAs) {
+            rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
+                .then(() => {
+                    console.log("Downloaded");
+                    // setInterval(this.validateBatch, 400);
+                })
+                .catch(() => {
+                    this.logger.log({
+                        level: 'error',
+                        message: "One of the VRPs lists cannot be downloaded. Anyway, the RPKI monitoring should be working."
+                    });
                 });
-            });
-
+        } else {
+            setInterval(this.validateBatch, 400);
+        }
     };
 
     updateMonitoredResources = () => {
-        // nothing
+        this.monitored = this.input.getMonitoredASns();
     };
 
-    validateBatch = () => {
-        const queue = this.validationQueue;
-        this.validationQueue = [];
 
-        queue.forEach(this.validate);
+    validateBatch = () => {
+        this.validationQueue.forEach(this.validate);
+        this.validationQueue = [];
     };
 
     filter = (message) => {
@@ -40,14 +44,16 @@ export default class MonitorRPKI extends Monitor {
 
     squashAlerts = (alerts) => {
 
-        const message = alerts[0].matchedMessage;
-        const covering = (alerts[0].extra.covering && alerts[0].extra.covering[0]) ? alerts[0].extra.covering[0] : false;
+        const firstAlert = alerts[0];
+        const message = firstAlert.matchedMessage;
+        const extra = firstAlert.extra;
+        const covering = (extra.covering && extra.covering[0]) ? extra.covering[0] : false;
         const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
 
-        if (!covering && this.params.checkUncovered) {
+        if (extra.valid === null && this.params.checkUncovered) {
             return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA.`;
         } else {
-            return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
+            return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}.  ${coveringString}`;
         }
     };
 
@@ -56,51 +62,52 @@ export default class MonitorRPKI extends Monitor {
         const prefix = message.prefix;
         const origin = message.originAS.getValue();
 
-        const result = rpki.validateFromCacheSync(prefix, origin, true);
+        rpki.validate(prefix, origin, true)
+            .then(result => {
+                if (result) {
+                    const key = "a" + [prefix, origin]
+                        .join("AS")
+                        .replace(/\./g, "_")
+                        .replace(/\:/g, "_")
+                        .replace(/\//g, "_");
 
-        if (result) {
-            const key = "a" + [prefix, origin]
-                .join("AS")
-                .replace(/\./g, "_")
-                .replace(/\:/g, "_")
-                .replace(/\//g, "_");
+                    if (result.valid === false) {
+                        this.publishAlert(key,
+                            prefix,
+                            matchedRule,
+                            message,
+                            { covering: result.covering, valid: result.valid });
+                    } else if (result.valid === null && this.params.checkUncovered) {
+                        this.publishAlert(key,
+                            prefix,
+                            matchedRule,
+                            message,
+                            { covering: null, valid: null });
+                    }
+                }
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
 
-            if (result.valid === false) {
-                this.publishAlert(key,
-                    prefix,
-                    matchedRule,
-                    message,
-                    { covering: result.covering });
-            } else if (result.valid === null && this.params.checkUncovered) {
-                this.publishAlert(key,
-                    prefix,
-                    matchedRule,
-                    message,
-                     {covering: null });
-            }
-        }
+
     };
 
-    _getMonitoredAS = (message) => {
-        const monitored = this.monitored;
-
-        for (let m of monitored) {
-            if (message.originAS.includes(m.asn)) {
-                return m;
-            }
-        }
-    };
 
     monitor = (message) => {
 
+        const messageOrigin = message.originAS;
         const prefix = message.prefix;
-        const matchedASRule = this._getMonitoredAS(message);
-        const matchedPrefixRule = this.input.getMoreSpecificMatch(prefix, false);
+        const matchedASRule = this.getMonitoredAsMatch(messageOrigin);
+        const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false);
 
         if (matchedPrefixRule) {
-            this.validationQueue.push({ message, matchedPrefixRule });
+            this.validationQueue.push({ message, matchedRule: matchedPrefixRule });
         } else if (matchedASRule) {
-            this.validationQueue.push({ message, matchedASRule });
+            this.validationQueue.push({ message, matchedRule: matchedASRule });
         }
 
         return Promise.resolve(true);
