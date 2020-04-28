@@ -146,7 +146,7 @@ describe("Composition", function() {
 
             expect(config.monitors[5]).to
                 .containSubset({
-                    "channel": "rpki-monitor",
+                    "channel": "rpki",
                     "name": "rpki-monitor",
                     "params": {
                         "thresholdMinPeers": 1,

@@ -549,7 +549,7 @@ describe("Alerting", function () {
         };
 
         let rpkiTestCompleted = false;
-        pubSub.subscribe("rpki-monitor", function (type, message) {
+        pubSub.subscribe("rpki", function (type, message) {
 
             if (!rpkiTestCompleted) {
                 message = JSON.parse(JSON.stringify(message));
