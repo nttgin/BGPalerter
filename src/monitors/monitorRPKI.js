@@ -9,6 +9,7 @@ export default class MonitorRPKI extends Monitor {
             this.updateMonitoredResources();
         });
 
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
         this.validationQueue = [];
 
         if (this.params.preCacheROAs) {
@@ -44,17 +45,37 @@ export default class MonitorRPKI extends Monitor {
 
     squashAlerts = (alerts) => {
 
-        const firstAlert = alerts[0];
-        const message = firstAlert.matchedMessage;
-        const extra = firstAlert.extra;
-        const covering = (extra.covering && extra.covering[0]) ? extra.covering[0] : false;
-        const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
+        const matchedMessages = alerts.map(alert => alert.matchedMessage);
+        const matchPerPrefix = {};
+        const prefixesOut = [];
 
-        if (extra.valid === null && this.params.checkUncovered) {
-            return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA. Accepted with AS path: ${message.path}`;
-        } else {
-            return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}.  ${coveringString}`;
+        for (let m of matchedMessages) { // Get the number of peers that triggered the alert for each prefix
+            matchPerPrefix[m.prefix] = matchPerPrefix[m.prefix] || [];
+            matchPerPrefix[m.prefix].push(m.peer);
         }
+
+        for (let p in matchPerPrefix) { // Check if any of the prefixes went above the thresholdMinPeers
+            const peers = [...new Set(matchPerPrefix[p])];
+            if (peers.length >= this.thresholdMinPeers) {
+                prefixesOut.push(p);
+            }
+        }
+
+        if (prefixesOut.length > 0) {
+            const firstAlert = alerts[0];
+            const message = firstAlert.matchedMessage;
+            const extra = firstAlert.extra;
+            const covering = (extra.covering && extra.covering[0]) ? extra.covering[0] : false;
+            const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
+
+            if (extra.valid === null && this.params.checkUncovered) {
+                return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA. Accepted with AS path: ${message.path}`;
+            } else {
+                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}.  ${coveringString}`;
+            }
+        }
+
+
     };
 
 
