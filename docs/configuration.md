@@ -268,21 +268,21 @@ invalid;
 * after you deployed RPKI, in order to be sure that all future BGP configurations will be covered by ROAs.
 
 > Example: 
-> The prefixes list of BGPalerter has an options.monitorASns list declared, such as:
+> The prefixes list of BGPalerter has the following entries:
 > ```yaml
-> 50.82.0.0/20:
->    asn: 58302
+> 103.21.244.0/24:
+>    asn: 13335
 >    description: an example
 >    ignoreMorespecifics: false
 > 
 > options:
 >  monitorASns:
->    58302:
+>    13335:
 >      group: default
 > ```
 > If in config.yml monitorRPKI is enabled, you will receive alerts every time:
 >  * 50.82.0.0/20 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
->  * AS58302 announces something that is not covered by ROAs or the announcement is RPKI invalid;
+>  * AS13335 announces something that is not covered by ROAs or the announcement is RPKI invalid;
 
 
 Example of alert:
