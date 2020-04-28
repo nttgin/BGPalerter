@@ -148,7 +148,10 @@ export default class Report {
                 break;
 
             case "rpki":
-                context.asn = content.data[0].matchedRule.asn.toString();
+                matched = content.data[0].matchedRule;
+                context.asn = matched.asn.toString();
+                context.prefix = matched.prefix;
+                context.description = matched.description;
                 break;
 
             default:
