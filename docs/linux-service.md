@@ -1,4 +1,4 @@
-## Run BGPAlerter as a Linux Service
+## Run BGPalerter as a Linux Service
 If you are interested in running this application as a service on a Linux server here is a basic guide covering how to do that.  This process works for RHEL 7 based Linux installations.  It will likely work very similiarly on other systemctl enabled installations.
 
 ### Create directory for the application to reside
@@ -19,7 +19,7 @@ The contents of this file should be as follows:
 
 ```
 [Unit]
-Description=BGPAlerter
+Description=BGPalerter
 After=network.target
 
 [Service]
@@ -37,7 +37,7 @@ Reload systemd to register the new configuration.
 `systemctl daemon-reload`
 
 ### Enable and start the service
-Enable bgpalerter to start at boot and then start the service.
+Enable BGPalerter to start at boot and then start the service.
 
 `systemctl enable bgpalerter`
 
@@ -62,15 +62,15 @@ do
     echo "--restart  Restart the Services"
   elif [ "$arg" == "--start" ]
   then
-    echo "Starting BGPAlerter"
+    echo "Starting BGPalerter"
     systemctl start bgpalerter.service
   elif [ "$arg" == "--stop" ]
   then
-    echo "Stopping BGPAlerter"
+    echo "Stopping BGPalerter"
     systemctl stop bgpalerter.service
   elif [ "$arg" == "--restart" ]
   then
-    echo "Restarting BGPAlerter"
+    echo "Restarting BGPalerter"
     systemctl restart bgpalerter.service
 fi
 done
