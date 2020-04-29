@@ -6,9 +6,21 @@ Create a directory to place the application files.
 
 `mkdir /opt/bgpalerter`
 
-If this is a new installation `cd /opt/bgpalerter` before downloading your files and running them for the first time.  If this is an existing install simply move the files of your existing install into this directory `mv -t /opt/bgpalerter bgpalerter-linux-x64 bgpalerter.pid config.yml prefixes.yml`
+This is the directory where the binary and yaml config files will be stored.
 
-This is the directory where the binary and yaml config files will be stored.  The application will also create `logs` and `src` subdirectories here if needed.  You do not have to use `/opt/bgpalerter` as your directory of choice, if you choose something else - simply make sure whatever you choose gets updated in the systemd service file below as well.
+If this is a new installation, download the BGPalerter binary in the newly created directory and execute it:
+
+```
+cd /opt/bgpalerter
+wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
+chmod +x bgpalerter-linux-x64
+./bgpalerter-linux-x64
+```
+The autoconfiguration will start at the end of which all the needed files will be created.
+
+If this is an existing install simply move the files of your existing install into this directory `mv -t /opt/bgpalerter bgpalerter-linux-x64 bgpalerter.pid config.yml prefixes.yml`
+
+The application will also create `logs` and `src` subdirectories here if needed. You do not have to use `/opt/bgpalerter` as your directory of choice, if you choose something else - simply make sure whatever you choose gets updated in the systemd service file below as well.
 
 ### Create systemd service file
 Next you need to create the systemd service file.
