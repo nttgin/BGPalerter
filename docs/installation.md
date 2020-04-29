@@ -22,7 +22,7 @@ The first time you run it, the auto-configuration will start.
 5. Run it: `./bgpalerter-linux-x64`  
 Or use `nohup ./bgpalerter-linux-x64 &` to leave it running after you close the terminal
 
-Additionally, you can configure [BGPalerter as a Linux Serivce] (https://github.com/nttgin/BGPalerter/blob/81350671857e00a1377f3e26bd628ef00e328cf4/docs/linux-service.md)
+   Additionally, you can configure [BGPalerter as a Linux Serivce] (https://github.com/nttgin/BGPalerter/blob/81350671857e00a1377f3e26bd628ef00e328cf4/docs/linux-service.md)
 
 #### Mac
 
