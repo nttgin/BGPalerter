@@ -72,8 +72,8 @@ export default class MonitorRPKI extends Monitor {
         rpki.validate(prefix, origin, true)
             .then(result => {
                 if (result) {
-                    const key = "a" + [prefix, origin]
-                        .join("AS")
+                    const key = "a" + [prefix, origin, result.valid]
+                        .join("-")
                         .replace(/\./g, "_")
                         .replace(/\:/g, "_")
                         .replace(/\//g, "_");
