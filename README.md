@@ -34,7 +34,7 @@ Read the documentation below for more options.
     - [Run from binary](docs/installation.md#running-bgpalerter-from-binaries)
     - [Run from source code](docs/installation.md#running-bgpalerter-from-the-source-code)
     - [Run in Docker](docs/installation.md#running-bgpalerter-in-docker)
-    - [Run as a Linux Service](docs/installation.md#linux-service)
+    - [Run as a Linux service](docs/installation.md#linux-service)
 - [Monitored prefixes list](docs/prefixes.md#prefixes)
     - [Generate prefix list](docs/prefixes.md#generate)
     - [Prefix attributes description](docs/prefixes.md#prefixes-fields)
