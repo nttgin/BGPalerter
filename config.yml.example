@@ -43,6 +43,13 @@ monitors:
     params:
       thresholdMinPeers: 2
 
+  - file: monitorRPKI
+    channel: rpki
+    name: rpki-monitor
+    params:
+      thresholdMinPeers: 1
+      checkUncovered: false
+
 reports:
   - file: reportFile
     channels:
@@ -51,6 +58,7 @@ reports:
       - visibility
       - path
       - misconfiguration
+      - rpki
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
@@ -62,6 +70,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -91,6 +100,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
@@ -108,6 +118,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      host: localhost
 #      port: 9092
@@ -122,6 +133,7 @@ reports:
 #      - path
 #      - asn-monitor
 #      - misconfiguration
+#      - rpki
 #    params:
 #      host: localhost
 #      port: 514
@@ -139,6 +151,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      severity:
 #        hijack: critical
@@ -160,6 +173,8 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
+#    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
 
@@ -170,6 +185,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: '{"text": "${summary}"}'

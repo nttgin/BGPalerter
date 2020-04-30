@@ -21,7 +21,7 @@ The following are advanced parameters, please don't touch them if you are not do
 
 | Parameter | Description  | Expected format | Example  |  Required |
 |---|---|---|---|---|
-|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
+|environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. The value "research" is explained [here](research.md). Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
 |pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
 |logging.backlogSize| Indicates the buffer dimension (number of alerts) before flushing it on the disk. This parameter plays a role only when receiving thousand of alerts per second in order to prevent IO starvation, in all other cases (e.g. production monitoring) it is irrelevant. | An integer | 15 | Yes | 
@@ -255,6 +255,49 @@ Parameters for this monitor module:
 |---|---|
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+    
+    
+#### monitorRPKI
+
+This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
+involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
+
+This monitor is particularly useful when:
+* you are deploying RPKI, since it will let you know if any of your announcements are 
+invalid;
+* after you deployed RPKI, in order to be sure that all future BGP configurations will be covered by ROAs.
+
+> Example: 
+> The prefixes list of BGPalerter has the following entries:
+> ```yaml
+> 103.21.244.0/24:
+>    asn: 13335
+>    description: an example
+>    ignoreMorespecifics: false
+> 
+> options:
+>  monitorASns:
+>    13335:
+>      group: default
+> ```
+> If in config.yml monitorRPKI is enabled, you will receive alerts every time:
+>  * 103.21.244.0/24 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
+>  * AS13335 announces something that is not covered by ROAs or the announcement is RPKI invalid;
+
+
+Example of alert:
+> The route 103.21.244.0/24 announced by AS13335 is not RPKI valid.
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
+|preCacheROAs| This parameter allows to download locally VRPs lists. This is suggested in the case you want to validate many BGP updates (e.g. for research purposes). For normal production monitoring do NOT set this parameter. |
+|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+
     
 ### Reports
 
