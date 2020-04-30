@@ -63,7 +63,6 @@ We currently use the following automation on the repository:
 * [Travis CI](https://travis-ci.org/) to perform tests on each commit and pull request.
 * [Dependabot](https://dependabot.com/) to check for newer version of the dependencies used.
 * [Hound](https://houndci.com/) to check code correctness and style. 
-* [Snyk](https://snyk.io/) to check for vulnerabilities in pull requests.
 * [GitHub Security Alerts](https://github.com/nttgin/BGPalerter/network/alerts) to check for vulnerabilities on the entire repository.
 
 
