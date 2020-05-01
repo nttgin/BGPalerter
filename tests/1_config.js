@@ -38,6 +38,7 @@ var model = require('../src/model');
 chai.use(chaiSubset);
 var expect = chai.expect;
 var AS = model.AS;
+require("./http-proxy-server");
 
 var asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
@@ -67,6 +68,7 @@ describe("Composition", function() {
                 .keys([
                     "environment",
                     "connectors",
+                    "httpProxy",
                     "monitors",
                     "reports",
                     "notificationIntervalSeconds",
