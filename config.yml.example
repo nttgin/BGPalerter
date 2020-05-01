@@ -245,6 +245,10 @@ checkForUpdatesAtBoot: true
 monitoredPrefixesFiles:
   - prefixes.yml
 
+############################
+# HTTP proxy setting:
+# Allow to run BGPalerter behind an HTTP(S) proxy
+# httpProxy: http://username:password@127.0.0.1:9000
 
 
 ############################

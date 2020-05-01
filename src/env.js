@@ -38,6 +38,7 @@ import FileLogger from './fileLogger';
 import Input from "./inputs/inputYml";
 import {version} from '../package.json';
 import axios from 'axios';
+import url from 'url';
 
 const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
@@ -258,9 +259,15 @@ config.connectors = config.connectors
 
     });
 
+if (config.httpProxy) {
+    var HttpsProxyAgent = require("https-proxy-agent");
+    var proxyOpts = url.parse(config.httpProxy);
+    var agent = new HttpsProxyAgent(proxyOpts);
+}    
 
 const input = new Input(config);
 
+vector.agent = agent;
 vector.config = config;
 vector.logger = wlogger;
 vector.input = input;
