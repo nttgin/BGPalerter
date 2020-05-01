@@ -36,7 +36,9 @@ export default class ReportSlack extends ReportHTTP {
 
     constructor(channels, params, env) {
         const templates = {};
-        axios.defaults.agent = env.agent;
+        if (!this.params.noProxy) {
+            axios.defaults.agent = env.agent;
+        }
 
         const getTemplateItem = (color) => {
            return JSON.stringify({

@@ -4,6 +4,7 @@ connectors:
     params:
       carefulSubscription: true
       url: wss://ris-live.ripe.net/v1/ws/
+      noProxy: false
       perMessageDeflate: true
       subscription:
         moreSpecific: true
@@ -102,6 +103,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
+#      noProxy: false
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
 #        hijack: '#d60b1c'
@@ -153,6 +155,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
+#      noProxy: false
 #      severity:
 #        hijack: critical
 #        newprefix: informational
@@ -175,6 +178,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
+#      noProxy: false
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
 

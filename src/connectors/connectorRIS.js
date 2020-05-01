@@ -45,7 +45,10 @@ export default class ConnectorRIS extends Connector{
         this.pingInterval = 5000;
         this._defaultReconnectTimeout = 10000;
         this.reconnectTimeout = this._defaultReconnectTimeout;
-        this.agent = env.agent;
+        this.agent = null;
+        if (!this.params.noProxy) {
+            this.agent = env.agent;
+        }
 
         setInterval(this._ping, this.pingInterval);
 

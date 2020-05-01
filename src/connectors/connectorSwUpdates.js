@@ -38,7 +38,9 @@ export default class ConnectorSwUpdates extends Connector{
 
     constructor(name, params, env) {
         super(name, params, env);
-        axios.defaults.httpsAgent = env.agent;
+        if (!this.params.noProxy) {
+            axios.defaults.agent = env.agent;
+        }
     }
 
     connect = () =>

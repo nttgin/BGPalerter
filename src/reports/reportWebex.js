@@ -54,8 +54,9 @@ export default class ReportWebex extends Report {
                 });
             }
         }
-        axios.defaults.agent = env.agent;
-
+        if (!this.params.noProxy) {
+            axios.defaults.agent = env.agent;
+        }
     }
 
     _sendWebexMessage = (url, message, content) => {
