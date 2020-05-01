@@ -54,6 +54,7 @@ export default class ReportWebex extends Report {
                 });
             }
         }
+        axios.defaults.agent = env.agent;
 
     }
 
@@ -64,7 +65,7 @@ export default class ReportWebex extends Report {
             method: "POST",
             resposnseType: "json",
             data: {
-                markdown: `**${message}**: ${content.message}` 
+                markdown: `**${message}**: ${content.message}`
             }
         })
             .catch((error) => {

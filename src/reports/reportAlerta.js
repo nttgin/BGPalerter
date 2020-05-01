@@ -40,7 +40,7 @@ export default class ReportAlerta extends Report {
 
         this.environment = env.config.environment;
         this.enabled = true;
-        if (!this.params.urls || !Object.keys(this.params.urls).length){
+        if (!this.params.urls || !Object.keys(this.params.urls).length) {
             this.logger.log({
                 level: 'error',
                 message: "Alerta reporting is not enabled: no group is defined"
@@ -64,6 +64,7 @@ export default class ReportAlerta extends Report {
             this.headers.Authorization = "Bearer " + this.params.token;
         }
 
+        axios.defaults.agent = env.agent;
     }
 
     _createAlertaAlert = (url, channel, content) => {
