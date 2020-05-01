@@ -45,6 +45,7 @@ export default class ConnectorRIS extends Connector{
         this.pingInterval = 5000;
         this._defaultReconnectTimeout = 10000;
         this.reconnectTimeout = this._defaultReconnectTimeout;
+        this.agent = env.agent;
 
         setInterval(this._ping, this.pingInterval);
 
@@ -88,6 +89,7 @@ export default class ConnectorRIS extends Connector{
         new Promise((resolve, reject) => {
             try {
                 this.ws = new WebSocket(this.url, {
+                    agent: this.agent,
                     perMessageDeflate: this.params.perMessageDeflate
                 });
 
