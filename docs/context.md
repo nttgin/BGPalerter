@@ -6,8 +6,8 @@ Such tags are reported in the table below.
 | Tag | Description | 
 |---|---|
 | summary | The summary of the alert |
-| earliest | The date of the earliest event that triggered the alert (format YYYY-MM-DD hh:mm:ss)|
-| latest | The date of the last event that triggered the alert (format YYYY-MM-DD hh:mm:ss)|
+| earliest | The date of the earliest event that triggered the alert (format YYYY-MM-DD HH:mm:ss)|
+| latest | The date of the last event that triggered the alert (format YYYY-MM-DD HH:mm:ss)|
 | channel | The channel where the alert is coming from |
 | type | The name of the monitor that triggered the alert |
 | prefix | The monitored prefix involved in the alert |
