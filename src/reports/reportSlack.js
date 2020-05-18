@@ -30,78 +30,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Report from "./report";
-import axios from "axios";
+import ReportHTTP from "./reportHTTP";
 
-export default class ReportSlack extends Report {
+export default class ReportSlack extends ReportHTTP {
 
     constructor(channels, params, env) {
-        super(channels, params, env);
+        const templates = {};
 
-
-        this.enabled = true;
-        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
-            this.logger.log({
-                level: 'error',
-                message: "Slack reporting is not enabled: no group is defined"
-            });
-            this.enabled = false;
-        } else {
-            if (!this.params.hooks["default"]) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In hooks, for reportSlack, a group named 'default' is required for communications to the admin."
-                });
-            }
-        }
-
-    }
-
-    _sendSlackMessage = (url, channel, content, context) => {
-        let message = content.message;
-        const color = (this.params && this.params.colors && this.params.colors[channel])
-            ? this.params.colors[channel]
-            : '#4287f5';
-
-        if (this.params.showPaths > 0) {
-            message += `${content.message}. Top ${context.pathNumber} most used AS paths: \n ${context.paths}`;
-        }
-
-        axios({
-            url: url,
-            method: "POST",
-            resposnseType: "json",
-            data: {
+        const getTemplateItem = (color) => {
+           return JSON.stringify({
                 attachments: [
                     {
                         color: color,
-                        title: channel,
-                        text: message
+                        title: "${channel}",
+                        text: "${summary}"
                     }
                 ]
-            }
-        })
-            .catch((error) => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
-            })
-    };
+            });
+        };
 
-    report = (channel, content) => {
-        if (this.enabled) {
-            const context = this.getContext(channel, content);
-            let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
-
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there are no groups defined, send to all of them
-
-            for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendSlackMessage(this.params.hooks[group], channel, content, context);
-                }
-            }
+        for (let channel in params.colors) {
+            templates[channel] = getTemplateItem(params.colors[channel]);
         }
+        templates["default"] = getTemplateItem('#4287f5');
 
+        const slackParams = {
+            headers: {},
+            isTemplateJSON: true,
+            showPaths: params.showPaths,
+            hooks: params.hooks,
+            name: "reportSlack",
+            templates
+        };
+
+        super(channels, slackParams, env);
     }
 }

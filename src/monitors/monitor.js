@@ -184,6 +184,16 @@ export default class Monitor {
         return alert;
     };
 
+    getMonitoredAsMatch = (originAS) => {
+        const monitored = this.input.getMonitoredASns();
+
+        for (let m of monitored) {
+            if (originAS.includes(m.asn)) {
+                return m;
+            }
+        }
+    };
+
     getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
         const matched = this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
 

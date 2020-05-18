@@ -35,13 +35,20 @@ monitors:
     channel: visibility
     name: withdrawal-detection
     params:
-      thresholdMinPeers: 10
+      thresholdMinPeers: 20
 
   - file: monitorAS
     channel: misconfiguration
     name: asn-monitor
     params:
       thresholdMinPeers: 2
+
+  - file: monitorRPKI
+    channel: rpki
+    name: rpki-monitor
+    params:
+      thresholdMinPeers: 1
+      checkUncovered: false
 
 reports:
   - file: reportFile
@@ -51,6 +58,7 @@ reports:
       - visibility
       - path
       - misconfiguration
+      - rpki
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
@@ -62,6 +70,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -91,6 +100,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
@@ -98,6 +108,7 @@ reports:
 #        newprefix: '#fa9548'
 #        visibility: '#fad648'
 #        path: '#42cbf5'
+#        rpki: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
 
@@ -108,6 +119,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      host: localhost
 #      port: 9092
@@ -122,10 +134,11 @@ reports:
 #      - path
 #      - asn-monitor
 #      - misconfiguration
+#      - rpki
 #    params:
 #      host: localhost
 #      port: 514
-#      templates:
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
 #        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
 #        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
@@ -139,13 +152,14 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      severity:
 #        hijack: critical
 #        newprefix: informational
 #        visibility: debug
 #        path: trace
-#      resourceTemplates:
+#      resourceTemplates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"
 #        newprefix: "newprefix::${prefix}@@${asn}"
@@ -160,10 +174,27 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
 
+#  - file: reportHTTP
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+#        default: '{"text": "${summary}"}'
+#      headers:
+#      isTemplateJSON: true
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      hooks:
+#        default: _YOUR_WEBHOOK_URL_
 
 ############################
 # Notification settings:

@@ -70,8 +70,8 @@ export default class Report {
     getContext = (channel, content) => {
         let context = {
             summary: content.message,
-            earliest: moment(content.earliest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            latest: moment(content.latest).utc().format("YYYY-MM-DD hh:mm:ss"),
+            earliest: moment(content.earliest).utc().format("YYYY-MM-DD HH:mm:ss"),
+            latest: moment(content.latest).utc().format("YYYY-MM-DD HH:mm:ss"),
             channel,
             type: content.origin,
         };
@@ -145,11 +145,20 @@ export default class Report {
 
             case "misconfiguration":
                 context.asn = content.data[0].matchedRule.asn.toString();
+                break;
 
+            case "rpki":
+                matched = content.data[0].matchedRule;
+                context.asn = matched.asn.toString();
+                context.prefix = matched.prefix;
+                context.description = matched.description;
                 break;
 
             default:
-                return false;
+                matched = content.data[0].matchedRule;
+                context.prefix = matched.prefix;
+                context.description = matched.description;
+                context.asn = matched.asn.toString();
         }
 
         return context;

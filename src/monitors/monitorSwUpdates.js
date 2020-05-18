@@ -39,7 +39,7 @@ export default class MonitorSwUpdates extends Monitor {
     };
 
     updateMonitoredResources = () => {
-        // throw new Error('The method updateMonitoredResources must be implemented in ' + this.name);
+        // nothing
     };
 
     filter = (message) => {

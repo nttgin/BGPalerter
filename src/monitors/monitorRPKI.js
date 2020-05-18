@@ -8,41 +8,60 @@ export default class MonitorRPKI extends Monitor {
         this.input.onChange(() => {
             this.updateMonitoredResources();
         });
+
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
         this.validationQueue = [];
 
-        rpki.preCache(60)
-            .then(() => {
-                setInterval(this.validateBatch, 400);
-            })
-
+        if (this.params.preCacheROAs) {
+            rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
+                .then(() => {
+                    console.log("Downloaded");
+                    // setInterval(this.validateBatch, 400);
+                })
+                .catch(() => {
+                    this.logger.log({
+                        level: 'error',
+                        message: "One of the VRPs lists cannot be downloaded. Anyway, the RPKI monitoring should be working."
+                    });
+                });
+        } else {
+            setInterval(this.validateBatch, 400);
+        }
     };
 
     updateMonitoredResources = () => {
-        // nothing
+        this.monitored = this.input.getMonitoredASns();
     };
+
 
     validateBatch = () => {
-        const queue = this.validationQueue;
+        this.validationQueue.forEach(this.validate);
         this.validationQueue = [];
-
-        queue.forEach(this.validate);
-    };
-
-    updateMonitoredPrefixes = () => {
-        this.monitored = this.input.getMonitoredPrefixes();
     };
 
     filter = (message) => {
-        return message.type === 'announcement' && message.originAS.numbers.length == 1;
+        return message.type === 'announcement' && message.originAS.numbers.length === 1;
     };
 
     squashAlerts = (alerts) => {
 
-        const message = alerts[0].matchedMessage;
-        const covering = (alerts[0].extra.covering && alerts[0].extra.covering[0]) ? alerts[0].extra.covering[0] : false;
-        const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
+        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
 
-        return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
+        if (peers >= this.thresholdMinPeers) {
+            const firstAlert = alerts[0];
+            const message = firstAlert.matchedMessage;
+            const extra = firstAlert.extra;
+            const covering = (extra.covering && extra.covering[0]) ? extra.covering[0] : false;
+            const coveringString = (covering) ? `Valid ROA: origin AS${covering.origin} prefix ${covering.prefix} max length ${covering.maxLength}` : '';
+
+            if (extra.valid === null && this.params.checkUncovered) {
+                return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA. Accepted with AS path: ${message.path}`;
+            } else {
+                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}.  ${coveringString}`;
+            }
+        }
+
+
     };
 
 
@@ -50,31 +69,54 @@ export default class MonitorRPKI extends Monitor {
         const prefix = message.prefix;
         const origin = message.originAS.getValue();
 
-        const result = rpki.validateFromCacheSync(prefix, origin, true);
+        rpki.validate(prefix, origin, true)
+            .then(result => {
+                if (result) {
+                    const key = "a" + [prefix, origin, result.valid]
+                        .join("-")
+                        .replace(/\./g, "_")
+                        .replace(/\:/g, "_")
+                        .replace(/\//g, "_");
 
-        if (result.valid === false) {
-            const key = "a" + [prefix, origin]
-                .join("AS")
-                .replace(/\./g, "_")
-                .replace(/\:/g, "_")
-                .replace(/\//g, "_");
+                    if (result.valid === false) {
+                        this.publishAlert(key,
+                            prefix,
+                            matchedRule,
+                            message,
+                            { covering: result.covering, valid: result.valid });
+                    } else if (result.valid === null && this.params.checkUncovered) {
+                        this.publishAlert(key,
+                            prefix,
+                            matchedRule,
+                            message,
+                            { covering: null, valid: null });
+                    }
+                }
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
 
-            this.publishAlert(key,
-                prefix,
-                matchedRule,
-                message,
-                { covering: result.covering });
-        }
+
     };
 
 
     monitor = (message) => {
-        const prefix = message.prefix;
-        const matchedRule = this.input.getMoreSpecificMatch(prefix, false);
 
-        if (matchedRule) {
-            this.validationQueue.push({ message, matchedRule });
+        const messageOrigin = message.originAS;
+        const prefix = message.prefix;
+        const matchedASRule = this.getMonitoredAsMatch(messageOrigin);
+        const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false);
+
+        if (matchedPrefixRule) {
+            this.validationQueue.push({ message, matchedRule: matchedPrefixRule });
+        } else if (matchedASRule) {
+            this.validationQueue.push({ message, matchedRule: matchedASRule });
         }
+
         return Promise.resolve(true);
     };
 

@@ -382,6 +382,44 @@ export default class ConnectorTest extends Connector{
                     }
                 ];
                 break;
+
+            case "rpki":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["82.112.100.0/24"], // Valid
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.4",
+                            path: [1, 2, 3, 4321, 2914]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["8.8.8.8/22"], // Not covered
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.4",
+                            path: [1, 2, 3, 4321, 5060, 2914]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["103.21.244.0/24"], // Invalid
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.4",
+                            path: [1, 2, 3, 4321, 13335]
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
             default:
                 return;
         }

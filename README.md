@@ -9,8 +9,10 @@ You just run it. You don't need to provide any data source or connect it to anyt
 
 It can deliver alerts on files, by email, on slack, and more.
 
-![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
+![BGPalerter](docs/img/bgpalerter_github_image.png)
 
+> The tool connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
+ 
 ## TL;DR (1 minute setup)
 > This section is useful if you don't care about the source code but you just want to run the monitor.
 Instead, if you want to run the source code (which is completely open) or develop, please read directly the documentation.
@@ -28,12 +30,15 @@ Please uncomment the related section and configure according to your needs.
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
 Read the documentation below for more options.
 
+[Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md)
+
 ## Documentation
 
 - [Installation](docs/installation.md)
     - [Run from binary](docs/installation.md#running-bgpalerter-from-binaries)
     - [Run from source code](docs/installation.md#running-bgpalerter-from-the-source-code)
     - [Run in Docker](docs/installation.md#running-bgpalerter-in-docker)
+    - [Run as a Linux service](docs/linux-service.md)
 - [Monitored prefixes list](docs/prefixes.md#prefixes)
     - [Generate prefix list](docs/prefixes.md#generate)
     - [Prefix attributes description](docs/prefixes.md#prefixes-fields)
@@ -49,8 +54,12 @@ Read the documentation below for more options.
             - [reportSyslog](docs/configuration.md#reportsyslog)
             - [reportAlerta](docs/configuration.md#reportalerta)
             - [reportWebex](docs/configuration.md#reportwebex)
+            - [reportHTTP](docs/configuration.md#reporthttp)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
-
+    - [Git flow](docs/release-process.md#git-flow)
+    - [Report context](docs/context.md)
+    - [Release process](docs/release-process.md)
+- [BGPalerter for researchers](docs/research.md)
