@@ -31,7 +31,6 @@
  */
 
 import Report from "./report";
-import axios from "axios";
 
 export default class ReportAlerta extends Report {
 
@@ -64,9 +63,6 @@ export default class ReportAlerta extends Report {
             this.headers.Authorization = "Bearer " + this.params.token;
         }
 
-        if (!this.params.noProxy) {
-            axios.defaults.agent = env.agent;
-        }
     }
 
     _createAlertaAlert = (url, channel, content) => {
@@ -88,7 +84,7 @@ export default class ReportAlerta extends Report {
             this.params.resourceTemplates["default"] ||
             this.params.resource_templates["default"];
 
-        axios({
+        this.axios({
             url: url + "/alert",
             method: "POST",
             headers: this.headers,

@@ -5,15 +5,14 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, httpProxy, prefixes, monitoredASes) {
+module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy) {
     const generateList = {};
     const allOrigins = {};
     let someNotValidatedPrefixes = false;
 
     if (httpProxy) {
-        var HttpsProxyAgent = require("https-proxy-agent");
-        var proxyOpts = url.parse(httpProxy);
-        axios.defaults.httpsAgent = new HttpsProxyAgent(proxyOpts);
+        const HttpsProxyAgent = require("https-proxy-agent");
+        axios.defaults.httpsAgent = new HttpsProxyAgent(url.parse(httpProxy));
     }
     
     if (!asnList && !prefixes) {

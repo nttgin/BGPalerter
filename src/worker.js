@@ -31,7 +31,7 @@
  */
 
 import Consumer from "./consumer";
-import LossyBuffer from "./lossyBuffer";
+import LossyBuffer from "./utils/lossyBuffer";
 import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 import fs from "fs";

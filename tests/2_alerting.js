@@ -34,7 +34,6 @@ var chai = require("chai");
 var chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 var expect = chai.expect;
-require("./http-proxy-server");
 
 let asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";

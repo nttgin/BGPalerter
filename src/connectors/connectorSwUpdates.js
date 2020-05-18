@@ -31,16 +31,12 @@
  */
 
 import Connector from "./connector";
-import axios from "axios";
 import semver from "semver";
 
 export default class ConnectorSwUpdates extends Connector{
 
     constructor(name, params, env) {
         super(name, params, env);
-        if (!this.params.noProxy) {
-            axios.defaults.agent = env.agent;
-        }
     }
 
     connect = () =>
@@ -49,7 +45,7 @@ export default class ConnectorSwUpdates extends Connector{
         });
 
     _checkForUpdates = () => {
-        return axios({
+        return this.axios({
             responseType: "json",
             url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
         })

@@ -117,9 +117,9 @@ switch(params._[0]) {
             params.o,
             (params.e || "").split(","),
             params.i || false,
-            params.x || null,
             prefixes,
-            monitoredASes
+            monitoredASes,
+            params.x || null
         );
 
         break;

@@ -6,7 +6,7 @@ connectors:
     params:
       testType: withdrawal
 
-httpProxy: http://127.0.0.1:8001
+#httpProxy: http://104.41.6.112:80
 
 monitors:
   - file: monitorHijack

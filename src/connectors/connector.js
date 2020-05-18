@@ -31,6 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+
 export default class Connector {
 
     constructor(name, params, env){
@@ -44,6 +46,11 @@ export default class Connector {
         this.connectCallback = null;
         this.errorCallback = null;
         this.disconnectCallback = null;
+
+        if (!this.params.noProxy && env.agent) {
+            axios.defaults.agent = env.agent;
+        }
+        this.axios = axios;
     }
 
     connect = () =>

@@ -33,8 +33,8 @@
 import yaml from "js-yaml";
 import fs from "fs";
 import path from "path";
-import PubSub from './pubSub';
-import FileLogger from './fileLogger';
+import PubSub from './utils/pubSub';
+import FileLogger from './utils/fileLogger';
 import Input from "./inputs/inputYml";
 import {version} from '../package.json';
 import axios from 'axios';
@@ -260,14 +260,12 @@ config.connectors = config.connectors
     });
 
 if (config.httpProxy) {
-    var HttpsProxyAgent = require("https-proxy-agent");
-    var proxyOpts = url.parse(config.httpProxy);
-    var agent = new HttpsProxyAgent(proxyOpts);
+    const HttpsProxyAgent = require("https-proxy-agent");
+    vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
 }    
 
 const input = new Input(config);
 
-vector.agent = agent;
 vector.config = config;
 vector.logger = wlogger;
 vector.input = input;
