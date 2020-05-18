@@ -35,7 +35,7 @@ monitors:
     channel: visibility
     name: withdrawal-detection
     params:
-      thresholdMinPeers: 10
+      thresholdMinPeers: 20
 
   - file: monitorAS
     channel: misconfiguration
@@ -108,6 +108,7 @@ reports:
 #        newprefix: '#fa9548'
 #        visibility: '#fad648'
 #        path: '#42cbf5'
+#        rpki: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
 
