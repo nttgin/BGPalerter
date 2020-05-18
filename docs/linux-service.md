@@ -2,30 +2,31 @@
 If you are interested in running this application as a service on a Linux server here is a basic guide covering how to do that.  This process works for RHEL 7 based Linux installations.  It will likely work very similiarly on other systemctl enabled installations.
 
 ### Create directory for the application to reside
-Create a directory to place the application files.
+Create a user for BGPalerter
 
-`mkdir /opt/bgpalerter`
+```bash
+adduser bgpalerter
+sudo su bgpalerter
+```
 
-This is the directory where the binary and yaml config files will be stored.
-
-If this is a new installation, download the BGPalerter binary in the newly created directory and execute it:
+If this is a new installation, download the BGPalerter binary in the home of the newly created user and execute it:
 
 ```
-cd /opt/bgpalerter
+cd /home/bgpalerter
 wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
 chmod +x bgpalerter-linux-x64
 ./bgpalerter-linux-x64
 ```
-The autoconfiguration will start at the end of which all the needed files will be created.
+The auto-configuration will start at the end of which all the needed files will be created.
 
-If this is an existing install simply move the files of your existing install into this directory `mv -t /opt/bgpalerter bgpalerter-linux-x64 bgpalerter.pid config.yml prefixes.yml`
+If this is an existing install simply move the files of your existing install into this directory `mv -t /home/bgpalerter bgpalerter-linux-x64 bgpalerter.pid config.yml prefixes.yml`
 
-The application will also create `logs` and `src` subdirectories here if needed. You do not have to use `/opt/bgpalerter` as your directory of choice, if you choose something else - simply make sure whatever you choose gets updated in the systemd service file below as well.
+The application will also create `logs` and `src` subdirectories here if needed. 
 
 ### Create systemd service file
 Next you need to create the systemd service file.
 
-`vi /etc/systemd/system/bgpalerter.service`
+`sudo vi /etc/systemd/system/bgpalerter.service`
 
 The contents of this file should be as follows:
 
@@ -36,8 +37,10 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/bgpalerter
-ExecStart=/opt/bgpalerter/bgpalerter-linux-x64
+Restart=on-failure
+User=bgpalerter
+WorkingDirectory=/home/bgpalerter
+ExecStart=/home/bgpalerter/bgpalerter-linux-x64
 
 [Install]
 WantedBy=multi-user.target
@@ -54,50 +57,3 @@ Enable BGPalerter to start at boot and then start the service.
 `systemctl enable bgpalerter`
 
 `systemctl start bgpalerter`
-
-### Another helpful trick
-Create this file.
-
-`vi /usr/bin/bgpalerter`
-
-The contents of this file should be as follows:
-
-```
-#!/bin/bash
-
-for arg in "$@"
-do
-  if [ "$arg" == "--help" ] || [ "$arg" == "-h" ]
-  then
-    echo "--start    Start the Services"
-    echo "--stop     Stop the Services"
-    echo "--restart  Restart the Services"
-  elif [ "$arg" == "--start" ]
-  then
-    echo "Starting BGPalerter"
-    systemctl start bgpalerter.service
-  elif [ "$arg" == "--stop" ]
-  then
-    echo "Stopping BGPalerter"
-    systemctl stop bgpalerter.service
-  elif [ "$arg" == "--restart" ]
-  then
-    echo "Restarting BGPalerter"
-    systemctl restart bgpalerter.service
-fi
-done
-```
-
-Make that file executable.
-
-`chmod +x /usr/bin/bgpalerter`
-
-This file allows you to simply type the following commands if systemctl is too much work for you to remember!
-
-`bgpalerter --help`
-
-`bgpalerter --start`
-
-`bgpalerter --stop`
-
-`bgpalerter --status`
