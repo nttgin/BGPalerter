@@ -70,8 +70,8 @@ export default class Report {
     getContext = (channel, content) => {
         let context = {
             summary: content.message,
-            earliest: moment(content.earliest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            latest: moment(content.latest).utc().format("YYYY-MM-DD hh:mm:ss"),
+            earliest: moment(content.earliest).utc().format("YYYY-MM-DD HH:mm:ss"),
+            latest: moment(content.latest).utc().format("YYYY-MM-DD HH:mm:ss"),
             channel,
             type: content.origin,
         };

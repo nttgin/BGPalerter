@@ -97,7 +97,7 @@ let config = {
             channel: "visibility",
             name: "withdrawal-detection",
             params: {
-                thresholdMinPeers: 10
+                thresholdMinPeers: 20
             }
         },
         {
