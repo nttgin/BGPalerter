@@ -38,7 +38,7 @@ The release number is composed of 3 digis `x.x.x`:
 
 * The first number identifies a breaking release. The first number is incremented only when the breaking change cannot be addressed with a deprecation warning.
 * The second number identifies a major release. The second number is incremented if new functionalities are introduced.
-* The third number identifies a minor release. The third number is incremented when there are improvements which don't introduce any new functionality but improve the available ones.
+* The third number identifies a minor release. The third number is incremented when there are changes which don't introduce any new functionality but improve the available ones.
 
 ### Patching
 In the event a serious bug (e.g. affecting one of the core functionalities) is discovered in a released version, we will not follow the timing described above and release as soon as possible a minor release.
@@ -69,7 +69,7 @@ We currently use the following automation on the repository:
 # Git flow
 
 1) The development happens in the `dev` branch.
-2) When a set of feature is defined as the next release candidate, the `dev` branch is branched to create the `release` branch which contains the release candidate code.
+2) When a set of feature is defined as the next release candidate, the `dev` branch is branched to create the `release` branch, which contains the release candidate code.
 3) The release candidate is tested as described above.
 4) After the test period, the release candidate is promoted to pre-release:
     1) The source is tagged with a tag reporting the release number
