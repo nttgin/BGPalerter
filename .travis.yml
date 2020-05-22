@@ -4,7 +4,7 @@ node_js:
 
 before_install:
   - npm install -g anyproxy
-  - anyproxy --port 8001
+  - nohup anyproxy --port 8001 &
 
 cache:
   directories:
