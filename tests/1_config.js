@@ -63,9 +63,11 @@ describe("Composition", function() {
         var config = worker.config;
 
         it("config structure", function () {
+            if (config.httpProxy) {
+                console.log("Using proxy: ", config.httpProxy);
+            }
             expect(config).to.have
                 .keys([
-                    "httpProxy",
                     "environment",
                     "connectors",
                     "monitors",
