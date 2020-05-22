@@ -32,9 +32,6 @@
 
 var chai = require("chai");
 var chaiSubset = require('chai-subset');
-var readLastLines = require('read-last-lines');
-var moment = require('moment');
-var model = require('../../src/model');
 chai.use(chaiSubset);
 var expect = chai.expect;
 var axios = require('axios');
@@ -99,7 +96,7 @@ describe("Composition", function() {
                     params: {
                         useStatusCodes: true,
                         host: null,
-                        port: 8011
+                        port: 8012
                     }
                 });
         });

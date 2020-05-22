@@ -35,7 +35,7 @@ processMonitors:
     params:
       useStatusCodes: true
       host: null
-      port: 8011
+      port: 8012
 
 
 logging:
