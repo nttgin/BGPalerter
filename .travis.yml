@@ -9,10 +9,11 @@ jobs:
   include:
     - stage: "Tests [no proxy]"
       name: "Unit Tests"
-      script: 'npm run test'
+      script: npm run test
     - stage: "Tests [proxy]"
-      name: "Unit Tests"
-      script: 'npm install -g anyproxy && nohup anyproxy --port 8001 & && npm run test-proxy'
+      name: "Unit Tests with proxy"
+      script: 'npm install -g anyproxy && nohup anyproxy --port 8001 &'
+    - script: npm run test-proxy
 
 cache:
   directories:
