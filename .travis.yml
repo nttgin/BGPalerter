@@ -10,9 +10,7 @@ jobs:
   include:
     - stage: "Tests [no proxy]"
       name: "Unit Tests"
-      script: npm run test
-    - script: 'printf "\nhttpProxy: http://localhost:8001\n" >> tests/config.test.yml'
-      name: "adding proxy to config"
+      script: 'npm run test && printf "\nhttpProxy: http://localhost:8001\n" >> tests/config.test.yml'
     - stage: "Tests [with proxy]"
       name: "Unit Tests"
       script: npm run test
