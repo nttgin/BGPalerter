@@ -8,11 +8,12 @@ before_install:
 
 jobs:
   include:
-    - stage: "Tests"
-      name: "Unit Tests [no proxy]"
-      script: 'npm run test && printf "\nhttpProxy: http://localhost:8001\n" >> tests/config.test.yml'
-    - name: "Unit Tests [proxy]"
-      script: npm run test
+    - stage: "Tests [no proxy]"
+      name: "Unit Tests"
+      script: 'npm run test'
+    - stage: "Tests [proxy]"
+      name: "Unit Tests"
+      script: 'npm run test-proxy'
 
 cache:
   directories:
