@@ -2,10 +2,6 @@ language: node_js
 node_js:
   - 12
 
-before_install:
-  - npm install -g anyproxy
-  - nohup anyproxy --port 8001 & &&
-
 jobs:
   include:
     - stage: "Tests without proxy"
