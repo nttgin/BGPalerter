@@ -1,9 +1,21 @@
 language: node_js
 node_js:
-  - 10
+  - 12
+
+before_install:
+  - npm install -g anyproxy
+  - nohup anyproxy --port 8001 &
+
+jobs:
+  include:
+    - stage: "Tests [no proxy]"
+      name: "Unit Tests"
+      script: 'npm run test'
+    - stage: "Tests [proxy]"
+      name: "Unit Tests"
+      script: 'npm run test-proxy'
 
 cache:
-  yarn: true
   directories:
     - node_modules
 
