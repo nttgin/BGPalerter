@@ -5,7 +5,7 @@ node_js:
 before_install:
   - npm install -g anyproxy
   - nohup anyproxy --port 8001 &
-  - 'echo "httpProxy: http://localhost:8001" > tests/config.test.yml'
+  - 'echo "\nhttpProxy: http://localhost:8001\n" >> tests/config.test.yml'
 
 cache:
   directories:

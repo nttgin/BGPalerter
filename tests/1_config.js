@@ -65,6 +65,7 @@ describe("Composition", function() {
         it("config structure", function () {
             expect(config).to.have
                 .keys([
+                    "httpProxy",
                     "environment",
                     "connectors",
                     "monitors",
