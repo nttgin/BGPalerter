@@ -36,7 +36,7 @@ chai.use(chaiSubset);
 var expect = chai.expect;
 var axios = require('axios');
 
-var asyncTimeout = 20000;
+var asyncTimeout = 30000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/proxy_tests/config.proxy.test.yml";
 
