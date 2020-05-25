@@ -42,7 +42,7 @@
     "inquirer": "^7.1.0",
     "ip-address": "^6.3.0",
     "ip-sub": "^1.0.7",
-    "js-yaml": "^3.13.1",
+    "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
     "nodemailer": "^6.4.6",
     "path": "^0.12.7",
