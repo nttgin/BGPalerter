@@ -16,6 +16,7 @@ The following are common parameters which it is possible to specify in the confi
 |logging.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
 |processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
+|httpProxy| Defines the HTTP/HTTPS proxy server to be used by BGPalerter and its submodules (reporters/connectors/monitors). See [here](http-proxy.md) for more information. | A string | http://username:password@proxy.example.org:8080 | No | 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 

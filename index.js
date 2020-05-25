@@ -73,7 +73,7 @@ const params = yargs
 
             .alias('x', 'proxy')
             .nargs('x', 1)
-            .describe('x', 'HTTP(S) proxy to use')
+            .describe('x', 'HTTP/HTTPS proxy to use')
 
             .demandOption(['o']);
     })
