@@ -51,7 +51,7 @@ export default class Report {
         }
 
         if (!this.params.noProxy && env.agent) {
-            axios.defaults.agent = env.agent;
+            axios.defaults.httpsAgent = env.agent;
         }
         this.axios = axios;
     }
