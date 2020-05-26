@@ -38,7 +38,10 @@ export default class Uptime {
     constructor(connectors, params){
         this.connectors = connectors;
         this.params = params;
-        axios.defaults.httpsAgent = env.agent;
+
+        if (!this.params.noProxy && env.agent) {
+            axios.defaults.httpsAgent = env.agent;
+        }
         this.axios = axios;
     };
 

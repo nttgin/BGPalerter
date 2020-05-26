@@ -92,7 +92,6 @@ export default class ConnectorRIS extends Connector{
                     perMessageDeflate: this.params.perMessageDeflate
                 };
                 if (!this.params.noProxy && this.agent) {
-                    console.log("Using proxy");
                     wsOptions.agent = this.agent;
                 }
                 this.ws = new WebSocket(this.url, wsOptions);
