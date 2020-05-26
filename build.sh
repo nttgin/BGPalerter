@@ -6,7 +6,7 @@ mkdir bin
 rm -rf build
 mkdir build
 
-npm install
+npm install --silent
 
 npm run babel . --  --ignore node_modules --out-dir build
 
