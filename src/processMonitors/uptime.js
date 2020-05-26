@@ -30,11 +30,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+import env from "../env";
+
 export default class Uptime {
 
     constructor(connectors, params){
         this.connectors = connectors;
         this.params = params;
+        axios.defaults.httpsAgent = env.agent;
+        this.axios = axios;
     };
 
 

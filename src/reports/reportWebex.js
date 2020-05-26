@@ -31,7 +31,6 @@
  */
 
 import Report from "./report";
-import axios from "axios";
 
 export default class ReportWebex extends Report {
 
@@ -54,17 +53,16 @@ export default class ReportWebex extends Report {
                 });
             }
         }
-
     }
 
     _sendWebexMessage = (url, message, content) => {
 
-        axios({
+        this.axios({
             url: url,
             method: "POST",
             resposnseType: "json",
             data: {
-                markdown: `**${message}**: ${content.message}` 
+                markdown: `**${message}**: ${content.message}`
             }
         })
             .catch((error) => {

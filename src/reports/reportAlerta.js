@@ -31,7 +31,6 @@
  */
 
 import Report from "./report";
-import axios from "axios";
 
 export default class ReportAlerta extends Report {
 
@@ -40,7 +39,7 @@ export default class ReportAlerta extends Report {
 
         this.environment = env.config.environment;
         this.enabled = true;
-        if (!this.params.urls || !Object.keys(this.params.urls).length){
+        if (!this.params.urls || !Object.keys(this.params.urls).length) {
             this.logger.log({
                 level: 'error',
                 message: "Alerta reporting is not enabled: no group is defined"
@@ -85,7 +84,7 @@ export default class ReportAlerta extends Report {
             this.params.resourceTemplates["default"] ||
             this.params.resource_templates["default"];
 
-        axios({
+        this.axios({
             url: url + "/alert",
             method: "POST",
             headers: this.headers,

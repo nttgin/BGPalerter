@@ -31,6 +31,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+
 export default class Monitor {
 
     constructor(name, channel, params, env) {
@@ -43,6 +45,11 @@ export default class Monitor {
         this.name = name;
         this.channel = channel;
         this.monitored = [];
+
+        if (!this.params.noProxy && env.agent) {
+            axios.defaults.httpsAgent = env.agent;
+        }
+        this.axios = axios;
 
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
         this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>

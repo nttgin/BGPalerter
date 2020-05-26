@@ -1,14 +1,20 @@
 import axios from "axios";
+import url from "url";
 import brembo from "brembo";
 import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes) {
+module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy) {
     const generateList = {};
     const allOrigins = {};
     let someNotValidatedPrefixes = false;
 
+    if (httpProxy) {
+        const HttpsProxyAgent = require("https-proxy-agent");
+        axios.defaults.httpsAgent = new HttpsProxyAgent(url.parse(httpProxy));
+    }
+    
     if (!asnList && !prefixes) {
         throw new Error("You need to specify at least an AS number or a list of prefixes.");
     }

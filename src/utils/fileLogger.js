@@ -1,5 +1,5 @@
-var fs = require('fs');
-var moment = require('moment');
+const fs = require('fs');
+const moment = require('moment');
 const zlib = require('zlib');
 
 export default class FileLogger {
@@ -7,7 +7,7 @@ export default class FileLogger {
     constructor(params) {
 
         this.format = params.format || this.defaultFormat;
-        this.logRotatePattern = params.logRotatePattern;
+        this.logRotatePattern = params.logRotatePattern || "YYYY-MM-DD";
         this.filename = params.filename;
         this.directory = params.directory;
         this.levels = params.levels || ['error', 'info', 'verbose'];

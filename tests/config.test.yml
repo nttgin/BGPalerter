@@ -6,6 +6,8 @@ connectors:
     params:
       testType: withdrawal
 
+#httpProxy: http://104.41.6.112:80
+
 monitors:
   - file: monitorHijack
     channel: hijack

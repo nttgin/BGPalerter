@@ -31,7 +31,6 @@
  */
 
 import Report from "./report";
-import axios from "axios";
 
 export default class ReportHTTP extends Report {
 
@@ -74,7 +73,7 @@ export default class ReportHTTP extends Report {
 
         const blob = this._getMessage(channel, content);
 
-        axios({
+        this.axios({
             url: url,
             method: "POST",
             headers: this.headers,

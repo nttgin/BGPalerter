@@ -6,11 +6,12 @@
   "bin": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/massimocandela/rpki-validator.git"
+    "url": "git+https://github.com/nttgin/BGPalerter.git"
   },
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "./node_modules/.bin/mocha --exit tests --require @babel/register",
+    "test": "./node_modules/.bin/mocha --exit tests/*.js --require @babel/register",
+    "test-proxy": "tests/proxy_tests/test_proxy.sh",
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
@@ -39,6 +40,7 @@
     "axios": "^0.19.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
+    "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.1.0",
     "ip-address": "^6.3.0",
     "ip-sub": "^1.0.7",

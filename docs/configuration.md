@@ -16,6 +16,7 @@ The following are common parameters which it is possible to specify in the confi
 |logging.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
 |processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
+|httpProxy| Defines the HTTP/HTTPS proxy server to be used by BGPalerter and its submodules (reporters/connectors/monitors). See [here](http-proxy.md) for more information. | A string | http://username:password@proxy.example.org:8080 | No | 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 
@@ -79,6 +80,7 @@ Each monitor declaration is composed of:
 | channel | The name of the channel that will be used by the monitor to dispatch messages. If the inserted name doesn't correspond to an already existent channel, a new channel is created.|
 |name| The name associated to the monitor. Multiple monitors with the same implementation can be loaded with different names. This name will be used to annotate messages in order track from where they are coming from.|
 |params| A dictionary of parameters that can be useful for the functioning of the monitor. Different monitors with the same implementation can be initialized with different parameters. |
+|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 
 Each report declaration is composed of:
 
@@ -86,6 +88,7 @@ Each report declaration is composed of:
 |---|---|
 | file | Name of the file containing the report implementation. Report implementations are in the `reports` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the report. It is common to have group declarations among the parameters. Different reports with the same implementation can be initialized with different parameters. |
+|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |channels| A [list](docs/prefixes.md#array) of channels the monitor will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
 
 
@@ -95,7 +98,9 @@ Each connector is composed of:
 |---|---|
 |file|Name of the file containing the connector implementation. Report implementations are in the `connectors` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the connector.  E.g. the data source url, password, socket options|
+|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |name| The name that will be used to identify this connector and to annotate logs and messages. | 
+
 
 > Connectors will always send the BGP updates to all the channels. The BGP updates have all the same format.
 

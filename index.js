@@ -71,6 +71,10 @@ const params = yargs
             .nargs('m', 0)
             .describe('m', 'Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.')
 
+            .alias('x', 'proxy')
+            .nargs('x', 1)
+            .describe('x', 'HTTP/HTTPS proxy to use')
+
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -114,7 +118,8 @@ switch(params._[0]) {
             (params.e || "").split(","),
             params.i || false,
             prefixes,
-            monitoredASes
+            monitoredASes,
+            params.x || null
         );
 
         break;

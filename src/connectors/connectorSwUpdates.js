@@ -31,7 +31,6 @@
  */
 
 import Connector from "./connector";
-import axios from "axios";
 import semver from "semver";
 
 export default class ConnectorSwUpdates extends Connector{
@@ -46,7 +45,7 @@ export default class ConnectorSwUpdates extends Connector{
         });
 
     _checkForUpdates = () => {
-        return axios({
+        return this.axios({
             responseType: "json",
             url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
         })
@@ -71,7 +70,7 @@ export default class ConnectorSwUpdates extends Connector{
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             if (this.config.checkForUpdatesAtBoot){
-                this._checkForUpdates();
+                setTimeout(this._checkForUpdates, 1000);
             }
             setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);
