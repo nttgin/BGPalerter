@@ -5,10 +5,6 @@ mkdir bin
 
 npm run babel . --  --ignore node_modules --out-dir build
 
-cp config.yml.example build/config.yml
-
-cp package.json build/package.json
-
 cd build
 
 npm install --silent
