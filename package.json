@@ -46,7 +46,7 @@
     "ip-sub": "^1.0.7",
     "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
-    "nodemailer": "^6.4.7",
+    "nodemailer": "^6.4.8",
     "path": "^0.12.7",
     "restify": "^8.5.1",
     "rpki-validator": "^1.0.16",
