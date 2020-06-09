@@ -429,5 +429,9 @@ Parameters for this report module:
 |---|---|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
 |botToken| Telegram Bot Token obtained at https://core.telegram.org/bots#3-how-do-i-create-a-bot|
-|chatId| Negative (chat) or positive (user) ID value to send alert to. You can use curl to obtain required ID: run `curl https://api.telegram.org/bot<TOKEN>/getUpdates` and write a message to your bot, you will see JSON data, something like: "from": { "id": 12345, .., where 12345 is the value that you should use.|
+|chatId| Negative (chat) or positive (user) ID value to send alert to.|
+
+You can obtain **chatId** from terminal using curl: 
+1. run `curl https://api.telegram.org/bot<TOKEN>/getUpdates`
+2. while curl is still running - write a message to your bot, curl will receive a response with JSON data, something like: `.. "from": { "id": 12345, ..`, where **12345** is the required value.|
 
