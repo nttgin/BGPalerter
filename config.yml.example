@@ -206,8 +206,9 @@ reports:
 #      - rpki
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
-#      botToken: _YOUR_TELEGRAM_BOT_TOKEN_
-#      chatId: _YOUR_TELEGRAM_CHAT_ID_
+#      botToken: '123456789:AAB_cde1a18iP_ABCza875CK-abc7234561'  ## please follow instructions to get Bot token - https://core.telegram.org/bots#3-how-do-i-create-a-bot
+#      chatId: -123456789	## you can use CHAT ID (negative integer) or USER ID (positive integer) from here - curl https://api.telegram.org/bot<TOKEN>/getUpdates
+#
 
 ############################
 # Notification settings:

@@ -419,3 +419,15 @@ Parameters for this report module:
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 
 
+#### reportTelegram
+
+This report module sends alerts directly to specified telegram user or chatgroup (using Telegram Bot API - https://core.telegram.org/bots).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
+|botToken| Telegram Bot Token obtained at https://core.telegram.org/bots#3-how-do-i-create-a-bot|
+|chatId| Negative (chat) or positive (user) ID value to send alert to. You can use curl to obtain required ID: run `curl https://api.telegram.org/bot<TOKEN>/getUpdates` and write a message to your bot, you will see JSON data, something like: "from": { "id": 12345, .., where 12345 is the value that you should use.|
+
