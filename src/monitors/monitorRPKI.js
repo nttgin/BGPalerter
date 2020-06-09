@@ -16,7 +16,6 @@ export default class MonitorRPKI extends Monitor {
             rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
                 .then(() => {
                     console.log("Downloaded");
-                    // setInterval(this.validateBatch, 400);
                 })
                 .catch(() => {
                     this.logger.log({
