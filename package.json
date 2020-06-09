@@ -36,7 +36,7 @@
     "read-last-lines": "^1.7.2"
   },
   "dependencies": {
-    "@sentry/node": "^5.16.1",
+    "@sentry/node": "^5.17.0",
     "axios": "^0.19.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.3",
