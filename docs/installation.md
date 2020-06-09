@@ -67,3 +67,10 @@ There are two main builds:
 * `dev` reflects the last commit in the `dev` branch. Use this only for development purposes.
 
 Additionally, each release has its own build in case you want to revet back to an older version.
+
+To run the latest stable version of BGPalerter in Docker, do:
+
+```bash
+docker pull nttgin/bgpalerter:latest
+docker run -i nttgin/bgpalerter
+```

@@ -9,7 +9,7 @@ You just run it. You don't need to provide any data source or connect it to anyt
 
 It can deliver alerts on files, by email, on slack, and more.
 
-![BGPalerter](docs/img/bgpalerter_github_image.png)
+![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
 > The tool connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
