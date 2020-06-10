@@ -187,7 +187,7 @@ export default class Input {
                             const asns = answer.asns.split(",");
                             return generatePrefixes(
                                 asns,
-                                "prefixes.yml",
+                                this.config.volume + "prefixes.yml",
                                 [],
                                 answer.i,
                                 null,

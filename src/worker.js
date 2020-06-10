@@ -30,17 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Consumer from "./consumer";
 import LossyBuffer from "./utils/lossyBuffer";
-import ConnectorFactory from "./connectorFactory";
 import cluster from "cluster";
 import fs from "fs";
 
 export default class Worker {
     constructor(configFile, volume) {
-        global.EXTERNAL_CONFIG_FILE = configFile;
+        global.EXTERNAL_CONFIG_FILE = global.EXTERNAL_CONFIG_FILE || configFile;
+        global.EXTERNAL_VOLUME_DIRECTORY = global.EXTERNAL_VOLUME_DIRECTORY || volume;
 
         const env = require("./env");
+        const Consumer = require("./consumer").default;
+
         this.config = env.config;
         this.logger = env.logger;
         this.input = env.input;
@@ -84,6 +85,7 @@ export default class Worker {
             }
         }
 
+        const ConnectorFactory = require("./connectorFactory").default;
         const connectorFactory = new ConnectorFactory();
 
         if (this.config.uptimeMonitor) {

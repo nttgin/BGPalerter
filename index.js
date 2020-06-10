@@ -32,10 +32,6 @@
 
 import yargs from 'yargs';
 
-
-
-
-
 const params = yargs
     .usage('Usage: $0 <command> [options]')
 

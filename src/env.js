@@ -40,12 +40,15 @@ import {version} from '../package.json';
 import axios from 'axios';
 import url from 'url';
 
-const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
-    configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath,
+    configFile: global.EXTERNAL_CONFIG_FILE ||
+        ((global.EXTERNAL_VOLUME_DIRECTORY)
+            ? global.EXTERNAL_VOLUME_DIRECTORY + 'config.yml'
+            : path.resolve(process.cwd(), 'config.yml')),
     clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
 };
+
 let config = {
     environment: "production",
     connectors: [
@@ -158,19 +161,20 @@ if (fs.existsSync(vector.configFile)) {
         responseType: 'blob', // important
     })
         .then((response) => {
-            fs.writeFileSync(defaultConfigFilePath, response.data);
-            yaml.safeLoad(fs.readFileSync(defaultConfigFilePath, 'utf8')); // Test readability and format
+            fs.writeFileSync(vector.configFile, response.data);
+            yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8')); // Test readability and format
         })
         .catch(() => {
-            fs.writeFileSync(defaultConfigFilePath, ymlBasicConfig); // Download failed, write simple default config
+            fs.writeFileSync(vector.configFile, ymlBasicConfig); // Download failed, write simple default config
         })
-
 }
+
+config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "./";
 
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',
-    directory: config.logging.directory,
+    directory: config.volume + config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
@@ -182,7 +186,7 @@ const errorTransport = new FileLogger({
 const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'reports-%DATE%.log',
-    directory: config.logging.directory,
+    directory: config.volume + config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,

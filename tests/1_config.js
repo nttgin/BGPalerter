@@ -34,10 +34,8 @@ var chai = require("chai");
 var chaiSubset = require('chai-subset');
 var readLastLines = require('read-last-lines');
 var moment = require('moment');
-var model = require('../src/model');
 chai.use(chaiSubset);
 var expect = chai.expect;
-var AS = model.AS;
 
 var asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
@@ -79,7 +77,8 @@ describe("Composition", function() {
                     "multiProcess",
                     "maxMessagesPerSecond",
                     "fadeOffSeconds",
-                    "checkFadeOffGroupsSeconds"
+                    "checkFadeOffGroupsSeconds",
+                    "volume"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')

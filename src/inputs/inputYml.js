@@ -50,7 +50,7 @@ export default class InputYml extends Input {
     };
 
     loadPrefixes = () => {
-        if (!fs.existsSync('./' + this.config.monitoredPrefixesFiles[0])) {
+        if (!fs.existsSync(this.config.volume + this.config.monitoredPrefixesFiles[0])) {
             return this.generate()
                 .then(() => this._loadPrefixes());
         }
@@ -67,8 +67,8 @@ export default class InputYml extends Input {
                 let monitoredPrefixesFile = {};
                 let fileContent;
 
-                if (fs.existsSync('./' + prefixesFile)) {
-                    fileContent = fs.readFileSync('./' + prefixesFile, 'utf8');
+                if (fs.existsSync(this.config.volume + prefixesFile)) {
+                    fileContent = fs.readFileSync(this.config.volume + prefixesFile, 'utf8');
                     try {
                         monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
                     } catch (error) {
