@@ -32,6 +32,8 @@ Read the documentation below for more options.
 
 [Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md)
 
+[Who is using BGPalerter.](docs/friends.md)
+
 ## Documentation
 
 - [Installation](docs/installation.md)
