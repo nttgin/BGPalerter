@@ -119,3 +119,15 @@ docker run -i --name bgpalerter \
 > This option does NOT replace [proper monitoring](process-monitors.md).
 Just restarting the container will not assure you that the monitoring is working properly or that it will work again. You should always investigate failures and fix possible misconfiguration.
 
+## BGPalerter parameters
+
+The execution of BGPalerter supports some parameters 
+
+| Parameter | Description |
+|---|---|
+| -v  | Show version number |
+| -h  | Show help |
+| -c  | To specify the config file to load (default `./config.yml`) |
+| -d  | To specify a directory where configuration and data is persisted (see [volume](configuration.md)). |
+
+You can also use the same parameters with npm (if you are running the source code), in the following format `npm run serve -- --h` (replace `h` with the parameter you need).
