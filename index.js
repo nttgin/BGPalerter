@@ -36,17 +36,27 @@ const params = yargs
     .usage('Usage: $0 <command> [options]')
 
     .command('$0', 'Run BGPalerter (default)', function () {
-        yargs.alias('c', 'config')
+        yargs
+            .alias('v', 'version')
+            .nargs('v', 0)
+            .describe('v', 'Show version number')
+
+            .alias('c', 'config')
             .nargs('c', 1)
             .describe('c', 'Config file to load')
 
-            .alias('v', 'volume')
-            .nargs('v', 1)
-            .describe('c', 'A directory where configuration and data is persisted')
+            .alias('d', 'data-volume')
+            .nargs('d', 1)
+            .describe('d', 'A directory where configuration and data is persisted')
     })
 
     .command('generate', 'Generate prefixes to monitor', function () {
-        yargs.alias('o', 'output')
+        yargs
+            .alias('v', 'version')
+            .nargs('v', 0)
+            .describe('v', 'Show version number')
+
+            .alias('o', 'output')
             .nargs('o', 1)
             .describe('o', 'Write to file')
 
@@ -134,5 +144,5 @@ switch(params._[0]) {
 
     default: // Run monitor
         const Worker = require("./src/worker").default;
-        module.exports = new Worker(params.c, params.v);
+        module.exports = new Worker(params.c, params.d);
 }
