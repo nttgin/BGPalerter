@@ -58,6 +58,7 @@ Read the documentation below for more options.
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
     - [HTTP/HTTPS proxy](docs/http-proxy.md)
+- [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
     - [Git flow](docs/release-process.md#git-flow)

@@ -4,3 +4,4 @@ BGPalerter can be easily updated. The configuration of BGPalerter is persisted i
 
 * if you are using the binary, go in the [releases tab](https://github.com/nttgin/BGPalerter/releases), download the new binary and replace the old one.
 * if you are using the source code, simply do a git pull of the master branch.
+* if you are using docker, do `docker pull nttgin/bgpalerter:latest`, after stop and remove your current container and [run it again](installation.md#running-bgpalerter-in-docker).

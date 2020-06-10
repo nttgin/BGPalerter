@@ -66,29 +66,56 @@ There are two main builds:
 * `latest` stable version for production monitoring;
 * `dev` reflects the last commit in the `dev` branch. Use this only for development purposes.
 
-Additionally, each release has its own build in case you want to revet back to an older version.
+Additionally, each release has its own build in case you want to revert back to an older version.
 
-To run the latest stable version of BGPalerter in Docker in interactive mode, do:
+To run the latest stable version of BGPalerter in Docker, do:
+
+```
+docker run -i --name bgpalerter \
+  -v $(pwd)/volume:/opt/bgpalerter/volume \
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
+```
+
+With this command, a new directory `./volume` will be created in the current position.
+Such directory will contain all the persistent data that BGPalerter will generate, including configuration and alert logs.  
+You can specify another directory by changing the directory before the colon in the -v flag (e.g. `-v _LOCATION_YOU_WANT_/volume:/opt/bgpalerter/volume`).
+
+The command above runs BGPalerter in interactive mode (`-i` flag), which is necessary if you want to run the auto configuration.
+
+You should replace the flag `-i` with the flag `-d`, when:
+* You already have the configuration files `config.yml` and `prefixes.yml`, or you plan to create them by hand. Just place them into the volume directory.
+* You executed BGPalerter with the `-i` flag and the volume directory and the configuration files have been already generated.
+
+For production monitoring we suggest to monitor the uptime of BGPalerter.  
+In case you want to monitor the uptime by using the `uptimeApi` ([read more](process-monitors.md)), you need to map the port in the docker configuration with the following command:
 
 ```bash
-docker pull nttgin/bgpalerter:latest
-docker run -i nttgin/bgpalerter
+docker run -i --name bgpalerter \
+  -v $(pwd)/volume:/opt/bgpalerter/volume \
+  -p 8011:8011
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
 ```
 
-To run the latest stable version of BGPalerter in docker in the background (`-d`) with
-pre-generated configuration files:
+The `uptimeApi` module has to be enabled in `volume/config.yml` as described [here](process-monitors.md).
+Now you can monitor `http://127.0.0.1:8011/status` (e.g. in Nagios) to check the status of the BGPalerter monitoring.
+Such API may return a negative result when there is a misconfiguration or when BGPalerter failed to connect to the data repository.
 
-```
-docker run -d --name bgpalerter \
-  -v $PWD/prefixes.yml:/opt/bgpalerter/prefixes.yml \
-  -v $PWD/config.yml:/opt/bgpalerter/config.yml \
+
+
+Optionally, you can specify a health check in docker to auto-restart the container in case of prolonged failure.
+
+```bash
+docker run -i --name bgpalerter \
+  -v $(pwd)/volume:/opt/bgpalerter/volume \
   --health-cmd='wget --quiet --tries=1 --spider http://127.0.0.1:8011/status || exit 1' \
   --health-timeout=2s \
-  --health-retries=12 \
-  --health-interval=5s \
+  --health-retries=15 \
+  --health-interval=60s \
   --restart unless-stopped \
-  -p 8011:8011 \
-  nttgin/bgpalerter:latest
+  -p 8011:8011
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
 ```
 
-The above example assumes the `uptimeApi` is enabled and listening on tcp 8011.
+> This option does NOT replace [proper monitoring](process-monitors.md).
+Just restarting the container will not assure you that the monitoring is working properly or that it will work again. You should always investigate failures and fix possible misconfiguration.
+
