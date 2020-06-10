@@ -68,9 +68,27 @@ There are two main builds:
 
 Additionally, each release has its own build in case you want to revet back to an older version.
 
-To run the latest stable version of BGPalerter in Docker, do:
+To run the latest stable version of BGPalerter in Docker in interactive mode, do:
 
 ```bash
 docker pull nttgin/bgpalerter:latest
 docker run -i nttgin/bgpalerter
 ```
+
+To run the latest stable version of BGPalerter in docker in the background (`-d`) with
+pre-generated configuration files:
+
+```
+docker run -d --name bgpalerter \
+  -v $PWD/prefixes.yml:/opt/bgpalerter/prefixes.yml \
+  -v $PWD/config.yml:/opt/bgpalerter/config.yml \
+  --health-cmd='wget --quiet --tries=1 --spider http://127.0.0.1:8011/status || exit 1' \
+  --health-timeout=2s \
+  --health-retries=12 \
+  --health-interval=5s \
+  --restart unless-stopped \
+  -p 8011:8011 \
+  nttgin/bgpalerter:latest
+```
+
+The above example assumes the `uptimeApi` is enabled and listening on tcp 8011.
