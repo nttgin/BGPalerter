@@ -1,0 +1,6 @@
+# Updating BGPalerter
+
+BGPalerter can be easily updated. The configuration of BGPalerter is persisted in `config.yml` and `prefixes.yml`, as long as you preserve such files you will not need to reconfigure it after the update.
+
+* if you are using the binary, go in the [releases tab](https://github.com/nttgin/BGPalerter/releases), download the new binary and replace the old one.
+* if you are using the source code, simply do a git pull of the master branch.

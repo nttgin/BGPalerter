@@ -37,7 +37,7 @@ import cluster from "cluster";
 import fs from "fs";
 
 export default class Worker {
-    constructor(configFile) {
+    constructor(configFile, volume) {
         global.EXTERNAL_CONFIG_FILE = configFile;
 
         const env = require("./env");

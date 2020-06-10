@@ -32,12 +32,23 @@
 
 import yargs from 'yargs';
 
+
+
+
+
 const params = yargs
     .usage('Usage: $0 <command> [options]')
 
     .command('$0', 'Run BGPalerter (default)', function () {
+        yargs.alias('c', 'config')
+            .nargs('c', 1)
+            .describe('c', 'Config file to load')
+
+            .alias('v', 'volume')
+            .nargs('v', 1)
+            .describe('c', 'A directory where configuration and data is persisted')
     })
-    .example('$0 run -c config.yml', 'Run BGPalerter')
+
     .command('generate', 'Generate prefixes to monitor', function () {
         yargs.alias('o', 'output')
             .nargs('o', 1)
@@ -49,15 +60,16 @@ const params = yargs
 
             .alias('e', 'exclude')
             .nargs('e', 1)
-            .describe('e', 'Prefixes to exclude')
+            .describe('e', 'Comma-separated list of prefixes to exclude')
+
 
             .alias('p', 'prefixes')
             .nargs('p', 1)
-            .describe('p', 'Prefixes to include')
+            .describe('p', 'Comma-separated list of prefixes to include')
 
             .alias('l', 'prefixes-file')
             .nargs('l', 1)
-            .describe('l', 'File containing the prefixes to include')
+            .describe('l', 'File containing the prefixes to include in the monitoring. One prefix for each line')
 
             .alias('i', 'ignore-delegated')
             .nargs('i', 0)
@@ -126,5 +138,5 @@ switch(params._[0]) {
 
     default: // Run monitor
         const Worker = require("./src/worker").default;
-        module.exports = new Worker(params.c);
+        module.exports = new Worker(params.c, params.v);
 }
