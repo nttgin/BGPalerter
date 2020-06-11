@@ -77,7 +77,8 @@ describe("Composition", function() {
                     "notificationIntervalSeconds",
                     "pidFile",
                     "processMonitors",
-                    "reports"
+                    "reports",
+                    "volume"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
