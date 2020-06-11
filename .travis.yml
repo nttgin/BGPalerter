@@ -4,11 +4,10 @@ node_js:
 
 jobs:
   include:
-    - stage: "Tests without proxy"
+    - stage: "Tests"
       name: "Tests without proxy"
       script: npm run test
-    - stage: "Tests with proxy"
-      name: "Tests with proxy"
+    - name: "Tests with proxy"
       script: npm run test-proxy
 
 cache:
