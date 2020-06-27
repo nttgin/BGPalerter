@@ -12,8 +12,18 @@ export default class MonitorRPKI extends Monitor {
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
         this.validationQueue = [];
 
+        const rpkiValidatorOptions = {
+            connector: this.params.vrpProvider || "ntt"
+        };
+
+        if (!this.params.noProxy && env.agent) {
+            rpkiValidatorOptions.httpsAgent = env.agent;
+        }
+
+        this.rpki = new rpki(rpkiValidatorOptions);
+
         if (this.params.preCacheROAs) {
-            rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
+            this.rpki.preCache(Math.max(this.params.refreshVrpListMinutes, 15))
                 .then(() => {
                     console.log("Downloaded");
                 })
@@ -68,7 +78,7 @@ export default class MonitorRPKI extends Monitor {
         const prefix = message.prefix;
         const origin = message.originAS.getValue();
 
-        rpki.validate(prefix, origin, true)
+        this.rpki.validate(prefix, origin, true)
             .then(result => {
                 if (result) {
                     const key = "a" + [prefix, origin, result.valid]
