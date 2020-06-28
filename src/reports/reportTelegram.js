@@ -67,7 +67,7 @@ export default class reportTelegram extends ReportHTTP {
         if (!params.botUrl) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} reporting is not enabled: no botToken/chatId provided`
+                message: `${this.name} reporting is not enabled: no botUrl provided`
             });
             this.enabled = false;
         }
