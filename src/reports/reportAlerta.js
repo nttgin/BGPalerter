@@ -111,7 +111,7 @@ export default class ReportAlerta extends Report {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.urls); // If there are no groups defined, send to all of them
+            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.urls); // If there is no specific group defined, send to all of them
 
             for (let group of groups) {
                 if (this.params.urls[group]) {

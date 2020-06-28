@@ -196,6 +196,21 @@ reports:
 #      hooks:
 #        default: _YOUR_WEBHOOK_URL_
 
+#  - file: reportTelegram
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      botUrl: https://api.telegram.org/bot<_BOT_ID_>/sendMessage
+#      chatIds:
+#        default: _CHAT_ID_
+
+
 ############################
 # Notification settings:
 # - notificationIntervalSeconds

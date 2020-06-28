@@ -426,3 +426,24 @@ Parameters for this report module:
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 
 
+#### reportTelegram
+
+This report module sends alerts directly to specified Telegram users, groups, or channels.
+To send alert to Telegram you need to create a bot.
+
+To create a bot:
+1. Open Telegram, search `@botfather` and open a chat with it
+2. Type `/newbot` and follow the procedure to create a bot
+3. Take note of the bot ID provided
+4. Open the chat (channel, group, user) where you want to end the alerts
+5. Write something in the chat (from whatever user)
+6. Visit `https://api.telegram.org/bot_BOT_ID_/getUpdates` (replacing `_BOT_ID_` with your bot ID) from your browser and take note of the chat ID returned in the answer (in case of multiple chat IDs, use the one with the same text you sent at the previous point)
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
+|botUrl| The Telegram bot URL. Usually `https://api.telegram.org/bot_BOT_ID_/` where `_BOT_ID_` is your both ID. |
+|chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).| 
+|chatIds.default| The chat ID of the default user group.| 

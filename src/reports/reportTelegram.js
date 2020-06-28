@@ -30,61 +30,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Report from "./report";
+import ReportHTTP from "./reportHTTP";
 
-export default class ReportWebex extends Report {
+export default class reportTelegram extends ReportHTTP {
 
     constructor(channels, params, env) {
-        super(channels, params, env);
+        const templates = {};
+        const hooks = {};
+
+        const getTemplateItem = (chatId) => {
+            return JSON.stringify({
+                "chat_id": chatId,
+                "text": "${summary}",
+                "parse_mode": 'HTML',
+                "disable_web_page_preview": true,
+            });
+        };
+
+        for (let channel in params.chatIds) {
+            templates[channel] = getTemplateItem(params.chatIds[channel]);
+            hooks[channel] = params.botUrl;
+        }
 
 
-        this.enabled = true;
-        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
+        const telegramParams = {
+            headers: {},
+            isTemplateJSON: true,
+            showPaths: params.showPaths,
+            hooks: hooks,
+            name: "reportTelegram",
+            templates
+        };
+
+        super(channels, telegramParams, env);
+
+        if (!params.botUrl) {
             this.logger.log({
                 level: 'error',
-                message: "Webex reporting is not enabled: no group is defined"
+                message: `${this.name} reporting is not enabled: no botToken/chatId provided`
             });
             this.enabled = false;
-        } else {
-            if (!this.params.hooks["default"]) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In hooks, for reportWebex, a group named 'default' is required for communications to the admin."
-                });
-            }
         }
-    }
-
-    _sendWebexMessage = (url, message, content) => {
-
-        this.axios({
-            url: url,
-            method: "POST",
-            resposnseType: "json",
-            data: {
-                markdown: `**${message}**: ${content.message}`
-            }
-        })
-            .catch((error) => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
-            })
-    };
-
-    report = (message, content) => {
-        if (this.enabled){
-            let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
-
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there is no specific group defined, send to all of them
-
-            for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendWebexMessage(this.params.hooks[group], message, content);
-                }
-            }
-        }
-
     }
 }

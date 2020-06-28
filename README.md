@@ -57,6 +57,7 @@ Read the documentation below for more options.
             - [reportAlerta](docs/configuration.md#reportalerta)
             - [reportWebex](docs/configuration.md#reportwebex)
             - [reportHTTP](docs/configuration.md#reporthttp)
+            - [reportTelegram](docs/configuration.md#reporttelegram)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
     - [HTTP/HTTPS proxy](docs/http-proxy.md)
