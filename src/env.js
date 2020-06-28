@@ -130,6 +130,7 @@ let config = {
     notificationIntervalSeconds: 14400,
     alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
+    persistStatus: true,
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
@@ -266,7 +267,15 @@ config.connectors = config.connectors
 if (config.httpProxy) {
     const HttpsProxyAgent = require("https-proxy-agent");
     vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
-}    
+}
+
+if (!!config.persistStatus) {
+    const Storage = require("./utils/storages/storageFile").default;
+    vector.storage = new Storage({
+        validitySeconds: 3600 * 4,
+    }, config);
+}
+
 
 const input = new Input(config);
 

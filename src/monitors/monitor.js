@@ -40,6 +40,7 @@ export default class Monitor {
         this.pubSub = env.pubSub;
         this.logger = env.logger;
         this.input = env.input;
+        this.storage = env.storage;
         this.params = params || {};
         this.maxDataSamples = this.params.maxDataSamples || 1000;
         this.name = name;
@@ -56,9 +57,10 @@ export default class Monitor {
         this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples
         this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
 
+        this._retrieveStatus();
         this.internalConfig = {
             notificationInterval: (this.config.notificationIntervalSeconds || 14400) * 1000,
-            checkFadeOffGroups: this.config.checkFadeOffGroupsSeconds || 30 * 1000,
+            checkFadeOffGroups: (this.config.checkFadeOffGroupsSeconds || 30) * 1000,
             fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };
 
@@ -160,6 +162,49 @@ export default class Monitor {
         }
     };
 
+    _retrieveStatus = () => {
+        if (this.storage) {
+            this.storage.get("status")
+                .then(({ alerts={}, sent={}, truncated={}, fadeOff={} }) => {
+                    this.alerts = alerts;
+                    this.sent = sent;
+                    this.truncated = truncated;
+                    this.fadeOff = fadeOff;
+                })
+                .catch(error => {
+                    // Nothing
+                });
+        }
+    };
+
+    _persistStatus = () => {
+        if (this._persistStatusTimer){
+            clearTimeout(this._persistStatusTimer);
+        }
+        this._persistStatusTimer = setTimeout(this._persistStatusHelper, 5000);
+    };
+
+    _persistStatusHelper = () => {
+        if (this.storage) {
+            const status = {
+                alerts: this.alerts,
+                sent: this.sent,
+                truncated: this.truncated,
+                fadeOff: this.fadeOff
+            };
+
+            if (Object.values(status).some(i => Object.keys(i).length > 0)) { // If there is anything in the cache
+                this.storage.set("status", status)
+                    .catch(error => {
+                        this.logger.log({
+                            level: 'error',
+                            message: error
+                        });
+                    });
+            }
+        }
+    };
+
     _publishGroupId = (id, now) => {
         const group = this._squash(id);
 
@@ -187,6 +232,7 @@ export default class Monitor {
     _publishOnChannel = (alert) => {
 
         this.pubSub.publish(this.channel, alert);
+        this._persistStatus();
 
         return alert;
     };

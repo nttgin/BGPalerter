@@ -201,10 +201,12 @@ reports:
 # - notificationIntervalSeconds
 #       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
 #       triggered it is not yet solved.
-#
+# - persistStatus
+#       Persist the status of BGPalerter. If the process is restarted, the list of alerts already sent is recovered
+#       and they are not repeated. The process must be able to write on disc, this option will create a file inside .cache/
 
 notificationIntervalSeconds: 14400
-
+persistStatus: true
 
 logging:
   directory: logs
@@ -215,7 +217,6 @@ logging:
   compressOnRotation: false
   
 checkForUpdatesAtBoot: true
-
 
 ############################
 # Process monitoring settings:
@@ -245,6 +246,7 @@ checkForUpdatesAtBoot: true
 
 monitoredPrefixesFiles:
   - prefixes.yml
+
 
 ############################
 # HTTP proxy setting:

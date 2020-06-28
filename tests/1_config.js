@@ -78,7 +78,8 @@ describe("Composition", function() {
                     "maxMessagesPerSecond",
                     "fadeOffSeconds",
                     "checkFadeOffGroupsSeconds",
-                    "volume"
+                    "volume",
+                    "persistStatus"
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
