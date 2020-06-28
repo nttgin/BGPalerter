@@ -31,7 +31,7 @@ export default class StorageFile extends Storage{
                         reject(error);
                     } else {
                         try {
-                            resolve(JSON.parse(content));
+                            resolve(JSON.parse(content) || {});
                         } catch (e) {
                             resolve({});
                         }

@@ -3,7 +3,7 @@ export default class Storage {
     constructor(params, config){
         this.config = config;
         this.params = params;
-        this.validity = this.params.validity || 3600 * 2;
+        this.validity = (this.params.validitySeconds || 3600 * 2) * 1000;
     };
 
     set = (key, value) =>
@@ -26,11 +26,15 @@ export default class Storage {
         new Promise((resolve, reject) => {
             if (/^[a-z\-]+$/i.test(key)) {
                 this._get(key)
-                    .then(({ date, value }) => {
-                        const now = new Date().getTime();
-                        if (date + this.validity >= now) {
-                            return value;
+                    .then((data) => {
+                        if (!!data) {
+                            const { date, value } = data;
+                            const now = new Date().getTime();
+                            if (date + this.validity >= now) {
+                                return value;
+                            }
                         }
+                        return {};
                     })
                     .then(resolve);
             } else {

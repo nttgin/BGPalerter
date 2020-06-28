@@ -160,8 +160,6 @@ export default class Monitor {
                 }
             }
         }
-
-        this._persistStatus();
     };
 
     _retrieveStatus = () => {
@@ -174,15 +172,19 @@ export default class Monitor {
                     this.fadeOff = fadeOff;
                 })
                 .catch(error => {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
+                    // Nothing
                 });
         }
     };
 
     _persistStatus = () => {
+        if (this._persistStatusTimer){
+            clearTimeout(this._persistStatusTimer);
+        }
+        this._persistStatusTimer = setTimeout(this._persistStatusHelper, 5000);
+    };
+
+    _persistStatusHelper = () => {
         if (this.storage) {
             const status = {
                 alerts: this.alerts,
@@ -230,6 +232,7 @@ export default class Monitor {
     _publishOnChannel = (alert) => {
 
         this.pubSub.publish(this.channel, alert);
+        this._persistStatus();
 
         return alert;
     };
