@@ -30,14 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var readLastLines = require('read-last-lines');
-var moment = require('moment');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+const readLastLines = require('read-last-lines');
+const moment = require('moment');
 chai.use(chaiSubset);
-var expect = chai.expect;
+const expect = chai.expect;
 
-var asyncTimeout = 20000;
+const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
@@ -46,8 +46,8 @@ describe("Composition", function() {
     describe("Software updates check", function () {
         it("new version detected", function (done) {
 
-            var worker = require("../index");
-            var pubSub = worker.pubSub;
+            const worker = require("../index");
+            const pubSub = worker.pubSub;
 
             pubSub.subscribe("software-update", function (type, message) {
                 expect(type).to.equal("software-update");
@@ -57,8 +57,8 @@ describe("Composition", function() {
     });
 
     describe("Configuration loader", function () {
-        var worker = require("../index");
-        var config = worker.config;
+        const worker = require("../index");
+        const config = worker.config;
 
         it("config structure", function () {
             expect(config).to.have
@@ -186,8 +186,8 @@ describe("Composition", function() {
     });
 
     describe("Input loader", function () {
-        var worker = require("../index");
-        var input = worker.input;
+        const worker = require("../index");
+        const input = worker.input;
 
         it("loading prefixes", function () {
 
@@ -314,9 +314,9 @@ describe("Composition", function() {
     });
 
     describe("Logging", function () {
-        var worker = require("../index");
-        var config = worker.config;
-        var logger = worker.logger;
+        const worker = require("../index");
+        const config = worker.config;
+        const logger = worker.logger;
 
         it("errors logging on the right file", function (done) {
             const message = "Test message";

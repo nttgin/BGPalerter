@@ -30,20 +30,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var axios = require('axios');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+const axios = require('axios');
 chai.use(chaiSubset);
-var expect = chai.expect;
+const expect = chai.expect;
 
-var asyncTimeout = 20000;
+const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 describe("Uptime Monitor", function() {
 
-    var worker = require("../index");
-    var config = worker.config;
+    const worker = require("../index");
+    const config = worker.config;
 
     it("uptime config", function () {
         expect(config.processMonitors[0]).to

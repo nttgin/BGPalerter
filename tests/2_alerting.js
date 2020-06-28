@@ -30,18 +30,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
-var expect = chai.expect;
+const expect = chai.expect;
 
-let asyncTimeout = 20000;
+const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
 
 describe("Alerting", function () {
-    var worker = require("../index");
-    var pubSub = worker.pubSub;
+    const worker = require("../index");
+    const pubSub = worker.pubSub;
 
     it("visibility reporting", function(done) {
 
