@@ -172,6 +172,10 @@ if (fs.existsSync(vector.configFile)) {
 
 config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "./";
 
+if (config.volume.slice(-1) !== "/") {
+    config.volume += "/";
+}
+
 if (!fs.existsSync(config.volume)){
     fs.mkdirSync(config.volume);
 }
