@@ -9,3 +9,4 @@ logs/
 bgpalerter.pid
 alertdata/
 .npmrc
+.cache/
