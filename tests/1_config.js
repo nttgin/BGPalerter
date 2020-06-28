@@ -49,7 +49,7 @@ if (!fs.existsSync(volume)) {
 fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
 
-describe("Tests", function() {
+describe("Core functions", function() {
 
     describe("Configuration loader", function () {
         const worker = require("../index");

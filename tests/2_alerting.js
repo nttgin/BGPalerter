@@ -31,10 +31,12 @@
  */
 
 const chai = require("chai");
+const fs = require("fs");
 const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
+const cacheCloneDirectory = "tests/.cache_clone/";
 const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
@@ -533,14 +535,14 @@ describe("Alerting", function () {
 
         const expectedData = {
 
-        "a103_21_244_0_24-13335-false": {
-            id:  "a103_21_244_0_24-13335-false",
+            "a103_21_244_0_24-13335-false": {
+                id:  "a103_21_244_0_24-13335-false",
                 origin: 'rpki-monitor',
                 affected: '103.21.244.0/24',
                 message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Accepted with AS path: [1,2,3,4321,13335].  Valid ROA: origin AS0 prefix 103.21.244.0/23 max length 23',
-        },
+            },
 
-        "a8_8_8_8_22-2914-": {
+            "a8_8_8_8_22-2914-": {
                 id:  "a8_8_8_8_22-2914-",
                 origin: 'rpki-monitor',
                 affected: '8.8.8.8/22',
@@ -596,5 +598,27 @@ describe("Alerting", function () {
         });
 
     }).timeout(asyncTimeout);
+});
 
+describe("Status storage", function () {
+    it("alerts stored", function (done) {
+
+        const files = fs.readdirSync(cacheCloneDirectory);
+
+        for (let f of files) {
+            const fileClone = cacheCloneDirectory + f;
+            const fileOriginal = volume + ".cache/" + f;
+            const exists = fs.existsSync(fileOriginal);
+
+            expect(exists).to.equal(true);
+
+            if (exists) {
+                const clone = JSON.parse(fs.readFileSync(fileClone, 'utf8')).value;
+                const original = JSON.parse(fs.readFileSync(fileOriginal, 'utf8')).value;
+                expect(original.sent).to.have.keys(Object.keys(clone.sent));
+            }
+        }
+        done();
+
+    }).timeout(asyncTimeout);
 });
