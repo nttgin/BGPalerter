@@ -172,6 +172,10 @@ if (fs.existsSync(vector.configFile)) {
 
 config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "./";
 
+if (!fs.existsSync(config.volume)){
+    fs.mkdirSync(config.volume);
+}
+
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',
@@ -208,7 +212,6 @@ const wlogger = {
             return loggerTransports[data.level].log(data);
         }
 };
-
 
 config.monitors = (config.monitors || []);
 config.monitors.push({
