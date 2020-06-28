@@ -5,40 +5,46 @@ export default class StorageFile extends Storage{
     constructor(params, config){
         super(params, config);
         this.directory = this.config.volume + (this.params.directory || ".cache/");
-        if (!fs.existsSync(this.directory)) {
-            fs.mkdirSync(this.directory);
+        this.enabled = true;
+        try {
+            if (!fs.existsSync(this.directory)) {
+                fs.mkdirSync(this.directory);
+            }
+        } catch(error) {
+            this.enabled = false;
         }
     };
 
     _set = (key, value) =>
         new Promise((resolve, reject) => {
-            const file = this.directory + key + ".json";
-            fs.writeFile(file, JSON.stringify(value), error => {
-                if (error) {
-                    reject(error);
-                } else {
+            if (this.enabled) {
+                const file = this.directory + key + ".json";
+                try {
+                    fs.writeFileSync(file, JSON.stringify(value));
                     resolve(true);
+                } catch (error) {
+                    reject(error);
                 }
-            });
+            } else {
+                reject("The .cache/ directory is not writeable");
+            }
         });
 
     _get = (key) =>
         new Promise((resolve, reject) => {
-            const file = this.directory + key + ".json";
-            if (fs.existsSync(file)) {
-                fs.readFile(file, (error, content) => {
-                    if (error) {
-                        reject(error);
+            if (this.enabled) {
+                const file = this.directory + key + ".json";
+                try {
+                    if (fs.existsSync(file)) {
+                        resolve(JSON.parse(fs.readFileSync(file, 'utf8')));
                     } else {
-                        try {
-                            resolve(JSON.parse(content) || {});
-                        } catch (e) {
-                            resolve({});
-                        }
+                        resolve(null);
                     }
-                });
+                } catch (error) {
+                    reject(error);
+                }
             } else {
-                resolve({});
+                reject("The .cache/ directory is not writeable");
             }
         });
 }

@@ -164,7 +164,8 @@ export default class Monitor {
 
     _retrieveStatus = () => {
         if (this.storage) {
-            this.storage.get("status")
+            this.storage
+                .get(`status-${this.name}`)
                 .then(({ alerts={}, sent={}, truncated={}, fadeOff={} }) => {
                     this.alerts = alerts;
                     this.sent = sent;
@@ -172,7 +173,10 @@ export default class Monitor {
                     this.fadeOff = fadeOff;
                 })
                 .catch(error => {
-                    // Nothing
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                 });
         }
     };
@@ -194,7 +198,8 @@ export default class Monitor {
             };
 
             if (Object.values(status).some(i => Object.keys(i).length > 0)) { // If there is anything in the cache
-                this.storage.set("status", status)
+                this.storage
+                    .set(`status-${this.name}`, status)
                     .catch(error => {
                         this.logger.log({
                             level: 'error',
