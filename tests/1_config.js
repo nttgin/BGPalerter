@@ -34,27 +34,22 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const readLastLines = require('read-last-lines');
 const moment = require('moment');
+const fs = require('fs');
 chai.use(chaiSubset);
 const expect = chai.expect;
-
+const volume = "volumetests/";
 const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
-describe("Composition", function() {
+// Prepare test environment
+if (!fs.existsSync(volume)) {
+    fs.mkdirSync(volume);
+}
+fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
+fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
 
-    describe("Software updates check", function () {
-        it("new version detected", function (done) {
-
-            const worker = require("../index");
-            const pubSub = worker.pubSub;
-
-            pubSub.subscribe("software-update", function (type, message) {
-                expect(type).to.equal("software-update");
-                done();
-            });
-        }).timeout(asyncTimeout);
-    });
+describe("Tests", function() {
 
     describe("Configuration loader", function () {
         const worker = require("../index");
@@ -83,6 +78,14 @@ describe("Composition", function() {
                 ]);
             expect(config.connectors[0]).to.have
                 .property('class')
+        });
+
+        it("volume setting", function () {
+            expect(config.volume).to.equals(volume);
+        });
+
+        it("check for updates setting", function () {
+            expect(config.checkForUpdatesAtBoot).to.equals(true);
         });
 
         it("loading connectors", function () {
@@ -183,6 +186,19 @@ describe("Composition", function() {
                 .property('class')
         });
 
+    });
+
+    describe("Software updates check", function () {
+        it("new version detected", function (done) {
+
+            const worker = require("../index");
+            const pubSub = worker.pubSub;
+
+            pubSub.subscribe("software-update", function (type, message) {
+                expect(type).to.equal("software-update");
+                done();
+            });
+        }).timeout(asyncTimeout);
     });
 
     describe("Input loader", function () {
@@ -326,7 +342,7 @@ describe("Composition", function() {
                     message: message
                 });
 
-            const file = config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
@@ -347,7 +363,7 @@ describe("Composition", function() {
                     message: message
                 });
 
-            const file = config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {

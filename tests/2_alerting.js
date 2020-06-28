@@ -34,14 +34,14 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 const expect = chai.expect;
-
+const volume = "volumetests/";
 const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 describe("Alerting", function () {
-    const worker = require("../index");
-    const pubSub = worker.pubSub;
+    var worker = require("../index");
+    var pubSub = worker.pubSub;
 
     it("visibility reporting", function(done) {
 

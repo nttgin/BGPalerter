@@ -65,7 +65,7 @@ reports:
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
 monitoredPrefixesFiles:
-  - tests/prefixes.test.yml
+  - prefixes.test.yml
 
 logging:
   directory: logs
@@ -77,6 +77,8 @@ logging:
 
 checkForUpdatesAtBoot: true
 persistStatus: true
+
+volume: volumetests/
 
 processMonitors:
   - file: uptimeApi

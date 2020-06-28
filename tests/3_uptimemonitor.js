@@ -35,10 +35,10 @@ const chaiSubset = require('chai-subset');
 const axios = require('axios');
 chai.use(chaiSubset);
 const expect = chai.expect;
-
+const volume = "volumetests/";
 const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 describe("Uptime Monitor", function() {
 

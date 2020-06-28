@@ -10,7 +10,7 @@
   },
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "./node_modules/.bin/mocha --exit tests/*.js --require @babel/register",
+    "test": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/*.js --require @babel/register && rm -rf volumetests/",
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",

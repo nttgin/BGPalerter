@@ -10,3 +10,4 @@ bgpalerter.pid
 alertdata/
 .npmrc
 .cache/
+volumetests/
