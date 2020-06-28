@@ -279,7 +279,7 @@ if (config.httpProxy) {
 if (!!config.persistStatus) {
     const Storage = require("./utils/storages/storageFile").default;
     vector.storage = new Storage({
-        validitySeconds: 3600 * 4,
+        validitySeconds: config.notificationIntervalSeconds,
     }, config);
 }
 
