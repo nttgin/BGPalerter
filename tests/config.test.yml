@@ -60,6 +60,25 @@ reports:
       persistAlertData: false
       alertDataDirectory: alertdata/
 
+  - file: reportSyslog
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - asn-monitor
+      - misconfiguration
+      - rpki
+    params:
+      host: 127.0.0.1
+      port: 516
+      transport: udp
+      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
+        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
+        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
+        visibility: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${earliest}|${latest}|${peers}"
+        misconfiguration: "++BGPalerter-3-${type}: ${summary}|${asn}|${prefix}|${earliest}|${latest}"
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example

@@ -43,7 +43,7 @@ export default class ReportSyslog extends Report {
         this.host = params.host;
         this.options = {
             syslogHostname: params.host,
-            transport: syslog.Transport.Udp,
+            transport: (params.transport === 'tcp') ? syslog.Transport.Tcp : syslog.Transport.Udp,
             port: params.port
         };
     }
@@ -62,14 +62,14 @@ export default class ReportSyslog extends Report {
                     this.client = syslog.createClient(this.host, this.options);
                     this.connected = true;
 
-                    this.client.on("close", function () {
+                    this.client.on("close", function (error) {
                         this.logger.log({
                             level: 'error',
                             message: 'Syslog disconnected: ' + error
                         });
                     });
 
-                    this.client.on("error", function () {
+                    this.client.on("error", function (error) {
                         this.logger.log({
                             level: 'error',
                             message: 'Syslog: ' + error

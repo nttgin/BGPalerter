@@ -136,7 +136,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
-#      host: localhost
+#      host: 127.0.0.1
 #      port: 514
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"

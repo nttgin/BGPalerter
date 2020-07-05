@@ -32,7 +32,8 @@
     "mocha": "^8.0.1",
     "nodemon": "^2.0.4",
     "pkg": "^4.4.9",
-    "read-last-lines": "^1.7.2"
+    "read-last-lines": "^1.7.2",
+    "syslogd": "^1.1.2"
   },
   "dependencies": {
     "@sentry/node": "^5.19.0",
@@ -51,7 +52,7 @@
     "rpki-validator": "^2.0.1",
     "semver": "^7.3.2",
     "syslog-client": "^1.1.1",
-    "ws": "^7.3.0",
+    "ws": "^7.3.1",
     "yargs": "^15.4.0"
   },
   "pkg": {
