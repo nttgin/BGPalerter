@@ -377,6 +377,7 @@ Parameters for this report module:
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |host| Host of the Syslog server (e.g. localhost).| 
 |port| Port of the Syslog server  (e.g. 514).| 
+|transport| The transport protocol to use. Two options: `udp` or `tcp`| 
 |templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
 
 #### reportAlerta

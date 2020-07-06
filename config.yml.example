@@ -138,6 +138,7 @@ reports:
 #    params:
 #      host: 127.0.0.1
 #      port: 514
+#      transport: udp
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
 #        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
