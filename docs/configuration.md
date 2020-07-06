@@ -41,7 +41,7 @@ You can compose the tool with 3 main components: connectors, monitors, and repor
 
 * Connectors retrieve/listen to the data from different sources and transform them to a common format.
 * Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
-* Reports send/store the alerts, e.g. by email or to a file.
+* Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
 > In config.yml.example there are all the possible components declarations (similar to the one of the example below). You can enable the various components by uncommenting the related block.
 
@@ -109,6 +109,9 @@ Each connector is composed of:
 
 
 ### Connectors
+Connectors retrieve/listen to the data from different sources and transform them to a common format.
+
+Possible connectors are:
 
 #### connectorRIS
 It connects to RIPE RIS https://ris-live.ripe.net/ and receives BGP updates coming from 600+ peers.
@@ -128,6 +131,9 @@ Connector used for testing purposes, it provokes all types of alerting. Needed t
 
 
 ### Monitors
+Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
+
+Possible monitors are:
 
 #### monitorHijack
 
@@ -307,6 +313,8 @@ Parameters for this monitor module:
 
     
 ### Reports
+
+Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
 Possible reports are:
 
