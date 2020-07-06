@@ -33,6 +33,7 @@
 const chai = require("chai");
 const fs = require("fs");
 const chaiSubset = require('chai-subset');
+const Syslogd = require("syslogd");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -41,9 +42,10 @@ const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
+const worker = require("../index");
+const pubSub = worker.pubSub;
+
 describe("Alerting", function () {
-    var worker = require("../index");
-    var pubSub = worker.pubSub;
 
     it("visibility reporting", function(done) {
 

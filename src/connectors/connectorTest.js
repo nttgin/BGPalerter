@@ -35,8 +35,6 @@ import {AS, Path} from "../model";
 
 export default class ConnectorTest extends Connector{
 
-    static isTest = true;
-
     constructor(name, params, env) {
         super(name, params, env);
         this.pubSub.subscribe("test-type", (type, message) => {

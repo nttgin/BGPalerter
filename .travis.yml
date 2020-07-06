@@ -7,13 +7,15 @@ jobs:
     - stage: "Tests"
       name: "Tests without proxy"
       script: npm run test
+    - name: "Tests reports"
+      script: npm run test-reports
     - name: "Tests with proxy"
       before_script:
         - npm install -g anyproxy
         - nohup anyproxy --port 8001 &
         - ANYPROXY_PID=$!
       script:
-        - ./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register
+        - npm run test-proxy
       after_script:
         - kill $ANYPROXY_PID
 
