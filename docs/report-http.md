@@ -43,7 +43,7 @@ reports:
       - visibility
       - path
       - misconfiguration
-     - rpki
+      - rpki
     params:
       templates:
         default: '{"attachments": [
