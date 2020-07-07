@@ -434,6 +434,7 @@ Parameters for this report module:
 |headers| Additional headers to use in the GET request. For example for authentication.|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 
+[See here some examples of how to adapt reportHTTP to some common applications.](report-http.md)
 
 #### reportTelegram
 
