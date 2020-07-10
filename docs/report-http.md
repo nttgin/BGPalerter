@@ -76,7 +76,7 @@ Pushover is an app that makes it easy to get real-time notifications on your And
      - rpki
    params:
      templates:
-       default: '{“message”: “${channel}: ${summary}”, “title”: “BGPalerter”, “priority”: “1”, “token”: “_YOUR_API_TOKEN_HERE_””, “user”: “_YOUR_USER_KEY_HERE_”}'
+       default: '{"message": "${channel}: ${summary}", "title": "BGPalerter", "priority": "1", "token": "_YOUR_API_TOKEN_HERE_", "user": "_YOUR_USER_KEY_HERE_"}'
      headers:
      isTemplateJSON: true
      showPaths: 0
