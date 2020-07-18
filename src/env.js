@@ -116,6 +116,8 @@ let config = {
             channel: "rpki",
             name: "rpki-monitor",
             params: {
+                preCacheROAs: true,
+                refreshVrpListMinutes: 15,
                 thresholdMinPeers: 1,
                 checkUncovered: false
             }
