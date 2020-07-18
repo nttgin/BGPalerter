@@ -32,36 +32,59 @@
 
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
-const Syslogd = require("syslogd");
 const expect = chai.expect;
-const asyncTimeout = 20000;
+const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
-global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/reports_tests/config.reports.test.yml";
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
+const worker = require("../../index");
+const pubSub = worker.pubSub;
 
-describe("Reports", function() {
-    const worker = require("../../index");
-    const pubSub = worker.pubSub;
+describe("RPKI monitoring 2", function() {
 
-    it("syslog", function (done) {
-        let doneCalled = false;
+    it("external connector", function (done) {
 
-        Syslogd(function(info) {
-            if (!doneCalled) {
-                expect(info.hostname).to.equals('127.0.0.1');
-                expect(info.tag).to.equals('++BGPalerter-5-withdrawal-detection');
-                done();
-                doneCalled = true;
+        const expectedData = {
+
+            "a82_112_100_0_24-2914-false" : {
+                id: 'a82_112_100_0_24-2914-false',
+                origin: 'rpki-monitor',
+                affected: '82.112.100.0/24',
+                message: 'The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Accepted with AS path: [1,2,3,4321,2914]. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24'
             }
-        })
-            .listen(1516, function(error) {
-                if (error) {
-                    console.log(error)
-                }
-            });
+        };
 
-        pubSub.publish("test-type", "visibility");
+        let rpkiTestCompletedExternal = false;
+        pubSub.subscribe("rpki", function (type, message) {
+
+            if (!rpkiTestCompletedExternal) {
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
+
+                expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                expect(expectedData[id] != null).to.equal(true);
+
+                expect(message).to
+                    .containSubset(expectedData[id]);
+
+                expect(message).to.contain
+                    .keys([
+                        "latest",
+                        "earliest"
+                    ]);
+
+                delete expectedData[id];
+                if (Object.keys(expectedData).length === 0) {
+                    setTimeout(() => {
+                        rpkiTestCompletedExternal = true;
+                        done();
+                    }, 5000);
+                }
+            }
+        });
+
+        pubSub.publish("test-type", "rpki");
+
 
     }).timeout(asyncTimeout);
 });

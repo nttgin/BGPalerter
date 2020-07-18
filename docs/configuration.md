@@ -41,7 +41,7 @@ You can compose the tool with 3 main components: connectors, monitors, and repor
 
 * Connectors retrieve/listen to the data from different sources and transform them to a common format.
 * Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
-* Reports send/store the alerts, e.g. by email or to a file.
+* Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
 > In config.yml.example there are all the possible components declarations (similar to the one of the example below). You can enable the various components by uncommenting the related block.
 
@@ -109,6 +109,9 @@ Each connector is composed of:
 
 
 ### Connectors
+Connectors retrieve/listen to the data from different sources and transform them to a common format.
+
+Possible connectors are:
 
 #### connectorRIS
 It connects to RIPE RIS https://ris-live.ripe.net/ and receives BGP updates coming from 600+ peers.
@@ -128,6 +131,9 @@ Connector used for testing purposes, it provokes all types of alerting. Needed t
 
 
 ### Monitors
+Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
+
+Possible monitors are:
 
 #### monitorHijack
 
@@ -300,13 +306,32 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
-|preCacheROAs| This parameter allows to download locally VRPs lists. This is suggested in the case you want to validate many BGP updates (e.g. for research purposes). For normal production monitoring do NOT set this parameter. |
+|preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
 |refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
+|vrpFile| A JSON file with an array of VRPs. See example below.|
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
+> VRPs file example:
+> ```json5
+> [
+>    {
+>        "prefix": "123.4.5.0/22",
+>        "asn": "1234",
+>        "maxLength": 24
+>    },
+>    {
+>        "prefix": "321.4.5.0/22",
+>        "asn": "9876",
+>        "maxLength": 22
+>    }
+> ]
+> ```
     
 ### Reports
+
+Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
 Possible reports are:
 
@@ -426,6 +451,7 @@ Parameters for this report module:
 |headers| Additional headers to use in the GET request. For example for authentication.|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 
+[See here some examples of how to adapt reportHTTP to some common applications.](report-http.md)
 
 #### reportTelegram
 

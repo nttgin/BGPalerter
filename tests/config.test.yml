@@ -43,7 +43,6 @@ monitors:
     params:
       thresholdMinPeers: 1
       preCacheROAs: false
-      refreshVrpListMinutes: 15
       checkUncovered: true
 
 
