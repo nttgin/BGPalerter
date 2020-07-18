@@ -154,7 +154,6 @@ describe("Core functions", function() {
                     "params": {
                         "thresholdMinPeers": 1,
                         "preCacheROAs": false,
-                        "refreshVrpListMinutes": 15,
                         "checkUncovered": true
                     }
                 });

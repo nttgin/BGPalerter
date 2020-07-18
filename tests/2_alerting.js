@@ -531,58 +531,6 @@ describe("Alerting", function () {
 
     }).timeout(asyncTimeout);
 
-    it("RPKI monitoring", function (done) {
-
-        pubSub.publish("test-type", "rpki");
-
-        const expectedData = {
-
-            "a103_21_244_0_24-13335-false": {
-                id:  "a103_21_244_0_24-13335-false",
-                origin: 'rpki-monitor',
-                affected: '103.21.244.0/24',
-                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Accepted with AS path: [1,2,3,4321,13335].  Valid ROA: origin AS0 prefix 103.21.244.0/23 max length 23',
-            },
-
-            "a8_8_8_8_22-2914-": {
-                id:  "a8_8_8_8_22-2914-",
-                origin: 'rpki-monitor',
-                affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA. Accepted with AS path: [1,2,3,4321,5060,2914]',
-            }
-        };
-
-        let rpkiTestCompleted = false;
-        pubSub.subscribe("rpki", function (type, message) {
-
-            if (!rpkiTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
-
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
-
-                expect(message).to
-                    .containSubset(expectedData[id]);
-
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        rpkiTestCompleted = true;
-                        done();
-                    }, 5000);
-                }
-            }
-        });
-
-    }).timeout(asyncTimeout);
-
     it("fading alerting", function (done) {
 
         pubSub.publish("test-type", "fade-off");

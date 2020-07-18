@@ -306,11 +306,28 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
-|preCacheROAs| This parameter allows to download locally VRPs lists. This is suggested in the case you want to validate many BGP updates (e.g. for research purposes). For normal production monitoring do NOT set this parameter. |
+|preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
 |refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
+|vrpFile| A JSON file with an array of VRPs. See example below.|
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
+> VRPs file example:
+> ```json5
+> [
+>    {
+>        "prefix": "123.4.5.0/22",
+>        "asn": "1234",
+>        "maxLength": 24
+>    },
+>    {
+>        "prefix": "321.4.5.0/22",
+>        "asn": "9876",
+>        "maxLength": 22
+>    }
+> ]
+> ```
     
 ### Reports
 
