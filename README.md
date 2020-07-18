@@ -36,10 +36,6 @@ Please uncomment the related section and configure according to your needs.
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
 Read the documentation below for more options.
 
-[Read here how we release BGPalerter and our effort in making it rock solid.](docs/release-process.md)
-
-[Who is using BGPalerter.](docs/friends.md)
-
 ## Documentation
 
 - [Installation](docs/installation.md)
@@ -81,3 +77,7 @@ Read the documentation below for more options.
     - [Report context](docs/context.md)
     - [Release process](docs/release-process.md)
 - [BGPalerter for researchers](docs/research.md)
+- [Release process and Git flow](docs/release-process.md)
+
+
+If you are using BGPalerter, feel free to sign here: [Who is using BGPalerter](docs/friends.md)
