@@ -94,6 +94,16 @@ export default class ConnectorRIS extends Connector{
                 if (!this.params.noProxy && this.agent) {
                     wsOptions.agent = this.agent;
                 }
+
+                if (this.ws) {
+                    this.ws.removeAllListeners("message");
+                    this.ws.removeAllListeners("close");
+                    this.ws.removeAllListeners("error");
+                    this.ws.removeAllListeners("open");
+                    this.ws.removeAllListeners("ping");
+                    this.ws.terminate();
+                }
+
                 this.ws = new WebSocket(this.url, wsOptions);
 
                 this.ws.on('message', this._messageToJson);
@@ -139,12 +149,7 @@ export default class ConnectorRIS extends Connector{
 
     _close = (error) => {
         this._disconnect(error);
-        try {
-            this.ws.terminate();
-            this.ws.removeAllListeners();
-        } catch(e) {
-            // Nothing to do here
-        }
+
         // Reconnect
         setTimeout(this._reconnect, this._getTimeoutReconnect());
     };
