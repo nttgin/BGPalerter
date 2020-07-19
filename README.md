@@ -17,7 +17,7 @@ It can deliver alerts on files, by email, on slack, and more.
 
 ![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
-> BGPalerter connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
+> BGPalerter connects to public BGP data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
 ## TL;DR (1 minute setup)
 > This section is useful if you don't care about the source code but you just want to run the monitor.
