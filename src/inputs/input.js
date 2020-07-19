@@ -39,7 +39,10 @@ export default class Input {
     constructor(config){
         this.prefixes = [];
         this.asns = [];
-        this.cache = {};
+        this.cache = {
+            af: {},
+            binaries: {}
+        };
         this.config = config;
         this.callbacks = [];
 
@@ -58,13 +61,14 @@ export default class Input {
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
         const p1b = ipUtils.getNetmask(prefix);
+        const p1af = ipUtils.getAddressFamily(prefix);
 
         for (let p2 of lessSpecifics) {
-            const p2b = ipUtils.getNetmask(p2.prefix);
-
-            if (ipUtils.isSubnetBinary(p2b, p1b)) {
+            if (p1af === ipUtils.getAddressFamily(p2.prefix) &&
+                ipUtils.isSubnetBinary(ipUtils.getNetmask(p2.prefix), p1b)) {
                 return true;
             }
+
         }
 
         return false;
@@ -75,9 +79,9 @@ export default class Input {
     };
 
     _change = () => {
-      for (let call of this.callbacks) {
-          call();
-      }
+        for (let call of this.callbacks) {
+            call();
+        }
     };
 
     getMonitoredLessSpecifics = () => {
@@ -113,16 +117,22 @@ export default class Input {
             if (ipUtils._isEqualPrefix(p.prefix, prefix)) { // Used internal method to avoid validation overhead
                 return p;
             } else {
-                if (!this.cache[p.prefix]) {
-                    this.cache[p.prefix] = ipUtils.getNetmask(p.prefix);
-                }
-                const p2 = ipUtils.getNetmask(prefix);
 
-                if (ipUtils.isSubnetBinary(this.cache[p.prefix], p2)) {
-                    if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                        return p;
-                    } else {
-                        return null;
+                if (!this.cache.af[p.prefix] || !this.cache.binaries[p.prefix]) {
+                    this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
+                    this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix);
+                }
+                const prefixAf = ipUtils.getAddressFamily(prefix);
+
+                if (prefixAf === this.cache.af[p.prefix]) {
+
+                    const prefixBinary = ipUtils.getNetmask(prefix);
+                    if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
+                        if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
+                            return p;
+                        } else {
+                            return null;
+                        }
                     }
                 }
             }
