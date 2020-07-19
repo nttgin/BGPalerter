@@ -3,7 +3,7 @@
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 # BGPalerter
-Self-configuring BGP monitoring tool, which will allows you to monitor in **real-time** if:
+Self-configuring BGP monitoring tool, which allows you to monitor in **real-time** if:
 * any of your prefixes loses visibility;
 * any of your prefixes is hijacked;
 * your AS is announcing RPKI invalid prefixes (e.g. not matching prefix length);
