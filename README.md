@@ -3,11 +3,11 @@
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 # BGPalerter
-Self-configuring BGP monitoring tool, which will allow you to monitor in **real-time** if:
+Self-configuring BGP monitoring tool, which will allows you to monitor in **real-time** if:
 * any of your prefixes loses visibility;
 * any of your prefixes is hijacked;
-* your AS is announcing a RPKI invalid prefix (e.g. not matching prefix length);
-* your AS is announcing a prefix not covered by a ROA;
+* your AS is announcing RPKI invalid prefixes (e.g. not matching prefix length);
+* your AS is announcing prefixes not covered by a ROAs;
 * your AS is announcing a new prefix that was never announced before;
 * one of the AS path used to reach your prefix matches a specific condition defined by you.
 
@@ -17,7 +17,7 @@ It can deliver alerts on files, by email, on slack, and more.
 
 ![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
-> The tool connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
+> BGPalerter connects to public data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
 ## TL;DR (1 minute setup)
 > This section is useful if you don't care about the source code but you just want to run the monitor.
@@ -30,7 +30,7 @@ The first time you run it, the auto-configuration will start.
 
 
 If something happens (e.g. a hijack) you will see the alerts in `logs/reports-YYYY-MM-DD.log`. 
-In `config.yml` you can find other reporting mechanisms (e.g. email and slack) in addition to logging on files. 
+In `config.yml` you can find other reporting mechanisms (e.g. email, Slack, Kafka) in addition to logging on files. 
 Please uncomment the related section and configure according to your needs. 
 
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
