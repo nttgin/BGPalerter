@@ -11,3 +11,4 @@ alertdata/
 .npmrc
 .cache/
 volumetests/
+tests/rpki_tests/vrp.json

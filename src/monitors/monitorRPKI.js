@@ -19,67 +19,116 @@ export default class MonitorRPKI extends Monitor {
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
         this.validationQueue = [];
 
-        const rpkiValidatorOptions = {
-            connector: this.providers[0],
-            clientId: env.clientId
-        };
+        this.loadRpkiValidator(env);
+    };
 
-        if (this.params.vrpProvider) {
-            if (this.providers.includes(this.params.vrpProvider)) {
-                rpkiValidatorOptions.connector = this.params.vrpProvider;
-            } else {
-                this.logger.log({
-                    level: 'error',
-                    message: "The specified vrpProvider is not valid. Using default vrpProvider."
-                });
-            }
-        }
-
-        if (this.params.vrpFile) {
-            this._readExternalVrpsFile(env.config.volume + this.params.vrpFile, rpkiValidatorOptions);
-        }
-
-        if (!this.params.noProxy && env.agent) {
-            rpkiValidatorOptions.httpsAgent = env.agent;
-        }
-
-        this.rpki = new rpki(rpkiValidatorOptions);
-
-        if (!!this.preCacheROAs) {
-            this.rpki.preCache(Math.max(this.refreshVrpListMinutes, 15))
-                .then(() => {
-                    setInterval(this.validateBatch, 100);
-                })
-                .catch(() => {
-                    this.logger.log({
-                        level: 'error',
-                        message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be able to work anyway."
-                    });
-                });
+    loadRpkiValidator = (env) => {
+        if (!!this.params.vrpFile) {
+            const vrpFile = env.config.volume + this.params.vrpFile;
+            this._loadRpkiValidatorFromVrpFile(env, vrpFile);
+            this._watchVrpFile(env, vrpFile);
         } else {
-            setInterval(this.validateBatch, 400);
+            this._loadRpkiValidatorFromVrpProvider(env);
         }
     };
 
-    _readExternalVrpsFile = (file, rpkiValidatorOptions) => {
+    _watchVrpFile = (env, vrpFile) => {
+        const reload = () => { // Watch the external file to refresh the list
+            if (this.watchFileTimer) {
+                clearTimeout(this.watchFileTimer);
+            }
+            this.watchFileTimer = setTimeout(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: "VRPs reloaded due to file change."
+                });
+                this._loadRpkiValidatorFromVrpFile(env, vrpFile);
+            }, 500);
+        };
+
+        fs.watchFile(vrpFile, reload);
+    };
+
+    _loadRpkiValidatorFromVrpProvider = (env) => {
+
+        if (!this.rpki) {
+            const rpkiValidatorOptions = {
+                connector: this.providers[0],
+                clientId: env.clientId
+            };
+
+            if (this.params.vrpProvider) { // Use vrp provider
+                if (this.providers.includes(this.params.vrpProvider)) {
+                    rpkiValidatorOptions.connector = this.params.vrpProvider;
+                } else {
+                    this.logger.log({
+                        level: 'error',
+                        message: "The specified vrpProvider is not valid. Using default vrpProvider."
+                    });
+                }
+            }
+
+            if (!this.params.noProxy && env.agent) {
+                rpkiValidatorOptions.httpsAgent = env.agent;
+            }
+
+            this.rpki = new rpki(rpkiValidatorOptions);
+
+            if (!!this.preCacheROAs) {
+                this.rpki
+                    .preCache(Math.max(this.refreshVrpListMinutes, 15))
+                    .then(() => {
+                        this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
+                    })
+                    .catch(() => {
+                        this.logger.log({
+                            level: 'error',
+                            message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                        });
+                    });
+            } else {
+                this.validationTimer = setInterval(this.validateBatch, 400); // Don't overload on-line validation
+            }
+        }
+    };
+
+    _loadRpkiValidatorFromVrpFile = (env, vrpFile) => {
+
         if (!!this.params.vrpProvider && this.params.vrpProvider !== "external") {
-            rpkiValidatorOptions.connector = this.providers[0];
-            delete rpkiValidatorOptions.vrps;
             this.logger.log({
                 level: 'error',
                 message: "You cannot specify a vrpProvider different from 'external' if you want to use a vrps file. Using default vrpProvider."
             });
         } else {
-            if (fs.existsSync(file)) {
+            if (fs.existsSync(vrpFile)) {
                 try {
-                    const vrps = JSON.parse(fs.readFileSync(file));
+                    const vrps = JSON.parse(fs.readFileSync(vrpFile));
 
                     if (vrps.length > 0) {
-                        rpkiValidatorOptions.connector = "external";
-                        rpkiValidatorOptions.vrps = vrps;
+
+                        if (this.validationTimer) {
+                            clearInterval(this.validationTimer); // Stop validation cycle
+                        }
+
+                        this.rpki = new rpki({
+                            connector: "external",
+                            clientId: env.clientId,
+                            vrps
+                        });
+
+                        this.rpki
+                            .preCache()
+                            .then(() => {
+                                this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
+                            })
+                            .catch(() => {
+                                this.logger.log({
+                                    level: 'error',
+                                    message: "It was not possible to load correctly the VRPs file. Possibly there is an error in the format. The RPKI monitoring should be working anyway with one of the on-line providers."
+                                });
+                            });
+
                     } else {
-                        rpkiValidatorOptions.connector = this.providers[0];
-                        delete rpkiValidatorOptions.vrps;
                         this.logger.log({
                             level: 'error',
                             message: "The provided VRPs file is empty. Using default vrpProvider."
@@ -87,23 +136,20 @@ export default class MonitorRPKI extends Monitor {
                     }
 
                 } catch (error) {
-                    rpkiValidatorOptions.connector = this.providers[0];
-                    delete rpkiValidatorOptions.vrps;
                     this.logger.log({
                         level: 'error',
                         message: "The provided VRPs file cannot be parsed. Using default vrpProvider."
                     });
                 }
             } else {
-                rpkiValidatorOptions.connector = this.providers[0];
-                delete rpkiValidatorOptions.vrps;
-
                 this.logger.log({
                     level: 'error',
                     message: "The provided VRPs file cannot be found. Using default vrpProvider."
                 });
             }
         }
+
+        return this._loadRpkiValidatorFromVrpProvider(env);
     };
 
     updateMonitoredResources = () => {
