@@ -124,7 +124,7 @@ export default class MonitorRPKI extends Monitor {
                         this.rpki
                             .preCache()
                             .then(() => {
-                                this.validationTimer = setInterval(this.validateBatch, 50); // If already cached, we can validate more often
+                                this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
                             })
                             .catch(() => {
                                 this.logger.log({
