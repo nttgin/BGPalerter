@@ -32,15 +32,22 @@
 
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
+const fs = require('fs');
 const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
+
+fs.copyFileSync("tests/rpki_tests/vrp.wrong.json", "tests/rpki_tests/vrp.json");
+
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
 describe("RPKI monitoring 2", function() {
+
+    //Test rpki watch file reloading
+    fs.copyFileSync("tests/rpki_tests/vrp.correct.json", "tests/rpki_tests/vrp.json");
 
     it("external connector", function (done) {
 
@@ -77,14 +84,16 @@ describe("RPKI monitoring 2", function() {
                 if (Object.keys(expectedData).length === 0) {
                     setTimeout(() => {
                         rpkiTestCompletedExternal = true;
+                        fs.unlinkSync("tests/rpki_tests/vrp.json");
                         done();
                     }, 5000);
                 }
             }
         });
 
-        pubSub.publish("test-type", "rpki");
-
+        setTimeout(() => { // Wait that the watcher realizes the file changed
+            pubSub.publish("test-type", "rpki");
+        }, 5000);
 
     }).timeout(asyncTimeout);
 });
