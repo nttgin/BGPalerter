@@ -43,7 +43,7 @@ export default class reportTelegram extends ReportHTTP {
                 "chat_id": chatId,
                 "text": "${summary}",
                 "parse_mode": 'HTML',
-                "disable_web_page_preview": true,
+                "disable_web_page_preview": true
             });
         };
 
