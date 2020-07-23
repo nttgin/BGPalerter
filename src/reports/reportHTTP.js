@@ -68,7 +68,7 @@ export default class ReportHTTP extends Report {
     _sendHTTPMessage = (url, channel, content) => {
         content = JSON.parse(JSON.stringify(content));
         if (this.params.showPaths > 0) {
-            content.message += `${content.message}. Top ${context.pathNumber} most used AS paths: \n ${context.paths}`;
+            content.message += `${content.message}. Top ${content.pathNumber} most used AS paths: \n ${content.paths}`;
         }
 
         const blob = this._getMessage(channel, content);
