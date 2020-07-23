@@ -182,9 +182,9 @@ export default class MonitorRPKI extends Monitor {
             const coveringString = (covering) ? `Valid ROAs: ${covering}`: '';
 
             if (extra.valid === null && this.params.checkUncovered) {
-                return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA. Accepted with AS path: ${message.path}`;
+                return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA`;
             } else {
-                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. Accepted with AS path: ${message.path}. ${coveringString}`;
+                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. ${coveringString}`;
             }
         }
     };

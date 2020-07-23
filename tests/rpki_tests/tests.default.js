@@ -50,14 +50,14 @@ describe("RPKI monitoring 1", function() {
                 id:  "a103_21_244_0_24-13335-false",
                 origin: 'rpki-monitor',
                 affected: '103.21.244.0/24',
-                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Accepted with AS path: [1,2,3,4321,13335]. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23',
+                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23',
             },
 
             "a8_8_8_8_22-2914-": {
                 id:  "a8_8_8_8_22-2914-",
                 origin: 'rpki-monitor',
                 affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA. Accepted with AS path: [1,2,3,4321,5060,2914]',
+                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA',
             }
         };
 
