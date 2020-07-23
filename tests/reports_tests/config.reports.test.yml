@@ -68,6 +68,22 @@ reports:
         visibility: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${earliest}|${latest}|${peers}"
         misconfiguration: "++BGPalerter-3-${type}: ${summary}|${asn}|${prefix}|${earliest}|${latest}"
 
+  - file: reportHTTP
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+        default: '{"text": "${summary}"}'
+      headers:
+      isTemplateJSON: true
+      showPaths: 5 # Amount of AS_PATHs to report in the alert
+      hooks:
+        default: http://localhost:8090/test
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
