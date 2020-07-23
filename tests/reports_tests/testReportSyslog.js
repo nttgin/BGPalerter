@@ -30,46 +30,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ReportHTTP from "./reportHTTP";
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+const Syslogd = require("syslogd");
+const expect = chai.expect;
+const asyncTimeout = 20000;
+chai.use(chaiSubset);
 
-export default class reportTelegram extends ReportHTTP {
+global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
+global.EXTERNAL_CONFIG_FILE = "tests/reports_tests/config.reports.test.yml";
 
-    constructor(channels, params, env) {
-        const templates = {};
-        const hooks = {};
+describe("Reports 1", function() {
+    const worker = require("../../index");
+    const pubSub = worker.pubSub;
 
-        const getTemplateItem = (chatId) => {
-            return JSON.stringify({
-                "chat_id": chatId,
-                "text": "${summary}",
-                "parse_mode": 'HTML',
-                "disable_web_page_preview": true
+    it("syslog", function (done) {
+        let doneCalled = false;
+
+        Syslogd(function(info) {
+            if (!doneCalled) {
+                expect(info.hostname).to.equals('127.0.0.1');
+                expect(info.tag).to.equals('++BGPalerter-5-withdrawal-detection');
+                done();
+                doneCalled = true;
+            }
+        })
+            .listen(1516, function(error) {
+                if (error) {
+                    console.log(error)
+                }
             });
-        };
 
-        for (let channel in params.chatIds) {
-            templates[channel] = getTemplateItem(params.chatIds[channel]);
-            hooks[channel] = params.botUrl;
-        }
+        pubSub.publish("test-type", "visibility");
+    }).timeout(asyncTimeout);
 
-
-        const telegramParams = {
-            headers: {},
-            isTemplateJSON: true,
-            showPaths: params.showPaths,
-            hooks: hooks,
-            name: "reportTelegram",
-            templates
-        };
-
-        super(channels, telegramParams, env);
-
-        if (!params.botUrl) {
-            this.logger.log({
-                level: 'error',
-                message: `${this.name} reporting is not enabled: no botUrl provided`
-            });
-            this.enabled = false;
-        }
-    }
-}
+});

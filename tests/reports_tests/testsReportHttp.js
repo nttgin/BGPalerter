@@ -33,35 +33,43 @@
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const Syslogd = require("syslogd");
+const restify = require("restify");
 const expect = chai.expect;
 const asyncTimeout = 20000;
 chai.use(chaiSubset);
+const assert = chai.assert
 
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/reports_tests/config.reports.test.yml";
 
-describe("Reports", function() {
+describe("Reports 2", function() {
     const worker = require("../../index");
     const pubSub = worker.pubSub;
 
-    it("syslog", function (done) {
-        let doneCalled = false;
+    it("reportHTTP", function (done) {
+        const server = restify.createServer();
+        server.pre(restify.pre.sanitizePath());
+        server.use(restify.plugins.bodyParser({ mapParams: true }));
+        let expectedData = [
+            "The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45. Top 1 most used AS paths: [2,3,15563]",
+            "A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45. Top 1 most used AS paths: [2,3,208585]",
+        ];
 
-        Syslogd(function(info) {
-            if (!doneCalled) {
-                expect(info.hostname).to.equals('127.0.0.1');
-                expect(info.tag).to.equals('++BGPalerter-5-withdrawal-detection');
-                done();
-                doneCalled = true;
+        pubSub.publish("test-type", "hijack");
+
+        server.post('/test', function (req, res, next) {
+            const text = req.body.text;
+            if (expectedData.includes(text)) {
+                expectedData = expectedData.filter(i => i !== text);
+            } else {
+                assert.fail(text, "none", "The message is not expected");
             }
-        })
-            .listen(1516, function(error) {
-                if (error) {
-                    console.log(error)
-                }
-            });
 
-        pubSub.publish("test-type", "visibility");
+            if (expectedData.length === 0) {
+                done();
+            }
+        });
+        server.listen(8090);
 
     }).timeout(asyncTimeout);
 });
