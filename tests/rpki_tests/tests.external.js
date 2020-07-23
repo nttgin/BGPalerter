@@ -57,7 +57,7 @@ describe("RPKI monitoring 2", function() {
                 id: 'a82_112_100_0_24-2914-false',
                 origin: 'rpki-monitor',
                 affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Accepted with AS path: [1,2,3,4321,2914]. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24'
+                message: 'The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24'
             }
         };
 

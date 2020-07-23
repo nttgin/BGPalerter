@@ -33,7 +33,6 @@
 const chai = require("chai");
 const fs = require("fs");
 const chaiSubset = require('chai-subset');
-const Syslogd = require("syslogd");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";

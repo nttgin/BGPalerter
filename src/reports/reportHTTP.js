@@ -60,18 +60,14 @@ export default class ReportHTTP extends Report {
         }
     }
 
-
-    _getMessage = (channel, content) => {
-        return this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], this.getContext(channel, content));
-    };
-
     _sendHTTPMessage = (url, channel, content) => {
-        content = JSON.parse(JSON.stringify(content));
-        if (this.params.showPaths > 0) {
-            content.message += `${content.message}. Top ${context.pathNumber} most used AS paths: \n ${context.paths}`;
+        const context = this.getContext(channel, content);
+
+        if (this.params.showPaths > 0 && context.pathNumber > 0) {
+            context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}`;
         }
 
-        const blob = this._getMessage(channel, content);
+        const blob = this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], context);
 
         this.axios({
             url: url,
