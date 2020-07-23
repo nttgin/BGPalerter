@@ -1,7 +1,7 @@
 {
   "name": "bgpalerter",
-  "version": "1.26.0",
-  "description": "",
+  "version": "1.26.1",
+  "description": "Software to monitor streams of BGP data. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, and more.",
   "main": "index.js",
   "bin": "index.js",
   "repository": {
