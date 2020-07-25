@@ -333,6 +333,9 @@ Parameters for this monitor module:
 
 Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
+> After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
+> This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
+
 Possible reports are:
 
 #### reportFile
@@ -363,7 +366,7 @@ Parameters for this report module:
 |notifiedEmails| A dictionary containing email addresses grouped by user groups.  (key: group, value: list of emails)| 
 |notifiedEmails.default| The default user group. Each user group is a [list](prefixes.md#array) of emails. This group should contain at least the admin. | 
 
-
+After configuring this module, [test the configuration](installation.md#bgpalerter-parameters) (`-t` option) to be sure everything will work once in production.
 
 #### reportSlack
 
