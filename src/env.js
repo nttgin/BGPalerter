@@ -172,6 +172,25 @@ if (fs.existsSync(vector.configFile)) {
         })
 }
 
+if (global.DRY_RUN) {
+    config.connectors = [{
+        file: "connectorTest",
+        name: "tes",
+        params: {
+            testType: "hijack"
+        }
+    }];
+    config.monitors = [{
+        file: "monitorPassthrough",
+        channel: "hijack",
+        name: "monitor-passthrough",
+        params: {
+            showPaths: 0,
+            thresholdMinPeers: 0
+        }
+    }];
+}
+
 config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "./";
 
 if (config.volume.slice(-1) !== "/") {
@@ -284,7 +303,6 @@ if (!!config.persistStatus) {
         validitySeconds: config.notificationIntervalSeconds,
     }, config);
 }
-
 
 const input = new Input(config);
 

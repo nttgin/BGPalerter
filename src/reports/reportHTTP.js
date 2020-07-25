@@ -66,9 +66,7 @@ export default class ReportHTTP extends Report {
         if (this.params.showPaths > 0 && context.pathNumber > 0) {
             context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}`;
         }
-
         const blob = this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], context);
-
         this.axios({
             url: url,
             method: "POST",

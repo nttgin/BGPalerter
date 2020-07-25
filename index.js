@@ -45,6 +45,10 @@ const params = yargs
             .nargs('c', 1)
             .describe('c', 'Config file to load')
 
+            .alias('t', 'test')
+            .nargs('t', 0)
+            .describe('v', 'Test the configuration with fake BGP updates')
+
             .alias('d', 'data-volume')
             .nargs('d', 1)
             .describe('d', 'A directory where configuration and data is persisted')
@@ -67,7 +71,6 @@ const params = yargs
             .alias('e', 'exclude')
             .nargs('e', 1)
             .describe('e', 'Comma-separated list of prefixes to exclude')
-
 
             .alias('p', 'prefixes')
             .nargs('p', 1)
@@ -143,6 +146,7 @@ switch(params._[0]) {
         break;
 
     default: // Run monitor
+        global.DRY_RUN = !!params.t;
         const Worker = require("./src/worker").default;
         module.exports = new Worker(params.c, params.d);
 }
