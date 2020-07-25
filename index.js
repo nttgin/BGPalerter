@@ -147,6 +147,7 @@ switch(params._[0]) {
 
     default: // Run monitor
         global.DRY_RUN = !!params.t;
+        if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: Remove -t option for production monitoring.");
         const Worker = require("./src/worker").default;
         module.exports = new Worker(params.c, params.d);
 }
