@@ -73,7 +73,7 @@ To run the latest stable version of BGPalerter in Docker, do:
 ```
 docker run -i --name bgpalerter \
   -v $(pwd)/volume:/opt/bgpalerter/volume \
-  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
 With this command, a new directory `./volume` will be created in the current position.
@@ -93,7 +93,7 @@ In case you want to monitor the uptime by using the `uptimeApi` ([read more](pro
 docker run -i --name bgpalerter \
   -v $(pwd)/volume:/opt/bgpalerter/volume \
   -p 8011:8011
-  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
 The `uptimeApi` module has to be enabled in `volume/config.yml` as described [here](process-monitors.md).
@@ -113,7 +113,7 @@ docker run -i --name bgpalerter \
   --health-interval=60s \
   --restart unless-stopped \
   -p 8011:8011
-  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume
+  nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
 > This option does NOT replace [proper monitoring](process-monitors.md).
