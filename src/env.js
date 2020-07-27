@@ -172,14 +172,16 @@ if (fs.existsSync(vector.configFile)) {
         })
 }
 
-config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "./";
+config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "";
 
-if (config.volume.slice(-1) !== "/") {
-    config.volume += "/";
-}
+if (config.volume && config.volume.length) {
+    if (config.volume.slice(-1) !== "/") {
+        config.volume += "/";
+    }
 
-if (!fs.existsSync(config.volume)){
-    fs.mkdirSync(config.volume);
+    if (!fs.existsSync(config.volume)) {
+        fs.mkdirSync(config.volume);
+    }
 }
 
 const errorTransport = new FileLogger({
