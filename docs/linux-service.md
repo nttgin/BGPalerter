@@ -57,3 +57,46 @@ Enable BGPalerter to start at boot and then start the service.
 `systemctl enable bgpalerter`
 
 `systemctl start bgpalerter`
+
+
+### Automatic Updates
+Enable automatic updates.
+
+`cd /home/bgpalerter`
+
+`vi upgrade.sh`
+
+The contents of this file should be as follows:
+```
+#!/bin/bash
+
+#Set the DATE variable
+DATE=$(date +"%m-%d-%Y")
+
+#If the file exists - rename it and append DATE
+if [ -f bgpalerter-linux-x64 ]; then
+  mv bgpalerter-linux-x64 "bgpalerter-linux-x64-$DATE"
+fi
+
+#Download the latest binary
+wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
+
+#Set permissions
+chmod +x bgpalerter-linux-x64
+chown -R bgpalerter:bgpalerter /home/bgpalerter/*
+
+#Restart the service
+systemctl restart bgpalerter
+
+#Delete binaries older than 60 days
+find -type f -name 'bgpalerter-linux-x64-*' -mtime +60 -delete
+```
+
+Configure a cron job to run, in this case, weekly.
+
+`crontab -e`
+
+The contents of this file should be as follows:
+```
+0 0 * * 0 ./home/bgpalerter/bgpalerter/upgrade.sh
+```
