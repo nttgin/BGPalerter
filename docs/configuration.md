@@ -333,6 +333,9 @@ Parameters for this monitor module:
 
 Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
+> By default all communications will be sent to the default user group, so it is not mandatory to configure any user group. 
+> Note that the default group is used also for administrative and error communications, if you want to filter out such communications you need to [create another user group](usergroups.md).
+
 Possible reports are:
 
 #### reportFile
