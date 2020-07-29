@@ -5,7 +5,7 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy) {
+module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy, debug, historical) {
     const generateList = {};
     const allOrigins = {};
     let someNotValidatedPrefixes = false;
@@ -13,6 +13,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
     if (httpProxy) {
         const HttpsProxyAgent = require("https-proxy-agent");
         axios.defaults.httpsAgent = new HttpsProxyAgent(url.parse(httpProxy));
+    }
+
+    if (historical) {
+        console.log("WARNING: you are using historical visibility data for generating the prefix list.");
     }
     
     if (!asnList && !prefixes) {
@@ -34,6 +38,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 resource: prefix
             }
         });
+
+        if (debug) {
+            console.log("Query", url)
+        }
 
         return axios({
             url,
@@ -61,6 +69,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 resource: prefix
             }
         });
+
+        if (debug) {
+            console.log("Query", url)
+        }
 
         return axios({
             url,
@@ -118,6 +130,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
             }
         });
 
+        if (debug) {
+            console.log("Query", url)
+        }
+
         return axios({
             url,
             method: 'GET',
@@ -132,11 +148,21 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                                 .sort((a,b) => a-b)
                                 .pop();
 
-                            return latest.getTime() + (3600 * 24 * 1000) > new Date().getTime();
+                            if (historical) {
+                                return latest.getTime() + (3600 * 24 * 1000 * 7) > new Date().getTime();
+                            } else {
+                                return latest.getTime() + (3600 * 24 * 1000) > new Date().getTime();
+                            }
                         })
 
                 }
                 return [];
+            })
+            .then(list => {
+                if (list.length === 0) {
+                    console.log("WARNING: no announced prefixes were detected. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.");
+                }
+                return list;
             })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
             .then(list => {
@@ -154,6 +180,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 prefix
             }
         });
+
+        if (debug) {
+            console.log("Query", url)
+        }
 
         return axios({
             url,
@@ -233,7 +263,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
             fs.writeFileSync(outputFile, yamlContent);
 
             if (someNotValidatedPrefixes) {
-                console.log("WARNING: The generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
+                console.log("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
             }
             console.log("Done!");
         })

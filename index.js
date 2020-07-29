@@ -96,6 +96,14 @@ const params = yargs
             .nargs('x', 1)
             .describe('x', 'HTTP/HTTPS proxy to use')
 
+            .alias('D', 'debug')
+            .nargs('D', 0)
+            .describe('D', 'Provide verbose output for debugging')
+
+            .alias('H', 'historical')
+            .nargs('H', 0)
+            .describe('H', 'Use historical visibility data for generating prefix list (prefixes visible in the last week).')
+
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -107,6 +115,8 @@ const params = yargs
 switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./src/generatePrefixesList");
+        const debug = !!params.D;
+        const historical = !!params.H;
         let prefixes = null;
         let monitoredASes = false;
         if (params.pf) {
@@ -140,7 +150,9 @@ switch(params._[0]) {
             params.i || false,
             prefixes,
             monitoredASes,
-            params.x || null
+            params.x || null,
+            debug,
+            historical
         );
 
         break;
