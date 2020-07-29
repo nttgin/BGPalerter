@@ -66,6 +66,12 @@ Enable automatic updates.
 
 `vi upgrade.sh`
 
+The file needs to be executable
+```
+chmod +x upgrade.sh
+chown bgpalerter:bgpalerter /home/bgpalerter/upgrade.sh
+```
+
 The contents of this file should be as follows:
 
 ```
