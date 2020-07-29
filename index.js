@@ -47,7 +47,7 @@ const params = yargs
 
             .alias('t', 'test')
             .nargs('t', 0)
-            .describe('v', 'Test the configuration with fake BGP updates')
+            .describe('t', 'Test the configuration with fake BGP updates')
 
             .alias('d', 'data-volume')
             .nargs('d', 1)
@@ -159,7 +159,7 @@ switch(params._[0]) {
 
     default: // Run monitor
         global.DRY_RUN = !!params.t;
-        if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: Remove -t option for production monitoring.");
+        if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: remove -t option for production monitoring.");
         const Worker = require("./src/worker").default;
         module.exports = new Worker(params.c, params.d);
 }
