@@ -37,16 +37,13 @@ const chaiSubset = require('chai-subset');
 const generatePrefixes = require('../../src/generatePrefixesList');
 const expect = chai.expect;
 const asyncTimeout = 60000;
-
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/generate_tests/config.test.yml";
-// const worker = require("../../index");
-// const pubSub = worker.pubSub;
 
 describe("Prefix List", function() {
 
-    it("generate file - default group", function (done) {
+    it("generate file - default group - exclude 1 prefix", function (done) {
         const asns = ["3333"];
         const outputFile = "tests/generate_tests/prefixes.yml";
         const originalFile = "tests/generate_tests/prefixes.final.default.yml";
@@ -72,9 +69,6 @@ describe("Prefix List", function() {
                 const resultJson = yaml.safeLoad(result) || {};
                 const originalJson = yaml.safeLoad(original) || {};
 
-                Object.keys(resultJson)
-                Object.keys(originalJson)
-
                 expect(resultJson).to.contain.keys(Object.keys(originalJson));
                 expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);
 
@@ -83,7 +77,7 @@ describe("Prefix List", function() {
             });
     }).timeout(asyncTimeout);
 
-    it("generate file - specific group", function (done) {
+    it("generate file - specific group - no exclude", function (done) {
         const asns = ["3333"];
         const outputFile = "tests/generate_tests/prefixes.yml";
         const originalFile = "tests/generate_tests/prefixes.final.group.yml";
@@ -91,7 +85,7 @@ describe("Prefix List", function() {
         const inputParameters = {
             asnList: asns,
             outputFile,
-            exclude: ["2001:67c:2e8::/48"],
+            exclude: [],
             excludeDelegated: true,
             prefixes: null,
             monitoredASes: asns,
@@ -104,13 +98,10 @@ describe("Prefix List", function() {
         generatePrefixes(inputParameters)
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');
-                fs.unlinkSync(outputFile);
+                // fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, 'utf8');
                 const resultJson = yaml.safeLoad(result) || {};
                 const originalJson = yaml.safeLoad(original) || {};
-
-                Object.keys(resultJson)
-                Object.keys(originalJson)
 
                 expect(resultJson).to.contain.keys(Object.keys(originalJson));
                 expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);

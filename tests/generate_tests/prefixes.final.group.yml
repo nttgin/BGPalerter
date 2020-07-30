@@ -40,6 +40,13 @@
   ignoreMorespecifics: false
   ignore: false
   group: test
+'2001:67c:2e8::/48':
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: test
 options:
   monitorASns:
     '3333':
