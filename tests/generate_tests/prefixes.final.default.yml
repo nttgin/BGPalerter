@@ -1,0 +1,46 @@
+193.0.10.0/23:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+193.0.20.0/23:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+193.0.0.0/21:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+193.0.12.0/23:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+193.0.18.0/23:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+193.0.22.0/23:
+  description: No description provided (valid ROA available)
+  asn:
+    - 3333
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+options:
+  monitorASns:
+    '3333':
+      group: default

@@ -36,7 +36,6 @@ import Input from "./input";
 import ipUtils from "ip-sub";
 import { AS } from "../model";
 
-
 export default class InputYml extends Input {
 
     constructor(config){

@@ -12,3 +12,4 @@ alertdata/
 .cache/
 volumetests/
 tests/rpki_tests/vrp.json
+tests/generate_tests/prefixes.yml

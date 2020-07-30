@@ -11,6 +11,8 @@ jobs:
       script: npm run test-reports
     - name: "Tests rpki"
       script: npm run test-rpki
+    - name: "Tests prefix generation"
+      script: npm run test-generate
     - name: "Tests with proxy"
       before_script:
         - npm install -g anyproxy
