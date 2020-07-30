@@ -41,12 +41,20 @@ export default class Consumer {
             this.connectors[connector.name] = connector.class
         }
 
-        this.monitors = env.config.monitors
-            .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params || {}, env));
+        try {
 
-        this.reports = env.config.reports
-            .map(report => new report.class(report.channels, report.params || {}, env));
+            this.monitors = env.config.monitors
+                .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params || {}, env));
 
+            this.reports = env.config.reports
+                .map(report => new report.class(report.channels, report.params || {}, env));
+
+        } catch (error) {
+            env.logger.log({
+                level: 'error',
+                message: error
+            });
+        }
         process.on('message', this.dispatch);
         env.pubSub.subscribe('data', (type, data) => {
             this.dispatch(data);
