@@ -5,7 +5,20 @@ import yaml from "js-yaml";
 import fs from "fs";
 const batchPromises = require('batch-promises');
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy, debug, historical) {
+module.exports = function generatePrefixes(inputParameters) {
+    const {
+        asnList,
+        outputFile,
+        exclude,
+        excludeDelegated,
+        prefixes,
+        monitoredASes,
+        httpProxy,
+        debug,
+        historical,
+        group
+    } = inputParameters;
+
     const generateList = {};
     const allOrigins = {};
     let someNotValidatedPrefixes = false;
@@ -117,7 +130,8 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                         description: description || "No description provided",
                         asn: origin.map(i => parseInt(i)),
                         ignoreMorespecifics: ignoreMorespecifics,
-                        ignore: excludeDelegated
+                        ignore: excludeDelegated,
+                        group: group || "default"
                     };
                 }
             });
@@ -247,7 +261,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 for (let monitoredAs of list) {
                     console.log("Generating generic monitoring rule for AS", monitoredAs);
                     generateList.options.monitorASns[monitoredAs] = {
-                        group: 'default'
+                        group: group || "default"
                     };
                 }
             };

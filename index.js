@@ -96,6 +96,10 @@ const params = yargs
             .nargs('x', 1)
             .describe('x', 'HTTP/HTTPS proxy to use')
 
+            .alias('g', 'group')
+            .nargs('g', 1)
+            .describe('x', 'Define a user group for all the generated rules.')
+
             .alias('D', 'debug')
             .nargs('D', 0)
             .describe('D', 'Provide verbose output for debugging')
@@ -143,17 +147,20 @@ switch(params._[0]) {
             monitoredASes = true;
         }
 
-        generatePrefixes(
-            (params.a) ? params.a.toString().split(",") : null,
-            params.o,
-            (params.e || "").split(","),
-            params.i || false,
+        const inputParameters = {
+            asnList: (params.a) ? params.a.toString().split(",") : null,
+            outputFile: params.o,
+            exclude: (params.e || "").split(","),
+            excludeDelegated: params.i || false,
             prefixes,
             monitoredASes,
-            params.x || null,
+            httpProxy: params.x || null,
             debug,
-            historical
-        );
+            historical,
+            group: params.g
+        };
+
+        generatePrefixes(inputParameters);
 
         break;
 

@@ -195,14 +195,21 @@ export default class Input {
                         .then((answer) => {
                             const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
-                            return generatePrefixes(
-                                asns,
-                                this.config.volume + "prefixes.yml",
-                                [],
-                                answer.i,
-                                null,
-                                answer.m ? asns : []
-                            );
+
+                            const inputParameters = {
+                                asnList: asns,
+                                outputFile: this.config.volume + "prefixes.yml",
+                                exclude: [],
+                                excludeDelegated: answer.i,
+                                prefixes: null,
+                                monitoredASes: answer.m ? asns : [],
+                                httpProxy: null,
+                                debug: false,
+                                historical: false,
+                                group: null
+                            }
+
+                            return generatePrefixes(inputParameters);
                         });
                 } else {
                     throw new Error("Nothing to monitor.");
