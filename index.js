@@ -100,6 +100,10 @@ const params = yargs
             .nargs('g', 1)
             .describe('x', 'Define a user group for all the generated rules.')
 
+            .alias('A', 'append')
+            .nargs('A', 0)
+            .describe('A', 'Append the new configuration to the previous one.')
+
             .alias('D', 'debug')
             .nargs('D', 0)
             .describe('D', 'Provide verbose output for debugging')
@@ -157,7 +161,8 @@ switch(params._[0]) {
             httpProxy: params.x || null,
             debug,
             historical,
-            group: params.g
+            group: params.g,
+            append: !!params.A
         };
 
         generatePrefixes(inputParameters);

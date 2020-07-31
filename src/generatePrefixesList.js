@@ -16,7 +16,8 @@ module.exports = function generatePrefixes(inputParameters) {
         httpProxy,
         debug,
         historical,
-        group
+        group,
+        append
     } = inputParameters;
 
     const generateList = {};
@@ -31,7 +32,7 @@ module.exports = function generatePrefixes(inputParameters) {
     if (historical) {
         console.log("WARNING: you are using historical visibility data for generating the prefix list.");
     }
-    
+
     if (!asnList && !prefixes) {
         throw new Error("You need to specify at least an AS number or a list of prefixes.");
     }
@@ -218,7 +219,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 }
             })
             .catch(() => {
-                console.log("RIPEstat rpki-validation query failed: cannot retrieve information for " + prefix);
+                console.log("RPKI validation query failed: cannot retrieve information for " + prefix);
             });
     };
 
@@ -230,6 +231,34 @@ module.exports = function generatePrefixes(inputParameters) {
         } else {
             return Promise.all(asnList.map(getAnnouncedPrefixes));
         }
+    };
+
+    const getCurrentPrefixes = (outputFile, yamlContent) => {
+        const content = fs.readFileSync(outputFile, 'utf8');
+        const current = yaml.safeLoad(content) || {};
+
+        function isObject (item) {
+            return (item && typeof item === 'object' && !Array.isArray(item));
+        }
+        function mergeDeep(target, ...sources) {
+            if (!sources.length) return target;
+            const source = sources.shift();
+
+            if (isObject(target) && isObject(source)) {
+                for (const key in source) {
+                    if (isObject(source[key])) {
+                        if (!target[key]) Object.assign(target, { [key]: {} });
+                        mergeDeep(target[key], source[key]);
+                    } else {
+                        Object.assign(target, { [key]: source[key] });
+                    }
+                }
+            }
+
+            return mergeDeep(target, ...sources);
+        };
+
+        return mergeDeep(current, yamlContent);
     };
 
     return getBaseRules()
@@ -273,8 +302,13 @@ module.exports = function generatePrefixes(inputParameters) {
             // Otherwise nothing
         })
         .then(() => { // write everything into the file
-            const yamlContent = yaml.dump(generateList);
-            fs.writeFileSync(outputFile, yamlContent);
+
+            if (append) {
+                const finalList = getCurrentPrefixes(outputFile, generateList);
+                fs.writeFileSync(outputFile, yaml.dump(finalList));
+            } else {
+                fs.writeFileSync(outputFile, yaml.dump(generateList));
+            }
 
             if (someNotValidatedPrefixes) {
                 console.log("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");

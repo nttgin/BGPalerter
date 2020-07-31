@@ -206,7 +206,8 @@ export default class Input {
                                 httpProxy: null,
                                 debug: false,
                                 historical: false,
-                                group: null
+                                group: null,
+                                append: false
                             }
 
                             return generatePrefixes(inputParameters);
