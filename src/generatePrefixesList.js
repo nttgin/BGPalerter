@@ -3,10 +3,11 @@ import url from "url";
 import brembo from "brembo";
 import yaml from "js-yaml";
 import fs from "fs";
+import { AS } from "./model";
 const batchPromises = require('batch-promises');
 
 module.exports = function generatePrefixes(inputParameters) {
-    const {
+    let {
         asnList,
         outputFile,
         exclude,
@@ -43,6 +44,19 @@ module.exports = function generatePrefixes(inputParameters) {
 
     if (!outputFile) {
         throw new Error("Output file not specified");
+    }
+
+    if (asnList) {
+        asnList = asnList.map(i => i.replace("AS", ""));
+        if (asnList.some(i => !new AS([i]).isValid())) {
+            throw new Error("One of the AS number is not valid");
+        }
+    }
+    if (monitoredASes) {
+        monitoredASes = monitoredASes.map(i => i.replace("AS", ""));
+        if (monitoredASes.some(i => !new AS([i]).isValid())) {
+            throw new Error("One of the AS number is not valid");
+        }
     }
 
     const getMultipleOrigins = (prefix) => {
