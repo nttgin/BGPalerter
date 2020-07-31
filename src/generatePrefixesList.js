@@ -2,9 +2,13 @@ import axios from "axios";
 import url from "url";
 import brembo from "brembo";
 import yaml from "js-yaml";
+import batchPromises from "batch-promises";
+import RpkiValidator from "rpki-validator";
 import fs from "fs";
 import { AS } from "./model";
-const batchPromises = require('batch-promises');
+const apiTimeout = 120000;
+const clientId = "ntt-bgpalerter"
+const rpki = new RpkiValidator({clientId});
 
 module.exports = function generatePrefixes(inputParameters) {
     let {
@@ -46,13 +50,13 @@ module.exports = function generatePrefixes(inputParameters) {
         throw new Error("Output file not specified");
     }
 
-    if (asnList) {
+    if (asnList && asnList.length) {
         asnList = asnList.map(i => i.replace("AS", ""));
         if (asnList.some(i => !new AS([i]).isValid())) {
             throw new Error("One of the AS number is not valid");
         }
     }
-    if (monitoredASes) {
+    if (monitoredASes && monitoredASes.length) {
         monitoredASes = monitoredASes.map(i => i.replace("AS", ""));
         if (monitoredASes.some(i => !new AS([i]).isValid())) {
             throw new Error("One of the AS number is not valid");
@@ -63,6 +67,7 @@ module.exports = function generatePrefixes(inputParameters) {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "prefix-overview", "data.json"],
             params: {
+                client: clientId,
                 resource: prefix
             }
         });
@@ -74,7 +79,8 @@ module.exports = function generatePrefixes(inputParameters) {
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 let asns = [];
@@ -84,7 +90,8 @@ module.exports = function generatePrefixes(inputParameters) {
 
                 return asns;
             })
-            .catch(() => {
+            .catch((error) => {
+                console.log(error);
                 console.log("RIPEstat prefix-overview query failed: cannot retrieve information for " + prefix);
             });
     };
@@ -94,6 +101,7 @@ module.exports = function generatePrefixes(inputParameters) {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
             params: {
+                client: clientId,
                 resource: prefix
             }
         });
@@ -105,7 +113,8 @@ module.exports = function generatePrefixes(inputParameters) {
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 let prefixes = [];
@@ -134,7 +143,7 @@ module.exports = function generatePrefixes(inputParameters) {
         getMultipleOrigins(prefix)
             .then(asns => {
 
-                if (asns.length) {
+                if (asns && asns.length) {
                     const origin = (asns && asns.length) ? asns : [asn];
 
                     for (let o of origin) {
@@ -155,9 +164,12 @@ module.exports = function generatePrefixes(inputParameters) {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "announced-prefixes", "data.json"],
             params: {
+                client: clientId,
                 resource: asn
             }
         });
+
+        console.log(`Getting announced prefixes of AS${asn}`);
 
         if (debug) {
             console.log("Query", url)
@@ -166,7 +178,8 @@ module.exports = function generatePrefixes(inputParameters) {
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 if (data.data && data.data.data && data.data.data.prefixes) {
@@ -189,61 +202,59 @@ module.exports = function generatePrefixes(inputParameters) {
             })
             .then(list => {
                 if (list.length === 0) {
-                    console.log("WARNING: no announced prefixes were detected. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.");
+                    console.log(`WARNING: no announced prefixes were detected for AS${asn}. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.`);
                 }
                 return list;
             })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
             .then(list => {
-                return Promise.all(list.map(i => generateRule(i.prefix, asn, false, null, false)))
-                    .then(() => list.map(i => i.prefix))
+
+                return batchPromises(40, list, i => {
+                    return generateRule(i.prefix, asn, false, null, false);
+                })
+                    .then(() => list.map(i => i.prefix));
             })
 
     };
 
     const validatePrefix = (asn, prefix) => {
-        const url = brembo.build("https://stat.ripe.net", {
-            path: ["data", "rpki-validation", "data.json"],
-            params: {
-                resource: asn,
-                prefix
-            }
-        });
 
-        if (debug) {
-            console.log("Query", url)
-        }
 
-        return axios({
-            url,
-            method: 'GET',
-            responseType: 'json'
-        })
-            .then(data => {
-                if (data.data && data.data.data && data.data.data.validating_roas) {
-                    return data.data.data.validating_roas.map(i => i.validity).some(i => i === 'valid');
-                }
-                return false;
-            })
-            .then((isValid) => {
-                if (isValid) {
-                    generateList[prefix].description += ' (valid ROA available)';
+        return rpki
+            .validate(prefix, asn, false)
+            .then(isValid => {
+                if (isValid === true) {
+                    // All good
+                } else if (isValid === false) {
+                    delete generateList[prefix];
+                    console.log("RPKI invalid:", prefix, asn);
                 } else {
+                    generateList[prefix].description += ' (No ROA available)';
                     someNotValidatedPrefixes = true;
                 }
             })
-            .catch(() => {
+            .catch((error) => {
                 console.log("RPKI validation query failed: cannot retrieve information for " + prefix);
             });
     };
 
     const getBaseRules = () => {
         if (prefixes) {
-            return Promise
-                .all(prefixes.map(p => generateRule(p, null, false, null, false)))
+
+            return batchPromises(40, prefixes, p => {
+                return generateRule(p, null, false, null, false);
+            })
                 .then(() => prefixes);
         } else {
-            return Promise.all(asnList.map(getAnnouncedPrefixes));
+            let prefixes = [];
+            return batchPromises(1, asnList, asn => {
+                return getAnnouncedPrefixes(asn)
+                    .then(plist => prefixes = prefixes.concat(plist));
+            })
+                .then(() => {
+                    console.log(`Total prefixes detected: ${prefixes.length}`);
+                    return prefixes;
+                });
         }
     };
 
@@ -270,7 +281,7 @@ module.exports = function generatePrefixes(inputParameters) {
             }
 
             return mergeDeep(target, ...sources);
-        };
+        }
 
         return mergeDeep(current, yamlContent);
     };
@@ -278,10 +289,13 @@ module.exports = function generatePrefixes(inputParameters) {
     return getBaseRules()
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
-            return batchPromises(10, prefixes, prefix => {
+            return batchPromises(1, prefixes, prefix => {
                 return getAnnouncedMoreSpecifics(prefix)
-                    .then((items) => Promise
-                        .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))))
+                    .then(items => {
+                        return batchPromises(1, items, item => {
+                            return generateRule(item.prefix, item.asn, true, item.description, excludeDelegated)
+                        });
+                    })
                     .catch((e) => {
                         console.log("Cannot download more specific prefixes of", prefix, e);
                     })
@@ -290,6 +304,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     console.log("Cannot download more specific prefixes", e);
                 })
         })
+        .then(() => rpki.preCache())
         .then(() => { // Check
             return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
