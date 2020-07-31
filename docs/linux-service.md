@@ -87,7 +87,7 @@ wget -O bgpalerter-linux-x64.tmp https://github.com/nttgin/BGPalerter/releases/l
 
 #Set permissions and ownership to execute the file and capture the version
 chmod +x bgpalerter-linux-x64.tmp
-chown -R bgpalerter:bgpalerter /home/bgpalerter/bgpalerter/
+chown -R bgpalerter:bgpalerter /home/bgpalerter/
 
 #Set variables to compare versions
 if [ -f bgpalerter-linux-x64 ]; then
@@ -146,5 +146,5 @@ Configure a cron job to run, in this case, weekly.
 
 The contents of this file should be as follows:
 ```
-0 0 * * 0 ./home/bgpalerter/bgpalerter/upgrade.sh
+0 0 * * 0 ./home/bgpalerter/upgrade.sh
 ```
