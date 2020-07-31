@@ -58,7 +58,8 @@ describe("Prefix List", function() {
             httpProxy: null,
             debug: false,
             historical: false,
-            group: null
+            group: null,
+            append: false
         }
         console.log = function(){};
         generatePrefixes(inputParameters)
@@ -92,13 +93,14 @@ describe("Prefix List", function() {
             httpProxy: null,
             debug: false,
             historical: false,
-            group: "test"
+            group: "test",
+            append: false
         }
         console.log = function(){};
         generatePrefixes(inputParameters)
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');
-                // fs.unlinkSync(outputFile);
+                fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, 'utf8');
                 const resultJson = yaml.safeLoad(result) || {};
                 const originalJson = yaml.safeLoad(original) || {};
