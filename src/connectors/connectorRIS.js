@@ -46,6 +46,7 @@ export default class ConnectorRIS extends Connector{
         this._defaultReconnectTimeout = 10000;
         this.reconnectTimeout = this._defaultReconnectTimeout;
         this.agent = env.agent;
+        this.subscribed = {};
 
         setInterval(this._ping, this.pingInterval);
 
@@ -195,7 +196,11 @@ export default class ConnectorRIS extends Connector{
 
             delete params.prefix;
 
-            console.log("Monitoring everything");
+            if (!this.subscribed["everything"]) {
+                console.log("Monitoring everything");
+                this.subscribed["everything"] = true;
+            }
+
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
@@ -205,7 +210,11 @@ export default class ConnectorRIS extends Connector{
 
             for (let p of monitoredPrefixes) {
 
-                console.log("Monitoring", p.prefix);
+                if (!this.subscribed[p.prefix]) {
+                    console.log("Monitoring", p.prefix);
+                    this.subscribed[p.prefix] = true;
+                }
+
                 params.prefix = p.prefix;
 
                 this.ws.send(JSON.stringify({
@@ -221,9 +230,13 @@ export default class ConnectorRIS extends Connector{
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let asn of monitoredASns){
+            const asnString = asn.getValue();
 
-            console.log("Monitoring AS", asn.getValue());
-            params.path = '' + asn.getValue() + '$';
+            if (!this.subscribed[asnString]) {
+                console.log(`Monitoring AS${asnString}`);
+                this.subscribed[asnString] = true;
+            }
+            params.path = `${asnString}\$`;
 
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
