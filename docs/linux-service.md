@@ -146,5 +146,5 @@ Configure a cron job to run, in this case, weekly.
 
 The contents of this file should be as follows:
 ```
-/bin/bash -c "/home/bgpalerter/bgpalerter/upgrade.sh"
+0 0 * * 0 /bin/bash -c "/home/bgpalerter/bgpalerter/upgrade.sh"
 ```
