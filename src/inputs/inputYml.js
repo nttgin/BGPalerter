@@ -57,19 +57,37 @@ export default class InputYml extends Input {
         return this._loadPrefixes();
     };
 
+    _watchPrefixFile = (file) => {
+        fs.watchFile(file, () => {
+            this.prefixes = [];
+            this.asns = [];
+            this._loadPrefixes()
+                .then(() => {
+                    return this._change();
+                })
+                .catch(error => {
+                    console.log(error);
+                    process.exit();
+                });
+        });
+    };
+
     _loadPrefixes = () =>
         new Promise((resolve, reject) => {
             const uniquePrefixes = {};
             const uniqueAsns = {};
+
             for (let prefixesFile of this.config.monitoredPrefixesFiles) {
 
+                const file = this.config.volume + prefixesFile;
                 let monitoredPrefixesFile = {};
                 let fileContent;
 
-                if (fs.existsSync(this.config.volume + prefixesFile)) {
-                    fileContent = fs.readFileSync(this.config.volume + prefixesFile, 'utf8');
+                if (fs.existsSync(file)) {
+                    fileContent = fs.readFileSync(file, 'utf8');
                     try {
                         monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
+                        this._watchPrefixFile(file);
                     } catch (error) {
                         throw new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]);
                     }

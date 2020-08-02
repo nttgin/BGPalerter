@@ -103,4 +103,8 @@ export default class Connector {
         this.disconnectCallback = callback;
     };
 
+    disconnect = () => {
+        throw new Error('The method disconnect MUST be implemented');
+    };
+
 }

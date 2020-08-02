@@ -36,7 +36,7 @@ import { AS, Path } from "../model";
 import brembo from "brembo";
 import ipUtils from "ip-sub";
 
-export default class ConnectorRIS extends Connector{
+export default class ConnectorRIS extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
@@ -86,6 +86,22 @@ export default class ConnectorRIS extends Connector{
         this._message(JSON.parse(message));
     };
 
+    _appendListeners = (resolve, reject) => {
+        this.ws.on('message', this._messageToJson);
+        this.ws.on('close', (error) => {
+
+            if (this.connected) {
+                this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+            } else {
+                this._close("It was not possible to establish a connection with RIPE RIS");
+                reject();
+            }
+        });
+        this.ws.on('error', this._error);
+        this.ws.on('open', this._openConnect.bind(null, resolve));
+        this.ws.on('ping', this._pingReceived);
+    }
+
     connect = () =>
         new Promise((resolve, reject) => {
             try {
@@ -95,31 +111,10 @@ export default class ConnectorRIS extends Connector{
                 if (!this.params.noProxy && this.agent) {
                     wsOptions.agent = this.agent;
                 }
-
-                if (this.ws) {
-                    this.ws.removeAllListeners("message");
-                    this.ws.removeAllListeners("close");
-                    this.ws.removeAllListeners("error");
-                    this.ws.removeAllListeners("open");
-                    this.ws.removeAllListeners("ping");
-                    this.ws.terminate();
-                }
-
+                this.disconnect();
                 this.ws = new WebSocket(this.url, wsOptions);
+                this._appendListeners(resolve, reject);
 
-                this.ws.on('message', this._messageToJson);
-                this.ws.on('close', (error) => {
-
-                    if (this.connected) {
-                        this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
-                    } else {
-                        this._close("It was not possible to establish a connection with RIPE RIS");
-                        reject();
-                    }
-                });
-                this.ws.on('error', this._error);
-                this.ws.on('open', this._openConnect.bind(null, resolve));
-                this.ws.on('ping', this._pingReceived);
             } catch(error) {
                 this._error(error);
                 reject(error);
@@ -141,6 +136,22 @@ export default class ConnectorRIS extends Connector{
                     });
                 }
             });
+    };
+
+    _removeListeners = () => {
+        this.ws.removeAllListeners("message");
+        this.ws.removeAllListeners("close");
+        this.ws.removeAllListeners("error");
+        this.ws.removeAllListeners("open");
+        this.ws.removeAllListeners("ping");
+    };
+
+    disconnect = () => {
+        if (this.ws) {
+            this._removeListeners();
+            this.ws.terminate();
+            this._disconnect(`${this.name} disconnected`);
+        }
     };
 
     _getTimeoutReconnect = () => {
@@ -245,21 +256,49 @@ export default class ConnectorRIS extends Connector{
         }
     };
 
+    _onInputChange = (input) => {
+        this.subscribed = {};
+        this.connect()
+            .then(() => this.subscribe(input))
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: "Prefix rules reloaded"
+                });
+            })
+            .catch(error => {
+                if (error) {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                }
+            });
+    };
+
+    onInputChange = (input) => {
+        input.onChange(() => {
+            if (this._timeoutFileChange) {
+                clearTimeout(this._timeoutFileChange);
+            }
+            this._timeoutFileChange = setTimeout(() => {
+                this._onInputChange(input);
+            }, 2000);
+        });
+    };
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             this.subscription = input;
             try {
-                input.onChange(() => {
-                    this._close();
-                });
-
                 if (this.params.carefulSubscription) {
                     this._subscribeToPrefixes(input);
                     this._subscribeToASns(input);
                 } else {
                     this._subscribeToAll(input);
                 }
+
+                this.onInputChange(input);
 
                 resolve(true);
             } catch(error) {
