@@ -75,11 +75,17 @@ chown bgpalerter:bgpalerter /home/bgpalerter/upgrade.sh
 The contents of this file should be as follows:
 
 ```
-#!/bin/bash
+#!/usr/bin/env bash
 
-#Log everything
-exec 1> ./logs/upgrade.log 2>&1
-set -ex
+#If log file does not exist, create it
+if [ ! -f /home/bgpalerter/logs/upgrade.log ]; then
+  touch /home/bgpalerter/logs/upgrade.log
+  chown bgpalerter:bgpalerter /home/bgpalerter/logs/upgrade.log
+fi
+
+#Log everything if executing manually
+exec 1> /home/bgpalerter/logs/upgrade.log 2>&1
+set -vex
 PS4='+\t '
 
 #Download the latest version and save it to a temp file
@@ -137,7 +143,7 @@ systemctl status bgpalerter -l
 find -type f -name 'bgpalerter-linux-x64-*' -mtime +60 -delete
 
 #Delete log file if larger than 5MB
-find ./logs -type f -name "upgrade.log" -size +5M -delete
+find /home/bgpalerter/logs/ -type f -name "upgrade.log" -size +5M -delete
 ```
 
 Configure a cron job to run, in this case, weekly.
@@ -146,5 +152,5 @@ Configure a cron job to run, in this case, weekly.
 
 The contents of this file should be as follows:
 ```
-0 0 * * 0 /bin/bash -c "/home/bgpalerter/bgpalerter/upgrade.sh"
+0 0 * * 0 /home/bgpalerter/bgpalerter/upgrade.sh
 ```
