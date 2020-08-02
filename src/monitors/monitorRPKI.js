@@ -16,7 +16,7 @@ export default class MonitorRPKI extends Monitor {
             this.updateMonitoredResources();
         });
 
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
         this.validationQueue = [];
 
         this.loadRpkiValidator(env);

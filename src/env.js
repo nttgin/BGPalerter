@@ -84,7 +84,7 @@ let config = {
             channel: "path",
             name: "path-matching",
             params: {
-                thresholdMinPeers: 0
+                thresholdMinPeers: 1
             }
         },
         {
@@ -92,7 +92,7 @@ let config = {
             channel: "newprefix",
             name: "prefix-detection",
             params: {
-                thresholdMinPeers: 2
+                thresholdMinPeers: 3
             }
         },
         {
@@ -100,7 +100,7 @@ let config = {
             channel: "visibility",
             name: "withdrawal-detection",
             params: {
-                thresholdMinPeers: 20
+                thresholdMinPeers: 40
             }
         },
         {
@@ -108,7 +108,7 @@ let config = {
             channel: "misconfiguration",
             name: "as-monitor",
             params: {
-                thresholdMinPeers: 2
+                thresholdMinPeers: 3
             }
         },
         {
@@ -118,7 +118,7 @@ let config = {
             params: {
                 preCacheROAs: true,
                 refreshVrpListMinutes: 15,
-                thresholdMinPeers: 1,
+                thresholdMinPeers: 2,
                 checkUncovered: false
             }
         }

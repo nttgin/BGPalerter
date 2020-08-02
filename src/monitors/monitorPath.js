@@ -36,7 +36,7 @@ export default class MonitorPath extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.updateMonitoredResources();
     };
 

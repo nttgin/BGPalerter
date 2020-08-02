@@ -23,31 +23,31 @@ monitors:
     channel: newprefix
     name: prefix-detection
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
   - file: monitorPath
     channel: path
     name: path-matching
     params:
-      thresholdMinPeers: 0
+      thresholdMinPeers: 1
 
   - file: monitorVisibility
     channel: visibility
     name: withdrawal-detection
     params:
-      thresholdMinPeers: 20
+      thresholdMinPeers: 40
 
   - file: monitorAS
     channel: misconfiguration
     name: asn-monitor
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
   - file: monitorRPKI
     channel: rpki
     name: rpki-monitor
     params:
-      thresholdMinPeers: 1
+      thresholdMinPeers: 2
       checkUncovered: false
       preCacheROAs: true
       refreshVrpListMinutes: 15

@@ -37,7 +37,7 @@ export default class MonitorVisibility extends Monitor {
 
     constructor(name, channel, params, env){
         super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 10;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 40;
         if (params.threshold) {
             this.logger.log({
                 level: 'error',
