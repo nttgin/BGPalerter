@@ -33,18 +33,22 @@
 
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
+import generatePrefixes from "../generatePrefixesList";
 
 export default class Input {
 
-    constructor(config){
+    constructor(env){
         this.prefixes = [];
         this.asns = [];
         this.cache = {
             af: {},
             binaries: {}
         };
-        this.config = config;
+        this.config = env.config;
+        this.storage = env.storage;
+        this.logger = env.logger;
         this.callbacks = [];
+        this.prefixListStorageKey = 'generate-prefixes-config';
 
         setTimeout(() => {
             this.loadPrefixes()
@@ -52,11 +56,16 @@ export default class Input {
                     this._change();
                 })
                 .catch(error => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                     console.log(error);
                     process.exit();
                 });
         }, 200);
 
+        this.setReGeneratePrefixList();
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
@@ -193,7 +202,7 @@ export default class Input {
                             }
                         ])
                         .then((answer) => {
-                            const generatePrefixes = require("../generatePrefixesList");
+                            // const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
 
                             const inputParameters = {
@@ -207,10 +216,24 @@ export default class Input {
                                 debug: false,
                                 historical: false,
                                 group: null,
-                                append: false
+                                append: false,
+                                logger: null
+                            };
+
+                            if (this.config.generatePrefixListEveryDays >= 1) {
+                                return this.storage
+                                    .set(this.prefixListStorageKey, inputParameters)
+                                    .then(() => generatePrefixes(inputParameters))
+                                    .catch(error => {
+                                        this.logger.log({
+                                            level: 'error',
+                                            message: error
+                                        });
+                                    });
+                            } else {
+                                return generatePrefixes(inputParameters);
                             }
 
-                            return generatePrefixes(inputParameters);
                         });
                 } else {
                     throw new Error("Nothing to monitor.");
@@ -218,6 +241,51 @@ export default class Input {
             });
 
 
+    };
+
+    _reGeneratePrefixList = () => {
+        this.logger.log({
+            level: 'info',
+            message: "Updating prefix list"
+        });
+
+        this.storage
+            .get(this.prefixListStorageKey)
+            .then(inputParameters => {
+                inputParameters.logger = (message) => {
+                    this.logger.log({
+                        level: 'info',
+                        message
+                    });
+                };
+
+                return generatePrefixes(inputParameters);
+            })
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: "Prefix list updated. See prefixes.yml."
+                });
+                this.setReGeneratePrefixList();
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+    };
+
+    setReGeneratePrefixList = () => {
+        if (this.config.generatePrefixListEveryDays >= 1) {
+            //const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+
+            const refreshTimer = 60000;
+            if (this.regeneratePrefixListTimer) {
+                clearTimeout(this.regeneratePrefixListTimer);
+            }
+            this.regeneratePrefixListTimer = setTimeout(this._reGeneratePrefixList, refreshTimer);
+        }
     };
 
 }

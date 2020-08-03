@@ -38,12 +38,12 @@ import { AS } from "../model";
 
 export default class InputYml extends Input {
 
-    constructor(config){
-        super(config);
+    constructor(env){
+        super(env);
         this.prefixes = [];
         this.asns = [];
 
-        if (!config.monitoredPrefixesFiles || config.monitoredPrefixesFiles.length === 0) {
+        if (!this.config.monitoredPrefixesFiles || this.config.monitoredPrefixesFiles.length === 0) {
             throw new Error("The monitoredPrefixesFiles key is missing in the config file");
         }
     };
@@ -66,7 +66,10 @@ export default class InputYml extends Input {
                     return this._change();
                 })
                 .catch(error => {
-                    console.log(error);
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                     process.exit();
                 });
         });

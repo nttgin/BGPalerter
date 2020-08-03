@@ -162,7 +162,8 @@ switch(params._[0]) {
             debug,
             historical,
             group: params.g,
-            append: !!params.A
+            append: !!params.A,
+            logger: null
         };
 
         generatePrefixes(inputParameters);

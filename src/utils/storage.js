@@ -3,7 +3,7 @@ export default class Storage {
     constructor(params, config){
         this.config = config;
         this.params = params;
-        this.validity = (this.params.validitySeconds || 3600 * 2) * 1000;
+        this.validity = (this.params.validitySeconds ? (this.params.validitySeconds * 1000) : null) || Infinity;
     };
 
     set = (key, value) => {

@@ -4,8 +4,8 @@ import fs from "fs";
 
 export default class MonitorRPKI extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
 
         this.providers = [ "ntt", "ripe", "external"]; // First provider is the default one
 

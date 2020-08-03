@@ -59,9 +59,9 @@ describe("Prefix List", function() {
             debug: false,
             historical: false,
             group: null,
-            append: false
+            append: false,
+            logger: () => {}
         }
-        console.log = function(){};
         generatePrefixes(inputParameters)
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');
@@ -94,9 +94,10 @@ describe("Prefix List", function() {
             debug: false,
             historical: false,
             group: "test",
-            append: false
+            append: false,
+            logger: () => {}
         }
-        console.log = function(){};
+
         generatePrefixes(inputParameters)
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');

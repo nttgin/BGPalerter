@@ -223,7 +223,7 @@ reports:
 #       Persist the status of BGPalerter. If the process is restarted, the list of alerts already sent is recovered
 #       and they are not repeated. The process must be able to write on disc, this option will create a file inside .cache/
 
-notificationIntervalSeconds: 14400
+notificationIntervalSeconds: 86400
 persistStatus: true
 
 logging:
@@ -235,6 +235,7 @@ logging:
   compressOnRotation: false
   
 checkForUpdatesAtBoot: true
+generatePrefixListEveryDays: 2
 
 ############################
 # Process monitoring settings:

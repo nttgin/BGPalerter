@@ -35,8 +35,8 @@ import fs from "fs";
 import path from "path";
 import PubSub from './utils/pubSub';
 import FileLogger from './utils/fileLogger';
-import Input from "./inputs/inputYml";
 import {version} from '../package.json';
+import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';
 
@@ -299,18 +299,9 @@ if (config.httpProxy) {
     vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
 }
 
-if (!!config.persistStatus) {
-    const Storage = require("./utils/storages/storageFile").default;
-    vector.storage = new Storage({
-        validitySeconds: config.notificationIntervalSeconds,
-    }, config);
-}
-
-const input = new Input(config);
-
+vector.storage = new Storage({}, config);
 vector.config = config;
 vector.logger = wlogger;
-vector.input = input;
 vector.pubSub = new PubSub();
 
 module.exports = vector;

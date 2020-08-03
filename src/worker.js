@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import LossyBuffer from "./utils/lossyBuffer";
+import Input from "./inputs/inputYml";
 import cluster from "cluster";
 import fs from "fs";
 
@@ -40,31 +40,35 @@ export default class Worker {
         global.EXTERNAL_VOLUME_DIRECTORY = global.EXTERNAL_VOLUME_DIRECTORY || volume;
 
         const env = require("./env");
-        const Consumer = require("./consumer").default;
 
         this.config = env.config;
         this.logger = env.logger;
-        this.input = env.input;
+        this.input = new Input(env);
         this.pubSub = env.pubSub;
         this.version = env.version;
         this.configFile = env.configFile;
 
         if (!this.config.multiProcess) {
+            const Consumer = require("./consumer").default;
 
             this.master();
-            new Consumer();
+            new Consumer(env, this.input);
 
         } else {
             if (cluster.isMaster) {
                 this.master(cluster.fork());
             } else {
-                new Consumer();
+                const Consumer = require("./consumer").default;
+                new Consumer(env, this.input);
             }
         }
 
     };
 
     master = (worker) => {
+        const LossyBuffer = require("./utils/lossyBuffer").default;
+        const ConnectorFactory = require("./connectorFactory").default;
+
         console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
         console.log("Loaded config:", this.configFile);
 
@@ -80,7 +84,6 @@ export default class Worker {
             }
         }
 
-        const ConnectorFactory = require("./connectorFactory").default;
         const connectorFactory = new ConnectorFactory();
 
         if (this.config.uptimeMonitor) {
@@ -101,7 +104,8 @@ export default class Worker {
         this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
         const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond /(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
-        return connectorFactory.connectConnectors(this.input)
+        return connectorFactory
+            .connectConnectors(this.input)
             .then(() => {
                 for (const connector of connectorFactory.getConnectors()) {
 

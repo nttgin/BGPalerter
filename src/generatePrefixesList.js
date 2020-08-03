@@ -22,8 +22,11 @@ module.exports = function generatePrefixes(inputParameters) {
         debug,
         historical,
         group,
-        append
+        append,
+        logger
     } = inputParameters;
+
+    logger = logger || console.log;
 
     const generateList = {};
     const allOrigins = {};
@@ -35,7 +38,7 @@ module.exports = function generatePrefixes(inputParameters) {
     }
 
     if (historical) {
-        console.log("WARNING: you are using historical visibility data for generating the prefix list.");
+        logger("WARNING: you are using historical visibility data for generating the prefix list.");
     }
 
     if (!asnList && !prefixes) {
@@ -73,7 +76,7 @@ module.exports = function generatePrefixes(inputParameters) {
         });
 
         if (debug) {
-            console.log("Query", url)
+            logger("Query", url)
         }
 
         return axios({
@@ -91,13 +94,13 @@ module.exports = function generatePrefixes(inputParameters) {
                 return asns;
             })
             .catch((error) => {
-                console.log(error);
-                console.log("RIPEstat prefix-overview query failed: cannot retrieve information for " + prefix);
+                logger(error);
+                logger(`RIPEstat prefix-overview query failed: cannot retrieve information for ${prefix}`);
             });
     };
 
     const getAnnouncedMoreSpecifics = (prefix) => {
-        console.log("Generating monitoring rule for", prefix);
+        logger(`Generating monitoring rule for ${prefix}`);
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
             params: {
@@ -107,7 +110,7 @@ module.exports = function generatePrefixes(inputParameters) {
         });
 
         if (debug) {
-            console.log("Query", url)
+            logger(`Query ${url}`);
         }
 
         return axios({
@@ -122,7 +125,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     prefixes = data.data.data.prefixes
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
-                            console.log("Detected more specific " + i.prefix);
+                            logger(`Detected more specific ${i.prefix}`);
                             return {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
@@ -134,7 +137,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 return prefixes;
             })
             .catch(() => {
-                console.log("RIPEstat related-prefixes query failed: cannot retrieve information for " + prefix);
+                logger(`RIPEstat related-prefixes query failed: cannot retrieve information for ${prefix}`);
             });
 
     };
@@ -169,10 +172,10 @@ module.exports = function generatePrefixes(inputParameters) {
             }
         });
 
-        console.log(`Getting announced prefixes of AS${asn}`);
+        logger(`Getting announced prefixes of AS${asn}`);
 
         if (debug) {
-            console.log("Query", url)
+            logger(`Query ${url}`);
         }
 
         return axios({
@@ -202,7 +205,7 @@ module.exports = function generatePrefixes(inputParameters) {
             })
             .then(list => {
                 if (list.length === 0) {
-                    console.log(`WARNING: no announced prefixes were detected for AS${asn}. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.`);
+                    logger(`WARNING: no announced prefixes were detected for AS${asn}. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.`);
                 }
                 return list;
             })
@@ -227,14 +230,14 @@ module.exports = function generatePrefixes(inputParameters) {
                     // All good
                 } else if (isValid === false) {
                     delete generateList[prefix];
-                    console.log("RPKI invalid:", prefix, asn);
+                    logger(`RPKI invalid: ${prefix} ${asn}`);
                 } else {
                     generateList[prefix].description += ' (No ROA available)';
                     someNotValidatedPrefixes = true;
                 }
             })
             .catch((error) => {
-                console.log("RPKI validation query failed: cannot retrieve information for " + prefix);
+                logger(`RPKI validation query failed: cannot retrieve information for ${prefix}`);
             });
     };
 
@@ -252,7 +255,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     .then(plist => prefixes = prefixes.concat(plist));
             })
                 .then(() => {
-                    console.log(`Total prefixes detected: ${prefixes.length}`);
+                    logger(`Total prefixes detected: ${prefixes.length}`);
                     return prefixes;
                 });
         }
@@ -297,18 +300,18 @@ module.exports = function generatePrefixes(inputParameters) {
                         });
                     })
                     .catch((e) => {
-                        console.log("Cannot download more specific prefixes of", prefix, e);
+                        logger(`Cannot download more specific prefixes of ${prefix} ${e}`);
                     })
             })
                 .catch((e) => {
-                    console.log("Cannot download more specific prefixes", e);
+                    logger(`Cannot download more specific prefixes ${e}`);
                 })
         })
         .then(() => rpki.preCache())
         .then(() => { // Check
             return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
-                    console.log("ROA check failed due to error", e);
+                    logger(`ROA check failed due to error ${e}`);
                 })
         })
         .then(() => { // Add the options for monitorASns
@@ -317,7 +320,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 generateList.options = generateList.options || {};
                 generateList.options.monitorASns = generateList.options.monitorASns || {};
                 for (let monitoredAs of list) {
-                    console.log("Generating generic monitoring rule for AS", monitoredAs);
+                    logger(`Generating generic monitoring rule for AS${monitoredAs}`);
                     generateList.options.monitorASns[monitoredAs] = {
                         group: group || "default"
                     };
@@ -330,22 +333,21 @@ module.exports = function generatePrefixes(inputParameters) {
             }
             // Otherwise nothing
         })
+        .then(() => {
+            if (someNotValidatedPrefixes) {
+                logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
+            }
+        })
         .then(() => { // write everything into the file
 
-            if (append) {
-                const finalList = getCurrentPrefixes(outputFile, generateList);
-                fs.writeFileSync(outputFile, yaml.dump(finalList));
-            } else {
-                fs.writeFileSync(outputFile, yaml.dump(generateList));
-            }
+            const list = (append) ? getCurrentPrefixes(outputFile, generateList) : generateList;
 
-            if (someNotValidatedPrefixes) {
-                console.log("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
-            }
-            console.log("Done!");
+            fs.writeFileSync(outputFile, yaml.dump(list));
+
+            logger("Done!");
         })
         .catch((e) => {
-            console.log("Something went wrong", e);
+            logger(`Something went wrong ${e}`);
         })
 
 };
