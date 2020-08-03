@@ -220,7 +220,7 @@ export default class Input {
                                 logger: null
                             };
 
-                            if (this.config.generatePrefixListEveryDays >= 1) {
+                            if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
                                 return this.storage
                                     .set(this.prefixListStorageKey, inputParameters)
                                     .then(() => generatePrefixes(inputParameters))
@@ -252,14 +252,19 @@ export default class Input {
         this.storage
             .get(this.prefixListStorageKey)
             .then(inputParameters => {
-                inputParameters.logger = (message) => {
-                    this.logger.log({
-                        level: 'info',
-                        message
-                    });
-                };
 
-                return generatePrefixes(inputParameters);
+                if (inputParameters && Object.keys(inputParameters).length > 0) {
+                    inputParameters.logger = (message) => {
+                        this.logger.log({
+                            level: 'info',
+                            message
+                        });
+                    };
+
+                    return generatePrefixes(inputParameters);
+                } else {
+                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
+                }
             })
             .then(() => {
                 this.logger.log({
@@ -277,10 +282,9 @@ export default class Input {
     };
 
     setReGeneratePrefixList = () => {
-        if (this.config.generatePrefixListEveryDays >= 1) {
-            //const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+        if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
+            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
 
-            const refreshTimer = 60000;
             if (this.regeneratePrefixListTimer) {
                 clearTimeout(this.regeneratePrefixListTimer);
             }
