@@ -36,7 +36,7 @@ const yaml = require("js-yaml");
 const chaiSubset = require('chai-subset');
 const generatePrefixes = require('../../src/generatePrefixesList');
 const expect = chai.expect;
-const asyncTimeout = 60000;
+const asyncTimeout = 120000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/generate_tests/config.test.yml";
@@ -63,6 +63,9 @@ describe("Prefix List", function() {
             logger: () => {}
         }
         generatePrefixes(inputParameters)
+            .then(content => {
+                fs.writeFileSync(outputFile, yaml.dump(content));
+            })
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');
                 fs.unlinkSync(outputFile);
@@ -99,6 +102,54 @@ describe("Prefix List", function() {
         }
 
         generatePrefixes(inputParameters)
+            .then(content => {
+                fs.writeFileSync(outputFile, yaml.dump(content));
+            })
+            .then(() => {
+                const result = fs.readFileSync(outputFile, 'utf8');
+                fs.unlinkSync(outputFile);
+                const original = fs.readFileSync(originalFile, 'utf8');
+                const resultJson = yaml.safeLoad(result) || {};
+                const originalJson = yaml.safeLoad(original) || {};
+
+                expect(resultJson).to.contain.keys(Object.keys(originalJson));
+                expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);
+
+                expect(resultJson).to.containSubset(originalJson);
+                done();
+            });
+    }).timeout(asyncTimeout);
+
+    it("generate file - append - no exclude", function (done) {
+        const asns = ["3333"];
+        const outputFile = "tests/generate_tests/prefixes.yml";
+        const initialFile = "tests/generate_tests/prefixes.initial.append.yml";
+        fs.copyFileSync(initialFile, outputFile);
+        const originalFile = "tests/generate_tests/prefixes.final.append.yml";
+
+        const inputParameters = {
+            asnList: asns,
+            outputFile,
+            exclude: [],
+            excludeDelegated: true,
+            prefixes: null,
+            monitoredASes: asns,
+            httpProxy: null,
+            debug: false,
+            historical: false,
+            group: "test",
+            append: true,
+            logger: () => {},
+            getCurrentPrefixesList: () => {
+                const content = yaml.safeLoad(fs.readFileSync(outputFile, "utf8"));
+                return Promise.resolve(content);
+            }
+        }
+
+        generatePrefixes(inputParameters)
+            .then(content => {
+                fs.writeFileSync(outputFile, yaml.dump(content));
+            })
             .then(() => {
                 const result = fs.readFileSync(outputFile, 'utf8');
                 fs.unlinkSync(outputFile);
