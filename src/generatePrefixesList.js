@@ -1,10 +1,8 @@
 import axios from "axios";
 import url from "url";
 import brembo from "brembo";
-import yaml from "js-yaml";
 import batchPromises from "batch-promises";
 import RpkiValidator from "rpki-validator";
-import fs from "fs";
 import { AS } from "./model";
 const apiTimeout = 120000;
 const clientId = "ntt-bgpalerter"
@@ -13,7 +11,6 @@ const rpki = new RpkiValidator({clientId});
 module.exports = function generatePrefixes(inputParameters) {
     let {
         asnList,
-        outputFile,
         exclude,
         excludeDelegated,
         prefixes,
@@ -23,7 +20,8 @@ module.exports = function generatePrefixes(inputParameters) {
         historical,
         group,
         append,
-        logger
+        logger,
+        getCurrentPrefixesList
     } = inputParameters;
 
     logger = logger || console.log;
@@ -47,10 +45,6 @@ module.exports = function generatePrefixes(inputParameters) {
 
     if (asnList && prefixes) {
         throw new Error("You can specify an AS number or a list of prefixes, not both.");
-    }
-
-    if (!outputFile) {
-        throw new Error("Output file not specified");
     }
 
     if (asnList && asnList.length) {
@@ -261,9 +255,7 @@ module.exports = function generatePrefixes(inputParameters) {
         }
     };
 
-    const getCurrentPrefixes = (outputFile, yamlContent) => {
-        const content = fs.readFileSync(outputFile, 'utf8');
-        const current = yaml.safeLoad(content) || {};
+    const mergeCurrentPrefixes = (current, yamlContent) => {
 
         function isObject (item) {
             return (item && typeof item === 'object' && !Array.isArray(item));
@@ -338,13 +330,17 @@ module.exports = function generatePrefixes(inputParameters) {
                 logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
             }
         })
-        .then(() => { // write everything into the file
-
-            const list = (append) ? getCurrentPrefixes(outputFile, generateList) : generateList;
-
-            fs.writeFileSync(outputFile, yaml.dump(list));
-
+        .then(() => {
+            return (append)
+                ? getCurrentPrefixesList()
+                    .then(current => {
+                        return mergeCurrentPrefixes(current, generateList)
+                    })
+                : generateList;
+        })
+        .then(list => {
             logger("Done!");
+            return list;
         })
         .catch((e) => {
             logger(`Something went wrong ${e}`);

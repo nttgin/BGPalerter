@@ -158,8 +158,12 @@ export default class Input {
         throw new Error('The method loadPrefixes MUST be implemented');
     };
 
-    save = () => {
+    save = (data) => {
         throw new Error('The method save MUST be implemented');
+    };
+
+    retrieve = () => {
+        throw new Error('The method retrieve MUST be implemented');
     };
 
     generate = () => {
@@ -202,12 +206,10 @@ export default class Input {
                             }
                         ])
                         .then((answer) => {
-                            // const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
 
                             const inputParameters = {
                                 asnList: asns,
-                                outputFile: this.config.volume + "prefixes.yml",
                                 exclude: [],
                                 excludeDelegated: answer.i,
                                 prefixes: null,
@@ -217,19 +219,16 @@ export default class Input {
                                 historical: false,
                                 group: null,
                                 append: false,
-                                logger: null
+                                logger: null,
+                                getCurrentPrefixesList: () => {
+                                    return this.retrieve();
+                                }
                             };
 
                             if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
                                 return this.storage
                                     .set(this.prefixListStorageKey, inputParameters)
-                                    .then(() => generatePrefixes(inputParameters))
-                                    .catch(error => {
-                                        this.logger.log({
-                                            level: 'error',
-                                            message: error
-                                        });
-                                    });
+                                    .then(() => generatePrefixes(inputParameters));
                             } else {
                                 return generatePrefixes(inputParameters);
                             }
@@ -238,9 +237,14 @@ export default class Input {
                 } else {
                     throw new Error("Nothing to monitor.");
                 }
+            })
+            .then(this.save)
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
             });
-
-
     };
 
     _reGeneratePrefixList = () => {
@@ -269,7 +273,7 @@ export default class Input {
             .then(() => {
                 this.logger.log({
                     level: 'info',
-                    message: "Prefix list updated. See prefixes.yml."
+                    message: `Prefix list updated.`
                 });
                 this.setReGeneratePrefixList();
             })

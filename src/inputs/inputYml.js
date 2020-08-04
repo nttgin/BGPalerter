@@ -49,7 +49,8 @@ export default class InputYml extends Input {
     };
 
     loadPrefixes = () => {
-        if (!fs.existsSync(this.config.volume + this.config.monitoredPrefixesFiles[0])) {
+        this.defaultPrefixFile = this.config.volume + this.config.monitoredPrefixesFiles[0];
+        if (!fs.existsSync(this.defaultPrefixFile)) {
             return this.generate()
                 .then(() => this._loadPrefixes());
         }
@@ -269,7 +270,12 @@ export default class InputYml extends Input {
         return this.asns;
     };
 
-    save = () =>
+    save = (content) => {
+        fs.writeFileSync(this.defaultPrefixFile, yaml.dump(content));
+        return Promise.resolve();
+    };
+
+    retrieve = () =>
         new Promise((resolve, reject) => {
             const prefixes = {};
             for (let rule of this.prefixes) {
@@ -299,7 +305,6 @@ export default class InputYml extends Input {
                 };
             }
 
-            fs.writeFileSync("prefixes.yml", yaml.dump({ ...prefixes, ...options }));
-            resolve(true)
+            resolve({ ...prefixes, ...options });
         });
 }
