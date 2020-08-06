@@ -21,7 +21,8 @@ module.exports = function generatePrefixes(inputParameters) {
         group,
         append,
         logger,
-        getCurrentPrefixesList
+        getCurrentPrefixesList,
+        enriched
     } = inputParameters;
 
     logger = logger || console.log;
@@ -220,6 +221,10 @@ module.exports = function generatePrefixes(inputParameters) {
         return rpki
             .validate(prefix, asn, false)
             .then(isValid => {
+                if (enriched) {
+                    generateList[prefix].valid = isValid;
+                }
+
                 if (isValid === true) {
                     // All good
                 } else if (isValid === false) {

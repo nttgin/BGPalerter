@@ -253,6 +253,8 @@ export default class Input {
             message: "Updating prefix list"
         });
 
+        this.setReGeneratePrefixList();
+
         this.storage
             .get(this.prefixListStorageKey)
             .then(inputParameters => {
@@ -265,17 +267,58 @@ export default class Input {
                         });
                     };
 
-                    return generatePrefixes(inputParameters);
+                    return this.retrieve()
+                        .then(oldPrefixList => {
+                            return generatePrefixes(inputParameters)
+                                .then(newPrefixList => {
+
+                                    const newPrefixes = [];
+                                    const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))];
+                                    const asns = [...new Set(Object
+                                        .values(oldPrefixList)
+                                        .map(i => i.asn)
+                                        .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
+
+                                    for (let prefix of uniquePrefixes) {
+                                        const oldPrefix = oldPrefixList[prefix];
+                                        const newPrefix = newPrefixList[prefix];
+
+                                        // The prefix didn't exist
+                                        if (newPrefix && !oldPrefix) {
+                                            // The prefix is not RPKI valid
+                                            if (!newPrefix.valid) {
+                                                // The prefix is not announced by a monitored ASn
+                                                if (!newPrefix.asn.some(p => asns.includes(p))) {
+                                                    newPrefixes.push(prefix);
+                                                    delete newPrefixList[prefix];
+                                                }
+                                            }
+                                        }
+
+                                    }
+
+                                    if (newPrefixes.length) {
+                                        this.logger.log({
+                                            level: 'info',
+                                            message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                                        });
+                                    }
+
+                                    return newPrefixList;
+                                });
+                        });
+
+
                 } else {
                     throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
                 }
             })
+            .then(this.save)
             .then(() => {
                 this.logger.log({
                     level: 'info',
                     message: `Prefix list updated.`
                 });
-                this.setReGeneratePrefixList();
             })
             .catch(error => {
                 this.logger.log({
@@ -287,7 +330,8 @@ export default class Input {
 
     setReGeneratePrefixList = () => {
         if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
-            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+            // const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+            const refreshTimer = 20000;
 
             if (this.regeneratePrefixListTimer) {
                 clearTimeout(this.regeneratePrefixListTimer);
