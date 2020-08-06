@@ -118,7 +118,7 @@ let config = {
             params: {
                 preCacheROAs: true,
                 refreshVrpListMinutes: 15,
-                thresholdMinPeers: 2,
+                thresholdMinPeers: 1,
                 checkUncovered: false
             }
         }
