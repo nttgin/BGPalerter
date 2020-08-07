@@ -214,7 +214,7 @@ export default class Input {
                                 excludeDelegated: answer.i,
                                 prefixes: null,
                                 monitoredASes: answer.m ? asns : [],
-                                httpProxy: null,
+                                httpProxy: this.config.httpProxy || null,
                                 debug: false,
                                 historical: false,
                                 group: null,
@@ -330,8 +330,7 @@ export default class Input {
 
     setReGeneratePrefixList = () => {
         if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
-            // const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
-            const refreshTimer = 20000;
+            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
 
             if (this.regeneratePrefixListTimer) {
                 clearTimeout(this.regeneratePrefixListTimer);
