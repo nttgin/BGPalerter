@@ -193,13 +193,6 @@ export default class Input {
 
                             {
                                 type: 'confirm',
-                                name: 'i',
-                                message: "Are there sub-prefixes delegated to other ASes? (e.g. sub-prefixes announced by customers)",
-                                default: true
-                            },
-
-                            {
-                                type: 'confirm',
                                 name: 'm',
                                 message: "Do you want to be notified when your AS is announcing a new prefix?",
                                 default: true
@@ -211,7 +204,7 @@ export default class Input {
                             const inputParameters = {
                                 asnList: asns,
                                 exclude: [],
-                                excludeDelegated: answer.i,
+                                excludeDelegated: true,
                                 prefixes: null,
                                 monitoredASes: answer.m ? asns : [],
                                 httpProxy: this.config.httpProxy || null,
