@@ -33,18 +33,22 @@
 
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
+import generatePrefixes from "../generatePrefixesList";
 
 export default class Input {
 
-    constructor(config){
+    constructor(env){
         this.prefixes = [];
         this.asns = [];
         this.cache = {
             af: {},
             binaries: {}
         };
-        this.config = config;
+        this.config = env.config;
+        this.storage = env.storage;
+        this.logger = env.logger;
         this.callbacks = [];
+        this.prefixListStorageKey = 'generate-prefixes-config';
 
         setTimeout(() => {
             this.loadPrefixes()
@@ -52,11 +56,16 @@ export default class Input {
                     this._change();
                 })
                 .catch(error => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                     console.log(error);
                     process.exit();
                 });
         }, 200);
 
+        this.setReGeneratePrefixList();
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
@@ -149,8 +158,12 @@ export default class Input {
         throw new Error('The method loadPrefixes MUST be implemented');
     };
 
-    save = () => {
+    save = (data) => {
         throw new Error('The method save MUST be implemented');
+    };
+
+    retrieve = () => {
+        throw new Error('The method retrieve MUST be implemented');
     };
 
     generate = () => {
@@ -193,31 +206,126 @@ export default class Input {
                             }
                         ])
                         .then((answer) => {
-                            const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
 
                             const inputParameters = {
                                 asnList: asns,
-                                outputFile: this.config.volume + "prefixes.yml",
                                 exclude: [],
                                 excludeDelegated: answer.i,
                                 prefixes: null,
                                 monitoredASes: answer.m ? asns : [],
-                                httpProxy: null,
+                                httpProxy: this.config.httpProxy || null,
                                 debug: false,
                                 historical: false,
                                 group: null,
-                                append: false
-                            }
+                                append: false,
+                                logger: null,
+                                getCurrentPrefixesList: () => {
+                                    return this.retrieve();
+                                }
+                            };
 
                             return generatePrefixes(inputParameters);
+
                         });
                 } else {
                     throw new Error("Nothing to monitor.");
                 }
+            })
+            .then(this.save)
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
             });
+    };
 
+    _reGeneratePrefixList = () => {
+        this.logger.log({
+            level: 'info',
+            message: "Updating prefix list"
+        });
 
+        this.setReGeneratePrefixList();
+
+        return this.retrieve()
+            .then(oldPrefixList => {
+                const inputParameters = oldPrefixList.options.generate;
+                inputParameters.httpProxy = this.config.httpProxy || null;
+
+                if (!inputParameters) {
+                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
+                }
+
+                inputParameters.logger = (message) => {
+                    this.logger.log({
+                        level: 'info',
+                        message
+                    });
+                };
+
+                return generatePrefixes(inputParameters)
+                    .then(newPrefixList => {
+
+                        const newPrefixes = [];
+                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))];
+                        const asns = [...new Set(Object
+                            .values(oldPrefixList)
+                            .map(i => i.asn)
+                            .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
+
+                        for (let prefix of uniquePrefixes) {
+                            const oldPrefix = oldPrefixList[prefix];
+                            const newPrefix = newPrefixList[prefix];
+
+                            // The prefix didn't exist
+                            if (newPrefix && !oldPrefix) {
+                                // The prefix is not RPKI valid
+                                if (!newPrefix.valid) {
+                                    // The prefix is not announced by a monitored ASn
+                                    if (!newPrefix.asn.some(p => asns.includes(p))) {
+                                        newPrefixes.push(prefix);
+                                        delete newPrefixList[prefix];
+                                    }
+                                }
+                            }
+
+                        }
+
+                        if (newPrefixes.length) {
+                            this.logger.log({
+                                level: 'info',
+                                message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                            });
+                        }
+
+                        return newPrefixList;
+                    });
+            })
+            .then(this.save)
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: `Prefix list updated.`
+                });
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+    };
+
+    setReGeneratePrefixList = () => {
+        if (this.config.generatePrefixListEveryDays >= 1) {
+            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+            if (this.regeneratePrefixListTimer) {
+                clearTimeout(this.regeneratePrefixListTimer);
+            }
+            this.regeneratePrefixListTimer = setTimeout(this._reGeneratePrefixList, refreshTimer);
+        }
     };
 
 }

@@ -34,8 +34,8 @@ import Monitor from "./monitor";
 
 export default class MonitorPath extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.updateMonitoredResources();
     };

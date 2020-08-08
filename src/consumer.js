@@ -30,11 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import env from "./env";
-
 export default class Consumer {
 
-    constructor(){
+    constructor(env, input){
+        this.logger = env.logger;
         this.connectors = {};
 
         for (let connector of env.config.connectors) {
@@ -44,13 +43,13 @@ export default class Consumer {
         try {
 
             this.monitors = env.config.monitors
-                .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params || {}, env));
+                .map(monitor => new monitor.class(monitor.name, monitor.channel, monitor.params || {}, env, input));
 
             this.reports = env.config.reports
                 .map(report => new report.class(report.channels, report.params || {}, env));
 
         } catch (error) {
-            env.logger.log({
+            this.logger.log({
                 level: 'error',
                 message: error
             });
@@ -79,7 +78,7 @@ export default class Consumer {
                         monitor
                             .monitor(message)
                             .catch(error => {
-                                env.logger.log({
+                                this.logger.log({
                                     level: 'error',
                                     message: error
                                 });
@@ -88,7 +87,7 @@ export default class Consumer {
                 }
             }
         } catch (error) {
-            env.logger.log({
+            this.logger.log({
                 level: 'error',
                 message: error.message
             });

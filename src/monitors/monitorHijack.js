@@ -35,8 +35,8 @@ import ipUtils from "ip-sub";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
         this.updateMonitoredResources();
     };

@@ -257,7 +257,6 @@ export default class ConnectorRIS extends Connector {
     };
 
     _onInputChange = (input) => {
-        this.subscribed = {};
         this.connect()
             .then(() => this.subscribe(input))
             .then(() => {

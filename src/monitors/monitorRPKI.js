@@ -4,8 +4,8 @@ import fs from "fs";
 
 export default class MonitorRPKI extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
 
         this.providers = [ "ntt", "ripe", "external"]; // First provider is the default one
 
@@ -16,7 +16,7 @@ export default class MonitorRPKI extends Monitor {
             this.updateMonitoredResources();
         });
 
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.validationQueue = [];
 
         this.loadRpkiValidator(env);

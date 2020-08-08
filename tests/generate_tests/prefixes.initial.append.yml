@@ -1,0 +1,11 @@
+1.1.1.1/23:
+  description: No description provided
+  asn:
+    - 2222
+  ignoreMorespecifics: false
+  ignore: false
+  group: default
+options:
+  monitorASns:
+    '2222':
+      group: default

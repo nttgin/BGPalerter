@@ -31,6 +31,8 @@
  */
 
 import yargs from 'yargs';
+import fs from "fs";
+import yaml from "js-yaml";
 
 const params = yargs
     .usage('Usage: $0 <command> [options]')
@@ -154,18 +156,31 @@ switch(params._[0]) {
         const inputParameters = {
             asnList: (params.a) ? params.a.toString().split(",") : null,
             outputFile: params.o,
-            exclude: (params.e || "").split(","),
+            exclude: (params.e) ? params.e.toString().split(",") : null,
             excludeDelegated: params.i || false,
             prefixes,
             monitoredASes,
             httpProxy: params.x || null,
             debug,
             historical,
-            group: params.g,
-            append: !!params.A
+            group: params.g || null,
+            append: !!params.A,
+            logger: null,
+            getCurrentPrefixesList: () => {
+                const content = JSON.parse( yaml.safeLoad(fs.readFileSync(params.o, "utf8")) || {});
+                return Promise.resolve(content);
+            }
         };
 
-        generatePrefixes(inputParameters);
+        if (!inputParameters.outputFile) {
+            throw new Error("Output file not specified");
+        }
+
+        generatePrefixes(inputParameters)
+            .then(content => {
+                fs.writeFileSync(params.o, yaml.dump(content));
+                process.exit(0);
+            });
 
         break;
 
