@@ -25,6 +25,7 @@ module.exports = function generatePrefixes(inputParameters) {
         enriched
     } = inputParameters;
 
+    exclude = exclude || [];
     logger = logger || console.log;
 
     const generateList = {};
@@ -194,7 +195,6 @@ module.exports = function generatePrefixes(inputParameters) {
                                 return latest.getTime() + (3600 * 24 * 1000) > new Date().getTime();
                             }
                         })
-
                 }
                 return [];
             })
@@ -216,8 +216,6 @@ module.exports = function generatePrefixes(inputParameters) {
     };
 
     const validatePrefix = (asn, prefix) => {
-
-
         return rpki
             .validate(prefix, asn, false)
             .then(isValid => {
@@ -345,6 +343,16 @@ module.exports = function generatePrefixes(inputParameters) {
         })
         .then(list => {
             logger("Done!");
+            const options = {
+                asnList,
+                exclude,
+                excludeDelegated,
+                prefixes,
+                monitoredASes,
+                historical,
+                group
+            };
+            list.options = Object.assign({}, list.options, { generate: options });
             return list;
         })
         .catch((e) => {

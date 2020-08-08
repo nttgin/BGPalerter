@@ -225,13 +225,7 @@ export default class Input {
                                 }
                             };
 
-                            if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
-                                return this.storage
-                                    .set(this.prefixListStorageKey, inputParameters)
-                                    .then(() => generatePrefixes(inputParameters));
-                            } else {
-                                return generatePrefixes(inputParameters);
-                            }
+                            return generatePrefixes(inputParameters);
 
                         });
                 } else {
@@ -255,63 +249,58 @@ export default class Input {
 
         this.setReGeneratePrefixList();
 
-        this.storage
-            .get(this.prefixListStorageKey)
-            .then(inputParameters => {
+        return this.retrieve()
+            .then(oldPrefixList => {
+                const inputParameters = oldPrefixList.options.generate;
 
-                if (inputParameters && Object.keys(inputParameters).length > 0) {
-                    inputParameters.logger = (message) => {
-                        this.logger.log({
-                            level: 'info',
-                            message
-                        });
-                    };
-
-                    return this.retrieve()
-                        .then(oldPrefixList => {
-                            return generatePrefixes(inputParameters)
-                                .then(newPrefixList => {
-
-                                    const newPrefixes = [];
-                                    const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))];
-                                    const asns = [...new Set(Object
-                                        .values(oldPrefixList)
-                                        .map(i => i.asn)
-                                        .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
-
-                                    for (let prefix of uniquePrefixes) {
-                                        const oldPrefix = oldPrefixList[prefix];
-                                        const newPrefix = newPrefixList[prefix];
-
-                                        // The prefix didn't exist
-                                        if (newPrefix && !oldPrefix) {
-                                            // The prefix is not RPKI valid
-                                            if (!newPrefix.valid) {
-                                                // The prefix is not announced by a monitored ASn
-                                                if (!newPrefix.asn.some(p => asns.includes(p))) {
-                                                    newPrefixes.push(prefix);
-                                                    delete newPrefixList[prefix];
-                                                }
-                                            }
-                                        }
-
-                                    }
-
-                                    if (newPrefixes.length) {
-                                        this.logger.log({
-                                            level: 'info',
-                                            message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
-                                        });
-                                    }
-
-                                    return newPrefixList;
-                                });
-                        });
-
-
-                } else {
+                if (!inputParameters) {
                     throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
                 }
+
+                inputParameters.logger = (message) => {
+                    this.logger.log({
+                        level: 'info',
+                        message
+                    });
+                };
+
+                return generatePrefixes(inputParameters)
+                    .then(newPrefixList => {
+
+                        const newPrefixes = [];
+                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))];
+                        const asns = [...new Set(Object
+                            .values(oldPrefixList)
+                            .map(i => i.asn)
+                            .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
+
+                        for (let prefix of uniquePrefixes) {
+                            const oldPrefix = oldPrefixList[prefix];
+                            const newPrefix = newPrefixList[prefix];
+
+                            // The prefix didn't exist
+                            if (newPrefix && !oldPrefix) {
+                                // The prefix is not RPKI valid
+                                if (!newPrefix.valid) {
+                                    // The prefix is not announced by a monitored ASn
+                                    if (!newPrefix.asn.some(p => asns.includes(p))) {
+                                        newPrefixes.push(prefix);
+                                        delete newPrefixList[prefix];
+                                    }
+                                }
+                            }
+
+                        }
+
+                        if (newPrefixes.length) {
+                            this.logger.log({
+                                level: 'info',
+                                message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                            });
+                        }
+
+                        return newPrefixList;
+                    });
             })
             .then(this.save)
             .then(() => {
@@ -329,7 +318,7 @@ export default class Input {
     };
 
     setReGeneratePrefixList = () => {
-        if (this.config.generatePrefixListEveryDays >= 1 && this.storage) {
+        if (this.config.generatePrefixListEveryDays >= 1) {
             const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
 
             if (this.regeneratePrefixListTimer) {

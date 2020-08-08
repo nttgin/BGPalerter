@@ -156,14 +156,14 @@ switch(params._[0]) {
         const inputParameters = {
             asnList: (params.a) ? params.a.toString().split(",") : null,
             outputFile: params.o,
-            exclude: (params.e || "").split(","),
+            exclude: (params.e) ? params.e.toString().split(",") : null,
             excludeDelegated: params.i || false,
             prefixes,
             monitoredASes,
             httpProxy: params.x || null,
             debug,
             historical,
-            group: params.g,
+            group: params.g || null,
             append: !!params.A,
             logger: null,
             getCurrentPrefixesList: () => {
