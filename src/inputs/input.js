@@ -252,6 +252,7 @@ export default class Input {
         return this.retrieve()
             .then(oldPrefixList => {
                 const inputParameters = oldPrefixList.options.generate;
+                inputParameters.httpProxy = this.config.httpProxy || null;
 
                 if (!inputParameters) {
                     throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
@@ -320,7 +321,6 @@ export default class Input {
     setReGeneratePrefixList = () => {
         if (this.config.generatePrefixListEveryDays >= 1) {
             const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
-
             if (this.regeneratePrefixListTimer) {
                 clearTimeout(this.regeneratePrefixListTimer);
             }
