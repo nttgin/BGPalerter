@@ -275,12 +275,12 @@ Parameters for this monitor module:
 #### monitorRPKI
 
 This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
-involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
+involving any of the monitored prefixes (independently of who is announcing them), and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
 
 This monitor is particularly useful when:
-* you are deploying RPKI, since it will let you know if any of your announcements are 
-invalid;
-* after you deployed RPKI, in order to be sure that all future BGP configurations will be covered by ROAs.
+* Before RPKI deployment, since it will let you test what announcements will be invalid after singing the ROAs.
+* During RPKI deployment, since it will let you know if any of your announcements are invalid.
+* After you deployed RPKI, in order to be sure all future BGP configurations will be covered by ROAs.
 
 > Example: 
 > The prefixes list of BGPalerter has the following entries:
@@ -296,12 +296,15 @@ invalid;
 >      group: default
 > ```
 > If in config.yml monitorRPKI is enabled, you will receive alerts every time:
->  * 103.21.244.0/24 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
->  * AS13335 announces something that is not covered by ROAs or the announcement is RPKI invalid;
+>  * 103.21.244.0/24 is announced and it is not covered by ROAs, or the announcement is RPKI invalid;
+>  * AS13335 announces something that is not covered by ROAs, or the announcement is RPKI invalid;
+>  * A prefix you announce used to be covered by a ROA but such ROA is no longer available (e.g. RPKI repositories past failures: [ARIN](https://www.arin.net/announcements/20200813/), [RIPE NCC](https://www.ripe.net/support/service-announcements/accidental-roa-deletion))
 
 
-Example of alert:
-> The route 103.21.244.0/24 announced by AS13335 is not RPKI valid.
+Examples of alerts:
+> The route 103.21.244.0/24 announced by AS13335 is not RPKI valid  
+> The route 1.2.3.4/24 announced by AS1234 is not covered by a ROA  
+> The route 1.2.3.4/24 announced by AS1234 is no longer covered by a ROA  
 
 Parameters for this monitor module:
 
