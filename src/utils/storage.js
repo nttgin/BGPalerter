@@ -7,7 +7,7 @@ export default class Storage {
     };
 
     set = (key, value) => {
-        if (/^[a-z\-]+$/i.test(key)) {
+        if (/^[A-Za-z0-9\-_]+$/i.test(key)) {
             const envelop = {
                 date: new Date().getTime(),
                 value
@@ -21,22 +21,17 @@ export default class Storage {
     };
 
     get = (key) => {
-        if (/^[a-z\-]+$/i.test(key)) {
-
-            return this._get(key)
-                .then((data) => {
-                    if (!!data) {
-                        const { date, value } = data;
-                        const now = new Date().getTime();
-                        if (date + this.validity >= now) {
-                            return value;
-                        }
+        return this._get(key)
+            .then((data) => {
+                if (!!data) {
+                    const { date, value } = data;
+                    const now = new Date().getTime();
+                    if (date + this.validity >= now) {
+                        return value;
                     }
-                    return {};
-                });
-        } else {
-            return Promise.reject("Not a valid key. Use only chars and dashes.");
-        }
+                }
+                return {};
+            });
     };
 
     _set = (key, value) => {
