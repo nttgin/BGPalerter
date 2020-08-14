@@ -11,7 +11,7 @@ export default class MonitorRPKI extends Monitor {
 
         this.refreshVrpListMinutes = (!!this.params.vrpFile) ? 0 : Math.max(this.params.refreshVrpListMinutes || 0, 15);
         this.preCacheROAs = this.params.preCacheROAs !== false;
-        this.cacheValidPrefixesSeconds = 3600 * 24 * 4 * 1000;
+        this.cacheValidPrefixesSeconds = this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7 * 1000;
 
         this.input.onChange(() => {
             this.updateMonitoredResources();
@@ -25,6 +25,12 @@ export default class MonitorRPKI extends Monitor {
             .get(this.seenRpkiValidAnnouncementsKey)
             .then(prefixes => {
                 this.seenRpkiValidAnnouncements = (prefixes) ? prefixes : {};
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
             });
         this.loadRpkiValidator(env);
     };
@@ -261,7 +267,13 @@ export default class MonitorRPKI extends Monitor {
                                 // Store dictionary
                                 this.seenRpkiValidAnnouncementsTimer = setTimeout(() => {
                                     this.storage
-                                        .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements);
+                                        .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements)
+                                        .catch(error => {
+                                            this.logger.log({
+                                                level: 'error',
+                                                message: error
+                                            });
+                                        });
                                 }, 1000);
 
                             }

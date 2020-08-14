@@ -317,6 +317,7 @@ Parameters for this monitor module:
 |vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
 |vrpFile| A JSON file with an array of VRPs. See example below.|
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g. disappearing ROAs). Default to 7 days. |
 
 > VRPs file example:
 > ```json5
