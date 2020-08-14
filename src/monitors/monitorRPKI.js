@@ -9,8 +9,9 @@ export default class MonitorRPKI extends Monitor {
 
         this.providers = [ "ntt", "ripe", "external"]; // First provider is the default one
 
-        this.refreshVrpListMinutes = this.params.refreshVrpListMinutes || 15;
+        this.refreshVrpListMinutes = (!!this.params.vrpFile) ? 0 : Math.max(this.params.refreshVrpListMinutes || 0, 15);
         this.preCacheROAs = this.params.preCacheROAs !== false;
+        this.cacheValidPrefixesSeconds = (this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
 
         this.input.onChange(() => {
             this.updateMonitoredResources();
@@ -19,6 +20,18 @@ export default class MonitorRPKI extends Monitor {
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.validationQueue = [];
 
+        this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
+        this.storage
+            .get(this.seenRpkiValidAnnouncementsKey)
+            .then(prefixes => {
+                this.seenRpkiValidAnnouncements = (prefixes) ? prefixes : {};
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
         this.loadRpkiValidator(env);
     };
 
@@ -76,7 +89,7 @@ export default class MonitorRPKI extends Monitor {
 
             if (!!this.preCacheROAs) {
                 this.rpki
-                    .preCache(Math.max(this.refreshVrpListMinutes, 15))
+                    .preCache(this.refreshVrpListMinutes)
                     .then(() => {
                         this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
                     })
@@ -102,42 +115,47 @@ export default class MonitorRPKI extends Monitor {
         } else {
             if (fs.existsSync(vrpFile)) {
                 try {
-                    const vrps = JSON.parse(fs.readFileSync(vrpFile));
+                    let vrps = JSON.parse(fs.readFileSync(vrpFile, 'utf8'));
 
-                    if (vrps.length > 0) {
-
-                        if (this.validationTimer) {
-                            clearInterval(this.validationTimer); // Stop validation cycle
+                    if (vrps) {
+                        if (vrps.roas && vrps.roas.length) {
+                            vrps = vrps.roas;
                         }
+                        if (vrps.length > 0) {
 
-                        if (this.rpki) {
-                            this.rpki.destroy();
-                        }
+                            if (this.validationTimer) {
+                                clearInterval(this.validationTimer); // Stop validation cycle
+                            }
 
-                        this.rpki = new rpki({
-                            connector: "external",
-                            clientId: env.clientId
-                        });
+                            if (this.rpki) {
+                                this.rpki.destroy();
+                            }
 
-                        this.rpki.setVRPs(vrps);
-
-                        this.rpki
-                            .preCache()
-                            .then(() => {
-                                this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
-                            })
-                            .catch(() => {
-                                this.logger.log({
-                                    level: 'error',
-                                    message: "It was not possible to load correctly the VRPs file. Possibly there is an error in the format. The RPKI monitoring should be working anyway with one of the on-line providers."
-                                });
+                            this.rpki = new rpki({
+                                connector: "external",
+                                clientId: env.clientId
                             });
 
-                    } else {
-                        this.logger.log({
-                            level: 'error',
-                            message: "The provided VRPs file is empty. Using default vrpProvider."
-                        });
+                            this.rpki.setVRPs(vrps);
+
+                            this.rpki
+                                .preCache(this.refreshVrpListMinutes)
+                                .then(() => {
+                                    this.validationTimer = setInterval(this.validateBatch, 100); // If already cached, we can validate more often
+                                })
+                                .catch(() => {
+                                    this.logger.log({
+                                        level: 'error',
+                                        message: "It was not possible to load correctly the VRPs file. Possibly there is an error in the format. The RPKI monitoring should be working anyway with one of the on-line providers."
+                                    });
+                                });
+
+                        } else {
+                            this.logger.log({
+                                level: 'error',
+                                message: "The provided VRPs file is empty. Using default vrpProvider."
+                            });
+                        }
                     }
 
                 } catch (error) {
@@ -181,9 +199,11 @@ export default class MonitorRPKI extends Monitor {
             const covering = (extra.covering && extra.covering.length) ? extra.covering.map(i => `${i.prefix}|AS${i.asn}|maxLength:${i.maxLength}`).join(", ") : false;
             const coveringString = (covering) ? `Valid ROAs: ${covering}`: '';
 
-            if (extra.valid === null && this.params.checkUncovered) {
+            if (extra.roaDisappeared) {
+                return `The route ${message.prefix} announced by ${message.originAS} is no longer covered by a ROA.`;
+            } else if (extra.valid === null && this.params.checkUncovered) {
                 return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA`;
-            } else {
+            } else if (extra.valid === false) {
                 return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. ${coveringString}`;
             }
         }
@@ -194,40 +214,88 @@ export default class MonitorRPKI extends Monitor {
         const origin = message.originAS.getValue();
 
         this.rpki
-            .validate(prefix, origin.toString(), true)
-            .then(result => {
-                if (result) {
-                    const key = "a" + [prefix, origin, result.valid]
-                        .join("-")
-                        .replace(/\./g, "_")
-                        .replace(/\:/g, "_")
-                        .replace(/\//g, "_");
+            .preCache(this.refreshVrpListMinutes)
+            .then(() => {
+                return this.rpki
+                    .validate(prefix, origin.toString(), true)
+                    .then(result => {
+                        if (result) {
 
-                    if (result.valid === false) {
-                        this.publishAlert(key,
-                            prefix,
-                            matchedRule,
-                            message,
-                            { covering: result.covering, valid: result.valid });
-                    } else if (result.valid === null && this.params.checkUncovered) {
-                        this.publishAlert(key,
-                            prefix,
-                            matchedRule,
-                            message,
-                            { covering: null, valid: null });
-                    }
-                }
-            })
-            .catch(error => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
+                            const cacheKey = "a" + [prefix, origin]
+                                .join("-")
+                                .replace(/\./g, "_")
+                                .replace(/\:/g, "_")
+                                .replace(/\//g, "_");
+
+                            const key = `${cacheKey}-${result.valid}`;
+
+                            if (result.valid === null) {
+
+                                const cache = this.seenRpkiValidAnnouncements[cacheKey];
+                                if (cache && cache.rpkiValid  && cache.date + this.cacheValidPrefixesSeconds >= new Date().getTime()) { // valid cache
+                                    this.publishAlert(key,
+                                        prefix,
+                                        matchedRule,
+                                        message,
+                                        { covering: null, valid: null, roaDisappeared: true });
+                                } else if (this.params.checkUncovered) {
+                                    this.publishAlert(key,
+                                        prefix,
+                                        matchedRule,
+                                        message,
+                                        { covering: null, valid: null });
+                                }
+                            } else if (result.valid === false) {
+                                this.publishAlert(key,
+                                    prefix,
+                                    matchedRule,
+                                    message,
+                                    { covering: result.covering, valid: false });
+
+                            } else if (result.valid) {
+
+                                // Refresh dictionary
+                                this.seenRpkiValidAnnouncements[cacheKey] = {
+                                    date: new Date().getTime(),
+                                    rpkiValid: true
+                                };
+
+                                if (this.seenRpkiValidAnnouncementsTimer) {
+                                    clearTimeout(this.seenRpkiValidAnnouncementsTimer);
+                                }
+
+                                // Store dictionary
+                                this.seenRpkiValidAnnouncementsTimer = setTimeout(() => {
+                                    const now = new Date().getTime();
+
+                                    // Delete old cache items
+                                    for (let roa of Object.keys(this.seenRpkiValidAnnouncements)) {
+                                        if (this.seenRpkiValidAnnouncements[roa].date + this.cacheValidPrefixesSeconds < now) {
+                                            delete this.seenRpkiValidAnnouncements[roa];
+                                        }
+                                    }
+                                    this.storage
+                                        .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements)
+                                        .catch(error => {
+                                            this.logger.log({
+                                                level: 'error',
+                                                message: error
+                                            });
+                                        });
+                                }, 1000);
+
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        this.logger.log({
+                            level: 'error',
+                            message: error
+                        });
+                    });
             });
 
-
     };
-
 
     monitor = (message) => {
 
@@ -246,7 +314,4 @@ export default class MonitorRPKI extends Monitor {
 
         return Promise.resolve(true);
     };
-
-
-
 }

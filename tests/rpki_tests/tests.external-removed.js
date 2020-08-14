@@ -31,55 +31,59 @@
  */
 
 const chai = require("chai");
-const fs = require("fs");
 const chaiSubset = require('chai-subset');
+const fs = require('fs');
 const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
-const cacheFile = ".cache/seen-rpki-valid-announcements.json";
-if (fs.existsSync(cacheFile)) {
-    fs.unlinkSync(cacheFile);
-}
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
 
-global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.default.yml";
+fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
+
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
+describe("RPKI monitoring 3", function() {
 
-describe("RPKI monitoring 1", function() {
-
-    it("default connector", function (done) {
+    it("missing roas", function (done) {
 
         const expectedData = {
 
-            "a103_21_244_0_24-13335-false": {
-                id:  "a103_21_244_0_24-13335-false",
+            "a82_112_100_0_24-2914-null": {
+                id: 'a82_112_100_0_24-2914-null',
                 origin: 'rpki-monitor',
-                affected: '103.21.244.0/24',
-                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23',
+                affected: '82.112.100.0/24',
+                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA.'
             },
 
-            "a8_8_8_8_22-2914-null": {
-                id:  "a8_8_8_8_22-2914-null",
+            "a8_8_8_8_22-2914-null" : {
+                id: 'a8_8_8_8_22-2914-null',
                 origin: 'rpki-monitor',
                 affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA',
+                message: 'The route 8.8.8.8/22 announced by AS2914 is no longer covered by a ROA.'
+            },
+
+            "a103_21_244_0_24-13335-null": {
+                id: 'a103_21_244_0_24-13335-null',
+                origin: 'rpki-monitor',
+                affected: '103.21.244.0/24',
+                message: 'The route 103.21.244.0/24 announced by AS13335 is no longer covered by a ROA.'
             }
+
         };
 
-        let rpkiTestCompleted = false;
+        let rpkiTestCompletedExternal = false;
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (!rpkiTestCompleted) {
+            if (!rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
                 expect(Object.keys(expectedData).includes(id)).to.equal(true);
                 expect(expectedData[id] != null).to.equal(true);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                expect(message).to.containSubset(expectedData[id]);
 
                 expect(message).to.contain
                     .keys([
@@ -90,16 +94,17 @@ describe("RPKI monitoring 1", function() {
                 delete expectedData[id];
                 if (Object.keys(expectedData).length === 0) {
                     setTimeout(() => {
-                        rpkiTestCompleted = true;
+                        rpkiTestCompletedExternal = true;
+                        fs.unlinkSync("tests/rpki_tests/vrp.json");
                         done();
                     }, 5000);
                 }
             }
         });
 
-        pubSub.publish("test-type", "rpki");
-
+        setTimeout(() => { // Wait that the watcher realizes the file changed
+            pubSub.publish("test-type", "rpki");
+        }, 5000);
 
     }).timeout(asyncTimeout);
-
 });
