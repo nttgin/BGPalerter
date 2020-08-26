@@ -33,7 +33,7 @@
     "@babel/preset-env": "^7.11.0",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
-    "mocha": "^8.1.1",
+    "mocha": "^8.1.2",
     "nodemon": "^2.0.4",
     "pkg": "^4.4.9",
     "read-last-lines": "^1.7.2",
