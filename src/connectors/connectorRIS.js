@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import WebSocket from "ws";
+import WebSocket from "../utils/WebSocket";
 import Connector from "./connector";
 import { AS, Path } from "../model";
 import brembo from "brembo";
@@ -42,13 +42,8 @@ export default class ConnectorRIS extends Connector {
         super(name, params, env);
         this.ws = null;
         this.subscription = null;
-        this.pingInterval = 5000;
-        this._defaultReconnectTimeout = 10000;
-        this.reconnectTimeout = this._defaultReconnectTimeout;
         this.agent = env.agent;
         this.subscribed = {};
-
-        setInterval(this._ping, this.pingInterval);
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -56,30 +51,15 @@ export default class ConnectorRIS extends Connector {
                 client: env.clientId
             }
         });
-
-    };
-
-    _ping = () => {
-        if (this.ws) {
-            try {
-                this.ws.ping();
-            } catch (e) {
-                // Nothing to do here
-            }
-        }
-    };
-
-    _pingReceived = () => {
-        if (this.closeTimeout) {
-            clearTimeout(this.closeTimeout);
-        }
-        this.closeTimeout = setTimeout(this._close, this.pingInterval * 3);
     };
 
     _openConnect = (resolve) => {
         resolve(true);
-        this.reconnectTimeout = this._defaultReconnectTimeout;
         this._connect(this.name + ' connector connected');
+
+        if (this.subscription) {
+            this.subscribe(this.subscription);
+        }
     };
 
     _messageToJson = (message) => {
@@ -91,16 +71,15 @@ export default class ConnectorRIS extends Connector {
         this.ws.on('close', (error) => {
 
             if (this.connected) {
-                this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
             } else {
-                this._close("It was not possible to establish a connection with RIPE RIS");
+                this._disconnect("It was not possible to establish a connection with RIPE RIS");
                 reject();
             }
         });
         this.ws.on('error', this._error);
         this.ws.on('open', this._openConnect.bind(null, resolve));
-        this.ws.on('ping', this._pingReceived);
-    }
+    };
 
     connect = () =>
         new Promise((resolve, reject) => {
@@ -111,59 +90,22 @@ export default class ConnectorRIS extends Connector {
                 if (!this.params.noProxy && this.agent) {
                     wsOptions.agent = this.agent;
                 }
-                this.disconnect();
+
                 this.ws = new WebSocket(this.url, wsOptions);
+                this.ws.connect();
                 this._appendListeners(resolve, reject);
 
             } catch(error) {
+                console.log(error);
                 this._error(error);
                 reject(error);
             }
         });
 
-    _reconnect = () => {
-        this.connect()
-            .then(() => {
-                if (this.subscription) {
-                    this.subscribe(this.subscription);
-                }
-            })
-            .catch(error => {
-                if (error) {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                }
-            });
-    };
-
-    _removeListeners = () => {
-        this.ws.removeAllListeners("message");
-        this.ws.removeAllListeners("close");
-        this.ws.removeAllListeners("error");
-        this.ws.removeAllListeners("open");
-        this.ws.removeAllListeners("ping");
-    };
-
     disconnect = () => {
         if (this.ws) {
-            this._removeListeners();
-            this.ws.terminate();
             this._disconnect(`${this.name} disconnected`);
         }
-    };
-
-    _getTimeoutReconnect = () => {
-        this.reconnectTimeout += (this.reconnectTimeout / 2);
-        return Math.min(120000, this.reconnectTimeout);
-    };
-
-    _close = (error) => {
-        this._disconnect(error);
-
-        // Reconnect
-        setTimeout(this._reconnect, this._getTimeoutReconnect());
     };
 
     _subscribeToAll = (input) => {
@@ -171,7 +113,6 @@ export default class ConnectorRIS extends Connector {
             type: "ris_subscribe",
             data: this.params.subscription
         }));
-
     };
 
     _optimizedPathMatch = (regex) => {
@@ -197,7 +138,6 @@ export default class ConnectorRIS extends Connector {
 
     _subscribeToPrefixes = (input) => {
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
-
         const params = JSON.parse(JSON.stringify(this.params.subscription));
 
         if (monitoredPrefixes
