@@ -156,7 +156,7 @@ export default class Report {
             case "rpki":
                 matched = content.data[0].matchedRule;
                 context.asn = matched.asn.toString();
-                context.prefix = matched.prefix | content.data[0].matchedMessage.prefix;
+                context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
                 context.description = matched.description;
                 break;
 
