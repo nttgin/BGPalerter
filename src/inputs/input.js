@@ -184,7 +184,7 @@ export default class Input {
                                 type: 'input',
                                 name: 'asns',
                                 message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g. 2914,3333)",
-                                default: true,
+                                default: null,
                                 validate: function(value) {
                                     const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
                                     return asns.length > 0;
