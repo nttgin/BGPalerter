@@ -44,13 +44,9 @@ Each matching rule in the path list is composed of:
 
 ### Match regular expression with multiple conditions in AND
 
-If you want to specify multiple conditions in the same match parameter, you can use the positive lookahead construct offered natively by regular expressions.
+If you want to specify multiple conditions in AND in the same match parameter, you can use the positive lookahead construct offered natively by regular expressions.
 A positive lookahead is in the form `(?=exp1)(?=exp2)` where `exp1` and `exp2` are regular expressions
 Positive lookaheads work also for negative conditions (e.g. `(?!exp)`), but in most of the cases this is redundant with the `notMatch` parameter.
-
-It is important to notice that often positive lookaheads can be replaced by multiple matching rules.  
-
-
 
 
 
