@@ -46,13 +46,10 @@ Each matching rule in the path list is composed of:
 
 If you want to specify multiple conditions in the same match parameter, you can use the positive lookahead construct offered natively by regular expressions.
 A positive lookahead is in the form `(?=exp1)(?=exp2)` where `exp1` and `exp2` are regular expressions
-
-Example: 
-> (?=.*(137|2914),32934$)(?=.*13335,2914,32934$)
-
-which tests for `AS32934 must only be visible via path 137 or 2914` AND `if it transits AS13335, it must be through AS2914`
-
 Positive lookaheads work also for negative conditions (e.g. `(?!exp)`), but in most of the cases this is redundant with the `notMatch` parameter.
+
+It is important to notice that often positive lookaheads can be replaced by multiple matching rules.  
+
 
 
 
