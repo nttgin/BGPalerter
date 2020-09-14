@@ -40,13 +40,13 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^5.22.3",
+    "@sentry/node": "^5.23.0",
     "axios": "^0.20.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.3.3",
-    "ip-address": "^6.3.0",
+    "ip-address": "^6.4.0",
     "ip-sub": "^1.0.10",
     "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
