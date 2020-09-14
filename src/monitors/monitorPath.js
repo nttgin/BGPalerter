@@ -54,10 +54,54 @@ export default class MonitorPath extends Monitor {
 
         if (peers >= this.thresholdMinPeers) {
             const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
-            return `Matched ${alerts[0].matchedRule.path.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times`;
+            return `Matched ${alerts[0].extra.matchDescription} on prefix ${alerts[0].matchedMessage.prefix} ${lengthViolation}${alerts.length} times`;
         }
 
         return false;
+    };
+
+    pathRuleCheck = (pathRule, index, message, matchedRule) => {
+        const messagePrefix = message.prefix;
+        const pathString = message.path.getValues().join(",");
+
+        let expMatch = true;
+        let expNotMatch = true;
+        let correctLength = true;
+
+        if (pathRule.match) {
+            expMatch = (new RegExp(pathRule.match)).test(pathString);
+            if (!expMatch) {
+                return;
+            }
+        }
+
+        if (pathRule.notMatch){
+            expNotMatch = !(new RegExp(pathRule.notMatch)).test(pathString);
+            if (!expNotMatch) {
+                return;
+            }
+        }
+
+        if (pathRule.maxLength && message.path.getValues().length > pathRule.maxLength) {
+            correctLength = false;
+        }
+
+        if (pathRule.minLength && message.path.getValues().length < pathRule.minLength) {
+            correctLength = false;
+        }
+
+        if (expMatch && expNotMatch &&
+            ((!pathRule.maxLength && !pathRule.maxLength) || !correctLength)) {
+
+            this.publishAlert(`${messagePrefix}-${index}`,
+                matchedRule.prefix,
+                matchedRule,
+                message,
+                {
+                    lengthViolation: !correctLength,
+                    matchDescription: pathRule.matchDescription
+                });
+        }
     };
 
     monitor = (message) =>
@@ -67,47 +111,10 @@ export default class MonitorPath extends Monitor {
             const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 
             if (matchedRule && !matchedRule.ignore && matchedRule.path) {
-                const pathString = message.path.getValues().join(",");
+                const pathRules = (matchedRule.path.length) ? matchedRule.path : [ matchedRule.path ];
 
-                let expMatch = true;
-                let expNotMatch = true;
-                let correctLength = true;
+                pathRules.map((pathRule, position) => this.pathRuleCheck(pathRule, position, message, matchedRule));
 
-                if (matchedRule.path.match) {
-                    expMatch = (new RegExp(matchedRule.path.match)).test(pathString);
-                    if (!expMatch) {
-                        resolve(true);
-                        return;
-                    }
-                }
-
-                if (matchedRule.path.notMatch){
-                    expNotMatch = !(new RegExp(matchedRule.path.notMatch)).test(pathString);
-                    if (!expNotMatch) {
-                        resolve(true);
-                        return;
-                    }
-                }
-
-                if (matchedRule.path.maxLength && message.path.getValues().length > matchedRule.path.maxLength) {
-                    correctLength = false;
-                }
-
-                if (matchedRule.path.minLength && message.path.getValues().length < matchedRule.path.minLength) {
-                    correctLength = false;
-                }
-
-                if (expMatch && expNotMatch &&
-                    ((!matchedRule.path.maxLength && !matchedRule.path.maxLength) || !correctLength)) {
-
-                    this.publishAlert(messagePrefix,
-                        matchedRule.prefix,
-                        matchedRule,
-                        message,
-                        {
-                            lengthViolation: !correctLength
-                        });
-                }
             }
 
             resolve(true);

@@ -378,71 +378,87 @@ describe("Alerting", function () {
         pubSub.publish("test-type", "path");
 
         const expectedData = {
-            "98.5.4.3/22": {
-                id: '98.5.4.3/22',
+            "98.5.4.3/22-1": {
+                id: '98.5.4.3/22-1',
                 origin: 'path-matching',
                 affected: "98.5.4.3/22",
-                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times',
-                data: [
-                    {
-                        extra: {
-                            lengthViolation: true
-                        },
-                        matchedRule: {
-                            prefix: '98.5.4.3/22',
-                            group: 'default',
-                            description: 'path matching test regex and maxLength',
-                            asn: [2914],
-                            ignoreMorespecifics: false,
-                            ignore: false,
-                            path: {
-                                match: ".*2914$",
-                                matchDescription: "test description",
-                                maxLength: 3,
+                message: 'Matched test description2 on prefix 98.5.4.3/22 (including length violation) 1 times',
+                "data":
+                    [
+                        {
+
+                            "affected":"98.5.4.3/22",
+                            "matchedRule":{
+                                "prefix":"98.5.4.3/22",
+                                "group":"default",
+                                "ignore":false,
+                                "excludeMonitors":[],
+                                "includeMonitors":[],
+                                "description":"path matching test regex and maxLength",
+                                "asn":[2914],
+                                "ignoreMorespecifics":false,
+                                "path":[
+                                    {
+                                        "match":".*2915$",
+                                        "maxLength":4,
+                                        "matchDescription":"test description1"
+                                    },{
+                                        "match":".*2914$",
+                                        "maxLength":3,
+                                        "matchDescription":"test description2"
+                                    }
+                                ]
+                            },"matchedMessage":{
+                                "type":"announcement",
+                                "prefix":"98.5.4.3/22",
+                                "peer":"124.0.0.3",
+                                "path":[1,2,3,4321,5060,2914],
+                                "originAS":[2914],
+                                "nextHop":"124.0.0.3",
+                                "aggregator":null},
+                            "extra":{
+                                "lengthViolation":true,
+                                "matchDescription":"test description2"
                             }
-                        },
-                        matchedMessage: {
-                            type: 'announcement',
-                            prefix: '98.5.4.3/22',
-                            peer: '124.0.0.3',
-                            path: [1, 2, 3, 4321, 5060, 2914],
-                            originAS: [2914],
-                            nextHop: '124.0.0.3'
                         }
-                    }
-                ]
+                    ]
             },
 
-            "99.5.4.3/22": {
-                id: '99.5.4.3/22',
+            "99.5.4.3/22-0": {
+                id: '99.5.4.3/22-0',
                 origin: 'path-matching',
                 affected: "99.5.4.3/22",
                 message: 'Matched test description on prefix 99.5.4.3/22 1 times',
                 data: [
                     {
-                        extra: {
-                            lengthViolation: false
-                        },
-                        matchedRule: {
-                            prefix: '99.5.4.3/22',
-                            group: 'default',
-                            description: 'path matching test regex and minLength',
-                            asn: [2914],
-                            ignoreMorespecifics: false,
-                            ignore: false,
-                            path: {
-                                match: ".*2914$",
-                                matchDescription: "test description",
-                                minLength: 2,
+                        "affected":"99.5.4.3/22",
+                        "matchedRule": {
+                            "prefix":"99.5.4.3/22",
+                            "group":"default",
+                            "ignore":false,
+                            "excludeMonitors":[],
+                            "includeMonitors":[],
+                            "description":"path matching test regex and minLength",
+                            "asn":[2914],
+                            "ignoreMorespecifics":false,
+                            "path":{
+                                "match":".*2914$",
+                                "minLength":2,
+                                "matchDescription":"test description"
                             }
                         },
-                        matchedMessage: {
-                            type: 'announcement',
-                            prefix: '99.5.4.3/22',
-                            peer: '124.0.0.3',
-                            path: [1, 2, 3, 4321, 5060, 2914],
-                            originAS: [2914],
-                            nextHop: '124.0.0.3'
+                        "matchedMessage":{
+                            "type":"announcement",
+                            "prefix":"99.5.4.3/22",
+                            "peer":"124.0.0.3",
+                            "path":[1,2,3,4321,5060,2914],
+                            "originAS":[2914],
+                            "nextHop":"124.0.0.3",
+                            "aggregator":null
+                        },
+                        "extra":{
+                            "lengthViolation":false,
+                            "matchDescription":"test description"
                         }
                     }
                 ]

@@ -229,18 +229,22 @@ export default class InputYml extends Input {
                 }
 
                 if (item.path) {
-                    if (!item.path.matchDescription){
-                        return "No matchDescription set";
-                    }
-                    this._validateRegex(item.path.match);
-                    this._validateRegex(item.path.notMatch);
-                    if (item.path.maxLength && !(typeof(item.path.maxLength) == "number" && item.path.maxLength > 1)) {
-                        return "Not valid maxLength";
-                    }
+                    ((item.path.length) ? item.path : [item.path])
+                        .map(rule => {
+                            if (!rule.matchDescription){
+                                return "No matchDescription set";
+                            }
+                            this._validateRegex(rule.match);
+                            this._validateRegex(rule.notMatch);
+                            if (rule.maxLength && !(typeof(rule.maxLength) == "number" && rule.maxLength > 1)) {
+                                return "Not valid maxLength";
+                            }
 
-                    if (item.path.minLength && !(typeof(item.path.minLength) == "number" && item.path.minLength > 1)) {
-                        return "Not valid minLength";
-                    }
+                            if (rule.minLength && !(typeof(rule.minLength) == "number" && rule.minLength > 1)) {
+                                return "Not valid minLength";
+                            }
+                        })
+
                 }
 
                 return null;

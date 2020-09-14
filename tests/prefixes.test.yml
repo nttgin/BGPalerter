@@ -70,9 +70,12 @@
   ignoreMorespecifics: false
   ignore: false
   path:
-    match: ".*2914$"
-    maxLength: 3
-    matchDescription: test description
+    - match: ".*2915$"
+      maxLength: 4
+      matchDescription: test description1
+    - match: ".*2914$"
+      maxLength: 3
+      matchDescription: test description2
 
 99.5.4.3/22:
   description: path matching test regex and minLength
