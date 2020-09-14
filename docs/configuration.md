@@ -174,7 +174,7 @@ Parameters for this monitor module:
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorPath
-
+``
 This monitor detects BGP updates containing AS_PATH which match particular regular expressions.
 
 > Example: 
@@ -185,14 +185,20 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 >    description: an example on path matching
 >    ignoreMorespecifics: false
 >  path:
->    match: ".*2194,1234$"
->    notMatch: ".*5054.*"
->    matchDescription: detected scrubbing center
+>    - match: ".*2194,1234$"
+>      notMatch: ".*5054.*"
+>      matchDescription: detected scrubbing center
+>    - match: ".*123$"
+>      notMatch: ".*5056.*"
+>      matchDescription: other match
 > ```
-> An alert will be generated when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
-> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
 
-More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
+Path is a list of matching rules, in this way multiple matching rules can be defined for the same prefix (rules are in OR).
+
+More about path matching [here](path-matching.md).
+
+> An alert will be generated for example when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
+> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
 
 Example of alert:
 > Matched "an example on path matching" on prefix 98.5.4.3/22 (including length violation) 1 times

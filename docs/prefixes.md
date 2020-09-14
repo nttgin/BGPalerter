@@ -69,12 +69,7 @@ Below the complete list of attributes (the dot notation is used to represent yml
 | ignore | Exclude the current prefix from monitoring. Useful when you are monitoring a prefix and you want to exclude a particular sub-prefix| A boolean | No |
 | includeMonitors | The list of monitors you want to run on this prefix. If this attribute is not declared, all monitors will be used. Not compatible with excludeMonitors. | An array of strings (monitors name according to config.yml) | No |
 | excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. Use monitors `name` attributes, as defined in the monitor listy in [config.yml](https://github.com/nttgin/BGPalerter/blob/master/config.yml.example). | An array of strings (monitors name according to config.yml) | No |
-| path | A dictionary containing all sub-attributes for path matching. All the sub-attributes are in AND.| Sub-attributes (as follows) | No |
-| path.match | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message triggers an alert. ASns are comma separated (see example above). **Please, use optimized regular expression as described [in the following sub-section](#optimized-regular-expressions-for-as-path-matching)** | A string (valid RegEx) | No |
-| path.notMatch | The regular expression that will be tested on each AS path. If the expression tests positive the BGP message will not triggers an alert. ASns are comma separated (see example above). | A string (valid RegEx) | No |
-| path.matchDescription | The description that will be reported in the alert in case the regex test results in a match. | A string | No |
-| path.maxLength | The maximum length allowed for an AS path. Longer paths will trigger an alert. | A number | No |
-| path.minLength | The minimum length allowed for an AS path. Shorter paths will trigger an alert. | A number | No |
+| path | A list path matching rules, read more [here](path-matching.md). |  | No |
 | group | The name of the group that will receive alerts about this monitored prefix. By default all alerts are sent to the "default" group. See [here](usergroups.md).| A string | No |
 
 
@@ -112,15 +107,3 @@ monitorASns:
 The AS2914 and AS3333 will be monitored. The alerts related to AS2914 will be sent to the "ntt" user group and the alerts for AS3333 to the "ripencc" user group.
 
 The monitor in charge of doing this type of detection is [monitorAS (click for more information)](configuration.md#monitoras).
-
-### Optimized regular expressions for AS path matching
-
-The following simple regular expressions will drastically reduce CPU and network usage when applied to the `path.match` attribute. Instead, there are no benefits in applying the following regular expressions to the `path.notMatch` attribute.
-
-To drastically optimize the process, try to use one of the following regular expression for `path.match` attribute. If the obtained filter is too loose, add additional (complex) constraints in `path.notMatch`. In this way the more complex `path.notMatch` will be tested only on the subset produced by the faster `path.match`.
-
-* "789$" - match paths that originate with AS789
-* "456" - match any path that traverses AS456 at any point
-* "^123,456" - match paths where the last traversed ASns were 123 and 456 (in that order)
-* "^123,456,789$" - match the exact path [123, 457, 789]
-* "[789,101112]" - match paths containing the AS_SET {789, 101112}
