@@ -110,7 +110,9 @@ export default class ReportEmail extends Report {
     };
 
     getEmailText = (channel, content) => {
-        return this.parseTemplate(this.templates[channel], this.getContext(channel, content));
+        const context = this.getContext(channel, content);
+        context.paths = context.paths.split(";").join("\n");
+        return this.parseTemplate(this.templates[channel], context);
     };
 
     _sendEmail = (email) => {
