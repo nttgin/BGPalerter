@@ -194,7 +194,7 @@ reports:
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
 #        default: '{"text": "${summary}"}'
 #      headers:
-#      isTemplateJSON: true
+#      isTemplateJSON: false
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      hooks:
 #        default: _YOUR_WEBHOOK_URL_
