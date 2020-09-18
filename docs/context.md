@@ -13,6 +13,8 @@ Such tags are reported in the table below.
 | prefix | The monitored prefix involved in the alert |
 | description | The description of the prefix involved in the alert |
 | asn | The monitored AS involved in the alert |
+| paths | The AS Paths involved in the alert |
+| pathNumber | The count of AS Paths in the alert |
 | peers | The number of peers that were able to see the issue |
 | neworigin | The AS announcing the monitored prefix (e.g. in case of a hijack, `neworigin` will contain the hijacker, `asn` will contain the usual origin) |
 | newprefix | The prefix announced (e.g. in case of a hijack, `newprefix` will contain the more specific prefix used for the hijack, `prefix` will contain the usual prefix) |
