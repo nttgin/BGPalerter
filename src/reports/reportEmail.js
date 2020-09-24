@@ -111,7 +111,7 @@ export default class ReportEmail extends Report {
 
     getEmailText = (channel, content) => {
         const context = this.getContext(channel, content);
-        context.paths = context.paths.split(";").join("\n");
+        context.paths = JSON.parse(`[${context.paths}]`).join("\n");
         return this.parseTemplate(this.templates[channel], context);
     };
 
