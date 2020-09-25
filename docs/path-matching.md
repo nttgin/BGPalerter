@@ -12,13 +12,13 @@ The AS_PATH parsed by BGPalerter are in the form `137,3333,1335,2914`.
 >    asn: 15562
 >    description: an example on path matching
 >    ignoreMorespecifics: false
->  path:
->    - match: ".*2194,1234$"
->      notMatch: ".*5054.*"
->      matchDescription: detected scrubbing center
->    - match: ".*123$"
->      notMatch: ".*5056.*"
->      matchDescription: other match
+>    path:
+>      - match: ".*2194,1234$"
+>        notMatch: ".*5054.*"
+>        matchDescription: detected scrubbing center
+>      - match: ".*123$"
+>        notMatch: ".*5056.*"
+>        matchDescription: other match
 > ```
 
 Each item in the `path` list is a matching rule.
