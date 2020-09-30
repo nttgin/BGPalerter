@@ -92,7 +92,7 @@ In case you want to monitor the uptime by using the `uptimeApi` ([read more](pro
 ```bash
 docker run -i --name bgpalerter \
   -v $(pwd)/volume:/opt/bgpalerter/volume \
-  -p 8011:8011
+  -p 8011:8011 \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
@@ -112,7 +112,7 @@ docker run -i --name bgpalerter \
   --health-retries=15 \
   --health-interval=60s \
   --restart unless-stopped \
-  -p 8011:8011
+  -p 8011:8011 \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
