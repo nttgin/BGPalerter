@@ -142,6 +142,8 @@ module.exports = function generatePrefixes(inputParameters) {
         getMultipleOrigins(prefix)
             .then(asns => {
 
+                let origins = [parseInt(asn)];
+
                 if (asns && asns.length) {
                     const origin = (asns && asns.length) ? asns : [asn];
 
@@ -149,14 +151,19 @@ module.exports = function generatePrefixes(inputParameters) {
                         allOrigins[o] = true;
                     }
 
-                    generateList[prefix] = {
-                        description: description || "No description provided",
-                        asn: origin.map(i => parseInt(i)),
-                        ignoreMorespecifics: ignoreMorespecifics,
-                        ignore: excludeDelegated,
-                        group: group || "default"
-                    };
+                    origins = origin.map(i => parseInt(i));
+                } else {
+                    logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }
+
+                generateList[prefix] = {
+                    description: description || "No description provided",
+                    asn: origins,
+                    ignoreMorespecifics: ignoreMorespecifics,
+                    ignore: excludeDelegated,
+                    group: group || "default"
+                };
+
             });
 
     const getAnnouncedPrefixes = (asn) => {
@@ -189,11 +196,10 @@ module.exports = function generatePrefixes(inputParameters) {
                                 .sort((a,b) => a-b)
                                 .pop();
 
-                            if (historical) {
-                                return latest.getTime() + (3600 * 24 * 1000 * 7) > new Date().getTime();
-                            } else {
-                                return latest.getTime() + (3600 * 24 * 1000) > new Date().getTime();
-                            }
+                            const validityPeriodDays = (historical) ?
+                                (3600 * 1000 * 24 * 7) : // 7 days
+                                (3600 * 1000 * 28); // 28 hours (1 day and 4 hours margin)
+                            return latest.getTime() + validityPeriodDays > new Date().getTime();
                         })
                 }
                 return [];
@@ -202,6 +208,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 if (list.length === 0) {
                     logger(`WARNING: no announced prefixes were detected for AS${asn}. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.`);
                 }
+
                 return list;
             })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
@@ -238,9 +245,8 @@ module.exports = function generatePrefixes(inputParameters) {
             });
     };
 
-    const getBaseRules = () => {
+    const getBaseRules = (prefixes) => {
         if (prefixes) {
-
             return batchPromises(40, prefixes, p => {
                 return generateRule(p, null, false, null, false);
             })
@@ -284,7 +290,7 @@ module.exports = function generatePrefixes(inputParameters) {
         return mergeDeep(current, yamlContent);
     };
 
-    return getBaseRules()
+    return getBaseRules(prefixes)
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
             return batchPromises(1, prefixes, prefix => {

@@ -57,7 +57,7 @@ describe("Prefix List", function() {
             monitoredASes: asns,
             httpProxy: null,
             debug: false,
-            historical: false,
+            historical: true,
             group: null,
             append: false,
             logger: () => {}
@@ -95,7 +95,7 @@ describe("Prefix List", function() {
             monitoredASes: asns,
             httpProxy: null,
             debug: false,
-            historical: false,
+            historical: true,
             group: "test",
             append: false,
             logger: () => {}
@@ -136,7 +136,7 @@ describe("Prefix List", function() {
             monitoredASes: asns,
             httpProxy: null,
             debug: false,
-            historical: false,
+            historical: true,
             group: "test",
             append: true,
             logger: () => {},
