@@ -271,7 +271,7 @@ config.reports = (config.reports || [])
     });
 config.connectors = config.connectors || [];
 
-config.connectors.push(        {
+config.connectors.push({
     file: "connectorSwUpdates",
     name: "upd"
 });
