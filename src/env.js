@@ -213,6 +213,7 @@ const errorTransport = new FileLogger({
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
@@ -225,6 +226,7 @@ const verboseTransport = new FileLogger({
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 

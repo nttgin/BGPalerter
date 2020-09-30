@@ -233,6 +233,7 @@ logging:
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: false
+  useUTC: true
   
 checkForUpdatesAtBoot: true
 generatePrefixListEveryDays: 2

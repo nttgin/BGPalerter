@@ -8,6 +8,7 @@ export default class FileLogger {
         this.format = params.format || this.defaultFormat;
         this.logRotatePattern = params.logRotatePattern || "YYYY-MM-DD";
         this.filename = params.filename;
+        this.useUTC = params.useUTC;
         this.directory = params.directory;
         this.levels = params.levels || ['error', 'info', 'verbose'];
 
@@ -41,17 +42,25 @@ export default class FileLogger {
             }
         }
 
-        return `${this.directory}/${this.filename.replace("%DATE%", moment().format(this.logRotatePattern))}${suffix}`;
+        return `${this.directory}/${this.filename.replace("%DATE%", this.getCurrentDate().format(this.logRotatePattern))}${suffix}`;
     };
 
     defaultFormat = (json) => {
         return JSON.stringify(json);
     };
 
+    getCurrentDate = () => {
+        if (this.useUTC) {
+            return moment.utc();
+        } else {
+            return moment();
+        }
+    };
+
     log = (data) => {
 
         const item = this.format({
-            timestamp: moment().format('YYYY-MM-DDTHH:mm:ssZ'),
+            timestamp: this.getCurrentDate().format('YYYY-MM-DDTHH:mm:ssZ'),
             data
         });
 
