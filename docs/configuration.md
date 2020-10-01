@@ -263,7 +263,7 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 > ```
 > If in config.yml monitorAS is enabled, you will receive alerts every time a prefix not already part of the prefixes list is announced by AS58302.
 > 
->If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
+> If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
 You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
 
@@ -346,8 +346,11 @@ Parameters for this monitor module:
 
 Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
 
-> After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
-> This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
+After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
+This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
+
+> By default all communications will be sent to the default user group, so it is not mandatory to configure any user group. 
+> Note that the default group is used also for administrative and error communications, if you want to filter out such communications you need to [create another user group](usergroups.md).
 
 Possible reports are:
 
