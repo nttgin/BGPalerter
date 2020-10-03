@@ -51,7 +51,7 @@
     "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
     "moment": "^2.29.0",
-    "nodemailer": "^6.4.12",
+    "nodemailer": "^6.4.13",
     "path": "^0.12.7",
     "restify": "^8.5.1",
     "rotating-file-stream": "^2.1.3",
