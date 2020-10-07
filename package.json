@@ -50,7 +50,7 @@
     "ip-sub": "^1.0.12",
     "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
-    "moment": "^2.29.0",
+    "moment": "^2.29.1",
     "nodemailer": "^6.4.13",
     "path": "^0.12.7",
     "restify": "^8.5.1",
