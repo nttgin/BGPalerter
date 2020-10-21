@@ -1,6 +1,8 @@
 import Monitor from "./monitor";
 import rpki from "rpki-validator";
 import fs from "fs";
+import md5 from "md5";
+import diff from "../utils/rpkiDiffingTool";
 
 export default class MonitorRPKI extends Monitor {
 
@@ -33,6 +35,8 @@ export default class MonitorRPKI extends Monitor {
                 });
             });
         this.loadRpkiValidator(env);
+
+        setInterval(this._diffVrps, this.refreshVrpListMinutes + 60000);
     };
 
     loadRpkiValidator = (env) => {
@@ -173,6 +177,41 @@ export default class MonitorRPKI extends Monitor {
         }
 
         return this._loadRpkiValidatorFromVrpProvider(env);
+    };
+
+    _diffVrps = () => {
+        let roaDiff;
+        const newVrps = [...this.rpki.getRadixTrie().v4.values(), ...this.rpki.getRadixTrie().v6.values()]; // Get all the vrps as retrieved from the rpki validator
+
+        if (this._oldVrps) { // No diff if there were no vrps before
+            roaDiff = [].concat.apply([], this.monitored
+                .map(i => diff(this._oldVrps, newVrps, i.asn.getValue()))); // Get the diff for each monitored AS
+        }
+
+        if (newVrps.length) {
+            this._oldVrps = newVrps;
+        }
+
+        if (roaDiff && roaDiff.length) { // Differences found
+            const impactedASes = [...new Set(roaDiff.map(i => i.asn))];
+            const matchedRules = impactedASes.map(asn => this.getMonitoredAsMatch(asn));
+
+            for (let matchedRule of matchedRules) { // An alert for each AS involved (they may have different user group)
+                const message = roaDiff.map(this._roaToString).join("");
+
+                console.log(message);
+                this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                    matchedRule.asn.getId(),
+                    matchedRule,
+                    message,
+                    {});
+            }
+        }
+
+    };
+
+    _roaToString = (roa) => {
+        return `${roa.prefix} ${roa.asn} ${roa.maxLength} ${roa.ta || ""}`;
     };
 
     updateMonitoredResources = () => {
