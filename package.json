@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@sentry/node": "^5.27.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
     "https-proxy-agent": "^5.0.0",
