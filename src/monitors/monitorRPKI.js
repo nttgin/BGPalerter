@@ -7,7 +7,7 @@ export default class MonitorRPKI extends Monitor {
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
 
-        this.providers = [ "ntt", "ripe", "external"]; // First provider is the default one
+        this.providers = [ "ntt", "ripe", "cloudflare", "external" ]; // First provider is the default one
 
         this.refreshVrpListMinutes = (!!this.params.vrpFile) ? 0 : Math.max(this.params.refreshVrpListMinutes || 0, 15);
         this.preCacheROAs = this.params.preCacheROAs !== false;
