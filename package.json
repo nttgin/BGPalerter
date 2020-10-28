@@ -46,7 +46,7 @@
     "brembo": "^2.0.4",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.3.3",
-    "ip-address": "^6.3.0",
+    "ip-address": "^7.1.0",
     "ip-sub": "^1.0.12",
     "js-yaml": "^3.14.0",
     "kafka-node": "^5.0.0",
