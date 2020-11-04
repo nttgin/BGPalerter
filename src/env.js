@@ -39,6 +39,7 @@ import {version} from '../package.json';
 import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';
+import RpkiUtils from './utils/RpkiUtils';
 
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
@@ -306,5 +307,6 @@ vector.storage = new Storage({}, config);
 vector.config = config;
 vector.logger = wlogger;
 vector.pubSub = new PubSub();
+vector.rpki = new RpkiUtils(vector);
 
 module.exports = vector;
