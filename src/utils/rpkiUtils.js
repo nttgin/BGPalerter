@@ -76,7 +76,6 @@ export default class RpkiUtils {
     };
 
     _loadRpkiValidatorFromVrpFile = (vrpFile) => {
-        console.log("LOADING");
 
         if (fs.existsSync(vrpFile)) {
             try {
@@ -146,7 +145,6 @@ export default class RpkiUtils {
             return this.rpki
                 .preCache(this.params.refreshVrpListMinutes)
                 .catch(() => {
-                    console.log("ERROR");
                     this.logger.log({
                         level: 'error',
                         message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
