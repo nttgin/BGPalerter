@@ -32,7 +32,7 @@ checkForUpdatesAtBoot: false
 persistStatus: false
 
 rpki:
-  preCacheROAs: true,
+  preCacheROAs: true
   refreshVrpListMinutes: 15
   vrpFile: tests/rpki_tests/vrp.json
 
