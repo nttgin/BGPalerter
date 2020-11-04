@@ -39,7 +39,7 @@ import {version} from '../package.json';
 import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';
-import RpkiUtils from './utils/RpkiUtils';
+import RpkiUtils from './utils/rpkiUtils';
 
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
