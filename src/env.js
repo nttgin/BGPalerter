@@ -117,8 +117,6 @@ let config = {
             channel: "rpki",
             name: "rpki-monitor",
             params: {
-                preCacheROAs: true,
-                refreshVrpListMinutes: 15,
                 thresholdMinPeers: 1,
                 checkUncovered: false
             }
@@ -142,6 +140,11 @@ let config = {
         maxRetainedFiles: 10,
         maxFileSizeMB: 15,
         compressOnRotation: false,
+    },
+    rpki: {
+        vrpProvider: "ntt",
+        preCacheROAs: true,
+        refreshVrpListMinutes: 15
     },
     checkForUpdatesAtBoot: true,
     pidFile: "bgpalerter.pid",
