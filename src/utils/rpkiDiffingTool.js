@@ -7,6 +7,7 @@ export default function diff (vrpsOld, vrpsNew, asn) {
 
     const getDiff = (vrpsOld, vrpsNew, asn)  => {
         const prefixes = [...new Set(vrpsOld.concat(vrpsNew).filter(i => i.asn === asn).map(i => i.prefix))];
+
         const filteredVrpsOld = vrpsOld.filter(i => i.asn === asn || prefixes.includes(i.prefix))
             .map(i => {
                 i.status = "removed";

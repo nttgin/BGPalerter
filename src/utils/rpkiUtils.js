@@ -153,7 +153,7 @@ export default class RpkiUtils {
         } else {
             return Promise.resolve();
         }
-    }
+    };
 
     validate = (prefix, origin) => {
         return this._preCache()
@@ -161,4 +161,8 @@ export default class RpkiUtils {
                 return this.rpki.validate(prefix, origin, true);
             });
     };
+
+    getVrps = () => {
+        return [].concat.apply([],[...this.rpki.getRadixTrie().v4.values(), ...this.rpki.getRadixTrie().v6.values()]);
+    }
 }
