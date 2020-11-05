@@ -49,12 +49,16 @@ You can use any of the RPKI validator that support JSON as output format. Below 
 
 * Download rpki-client [here](https://www.rpki-client.org/);
 
-* Install jq
-    * on Linux `apt-get install jq`
-    * on Mac `brew install jq`
-
 * Create a cron job every 15 minutes with the following
-    * `rpki-client -j test/ && cat test/export.json | jq .roas > test/vrps.json`
+    * `rpki-client -j test/`
+
+* Set the `vrpFile` parameter in `config.yml`
+    ```yaml
+    rpki:
+      vrpFile: test/export.json
+      preCacheROAs: true
+    ```
+    
     
     
 > Please, help with other examples    
