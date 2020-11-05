@@ -1,5 +1,6 @@
 import rpki from "rpki-validator";
 import fs from "fs";
+import md5 from "md5";
 
 export default class RpkiUtils {
     constructor(env) {
@@ -9,7 +10,9 @@ export default class RpkiUtils {
         this.clientId = env.clientId || "";
         this.logger = env.logger;
 
-        const providers = [ "ripe", "cloudflare", "external"]; // First provider is the default one
+        const defaultMarkDataAsStaleAfterMinutes = 60;
+
+        const providers = ["ntt", "ripe", "cloudflare", "external"]; // First provider is the default one
 
         if (this.params.vrpFile) {
             this.params.vrpProvider = "external";
@@ -29,7 +32,27 @@ export default class RpkiUtils {
             this.params.preCacheROAs = this.params.preCacheROAs !== false;
         }
 
+        if (this.params.markDataAsStaleAfterMinutes !== undefined) {
+            if (this.params.markDataAsStaleAfterMinutes <= this.params.refreshVrpListMinutes) {
+                this.logger.log({
+                    level: 'error',
+                    message: `The specified markDataAsStaleAfterMinutes cannot be <= of refreshVrpListMinutes (${defaultMarkDataAsStaleAfterMinutes} minutes will be used).`
+                });
+                this.params.markDataAsStaleAfterMinutes = defaultMarkDataAsStaleAfterMinutes;
+            }
+        }
+
+        this.status = {
+            data: true,
+            stale: false,
+            provider: this.params.vrpProvider
+        };
+
         this._loadRpkiValidator();
+
+        if (this.params.markDataAsStaleAfterMinutes > 0) {
+            setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
+        }
     };
 
     _loadRpkiValidatorFromVrpProvider = () => {
@@ -144,13 +167,23 @@ export default class RpkiUtils {
         if (!!this.params.preCacheROAs) {
             return this.rpki
                 .preCache(this.params.refreshVrpListMinutes)
+                .then(data => {
+                    this.status.data = true;
+                    this.status.stale = false;
+
+                    return data;
+                })
                 .catch(() => {
+                    this.status.data = false;
+                    this.status.stale = true;
                     this.logger.log({
                         level: 'error',
-                        message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                        message: "The VRP list cannot be downloaded."
                     });
                 });
         } else {
+            this.status.data = true;
+            this.status.stale = false;
             return Promise.resolve();
         }
     };
@@ -164,5 +197,20 @@ export default class RpkiUtils {
 
     getVrps = () => {
         return [].concat.apply([],[...this.rpki.getRadixTrie().v4.values(), ...this.rpki.getRadixTrie().v6.values()]);
-    }
+    };
+
+    getStatus = () => {
+        return this.status;
+    };
+
+    _markAsStale = () => {
+        if (!!this.params.preCacheROAs) {
+            const digest = md5(JSON.stringify(this.getVrps()));
+            if (this.oldDigest) {
+                this.status.stale = this.oldDigest === digest;
+            }
+
+            this.oldDigest = digest;
+        }
+    };
 }

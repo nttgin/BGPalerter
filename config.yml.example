@@ -284,6 +284,7 @@ rpki:
   vrpProvider: ntt
   preCacheROAs: true
   refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
 
 
 ############################

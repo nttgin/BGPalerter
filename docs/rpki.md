@@ -19,6 +19,7 @@ Below you can see the parameters available:
 |refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
 |vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `cloudflare`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
 |vrpFile| A JSON file with an array of VRPs. See example below.|
+|markDataAsStaleAfterMinutes| The amount of minutes (integer) after which an unchanged VRP list is marked as stale. Set to 0 to disable the check. |
 
 
 ## Generating a VRP file
