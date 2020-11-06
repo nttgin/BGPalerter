@@ -74,8 +74,10 @@ describe("Core functions", function() {
                     "fadeOffSeconds",
                     "checkFadeOffGroupsSeconds",
                     "volume",
-                    "persistStatus"
+                    "persistStatus",
+                    "rpki"
                 ]);
+
             expect(config.connectors[0]).to.have
                 .property('class')
         });
@@ -91,7 +93,7 @@ describe("Core functions", function() {
         it("loading connectors", function () {
             expect(config.connectors[0]).to
                 .containSubset({
-                    "params": {"testType": "withdrawal"},
+                    "params": { "testType": "withdrawal" },
                     "name": "tes"
                 });
             expect(config.connectors[0]).to.have
@@ -100,7 +102,7 @@ describe("Core functions", function() {
 
         it("loading monitors", function () {
 
-            expect(config.monitors.length).to.equal(7);
+            expect(config.monitors.length).to.equal(8);
 
             expect(config.monitors[0]).to
                 .containSubset({
@@ -153,9 +155,14 @@ describe("Core functions", function() {
                     "name": "rpki-monitor",
                     "params": {
                         "thresholdMinPeers": 1,
-                        "preCacheROAs": false,
                         "checkUncovered": true
                     }
+                });
+
+            expect(config.monitors[6]).to
+                .containSubset({
+                    "channel": "rpki",
+                    "name": "rpki-monitor"
                 });
 
             expect(config.monitors[config.monitors.length - 1]).to
@@ -183,6 +190,16 @@ describe("Core functions", function() {
 
             expect(config.reports[0]).to.have
                 .property('class')
+        });
+
+        it("rpki config", function () {
+            expect(config.rpki).to
+                .containSubset({
+                    "vrpProvider": "ntt",
+                    "preCacheROAs": true,
+                    "refreshVrpListMinutes": 15,
+                    "markDataAsStaleAfterMinutes": 120
+                });
         });
 
     });

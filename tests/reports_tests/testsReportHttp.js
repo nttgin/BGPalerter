@@ -62,7 +62,6 @@ describe("Reports 2", function() {
             if (expectedData.includes(text)) {
                 expectedData = expectedData.filter(i => i !== text);
             } else {
-                console.log(text);
                 assert.fail(text, "none", "The message is not expected");
             }
 
