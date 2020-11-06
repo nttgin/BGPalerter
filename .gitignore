@@ -13,3 +13,4 @@ alertdata/
 volumetests/
 tests/rpki_tests/vrp.json
 tests/generate_tests/prefixes.yml
+export.json

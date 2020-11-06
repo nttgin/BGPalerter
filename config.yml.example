@@ -49,8 +49,6 @@ monitors:
     params:
       thresholdMinPeers: 1
       checkUncovered: false
-      preCacheROAs: true
-      refreshVrpListMinutes: 15
 
 reports:
   - file: reportFile
@@ -275,6 +273,18 @@ monitoredPrefixesFiles:
 # More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/http-proxy.md
 
 # httpProxy: http://username:password@127.0.0.1:9000
+
+
+############################
+# RPKI settings:
+# Global RPKI settings shared across all monitors requiring RPKI data
+# More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/rpki.md
+
+rpki:
+  vrpProvider: ntt
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
 
 
 ############################

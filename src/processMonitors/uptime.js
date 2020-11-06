@@ -60,9 +60,14 @@ export default class Uptime {
             });
 
         const disconnected = connectors.some(connector => !connector.connected);
+        const rpki = env.rpki.getStatus();
+
+        const warning = disconnected || !rpki.data || rpki.stale;
+
         return {
-            warning: disconnected,
+            warning,
             connectors,
+            rpki
         };
 
     };

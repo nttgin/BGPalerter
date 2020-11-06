@@ -7,12 +7,9 @@ connectors:
       testType: withdrawal
 
 monitors:
-  - file: monitorRPKI
+  - file: monitorROAS
     channel: rpki
     name: rpki-monitor
-    params:
-      thresholdMinPeers: 1
-      checkUncovered: true
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
@@ -34,7 +31,7 @@ persistStatus: false
 rpki:
   preCacheROAs: true
   refreshVrpListMinutes: 15
-  vrpFile: tests/rpki_tests/vrp.json
+  vrpFile: tests/rpki_tests/roas.json
 
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds

@@ -42,7 +42,6 @@ monitors:
     name: rpki-monitor
     params:
       thresholdMinPeers: 1
-      preCacheROAs: false
       checkUncovered: true
 
 

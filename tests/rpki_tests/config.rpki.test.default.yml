@@ -12,8 +12,6 @@ monitors:
     name: rpki-monitor
     params:
       thresholdMinPeers: 1
-      preCacheROAs: true
-      refreshVrpListMinutes: 15
       checkUncovered: true
 
 
@@ -33,6 +31,9 @@ logging:
 checkForUpdatesAtBoot: false
 persistStatus: false
 
+rpki:
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false

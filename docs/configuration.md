@@ -21,6 +21,7 @@ The following are common parameters which it is possible to specify in the confi
 |volume| Defines a directory that will contain the data that needs persistence. For example, configuration files and logs will be created in such directory (default to "./"). | A string | /home/bgpalerter/ | No | 
 |persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No |
 |generatePrefixListEveryDays| This parameter allows to automatically re-generate the prefix list after the specified amount of days. Set to 0 to disable it. | An integer | 2 | No |
+|rpki| A dictionary containing the RPKI configuration (see [here](rpki.md) for more details). |  |  | Yes |
  
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
@@ -318,29 +319,11 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
-|preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
-|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `cloudflare`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
-|vrpFile| A JSON file with an array of VRPs. See example below.|
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 |cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g. disappearing ROAs). Default to 7 days. |
 
-> VRPs file example:
-> ```json5
-> [
->    {
->        "prefix": "123.4.5.0/22",
->        "asn": "1234",
->        "maxLength": 24
->    },
->    {
->        "prefix": "321.4.5.0/22",
->        "asn": "9876",
->        "maxLength": 22
->    }
-> ]
-> ```
+
     
 ### Reports
 

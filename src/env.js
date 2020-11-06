@@ -39,6 +39,7 @@ import {version} from '../package.json';
 import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';
+import RpkiUtils from './utils/rpkiUtils';
 
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
@@ -116,8 +117,6 @@ let config = {
             channel: "rpki",
             name: "rpki-monitor",
             params: {
-                preCacheROAs: true,
-                refreshVrpListMinutes: 15,
                 thresholdMinPeers: 1,
                 checkUncovered: false
             }
@@ -141,6 +140,11 @@ let config = {
         maxRetainedFiles: 10,
         maxFileSizeMB: 15,
         compressOnRotation: false,
+    },
+    rpki: {
+        vrpProvider: "ntt",
+        preCacheROAs: true,
+        refreshVrpListMinutes: 15
     },
     checkForUpdatesAtBoot: true,
     pidFile: "bgpalerter.pid",
@@ -306,5 +310,6 @@ vector.storage = new Storage({}, config);
 vector.config = config;
 vector.logger = wlogger;
 vector.pubSub = new PubSub();
+vector.rpki = new RpkiUtils(vector);
 
 module.exports = vector;

@@ -42,9 +42,11 @@ monitors:
     name: rpki-monitor
     params:
       thresholdMinPeers: 1
-      preCacheROAs: false
       checkUncovered: true
 
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
 
 reports:
   - file: reportFile
@@ -85,6 +87,12 @@ processMonitors:
       host: null
       port: 8011
 
+
+rpki:
+  vrpProvider: ntt
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false

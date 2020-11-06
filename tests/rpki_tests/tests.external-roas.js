@@ -37,28 +37,33 @@ const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
-global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
 
-fs.copyFileSync("tests/rpki_tests/vrp.wrong.json", "tests/rpki_tests/vrp.json");
+//Test rpki watch file reloading
+fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
+
+setTimeout(() => {
+    //Test rpki watch file reloading
+    fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
+}, 40000);
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 2", function() {
+describe("RPKI monitoring 4", function() {
 
-    //Test rpki watch file reloading
-    fs.copyFileSync("tests/rpki_tests/vrp.correct.json", "tests/rpki_tests/vrp.json");
-
-    it("external connector", function (done) {
+    it("ROA diff - external connector", function (done) {
 
         const expectedData = {
 
-            "a82_112_100_0_24-2914-false" : {
-                id: 'a82_112_100_0_24-2914-false',
+            "d6580b7dbaac973af25585b5a6e7bddc": {
+                id: 'd6580b7dbaac973af25585b5a6e7bddc',
+                truncated: false,
                 origin: 'rpki-monitor',
-                affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24'
+                affected: 2914,
+                message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, >'
             }
+
         };
 
         let rpkiTestCompletedExternal = false;
@@ -71,8 +76,7 @@ describe("RPKI monitoring 2", function() {
                 expect(Object.keys(expectedData).includes(id)).to.equal(true);
                 expect(expectedData[id] != null).to.equal(true);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                expect(message).to.containSubset(expectedData[id]);
 
                 expect(message).to.contain
                     .keys([
@@ -84,16 +88,15 @@ describe("RPKI monitoring 2", function() {
                 if (Object.keys(expectedData).length === 0) {
                     setTimeout(() => {
                         rpkiTestCompletedExternal = true;
-                        fs.unlinkSync("tests/rpki_tests/vrp.json");
                         done();
-                    }, 5000);
+                    }, 80000);
                 }
             }
         });
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
-        }, 10000);
+        }, 100000);
 
     }).timeout(asyncTimeout);
 });
