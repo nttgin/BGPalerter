@@ -24,8 +24,8 @@ jobs:
         - kill $ANYPROXY_PID
     - name: "Tests reportKafka"
       before_script:
-        - apt-get install tar
-        - apt-get install wget
+        - sudo apt-get -y install tar
+        - sudo apt-get -y install wget
         - rm kafka_2.13-2.6.0.tgz*
         - wget https://mirror.lyrahosting.com/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
         - tar -xzf kafka_2.13-2.6.0.tgz
