@@ -48,7 +48,6 @@ export default class Input {
         this.storage = env.storage;
         this.logger = env.logger;
         this.callbacks = [];
-        this.prefixListStorageKey = 'generate-prefixes-config';
 
         setTimeout(() => {
             this.loadPrefixes()

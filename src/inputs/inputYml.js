@@ -63,20 +63,25 @@ export default class InputYml extends Input {
     _watchPrefixFile = (file) => {
         if (!this.watcherSet) {
             this.watcherSet = true;
+
             fs.watchFile(file, () => {
-                this.prefixes = [];
-                this.asns = [];
-                this._loadPrefixes()
-                    .then(() => {
-                        return this._change();
-                    })
-                    .catch(error => {
-                        this.logger.log({
-                            level: 'error',
-                            message: error
+                if (this._watchPrefixFileTimer) {
+                    clearTimeout(this._watchPrefixFileTimer)
+                }
+                this._watchPrefixFileTimer = setTimeout(() => {
+                    this.prefixes = [];
+                    this.asns = [];
+                    this._loadPrefixes()
+                        .then(() => {
+                            return this._change();
+                        })
+                        .catch(error => {
+                            this.logger.log({
+                                level: 'error',
+                                message: error
+                            });
                         });
-                        process.exit();
-                    });
+                }, 5000);
             });
         }
     };
@@ -98,11 +103,13 @@ export default class InputYml extends Input {
                         monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
                         this._watchPrefixFile(file);
                     } catch (error) {
-                        throw new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]);
+                        reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
+                        return;
                     }
 
                     if (Object.keys(monitoredPrefixesFile).length === 0) {
-                        throw new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md");
+                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md"));
+                        return;
                     }
 
                     if (this.validate(monitoredPrefixesFile)) {
@@ -115,7 +122,8 @@ export default class InputYml extends Input {
                                     .keys(monitoredPrefixesFile.options.monitorASns)
                                     .map(asn => {
                                         if (uniqueAsns[asn]) {
-                                            throw new Error("Duplicate entry for monitored AS " + asn);
+                                            reject(new Error("Duplicate entry for monitored AS " + asn));
+                                            return;
                                         }
                                         uniqueAsns[asn] = true;
                                         return Object.assign({
@@ -131,7 +139,8 @@ export default class InputYml extends Input {
                             .filter(i => i !== "options")
                             .map(i => {
                                 if (uniquePrefixes[i]) {
-                                    throw new Error("Duplicate entry for " + i);
+                                    reject(new Error("Duplicate entry for " + i));
+                                    return;
                                 }
                                 uniquePrefixes[i] = true;
                                 monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
