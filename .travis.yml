@@ -26,7 +26,6 @@ jobs:
       before_script:
         - sudo apt-get -y install tar
         - sudo apt-get -y install wget
-        - rm kafka_2.13-2.6.0.tgz*
         - wget https://mirror.lyrahosting.com/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
         - tar -xzf kafka_2.13-2.6.0.tgz
         - nohup ./kafka_2.13-2.6.0/bin/zookeeper-server-start.sh ./kafka_2.13-2.6.0/config/zookeeper.properties &
