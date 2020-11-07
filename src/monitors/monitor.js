@@ -39,6 +39,7 @@ export default class Monitor {
         this.config = env.config;
         this.pubSub = env.pubSub;
         this.logger = env.logger;
+        this.rpki = env.rpki;
         this.input = input;
         this.storage = env.storage;
         this.params = params || {};

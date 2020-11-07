@@ -37,7 +37,7 @@ chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
 const cacheCloneDirectory = "tests/.cache_clone/";
-const asyncTimeout = 20000;
+const asyncTimeout = 40000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
