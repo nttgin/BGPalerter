@@ -252,17 +252,15 @@ export default class Input {
                 }
 
                 inputParameters.logger = (message) => {
-                    this.logger.log({
-                        level: 'info',
-                        message
-                    });
+                    // Nothing, ignore logs in this case (too many otherwise)
                 };
 
                 return generatePrefixes(inputParameters)
                     .then(newPrefixList => {
 
                         const newPrefixes = [];
-                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))];
+                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))]
+                            .filter(prefix => ipUtils.isValidPrefix(prefix));
                         const asns = [...new Set(Object
                             .values(oldPrefixList)
                             .map(i => i.asn)
@@ -271,6 +269,11 @@ export default class Input {
                         for (let prefix of uniquePrefixes) {
                             const oldPrefix = oldPrefixList[prefix];
                             const newPrefix = newPrefixList[prefix];
+
+                            // Apply old description to the prefix
+                            if (newPrefix && oldPrefix) {
+                                newPrefix.description = oldPrefix.description;
+                            }
 
                             // The prefix didn't exist
                             if (newPrefix && !oldPrefix) {
