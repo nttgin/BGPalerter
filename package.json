@@ -60,7 +60,7 @@
     "rpki-validator": "^2.2.6",
     "semver": "^7.3.2",
     "syslog-client": "^1.1.1",
-    "ws": "^7.3.1",
+    "ws": "^7.4.0",
     "yargs": "^16.1.0"
   },
   "pkg": {
