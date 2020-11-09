@@ -225,11 +225,16 @@ export default class Input {
                 }
             })
             .then(this.save)
+            .then(() => {
+                console.log("Done!");
+            })
             .catch(error => {
+                console.log(error);
                 this.logger.log({
                     level: 'error',
                     message: error
                 });
+                process.exit();
             });
     };
 

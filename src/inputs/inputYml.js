@@ -292,10 +292,19 @@ export default class InputYml extends Input {
         return this.asns;
     };
 
-    save = (content) => {
-        fs.writeFileSync(this.defaultPrefixFile, yaml.dump(content));
-        return Promise.resolve();
-    };
+    save = (content) =>
+        new Promise((resolve, reject) => {
+            if (content && typeof(content) === "object" && Object.keys(content).length > 0) {
+                try {
+                    fs.writeFileSync(this.defaultPrefixFile, yaml.dump(content));
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            } else {
+                reject(new Error("Empty or not valid prefix list"));
+            }
+        });
 
     retrieve = () =>
         new Promise((resolve, reject) => {
