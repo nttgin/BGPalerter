@@ -132,7 +132,7 @@ let config = {
     alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
     persistStatus: true,
-    generatePrefixListEveryDays: 2,
+    generatePrefixListEveryDays: 0,
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
