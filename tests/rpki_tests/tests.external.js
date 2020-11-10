@@ -86,14 +86,14 @@ describe("RPKI monitoring 2", function() {
                         rpkiTestCompletedExternal = true;
                         fs.unlinkSync("tests/rpki_tests/vrp.json");
                         done();
-                    }, 5000);
+                    }, 8000);
                 }
             }
         });
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
-        }, 5000);
+        }, 16000);
 
     }).timeout(asyncTimeout);
 });

@@ -33,17 +33,20 @@
 
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
+import generatePrefixes from "../generatePrefixesList";
 
 export default class Input {
 
-    constructor(config){
+    constructor(env){
         this.prefixes = [];
         this.asns = [];
         this.cache = {
             af: {},
             binaries: {}
         };
-        this.config = config;
+        this.config = env.config;
+        this.storage = env.storage;
+        this.logger = env.logger;
         this.callbacks = [];
 
         setTimeout(() => {
@@ -52,11 +55,16 @@ export default class Input {
                     this._change();
                 })
                 .catch(error => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                     console.log(error);
                     process.exit();
                 });
         }, 200);
 
+        this.setReGeneratePrefixList();
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
@@ -149,8 +157,12 @@ export default class Input {
         throw new Error('The method loadPrefixes MUST be implemented');
     };
 
-    save = () => {
+    save = (data) => {
         throw new Error('The method save MUST be implemented');
+    };
+
+    retrieve = () => {
+        throw new Error('The method retrieve MUST be implemented');
     };
 
     generate = () => {
@@ -171,18 +183,11 @@ export default class Input {
                                 type: 'input',
                                 name: 'asns',
                                 message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g. 2914,3333)",
-                                default: true,
+                                default: null,
                                 validate: function(value) {
                                     const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
                                     return asns.length > 0;
                                 }
-                            },
-
-                            {
-                                type: 'confirm',
-                                name: 'i',
-                                message: "Are there sub-prefixes delegated to other ASes? (e.g. sub-prefixes announced by customers)",
-                                default: true
                             },
 
                             {
@@ -193,23 +198,134 @@ export default class Input {
                             }
                         ])
                         .then((answer) => {
-                            const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
-                            return generatePrefixes(
-                                asns,
-                                this.config.volume + "prefixes.yml",
-                                [],
-                                answer.i,
-                                null,
-                                answer.m ? asns : []
-                            );
+
+                            const inputParameters = {
+                                asnList: asns,
+                                exclude: [],
+                                excludeDelegated: true,
+                                prefixes: null,
+                                monitoredASes: answer.m ? asns : [],
+                                httpProxy: this.config.httpProxy || null,
+                                debug: false,
+                                historical: false,
+                                group: null,
+                                append: false,
+                                logger: null,
+                                getCurrentPrefixesList: () => {
+                                    return this.retrieve();
+                                }
+                            };
+
+                            return generatePrefixes(inputParameters);
+
                         });
                 } else {
                     throw new Error("Nothing to monitor.");
                 }
+            })
+            .then(this.save)
+            .then(() => {
+                console.log("Done!");
+            })
+            .catch(error => {
+                console.log(error);
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+                process.exit();
             });
+    };
 
+    _reGeneratePrefixList = () => {
+        this.logger.log({
+            level: 'info',
+            message: "Updating prefix list"
+        });
 
+        this.setReGeneratePrefixList();
+
+        return this.retrieve()
+            .then(oldPrefixList => {
+                const inputParameters = oldPrefixList.options.generate;
+                inputParameters.httpProxy = this.config.httpProxy || null;
+
+                if (!inputParameters) {
+                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
+                }
+
+                inputParameters.logger = (message) => {
+                    // Nothing, ignore logs in this case (too many otherwise)
+                };
+
+                return generatePrefixes(inputParameters)
+                    .then(newPrefixList => {
+
+                        const newPrefixes = [];
+                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))]
+                            .filter(prefix => ipUtils.isValidPrefix(prefix));
+                        const asns = [...new Set(Object
+                            .values(oldPrefixList)
+                            .map(i => i.asn)
+                            .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
+
+                        for (let prefix of uniquePrefixes) {
+                            const oldPrefix = oldPrefixList[prefix];
+                            const newPrefix = newPrefixList[prefix];
+
+                            // Apply old description to the prefix
+                            if (newPrefix && oldPrefix) {
+                                newPrefix.description = oldPrefix.description;
+                            }
+
+                            // The prefix didn't exist
+                            if (newPrefix && !oldPrefix) {
+                                // The prefix is not RPKI valid
+                                if (!newPrefix.valid) {
+                                    // The prefix is not announced by a monitored ASn
+                                    if (!newPrefix.asn.some(p => asns.includes(p))) {
+                                        newPrefixes.push(prefix);
+                                        delete newPrefixList[prefix];
+                                    }
+                                }
+                            }
+
+                        }
+
+                        if (newPrefixes.length) {
+                            this.logger.log({
+                                level: 'info',
+                                message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                            });
+                        }
+
+                        return newPrefixList;
+                    });
+            })
+            .then(this.save)
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: `Prefix list updated.`
+                });
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+    };
+
+    setReGeneratePrefixList = () => {
+        if (this.config.generatePrefixListEveryDays >= 1) {
+            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+            if (this.regeneratePrefixListTimer) {
+                clearTimeout(this.regeneratePrefixListTimer);
+            }
+            this.regeneratePrefixListTimer = setTimeout(this._reGeneratePrefixList, refreshTimer);
+        }
     };
 
 }

@@ -31,6 +31,8 @@
  */
 
 import yargs from 'yargs';
+import fs from "fs";
+import yaml from "js-yaml";
 
 const params = yargs
     .usage('Usage: $0 <command> [options]')
@@ -44,6 +46,10 @@ const params = yargs
             .alias('c', 'config')
             .nargs('c', 1)
             .describe('c', 'Config file to load')
+
+            .alias('t', 'test')
+            .nargs('t', 0)
+            .describe('t', 'Test the configuration with fake BGP updates')
 
             .alias('d', 'data-volume')
             .nargs('d', 1)
@@ -67,7 +73,6 @@ const params = yargs
             .alias('e', 'exclude')
             .nargs('e', 1)
             .describe('e', 'Comma-separated list of prefixes to exclude')
-
 
             .alias('p', 'prefixes')
             .nargs('p', 1)
@@ -93,6 +98,22 @@ const params = yargs
             .nargs('x', 1)
             .describe('x', 'HTTP/HTTPS proxy to use')
 
+            .alias('g', 'group')
+            .nargs('g', 1)
+            .describe('x', 'Define a user group for all the generated rules.')
+
+            .alias('A', 'append')
+            .nargs('A', 0)
+            .describe('A', 'Append the new configuration to the previous one.')
+
+            .alias('D', 'debug')
+            .nargs('D', 0)
+            .describe('D', 'Provide verbose output for debugging')
+
+            .alias('H', 'historical')
+            .nargs('H', 0)
+            .describe('H', 'Use historical visibility data for generating prefix list (prefixes visible in the last week).')
+
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -104,6 +125,8 @@ const params = yargs
 switch(params._[0]) {
     case "generate":
         const generatePrefixes = require("./src/generatePrefixesList");
+        const debug = !!params.D;
+        const historical = !!params.H;
         let prefixes = null;
         let monitoredASes = false;
         if (params.pf) {
@@ -130,19 +153,40 @@ switch(params._[0]) {
             monitoredASes = true;
         }
 
-        generatePrefixes(
-            (params.a) ? params.a.toString().split(",") : null,
-            params.o,
-            (params.e || "").split(","),
-            params.i || false,
+        const inputParameters = {
+            asnList: (params.a) ? params.a.toString().split(",") : null,
+            outputFile: params.o,
+            exclude: (params.e) ? params.e.toString().split(",") : null,
+            excludeDelegated: params.i || false,
             prefixes,
             monitoredASes,
-            params.x || null
-        );
+            httpProxy: params.x || null,
+            debug,
+            historical,
+            group: params.g || null,
+            append: !!params.A,
+            logger: null,
+            getCurrentPrefixesList: () => {
+                const content = JSON.parse( yaml.safeLoad(fs.readFileSync(params.o, "utf8")) || {});
+                return Promise.resolve(content);
+            }
+        };
+
+        if (!inputParameters.outputFile) {
+            throw new Error("Output file not specified");
+        }
+
+        generatePrefixes(inputParameters)
+            .then(content => {
+                fs.writeFileSync(params.o, yaml.dump(content));
+                process.exit(0);
+            });
 
         break;
 
     default: // Run monitor
+        global.DRY_RUN = !!params.t;
+        if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: remove -t option for production monitoring.");
         const Worker = require("./src/worker").default;
         module.exports = new Worker(params.c, params.d);
 }

@@ -34,9 +34,9 @@ import Monitor from "./monitor";
 
 export default class MonitorNewPrefix extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
         this.updateMonitoredResources();
     };
 

@@ -14,11 +14,15 @@ The following are common parameters which it is possible to specify in the confi
 |logging.compressOnRotation| Indicates if when a file gets rotates it has to be compressed or not. | A boolean | true | Yes |
 |logging.maxFileSizeMB| Indicates the maximum file size in MB allowed before to be rotated. This allows to rotate files when logRotatePattern still the same but the file is too big | An integer | 15 | Yes |
 |logging.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
+|logging.useUTC| If set to true, logs will be reported in UTC time. Is set to false or missing, the timezone of the machine will be used. This parameter affects only the timestamp reported at the beginning of each log entry, it doesn't affect the time reported in the data/alerts which is always in UTC.  | A boolean | true | No |
 |checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
 |processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
 |httpProxy| Defines the HTTP/HTTPS proxy server to be used by BGPalerter and its submodules (reporters/connectors/monitors). See [here](http-proxy.md) for more information. | A string | http://usr:psw@ prxy.org:8080 | No | 
 |volume| Defines a directory that will contain the data that needs persistence. For example, configuration files and logs will be created in such directory (default to "./"). | A string | /home/bgpalerter/ | No | 
-|persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No | 
+|persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No |
+|generatePrefixListEveryDays| This parameter allows to automatically re-generate the prefix list after the specified amount of days. Set to 0 to disable it. | An integer | 0 | No |
+|rpki| A dictionary containing the RPKI configuration (see [here](rpki.md) for more details). |  |  | Yes |
+ 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 
@@ -120,7 +124,7 @@ Parameters for this connector module:
 
 |Parameter| Description| 
 |---|---|
-|url| WebSocket end-point of RIS, which currently is `wss://ris-live.ripe.net/v1/ws/` |
+|url| WebSocket end-point of RIS, which currently is `ws://ris-live.ripe.net/v1/ws/` |
 |subscription| Dictionary containing the parameters required by RIS. Refer to the [official documentation](https://ris-live.ripe.net/) for details.|
 |carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
 |perMessageDeflate| Enable gzip compression on the connection. |
@@ -183,14 +187,20 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 >    description: an example on path matching
 >    ignoreMorespecifics: false
 >  path:
->    match: ".*2194,1234$"
->    notMatch: ".*5054.*"
->    matchDescription: detected scrubbing center
+>    - match: ".*2194,1234$"
+>      notMatch: ".*5054.*"
+>      matchDescription: detected scrubbing center
+>    - match: ".*123$"
+>      notMatch: ".*5056.*"
+>      matchDescription: other match
 > ```
-> An alert will be generated when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
-> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
 
-More path matching options are available, see the entire list [here](prefixes.md#prefixes-fields)
+Path is a list of matching rules, in this way multiple matching rules can be defined for the same prefix (rules are in OR).
+
+More about path matching [here](path-matching.md).
+
+> An alert will be generated for example when a BGP announcements for 165.254.255.0/24 or a more specific contains an AS_PATH 
+> terminating in 2194,1234 but not containing 5054. The generated alert will report the matchDescription field.
 
 Example of alert:
 > Matched "an example on path matching" on prefix 98.5.4.3/22 (including length violation) 1 times
@@ -254,7 +264,7 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 > ```
 > If in config.yml monitorAS is enabled, you will receive alerts every time a prefix not already part of the prefixes list is announced by AS58302.
 > 
->If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
+> If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
 You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
 
@@ -273,12 +283,12 @@ Parameters for this monitor module:
 #### monitorRPKI
 
 This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
-involving any of the monitored prefixes (independently from who is announcing them) and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
+involving any of the monitored prefixes (independently of who is announcing them), and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
 
 This monitor is particularly useful when:
-* you are deploying RPKI, since it will let you know if any of your announcements are 
-invalid;
-* after you deployed RPKI, in order to be sure that all future BGP configurations will be covered by ROAs.
+* Before RPKI deployment, since it will let you test what announcements will be invalid after singing the ROAs.
+* During RPKI deployment, since it will let you know if any of your announcements are invalid.
+* After you deployed RPKI, in order to be sure all future BGP configurations will be covered by ROAs.
 
 > Example: 
 > The prefixes list of BGPalerter has the following entries:
@@ -294,44 +304,64 @@ invalid;
 >      group: default
 > ```
 > If in config.yml monitorRPKI is enabled, you will receive alerts every time:
->  * 103.21.244.0/24 is announced and it is not covered by ROAs or the announcement is RPKI invalid;
->  * AS13335 announces something that is not covered by ROAs or the announcement is RPKI invalid;
+>  * 103.21.244.0/24 is announced and it is not covered by ROAs, or the announcement is RPKI invalid;
+>  * AS13335 announces something that is not covered by ROAs, or the announcement is RPKI invalid;
+>  * A prefix you announce used to be covered by a ROA but such ROA is no longer available (e.g. RPKI repositories past failures: [ARIN](https://www.arin.net/announcements/20200813/), [RIPE NCC](https://www.ripe.net/support/service-announcements/accidental-roa-deletion))
 
 
-Example of alert:
-> The route 103.21.244.0/24 announced by AS13335 is not RPKI valid.
+Examples of alerts:
+> The route 103.21.244.0/24 announced by AS13335 is not RPKI valid  
+> The route 1.2.3.4/24 announced by AS1234 is not covered by a ROA  
+> The route 1.2.3.4/24 announced by AS1234 is no longer covered by a ROA  
+
+You need to configure your RPKI data source as described [here](rpki.md).
 
 Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
-|preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
-|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
-|vrpFile| A JSON file with an array of VRPs. See example below.|
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g. disappearing ROAs). Default to 7 days. |
 
-> VRPs file example:
-> ```json5
-> [
->    {
->        "prefix": "123.4.5.0/22",
->        "asn": "1234",
->        "maxLength": 24
->    },
->    {
->        "prefix": "321.4.5.0/22",
->        "asn": "9876",
->        "maxLength": 22
->    }
-> ]
+
+#### monitorROAS
+
+This monitor will periodically check and report diffs in ROAs repos involving any of your ASes or prefixes.
+You need to configure your RPKI data source as described [here](rpki.md).
+Note, while BGPalerter will perform the check near real time, many RIRs have delayed ROAs publication times.
+
+
+> Example: 
+> The prefixes list of BGPalerter has the following entries:
+> ```yaml
+> 1.2.3.4/24:
+>    asn: 1234
+>    description: an example
+>    ignoreMorespecifics: false
+> 
+> options:
+>  monitorASns:
+>    2914:
+>      group: default
 > ```
+> If in config.yml monitorROAS is enabled, you will receive alerts every time:
+>  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed.
+>  * A ROA that is, or was, involving AS2914 is added/edited/removed.
+
+
+Example of alerts:
+> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
+
+
     
 ### Reports
 
 Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
+
+After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
+This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
 
 > By default all communications will be sent to the default user group, so it is not mandatory to configure any user group. 
 > Note that the default group is used also for administrative and error communications, if you want to filter out such communications you need to [create another user group](usergroups.md).
@@ -356,6 +386,8 @@ Parameters for this report module:
 
 This report module sends the alerts by email.
 
+Read [here](context.md) how to write a template.
+
 Parameters for this report module:
 
 |Parameter| Description| 
@@ -366,7 +398,7 @@ Parameters for this report module:
 |notifiedEmails| A dictionary containing email addresses grouped by user groups.  (key: group, value: list of emails)| 
 |notifiedEmails.default| The default user group. Each user group is a [list](prefixes.md#array) of emails. This group should contain at least the admin. | 
 
-
+After configuring this module, [test the configuration](installation.md#bgpalerter-parameters) (`-t` option) to be sure everything will work once in production.
 
 #### reportSlack
 

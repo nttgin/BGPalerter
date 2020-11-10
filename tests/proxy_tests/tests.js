@@ -30,23 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
-var expect = chai.expect;
-var axios = require('axios');
+const expect = chai.expect;
+const axios = require('axios');
 
-var asyncTimeout = 30000;
+const asyncTimeout = 30000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/proxy_tests/config.proxy.test.yml";
+
+const worker = require("../../index");
+const pubSub = worker.pubSub;
+const config = worker.config;
 
 describe("Composition", function() {
 
     describe("Software updates check", function () {
         it("new version detected with proxy", function (done) {
-
-            var worker = require("../../index");
-            var pubSub = worker.pubSub;
 
             pubSub.subscribe("software-update", function (type, message) {
                 expect(type).to.equal("software-update");
@@ -56,8 +57,6 @@ describe("Composition", function() {
     });
 
     describe("Configuration loader", function () {
-        var worker = require("../../index");
-        var config = worker.config;
 
         it("config structure - proxy config loaded", function () {
             expect(config).to.have
@@ -87,9 +86,6 @@ describe("Composition", function() {
     });
 
     describe("Uptime Monitor", function() {
-
-        var worker = require("../../index");
-        var config = worker.config;
 
         it("uptime config", function () {
             expect(config.processMonitors[0]).to

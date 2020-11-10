@@ -35,8 +35,8 @@ import ipUtils from "ip-sub";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
         this.updateMonitoredResources();
     };
@@ -74,14 +74,22 @@ export default class MonitorHijack extends Monitor {
 
             if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
 
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
-            }
+                const origins = [].concat.apply([], [message.originAS.getValue()]);
+                Promise
+                    .all(origins.map(asn => this.rpki.validate(messagePrefix, asn, true)))
+                    .then(results => {
 
-            resolve(true);
+                        if (!results.every(result => result && result.valid)) {
+                            this.publishAlert(message.originAS.getId() + "-" + message.prefix,
+                                matchedRule.asn.getId(),
+                                matchedRule,
+                                message,
+                                {});
+                        }
+
+                        resolve(true);
+                    });
+            }
         });
 
 }

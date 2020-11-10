@@ -11,6 +11,8 @@ jobs:
       script: npm run test-reports
     - name: "Tests rpki"
       script: npm run test-rpki
+    - name: "Tests prefix generation"
+      script: npm run test-generate
     - name: "Tests with proxy"
       before_script:
         - npm install -g anyproxy
@@ -20,7 +22,17 @@ jobs:
         - npm run test-proxy
       after_script:
         - kill $ANYPROXY_PID
-
+    - name: "Tests reportKafka"
+      before_script:
+        - sudo apt-get -y install tar
+        - sudo apt-get -y install wget
+        - wget https://mirror.lyrahosting.com/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
+        - tar -xzf kafka_2.13-2.6.0.tgz
+        - nohup ./kafka_2.13-2.6.0/bin/zookeeper-server-start.sh ./kafka_2.13-2.6.0/config/zookeeper.properties &
+        - nohup ./kafka_2.13-2.6.0/bin/kafka-server-start.sh ./kafka_2.13-2.6.0/config/server.properties &
+        - nohup ./kafka_2.13-2.6.0/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 &
+      script:
+        - npm run test-kafka
 
 cache:
   npm: true

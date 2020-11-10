@@ -30,24 +30,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import WebSocket from "ws";
+import WebSocket from "../utils/WebSocket";
 import Connector from "./connector";
 import { AS, Path } from "../model";
 import brembo from "brembo";
 import ipUtils from "ip-sub";
 
-export default class ConnectorRIS extends Connector{
+export default class ConnectorRIS extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
         this.ws = null;
         this.subscription = null;
-        this.pingInterval = 5000;
-        this._defaultReconnectTimeout = 10000;
-        this.reconnectTimeout = this._defaultReconnectTimeout;
         this.agent = env.agent;
-
-        setInterval(this._ping, this.pingInterval);
+        this.subscribed = {};
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -55,34 +51,34 @@ export default class ConnectorRIS extends Connector{
                 client: env.clientId
             }
         });
-
-    };
-
-    _ping = () => {
-        if (this.ws) {
-            try {
-                this.ws.ping();
-            } catch (e) {
-                // Nothing to do here
-            }
-        }
-    };
-
-    _pingReceived = () => {
-        if (this.closeTimeout) {
-            clearTimeout(this.closeTimeout);
-        }
-        this.closeTimeout = setTimeout(this._close, this.pingInterval * 3);
     };
 
     _openConnect = (resolve) => {
         resolve(true);
-        this.reconnectTimeout = this._defaultReconnectTimeout;
         this._connect(this.name + ' connector connected');
+
+        if (this.subscription) {
+            this.subscribe(this.subscription);
+        }
     };
 
     _messageToJson = (message) => {
         this._message(JSON.parse(message));
+    };
+
+    _appendListeners = (resolve, reject) => {
+        this.ws.on('message', this._messageToJson);
+        this.ws.on('close', (error) => {
+
+            if (this.connected) {
+                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+            } else {
+                this._disconnect("It was not possible to establish a connection with RIPE RIS");
+                reject();
+            }
+        });
+        this.ws.on('error', this._error);
+        this.ws.on('open', this._openConnect.bind(null, resolve));
     };
 
     connect = () =>
@@ -95,63 +91,21 @@ export default class ConnectorRIS extends Connector{
                     wsOptions.agent = this.agent;
                 }
 
-                if (this.ws) {
-                    this.ws.removeAllListeners("message");
-                    this.ws.removeAllListeners("close");
-                    this.ws.removeAllListeners("error");
-                    this.ws.removeAllListeners("open");
-                    this.ws.removeAllListeners("ping");
-                    this.ws.terminate();
-                }
-
                 this.ws = new WebSocket(this.url, wsOptions);
+                this.ws.connect();
+                this._appendListeners(resolve, reject);
 
-                this.ws.on('message', this._messageToJson);
-                this.ws.on('close', (error) => {
-
-                    if (this.connected) {
-                        this._close("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
-                    } else {
-                        this._close("It was not possible to establish a connection with RIPE RIS");
-                        reject();
-                    }
-                });
-                this.ws.on('error', this._error);
-                this.ws.on('open', this._openConnect.bind(null, resolve));
-                this.ws.on('ping', this._pingReceived);
             } catch(error) {
+                console.log(error);
                 this._error(error);
                 reject(error);
             }
         });
 
-    _reconnect = () => {
-        this.connect()
-            .then(() => {
-                if (this.subscription) {
-                    this.subscribe(this.subscription);
-                }
-            })
-            .catch(error => {
-                if (error) {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                }
-            });
-    };
-
-    _getTimeoutReconnect = () => {
-        this.reconnectTimeout += (this.reconnectTimeout / 2);
-        return Math.min(120000, this.reconnectTimeout);
-    };
-
-    _close = (error) => {
-        this._disconnect(error);
-
-        // Reconnect
-        setTimeout(this._reconnect, this._getTimeoutReconnect());
+    disconnect = () => {
+        if (this.ws) {
+            this._disconnect(`${this.name} disconnected`);
+        }
     };
 
     _subscribeToAll = (input) => {
@@ -159,7 +113,6 @@ export default class ConnectorRIS extends Connector{
             type: "ris_subscribe",
             data: this.params.subscription
         }));
-
     };
 
     _optimizedPathMatch = (regex) => {
@@ -185,7 +138,6 @@ export default class ConnectorRIS extends Connector{
 
     _subscribeToPrefixes = (input) => {
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
-
         const params = JSON.parse(JSON.stringify(this.params.subscription));
 
         if (monitoredPrefixes
@@ -195,7 +147,11 @@ export default class ConnectorRIS extends Connector{
 
             delete params.prefix;
 
-            console.log("Monitoring everything");
+            if (!this.subscribed["everything"]) {
+                console.log("Monitoring everything");
+                this.subscribed["everything"] = true;
+            }
+
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
@@ -205,7 +161,11 @@ export default class ConnectorRIS extends Connector{
 
             for (let p of monitoredPrefixes) {
 
-                console.log("Monitoring", p.prefix);
+                if (!this.subscribed[p.prefix]) {
+                    console.log("Monitoring", p.prefix);
+                    this.subscribed[p.prefix] = true;
+                }
+
                 params.prefix = p.prefix;
 
                 this.ws.send(JSON.stringify({
@@ -221,9 +181,13 @@ export default class ConnectorRIS extends Connector{
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let asn of monitoredASns){
+            const asnString = asn.getValue();
 
-            console.log("Monitoring AS", asn.getValue());
-            params.path = '' + asn.getValue() + '$';
+            if (!this.subscribed[asnString]) {
+                console.log(`Monitoring AS${asnString}`);
+                this.subscribed[asnString] = true;
+            }
+            params.path = `${asnString}\$`;
 
             this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
@@ -232,21 +196,48 @@ export default class ConnectorRIS extends Connector{
         }
     };
 
+    _onInputChange = (input) => {
+        this.connect()
+            .then(() => this.subscribe(input))
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: "Prefix rules reloaded"
+                });
+            })
+            .catch(error => {
+                if (error) {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                }
+            });
+    };
+
+    onInputChange = (input) => {
+        input.onChange(() => {
+            if (this._timeoutFileChange) {
+                clearTimeout(this._timeoutFileChange);
+            }
+            this._timeoutFileChange = setTimeout(() => {
+                this._onInputChange(input);
+            }, 2000);
+        });
+    };
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             this.subscription = input;
             try {
-                input.onChange(() => {
-                    this._close();
-                });
-
                 if (this.params.carefulSubscription) {
                     this._subscribeToPrefixes(input);
                     this._subscribeToASns(input);
                 } else {
                     this._subscribeToAll(input);
                 }
+
+                this.onInputChange(input);
 
                 resolve(true);
             } catch(error) {

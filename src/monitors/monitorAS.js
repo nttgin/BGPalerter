@@ -34,9 +34,9 @@ import Monitor from "./monitor";
 
 export default class MonitorAS extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
         this.updateMonitoredResources();
     };
 
@@ -69,7 +69,6 @@ export default class MonitorAS extends Monitor {
             return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
         } else if (prefixesOut.length === 1) {
            return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
-
         }
 
         return false;

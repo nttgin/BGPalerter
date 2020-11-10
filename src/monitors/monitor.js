@@ -35,11 +35,12 @@ import axios from "axios";
 
 export default class Monitor {
 
-    constructor(name, channel, params, env) {
+    constructor(name, channel, params, env, input) {
         this.config = env.config;
         this.pubSub = env.pubSub;
         this.logger = env.logger;
-        this.input = env.input;
+        this.rpki = env.rpki;
+        this.input = input;
         this.storage = env.storage;
         this.params = params || {};
         this.maxDataSamples = this.params.maxDataSamples || 1000;
@@ -163,7 +164,7 @@ export default class Monitor {
     };
 
     _retrieveStatus = () => {
-        if (this.storage) {
+        if (this.config.persistStatus && this.storage) {
             this.storage
                 .get(`status-${this.name}`)
                 .then(({ alerts={}, sent={}, truncated={}, fadeOff={} }) => {
@@ -189,7 +190,7 @@ export default class Monitor {
     };
 
     _persistStatusHelper = () => {
-        if (this.storage) {
+        if (this.config.persistStatus && this.storage) {
             const status = {
                 alerts: this.alerts,
                 sent: this.sent,

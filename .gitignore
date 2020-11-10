@@ -12,3 +12,8 @@ alertdata/
 .cache/
 volumetests/
 tests/rpki_tests/vrp.json
+tests/generate_tests/prefixes.yml
+export.json
+tests/kafka_tests/kafka_2.13-2.6.0/
+tests/kafka_tests/kafka_2.13-2.6.0.tgz
+tests/kafka_tests/nohup.out

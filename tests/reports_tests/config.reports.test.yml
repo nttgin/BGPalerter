@@ -37,14 +37,12 @@ monitors:
     params:
       thresholdMinPeers: 2
 
-  - file: monitorRPKI
-    channel: rpki
-    name: rpki-monitor
-    params:
-      thresholdMinPeers: 1
-      preCacheROAs: false
-      refreshVrpListMinutes: 15
-      checkUncovered: true
+#  - file: monitorRPKI
+#    channel: rpki
+#    name: rpki-monitor
+#    params:
+#      thresholdMinPeers: 1
+#      checkUncovered: true
 
 
 reports:

@@ -1,11 +1,34 @@
 import axios from "axios";
 import url from "url";
 import brembo from "brembo";
-import yaml from "js-yaml";
-import fs from "fs";
-const batchPromises = require('batch-promises');
+import batchPromises from "batch-promises";
+import RpkiValidator from "rpki-validator";
+import { AS } from "./model";
+const apiTimeout = 120000;
+const clientId = "ntt-bgpalerter"
+const rpki = new RpkiValidator({clientId});
 
-module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes, httpProxy) {
+module.exports = function generatePrefixes(inputParameters) {
+    let {
+        asnList,
+        exclude,
+        excludeDelegated,
+        prefixes,
+        monitoredASes,
+        httpProxy,
+        debug,
+        historical,
+        group,
+        append,
+        logger,
+        getCurrentPrefixesList,
+        enriched
+    } = inputParameters;
+
+    exclude = exclude || [];
+    logger = logger || console.log;
+    group = group || "noc";
+
     const generateList = {};
     const allOrigins = {};
     let someNotValidatedPrefixes = false;
@@ -14,7 +37,11 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
         const HttpsProxyAgent = require("https-proxy-agent");
         axios.defaults.httpsAgent = new HttpsProxyAgent(url.parse(httpProxy));
     }
-    
+
+    if (historical) {
+        logger("WARNING: you are using historical visibility data for generating the prefix list.");
+    }
+
     if (!asnList && !prefixes) {
         throw new Error("You need to specify at least an AS number or a list of prefixes.");
     }
@@ -23,22 +50,37 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
         throw new Error("You can specify an AS number or a list of prefixes, not both.");
     }
 
-    if (!outputFile) {
-        throw new Error("Output file not specified");
+    if (asnList && asnList.length) {
+        asnList = asnList.map(i => i.replace("AS", ""));
+        if (asnList.some(i => !new AS([i]).isValid())) {
+            throw new Error("One of the AS number is not valid");
+        }
+    }
+    if (monitoredASes && monitoredASes.length) {
+        monitoredASes = monitoredASes.map(i => i.replace("AS", ""));
+        if (monitoredASes.some(i => !new AS([i]).isValid())) {
+            throw new Error("One of the AS number is not valid");
+        }
     }
 
     const getMultipleOrigins = (prefix) => {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "prefix-overview", "data.json"],
             params: {
+                client: clientId,
                 resource: prefix
             }
         });
 
+        if (debug) {
+            logger("Query", url)
+        }
+
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 let asns = [];
@@ -48,24 +90,31 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
 
                 return asns;
             })
-            .catch(() => {
-                console.log("RIPEstat prefix-overview query failed: cannot retrieve information for " + prefix);
+            .catch((error) => {
+                logger(error);
+                logger(`RIPEstat prefix-overview query failed: cannot retrieve information for ${prefix}`);
             });
     };
 
     const getAnnouncedMoreSpecifics = (prefix) => {
-        console.log("Generating monitoring rule for", prefix);
+        logger(`Generating monitoring rule for ${prefix}`);
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "related-prefixes", "data.json"],
             params: {
+                client: clientId,
                 resource: prefix
             }
         });
 
+        if (debug) {
+            logger(`Query ${url}`);
+        }
+
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 let prefixes = [];
@@ -73,7 +122,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                     prefixes = data.data.data.prefixes
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
-                            console.log("Detected more specific " + i.prefix);
+                            logger(`Detected more specific ${i.prefix}`);
                             return {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
@@ -85,7 +134,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 return prefixes;
             })
             .catch(() => {
-                console.log("RIPEstat related-prefixes query failed: cannot retrieve information for " + prefix);
+                logger(`RIPEstat related-prefixes query failed: cannot retrieve information for ${prefix}`);
             });
 
     };
@@ -94,34 +143,50 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
         getMultipleOrigins(prefix)
             .then(asns => {
 
-                if (asns.length) {
+                let origins = [parseInt(asn)];
+
+                if (asns && asns.length) {
                     const origin = (asns && asns.length) ? asns : [asn];
 
                     for (let o of origin) {
                         allOrigins[o] = true;
                     }
 
-                    generateList[prefix] = {
-                        description: description || "No description provided",
-                        asn: origin.map(i => parseInt(i)),
-                        ignoreMorespecifics: ignoreMorespecifics,
-                        ignore: excludeDelegated
-                    };
+                    origins = origin.map(i => parseInt(i));
+                } else {
+                    logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }
+
+                generateList[prefix] = {
+                    description: description || "No description provided",
+                    asn: origins,
+                    ignoreMorespecifics: ignoreMorespecifics,
+                    ignore: excludeDelegated,
+                    group: group
+                };
+
             });
 
     const getAnnouncedPrefixes = (asn) => {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "announced-prefixes", "data.json"],
             params: {
+                client: clientId,
                 resource: asn
             }
         });
 
+        logger(`Getting announced prefixes of AS${asn}`);
+
+        if (debug) {
+            logger(`Query ${url}`);
+        }
+
         return axios({
             url,
             method: 'GET',
-            responseType: 'json'
+            responseType: 'json',
+            timeout: apiTimeout
         })
             .then(data => {
                 if (data.data && data.data.data && data.data.data.prefixes) {
@@ -132,81 +197,127 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                                 .sort((a,b) => a-b)
                                 .pop();
 
-                            return latest.getTime() + (3600 * 24 * 1000) > new Date().getTime();
+                            const validityPeriodDays = (historical) ?
+                                (3600 * 1000 * 24 * 7) : // 7 days
+                                (3600 * 1000 * 28); // 28 hours (1 day and 4 hours margin)
+                            return latest.getTime() + validityPeriodDays > new Date().getTime();
                         })
-
                 }
                 return [];
             })
+            .then(list => {
+                if (list.length === 0) {
+                    logger(`WARNING: no announced prefixes were detected for AS${asn}. If you are sure the AS provided is announcing at least one prefix, this could be an issue with the data source (RIPEstat). Try to run the generate command with the option -H.`);
+                }
+
+                return list;
+            })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
             .then(list => {
-                return Promise.all(list.map(i => generateRule(i.prefix, asn, false, null, false)))
-                    .then(() => list.map(i => i.prefix))
-            })
+
+                return batchPromises(40, list, i => {
+                    return generateRule(i.prefix, asn, false, null, false);
+                })
+                    .then(() => list.map(i => i.prefix));
+            });
 
     };
 
     const validatePrefix = (asn, prefix) => {
-        const url = brembo.build("https://stat.ripe.net", {
-            path: ["data", "rpki-validation", "data.json"],
-            params: {
-                resource: asn,
-                prefix
-            }
-        });
-
-        return axios({
-            url,
-            method: 'GET',
-            responseType: 'json'
-        })
-            .then(data => {
-                if (data.data && data.data.data && data.data.data.validating_roas) {
-                    return data.data.data.validating_roas.map(i => i.validity).some(i => i === 'valid');
+        return rpki
+            .validate(prefix, asn, false)
+            .then(isValid => {
+                if (enriched) {
+                    generateList[prefix].valid = isValid;
                 }
-                return false;
-            })
-            .then((isValid) => {
-                if (isValid) {
-                    generateList[prefix].description += ' (valid ROA available)';
+
+                if (isValid === true) {
+                    // All good
+                } else if (isValid === false) {
+                    delete generateList[prefix];
+                    logger(`RPKI invalid: ${prefix} ${asn}`);
                 } else {
+                    generateList[prefix].description += ' (No ROA available)';
                     someNotValidatedPrefixes = true;
                 }
             })
-            .catch(() => {
-                console.log("RIPEstat rpki-validation query failed: cannot retrieve information for " + prefix);
+            .catch((error) => {
+                logger(`RPKI validation query failed: cannot retrieve information for ${prefix}`);
             });
     };
 
-    const getBaseRules = () => {
+    const getBaseRules = (prefixes) => {
         if (prefixes) {
-            return Promise
-                .all(prefixes.map(p => generateRule(p, null, false, null, false)))
+            return batchPromises(40, prefixes, p => {
+                return generateRule(p, null, false, null, false);
+            })
                 .then(() => prefixes);
         } else {
-            return Promise.all(asnList.map(getAnnouncedPrefixes));
+            let prefixes = [];
+            return batchPromises(1, asnList, asn => {
+                return getAnnouncedPrefixes(asn)
+                    .catch(error => {
+                        logger(`It was not possible to retrieve the announced prefixes of ${asn}. ${error}`);
+                        return prefixes;
+                    })
+                    .then(plist => prefixes = prefixes.concat(plist));
+            })
+                .then(() => {
+                    logger(`Total prefixes detected: ${prefixes.length}`);
+                    return prefixes;
+                });
         }
     };
 
-    return getBaseRules()
+    const mergeCurrentPrefixes = (current, yamlContent) => {
+
+        function isObject (item) {
+            return (item && typeof item === 'object' && !Array.isArray(item));
+        }
+        function mergeDeep(target, ...sources) {
+            if (!sources.length) return target;
+            const source = sources.shift();
+
+            if (isObject(target) && isObject(source)) {
+                for (const key in source) {
+                    if (isObject(source[key])) {
+                        if (!target[key]) Object.assign(target, { [key]: {} });
+                        mergeDeep(target[key], source[key]);
+                    } else {
+                        Object.assign(target, { [key]: source[key] });
+                    }
+                }
+            }
+
+            return mergeDeep(target, ...sources);
+        }
+
+        return mergeDeep(current, yamlContent);
+    };
+
+    return getBaseRules(prefixes)
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
-            return batchPromises(10, prefixes, prefix => {
+            return batchPromises(1, prefixes, prefix => {
                 return getAnnouncedMoreSpecifics(prefix)
-                    .then((items) => Promise
-                        .all(items.map(item => generateRule(item.prefix, item.asn, true, item.description, excludeDelegated))))
+                    .then(items => {
+                        return batchPromises(1, items, item => {
+                            return generateRule(item.prefix, item.asn, true, item.description, excludeDelegated)
+                        });
+                    })
                     .catch((e) => {
-                        console.log("Cannot download more specific prefixes of", prefix, e);
+                        logger(`Cannot download more specific prefixes of ${prefix} ${e}`);
                     })
             })
                 .catch((e) => {
-                    console.log("Cannot download more specific prefixes", e);
+                    logger(`Cannot download more specific prefixes ${e}`);
                 })
         })
+        .then(() => rpki.preCache())
         .then(() => { // Check
             return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
-                    console.log("ROA check failed due to error", e);
+                    logger(`ROA check failed due to error ${e}`);
                 })
         })
         .then(() => { // Add the options for monitorASns
@@ -215,9 +326,9 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 generateList.options = generateList.options || {};
                 generateList.options.monitorASns = generateList.options.monitorASns || {};
                 for (let monitoredAs of list) {
-                    console.log("Generating generic monitoring rule for AS", monitoredAs);
+                    logger(`Generating generic monitoring rule for AS${monitoredAs}`);
                     generateList.options.monitorASns[monitoredAs] = {
-                        group: 'default'
+                        group: group
                     };
                 }
             };
@@ -228,17 +339,34 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
             }
             // Otherwise nothing
         })
-        .then(() => { // write everything into the file
-            const yamlContent = yaml.dump(generateList);
-            fs.writeFileSync(outputFile, yamlContent);
-
+        .then(() => {
             if (someNotValidatedPrefixes) {
-                console.log("WARNING: The generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
+                logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
             }
-            console.log("Done!");
+        })
+        .then(() => {
+            return (append)
+                ? getCurrentPrefixesList()
+                    .then(current => {
+                        return mergeCurrentPrefixes(current, generateList)
+                    })
+                : generateList;
+        })
+        .then(list => {
+            const options = {
+                asnList,
+                exclude,
+                excludeDelegated,
+                prefixes,
+                monitoredASes,
+                historical,
+                group
+            };
+            list.options = Object.assign({}, list.options, { generate: options });
+            return list;
         })
         .catch((e) => {
-            console.log("Something went wrong", e);
-        })
+            logger(`Something went wrong ${e}`);
+        });
 
 };

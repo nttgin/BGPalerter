@@ -92,7 +92,7 @@ In case you want to monitor the uptime by using the `uptimeApi` ([read more](pro
 ```bash
 docker run -i --name bgpalerter \
   -v $(pwd)/volume:/opt/bgpalerter/volume \
-  -p 8011:8011
+  -p 8011:8011 \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
@@ -112,7 +112,7 @@ docker run -i --name bgpalerter \
   --health-retries=15 \
   --health-interval=60s \
   --restart unless-stopped \
-  -p 8011:8011
+  -p 8011:8011 \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
@@ -125,9 +125,10 @@ The execution of BGPalerter supports some parameters
 
 | Parameter | Description |
 |---|---|
-| -v  | Show version number |
-| -h  | Show help |
-| -c  | To specify the config file to load (default `./config.yml`) |
-| -d  | To specify a directory where configuration and data is persisted (see [volume](configuration.md)). |
+| -v | Show version number |
+| -h | Show help |
+| -c | To specify the config file to load (default `./config.yml`) |
+| -d | To specify a directory where configuration and data is persisted (see [volume](configuration.md)). |
+| -t | To test the configuration by generating fake BGP updates. This will start sending alerts on all the reports listening the `hijack` channel. |
 
 You can also use the same parameters with npm (if you are running the source code), in the following format `npm run serve -- --h` (replace `h` with the parameter you need).

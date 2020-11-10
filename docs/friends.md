@@ -8,4 +8,6 @@ Please, let me know so I can add your company name here.
 * Latin America and Caribbean Network Information Centre (LACNIC)
 * DigitalOcean (DO)
 * Freethought Internet (AS41000)
+* MTLNOG
+* EBOX (AS1403)
 * Cloudflare (AS13335)

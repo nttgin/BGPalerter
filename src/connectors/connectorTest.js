@@ -41,6 +41,8 @@ export default class ConnectorTest extends Connector{
             clearInterval(this.timer);
             this.subscribe({type: message});
         });
+
+        this.subscribe({type: params.testType});
     }
 
     connect = () => {

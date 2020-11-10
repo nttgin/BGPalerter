@@ -70,7 +70,7 @@ export default class ConnectorSwUpdates extends Connector{
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             if (this.config.checkForUpdatesAtBoot){
-                setTimeout(this._checkForUpdates, 1000);
+                setTimeout(this._checkForUpdates, 6000);
             }
             setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);

@@ -23,25 +23,25 @@ monitors:
     channel: newprefix
     name: prefix-detection
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
   - file: monitorPath
     channel: path
     name: path-matching
     params:
-      thresholdMinPeers: 0
+      thresholdMinPeers: 1
 
   - file: monitorVisibility
     channel: visibility
     name: withdrawal-detection
     params:
-      thresholdMinPeers: 20
+      thresholdMinPeers: 40
 
   - file: monitorAS
     channel: misconfiguration
     name: asn-monitor
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
   - file: monitorRPKI
     channel: rpki
@@ -49,8 +49,10 @@ monitors:
     params:
       thresholdMinPeers: 1
       checkUncovered: false
-      preCacheROAs: true
-      refreshVrpListMinutes: 15
+
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
 
 reports:
   - file: reportFile
@@ -92,8 +94,10 @@ reports:
 #          rejectUnauthorized: true  # Reject unauthorized certificates
 #      notifiedEmails:
 #        default:
+#          - admin@example.org
+#        noc:
 #          - joe@example.org
-#          - noc@example.org
+#          - seb@example.org
 
 #  - file: reportSlack
 #    channels:
@@ -113,6 +117,7 @@ reports:
 #        rpki: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
+#        noc: _YOUR_SLACK_WEBHOOK_URL_
 
 #  - file: reportKafka
 #    channels:
@@ -169,6 +174,7 @@ reports:
 #        visibility: "visibility::${prefix}@@${asn}"
 #      urls:
 #        default: _YOUR_ALERTA_API_URL_
+#        noc: _YOUR_ALERTA_API_URL_
 
 #  - file: reportWebex
 #    channels:
@@ -181,6 +187,7 @@ reports:
 #    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
+#        noc: _YOUR_WEBEX_WEBHOOK_URL_
 
 #  - file: reportHTTP
 #    channels:
@@ -198,6 +205,7 @@ reports:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      hooks:
 #        default: _YOUR_WEBHOOK_URL_
+#        noc: _YOUR_WEBHOOK_URL_
 
 #  - file: reportTelegram
 #    channels:
@@ -212,6 +220,7 @@ reports:
 #      botUrl: https://api.telegram.org/bot<_BOT_ID_>/sendMessage
 #      chatIds:
 #        default: _CHAT_ID_
+#        noc: _CHAT_ID_
 
 
 ############################
@@ -223,7 +232,7 @@ reports:
 #       Persist the status of BGPalerter. If the process is restarted, the list of alerts already sent is recovered
 #       and they are not repeated. The process must be able to write on disc, this option will create a file inside .cache/
 
-notificationIntervalSeconds: 14400
+notificationIntervalSeconds: 86400
 persistStatus: true
 
 logging:
@@ -233,8 +242,10 @@ logging:
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: false
+  useUTC: true
   
 checkForUpdatesAtBoot: true
+generatePrefixListEveryDays: 0
 
 ############################
 # Process monitoring settings:
@@ -273,6 +284,18 @@ monitoredPrefixesFiles:
 # More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/http-proxy.md
 
 # httpProxy: http://username:password@127.0.0.1:9000
+
+
+############################
+# RPKI settings:
+# Global RPKI settings shared across all monitors requiring RPKI data
+# More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/rpki.md
+
+rpki:
+  vrpProvider: ntt
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
 
 
 ############################

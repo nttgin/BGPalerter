@@ -35,10 +35,11 @@ import fs from "fs";
 import path from "path";
 import PubSub from './utils/pubSub';
 import FileLogger from './utils/fileLogger';
-import Input from "./inputs/inputYml";
 import {version} from '../package.json';
+import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';
+import RpkiUtils from './utils/rpkiUtils';
 
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
@@ -84,7 +85,7 @@ let config = {
             channel: "path",
             name: "path-matching",
             params: {
-                thresholdMinPeers: 0
+                thresholdMinPeers: 1
             }
         },
         {
@@ -92,7 +93,7 @@ let config = {
             channel: "newprefix",
             name: "prefix-detection",
             params: {
-                thresholdMinPeers: 2
+                thresholdMinPeers: 3
             }
         },
         {
@@ -100,7 +101,7 @@ let config = {
             channel: "visibility",
             name: "withdrawal-detection",
             params: {
-                thresholdMinPeers: 20
+                thresholdMinPeers: 40
             }
         },
         {
@@ -108,7 +109,7 @@ let config = {
             channel: "misconfiguration",
             name: "as-monitor",
             params: {
-                thresholdMinPeers: 2
+                thresholdMinPeers: 3
             }
         },
         {
@@ -116,8 +117,6 @@ let config = {
             channel: "rpki",
             name: "rpki-monitor",
             params: {
-                preCacheROAs: true,
-                refreshVrpListMinutes: 15,
                 thresholdMinPeers: 1,
                 checkUncovered: false
             }
@@ -129,10 +128,11 @@ let config = {
             channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration", "rpki"]
         }
     ],
-    notificationIntervalSeconds: 14400,
+    notificationIntervalSeconds: 86400,
     alarmOnlyOnce: false,
     monitoredPrefixesFiles: ["prefixes.yml"],
     persistStatus: true,
+    generatePrefixListEveryDays: 0,
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
@@ -140,6 +140,11 @@ let config = {
         maxRetainedFiles: 10,
         maxFileSizeMB: 15,
         compressOnRotation: false,
+    },
+    rpki: {
+        vrpProvider: "ntt",
+        preCacheROAs: true,
+        refreshVrpListMinutes: 15
     },
     checkForUpdatesAtBoot: true,
     pidFile: "bgpalerter.pid",
@@ -172,6 +177,25 @@ if (fs.existsSync(vector.configFile)) {
         })
 }
 
+if (global.DRY_RUN) {
+    config.connectors = [{
+        file: "connectorTest",
+        name: "tes",
+        params: {
+            testType: "hijack"
+        }
+    }];
+    config.monitors = [{
+        file: "monitorPassthrough",
+        channel: "hijack",
+        name: "monitor-passthrough",
+        params: {
+            showPaths: 0,
+            thresholdMinPeers: 0
+        }
+    }];
+}
+
 config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "";
 
 if (config.volume && config.volume.length) {
@@ -193,6 +217,7 @@ const errorTransport = new FileLogger({
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
@@ -205,6 +230,7 @@ const verboseTransport = new FileLogger({
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
@@ -251,7 +277,7 @@ config.reports = (config.reports || [])
     });
 config.connectors = config.connectors || [];
 
-config.connectors.push(        {
+config.connectors.push({
     file: "connectorSwUpdates",
     name: "upd"
 });
@@ -280,19 +306,10 @@ if (config.httpProxy) {
     vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
 }
 
-if (!!config.persistStatus) {
-    const Storage = require("./utils/storages/storageFile").default;
-    vector.storage = new Storage({
-        validitySeconds: config.notificationIntervalSeconds,
-    }, config);
-}
-
-
-const input = new Input(config);
-
+vector.storage = new Storage({}, config);
 vector.config = config;
 vector.logger = wlogger;
-vector.input = input;
 vector.pubSub = new PubSub();
+vector.rpki = new RpkiUtils(vector);
 
 module.exports = vector;
