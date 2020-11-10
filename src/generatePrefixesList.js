@@ -27,6 +27,7 @@ module.exports = function generatePrefixes(inputParameters) {
 
     exclude = exclude || [];
     logger = logger || console.log;
+    group = group || "noc";
 
     const generateList = {};
     const allOrigins = {};
@@ -161,7 +162,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     asn: origins,
                     ignoreMorespecifics: ignoreMorespecifics,
                     ignore: excludeDelegated,
-                    group: group || "default"
+                    group: group
                 };
 
             });
@@ -218,7 +219,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     return generateRule(i.prefix, asn, false, null, false);
                 })
                     .then(() => list.map(i => i.prefix));
-            })
+            });
 
     };
 
@@ -255,6 +256,10 @@ module.exports = function generatePrefixes(inputParameters) {
             let prefixes = [];
             return batchPromises(1, asnList, asn => {
                 return getAnnouncedPrefixes(asn)
+                    .catch(error => {
+                        logger(`It was not possible to retrieve the announced prefixes of ${asn}. ${error}`);
+                        return prefixes;
+                    })
                     .then(plist => prefixes = prefixes.concat(plist));
             })
                 .then(() => {
@@ -323,7 +328,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 for (let monitoredAs of list) {
                     logger(`Generating generic monitoring rule for AS${monitoredAs}`);
                     generateList.options.monitorASns[monitoredAs] = {
-                        group: group || "default"
+                        group: group
                     };
                 }
             };
@@ -348,7 +353,6 @@ module.exports = function generatePrefixes(inputParameters) {
                 : generateList;
         })
         .then(list => {
-            logger("Done!");
             const options = {
                 asnList,
                 exclude,
@@ -363,6 +367,6 @@ module.exports = function generatePrefixes(inputParameters) {
         })
         .catch((e) => {
             logger(`Something went wrong ${e}`);
-        })
+        });
 
 };

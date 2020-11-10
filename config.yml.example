@@ -50,6 +50,10 @@ monitors:
       thresholdMinPeers: 1
       checkUncovered: false
 
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
+
 reports:
   - file: reportFile
     channels:
@@ -90,8 +94,10 @@ reports:
 #          rejectUnauthorized: true  # Reject unauthorized certificates
 #      notifiedEmails:
 #        default:
+#          - admin@example.org
+#        noc:
 #          - joe@example.org
-#          - noc@example.org
+#          - seb@example.org
 
 #  - file: reportSlack
 #    channels:
@@ -111,6 +117,7 @@ reports:
 #        rpki: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
+#        noc: _YOUR_SLACK_WEBHOOK_URL_
 
 #  - file: reportKafka
 #    channels:
@@ -167,6 +174,7 @@ reports:
 #        visibility: "visibility::${prefix}@@${asn}"
 #      urls:
 #        default: _YOUR_ALERTA_API_URL_
+#        noc: _YOUR_ALERTA_API_URL_
 
 #  - file: reportWebex
 #    channels:
@@ -179,6 +187,7 @@ reports:
 #    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
+#        noc: _YOUR_WEBEX_WEBHOOK_URL_
 
 #  - file: reportHTTP
 #    channels:
@@ -196,6 +205,7 @@ reports:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      hooks:
 #        default: _YOUR_WEBHOOK_URL_
+#        noc: _YOUR_WEBHOOK_URL_
 
 #  - file: reportTelegram
 #    channels:
@@ -210,6 +220,7 @@ reports:
 #      botUrl: https://api.telegram.org/bot<_BOT_ID_>/sendMessage
 #      chatIds:
 #        default: _CHAT_ID_
+#        noc: _CHAT_ID_
 
 
 ############################
@@ -234,7 +245,7 @@ logging:
   useUTC: true
   
 checkForUpdatesAtBoot: true
-generatePrefixListEveryDays: 2
+generatePrefixListEveryDays: 0
 
 ############################
 # Process monitoring settings:

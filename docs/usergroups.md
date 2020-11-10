@@ -4,9 +4,12 @@ BGPalerter supports user groups. With user groups you can:
 * Notify only specific users about specific prefixes.
 * Notify only specific users about specific type of alerts.
 
-By default all communications will use the default group, so it is not mandatory to configure any user group.
-Note that the default group is used also for administrative and error communications. 
-Hence, it is important to set user groups in case you want to monitor resources of your customers and you want to forward to them the alerts without sending them administrative communications.
+By default, BGPalerter creates two user groups `noc` and `default` (since v1.27.0).
+* The `noc` user group receives only alerts related to the BGP monitoring. Even if set by default, this user group is optional. 
+* The `default` user group receives administrative and error communications. Additionally, it receives all the alerts that could not be dispatched to any other specific user group. This group is mandatory, and it MUST be set for all the report modules.
+
+
+You can create how many user groups you wish, for example to monitor resources of your customers and forward them the alerts about their resources without sending them administrative communications.
 
 ## Notify only specific users about specific prefixes
 
