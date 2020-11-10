@@ -39,11 +39,11 @@ chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
 
-//Test rpki watch file reloading
+// ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
 
 setTimeout(() => {
-    //Test rpki watch file reloading
+    // ROAs after
     fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
 }, 40000);
 
@@ -86,10 +86,8 @@ describe("RPKI monitoring 4", function() {
 
                 delete expectedData[id];
                 if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        rpkiTestCompletedExternal = true;
-                        done();
-                    }, 80000);
+                    rpkiTestCompletedExternal = true;
+                    done();
                 }
             }
         });
