@@ -2,16 +2,19 @@
   {
     "asn": "2914",
     "prefix": "1.2.3.0/24",
-    "maxLength": 24
+    "maxLength": 24,
+    "ta": "ripe"
   },
   {
     "asn": "AS2914",
     "prefix": "2.3.4.0/24",
-    "maxLength": 24
+    "maxLength": 24,
+    "ta": "ripe"
   },
   {
     "asn": 2914,
     "prefix": "2001:db8:123::/48",
-    "maxLength": 48
+    "maxLength": 48,
+    "ta": "ripe"
   }
 ]

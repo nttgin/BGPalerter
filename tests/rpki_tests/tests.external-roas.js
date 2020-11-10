@@ -56,12 +56,12 @@ describe("RPKI monitoring 4", function() {
 
         const expectedData = {
 
-            "d6580b7dbaac973af25585b5a6e7bddc": {
-                id: 'd6580b7dbaac973af25585b5a6e7bddc',
+            "129aafe3c8402fb045b71e810a73d425": {
+                id: '129aafe3c8402fb045b71e810a73d425',
                 truncated: false,
                 origin: 'rpki-monitor',
                 affected: 2914,
-                message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, >'
+                message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>'
             }
 
         };
