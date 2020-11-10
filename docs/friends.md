@@ -10,3 +10,4 @@ Please, let me know so I can add your company name here.
 * Freethought Internet (AS41000)
 * MTLNOG
 * EBOX (AS1403)
+* Cloudflare (AS13335)
