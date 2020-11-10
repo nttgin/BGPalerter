@@ -34,7 +34,7 @@
 import moment from "moment";
 import brembo from "brembo";
 import axios from "axios";
-import axiosRetry from "../utils/axiosRetry";
+import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Report {
 
@@ -51,11 +51,9 @@ export default class Report {
             });
         }
 
-        if (!this.params.noProxy && env.agent) {
-            axios.defaults.httpsAgent = env.agent;
-        }
-        axiosRetry(axios);
-        this.axios = axios;
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
     }
 
     getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {

@@ -18,11 +18,27 @@ const retry = function (axios, error) {
     });
 }
 
-export default function(axios) {
+export default function(axios, httpsAgent, userAgent) {
+
+    // Set agent/proxy
+    if (httpsAgent) {
+        axios.defaults.httpsAgent = httpsAgent;
+    }
+
+    // Set User Agent
+    if (userAgent) {
+        axios.defaults.headers.common = {
+            "User-Agent": userAgent
+        };
+    }
+
+    // Retry
     axios.interceptors.response.use(null, (error) => {
         if (error.config) {
             return retry(axios, error);
         }
         return Promise.reject(error);
     });
+
+    return axios;
 }

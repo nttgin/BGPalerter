@@ -32,7 +32,7 @@
  */
 
 import axios from "axios";
-import axiosRetry from "../utils/axiosRetry";
+import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Monitor {
 
@@ -49,11 +49,9 @@ export default class Monitor {
         this.channel = channel;
         this.monitored = [];
 
-        if (!this.params.noProxy && env.agent) {
-            axios.defaults.httpsAgent = env.agent;
-        }
-        axiosRetry(axios);
-        this.axios = axios;
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
 
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
         this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>

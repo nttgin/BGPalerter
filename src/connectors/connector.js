@@ -32,7 +32,7 @@
  */
 
 import axios from "axios";
-import axiosRetry from "../utils/axiosRetry";
+import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Connector {
 
@@ -48,11 +48,10 @@ export default class Connector {
         this.errorCallback = null;
         this.disconnectCallback = null;
 
-        if (!this.params.noProxy && env.agent) {
-            axios.defaults.httpsAgent = env.agent;
-        }
-        axiosRetry(axios);
-        this.axios = axios;
+
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
     }
 
     connect = () =>
