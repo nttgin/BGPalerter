@@ -8,16 +8,17 @@ Self-configuring BGP monitoring tool, which allows you to monitor in **real-time
 * any of your prefixes is hijacked;
 * your AS is announcing RPKI invalid prefixes (e.g. not matching prefix length);
 * your AS is announcing prefixes not covered by a ROAs;
+* a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
 * one of the AS path used to reach your prefix matches a specific condition defined by you.
 
-You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to public repos.
+You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to [public repos](docs/datasets.md).
 
 It can deliver alerts on files, by email, on slack, and more.
 
 ![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
 
-> BGPalerter connects to public BGP data repos (not managed by NTT) and the entire monitoring is done directly in the application (there are no NTT servers involved). 
+> BGPalerter connects to public BGP data repos (not managed by NTT), and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
 ## TL;DR (1 minute setup)
 > This section is useful if you don't care about the source code but you just want to run the monitor.
