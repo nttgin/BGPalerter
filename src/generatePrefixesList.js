@@ -27,8 +27,7 @@ module.exports = function generatePrefixes(inputParameters) {
 
     exclude = exclude || [];
     logger = logger || console.log;
-
-    const defaultUserGroup = "noc";
+    group = group || "noc";
 
     const generateList = {};
     const allOrigins = {};
@@ -163,7 +162,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     asn: origins,
                     ignoreMorespecifics: ignoreMorespecifics,
                     ignore: excludeDelegated,
-                    group: group || defaultUserGroup
+                    group: group
                 };
 
             });
@@ -329,7 +328,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 for (let monitoredAs of list) {
                     logger(`Generating generic monitoring rule for AS${monitoredAs}`);
                     generateList.options.monitorASns[monitoredAs] = {
-                        group: group || defaultUserGroup
+                        group: group
                     };
                 }
             };
