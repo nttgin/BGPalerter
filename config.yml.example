@@ -50,6 +50,10 @@ monitors:
       thresholdMinPeers: 1
       checkUncovered: false
 
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
+
 reports:
   - file: reportFile
     channels:
