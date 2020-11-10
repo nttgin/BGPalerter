@@ -314,6 +314,8 @@ Examples of alerts:
 > The route 1.2.3.4/24 announced by AS1234 is not covered by a ROA  
 > The route 1.2.3.4/24 announced by AS1234 is no longer covered by a ROA  
 
+You need to configure your RPKI data source as described [here](rpki.md).
+
 Parameters for this monitor module:
 
 |Parameter| Description| 
@@ -322,6 +324,35 @@ Parameters for this monitor module:
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 |cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g. disappearing ROAs). Default to 7 days. |
+
+
+#### monitorROAS
+
+This monitor will periodically check and report diffs in ROAs repos involving any of your ASes or prefixes.
+You need to configure your RPKI data source as described [here](rpki.md).
+Note, while BGPalerter will perform the check near real time, many RIRs have delayed ROAs publication times.
+
+
+> Example: 
+> The prefixes list of BGPalerter has the following entries:
+> ```yaml
+> 1.2.3.4/24:
+>    asn: 1234
+>    description: an example
+>    ignoreMorespecifics: false
+> 
+> options:
+>  monitorASns:
+>    2914:
+>      group: default
+> ```
+> If in config.yml monitorROAS is enabled, you will receive alerts every time:
+>  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed.
+>  * A ROA that is, or was, involving AS2914 is added/edited/removed.
+
+
+Example of alerts:
+> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
 
 
     
