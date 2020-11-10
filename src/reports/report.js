@@ -34,6 +34,7 @@
 import moment from "moment";
 import brembo from "brembo";
 import axios from "axios";
+import axiosRetry from "../utils/axiosRetry";
 
 export default class Report {
 
@@ -53,6 +54,7 @@ export default class Report {
         if (!this.params.noProxy && env.agent) {
             axios.defaults.httpsAgent = env.agent;
         }
+        axiosRetry(axios);
         this.axios = axios;
     }
 

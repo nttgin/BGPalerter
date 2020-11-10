@@ -32,6 +32,7 @@
  */
 
 import axios from "axios";
+import axiosRetry from "../utils/axiosRetry";
 
 export default class Monitor {
 
@@ -51,6 +52,7 @@ export default class Monitor {
         if (!this.params.noProxy && env.agent) {
             axios.defaults.httpsAgent = env.agent;
         }
+        axiosRetry(axios);
         this.axios = axios;
 
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.

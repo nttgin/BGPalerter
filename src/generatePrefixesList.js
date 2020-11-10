@@ -7,6 +7,8 @@ import { AS } from "./model";
 const apiTimeout = 120000;
 const clientId = "ntt-bgpalerter"
 const rpki = new RpkiValidator({clientId});
+import axiosRetry from "./utils/axiosRetry";
+
 
 module.exports = function generatePrefixes(inputParameters) {
     let {
@@ -37,6 +39,7 @@ module.exports = function generatePrefixes(inputParameters) {
         const HttpsProxyAgent = require("https-proxy-agent");
         axios.defaults.httpsAgent = new HttpsProxyAgent(url.parse(httpProxy));
     }
+    axiosRetry(axios);
 
     if (historical) {
         logger("WARNING: you are using historical visibility data for generating the prefix list.");

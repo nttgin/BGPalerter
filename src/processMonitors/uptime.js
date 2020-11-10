@@ -32,6 +32,7 @@
 
 import axios from "axios";
 import env from "../env";
+import axiosRetry from "../utils/axiosRetry";
 
 export default class Uptime {
 
@@ -42,6 +43,7 @@ export default class Uptime {
         if (!this.params.noProxy && env.agent) {
             axios.defaults.httpsAgent = env.agent;
         }
+        axiosRetry(axios);
         this.axios = axios;
     };
 
