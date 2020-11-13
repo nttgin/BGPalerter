@@ -53,7 +53,7 @@
     "kafkajs": "^1.14.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "nodemailer": "^6.4.15",
+    "nodemailer": "^6.4.16",
     "path": "^0.12.7",
     "restify": "^8.5.1",
     "rotating-file-stream": "^2.1.3",
