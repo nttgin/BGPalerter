@@ -91,7 +91,7 @@ export default class Monitor {
 
     _squash = (id) => {
 
-        const alerts = this.alerts[id];
+        const alerts = this.alerts[id] || [];
         const message = this.squashAlerts(alerts);
 
         if (message) {
