@@ -134,8 +134,10 @@ export default class Monitor {
             this.alerts[id].push(context);
 
             // Check if for each alert group the maxDataSamples parameter is respected
-            if (!this.truncated[id] && this.alerts[id].length > this.maxDataSamples) {
-                this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+            if (this.alerts[id].length > this.maxDataSamples) {
+                if (!this.truncated[id]) {
+                    this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+                }
                 this.alerts[id] = this.alerts[id].slice(-this.maxDataSamples); // Truncate
             }
 
