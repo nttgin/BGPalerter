@@ -47,12 +47,24 @@ describe("Reports 1", function() {
     it("syslog", function (done) {
         let doneCalled = false;
 
+        let expectedData = [
+            "The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn.",
+            "The prefix 165.254.225.0/24 (description 1) has been withdrawn.",
+            "The prefix 2001:db8:123::/48 (exact matching test) has been withdrawn."
+        ];
+
         Syslogd(function(info) {
             if (!doneCalled) {
                 expect(info.hostname).to.equals('127.0.0.1');
-                expect(info.tag).to.equals('++BGPalerter-5-withdrawal-detection');
-                done();
-                doneCalled = true;
+                const object = expectedData.filter(i => info.msg.startsWith(i))[0];
+                expectedData = expectedData.filter(i => i !== object);
+
+                if (object) {
+                    if (expectedData.length === 0) {
+                        done();
+                        doneCalled = true;
+                    }
+                }
             }
         })
             .listen(1516, function(error) {

@@ -11,7 +11,7 @@
   "scripts": {
     "babel": "./node_modules/.bin/babel",
     "test": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/*.js --require @babel/register && rm -rf volumetests/",
-    "test-reports": "./node_modules/.bin/mocha --exit tests/reports_tests/*.js --require @babel/register",
+    "test-reports": "./node_modules/.bin/mocha --exit tests/reports_tests/testReportSyslog.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/reports_tests/testsReportHttp.js --require @babel/register",
     "test-proxy": "./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register",
     "test-generate": "./node_modules/.bin/mocha --exit tests/generate_tests/*.js --require @babel/register",
     "test-kafka": "./node_modules/.bin/mocha --exit tests/kafka_tests/*.js --require @babel/register",

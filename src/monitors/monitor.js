@@ -167,8 +167,7 @@ export default class Monitor {
         if (this.config.persistStatus && this.storage) {
             this.storage
                 .get(`status-${this.name}`)
-                .then(({ alerts={}, sent={}, truncated={}, fadeOff={} }) => {
-                    this.alerts = alerts;
+                .then(({ sent={}, truncated={}, fadeOff={} }) => {
                     this.sent = sent;
                     this.truncated = truncated;
                     this.fadeOff = fadeOff;
@@ -192,7 +191,6 @@ export default class Monitor {
     _persistStatusHelper = () => {
         if (this.config.persistStatus && this.storage) {
             const status = {
-                alerts: this.alerts,
                 sent: this.sent,
                 truncated: this.truncated,
                 fadeOff: this.fadeOff
