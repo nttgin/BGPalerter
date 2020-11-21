@@ -64,7 +64,6 @@ export default class Input {
                 });
         }, 200);
 
-        this.setReGeneratePrefixList();
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {

@@ -42,12 +42,14 @@ export default class InputYml extends Input {
         super(env);
         this.prefixes = [];
         this.asns = [];
+        this.options = {};
+        this.watcherSet = false;
 
         if (!this.config.monitoredPrefixesFiles || this.config.monitoredPrefixesFiles.length === 0) {
             throw new Error("The monitoredPrefixesFiles key is missing in the config file");
+        } else if (this.config.monitoredPrefixesFiles.length === 1) {
+            this.setReGeneratePrefixList();
         }
-
-        this.watcherSet = false;
     };
 
     loadPrefixes = () => {
@@ -115,10 +117,10 @@ export default class InputYml extends Input {
                     if (this.validate(monitoredPrefixesFile)) {
                         if (monitoredPrefixesFile.options) {
 
-                            this.options = monitoredPrefixesFile.options;
+                            this.options = Object.assign(this.options, monitoredPrefixesFile.options);
 
                             if (monitoredPrefixesFile.options.monitorASns) {
-                                this.asns = Object
+                                const newAsnSet = Object
                                     .keys(monitoredPrefixesFile.options.monitorASns)
                                     .map(asn => {
                                         if (uniqueAsns[asn]) {
@@ -131,6 +133,8 @@ export default class InputYml extends Input {
                                             group: 'default'
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
                                     });
+
+                                this.asns = this.asns.concat(newAsnSet);
                             }
                         }
 
@@ -322,7 +326,6 @@ export default class InputYml extends Input {
                 if (rule.excludeMonitors.length) prefixes[prefix].excludeMonitors = rule.excludeMonitors;
                 if (rule.includeMonitors.length) prefixes[prefix].includeMonitors = rule.includeMonitors;
             }
-
 
             const monitorASns = {};
             for (let asnRule of this.asns) {
