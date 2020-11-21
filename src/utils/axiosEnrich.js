@@ -14,7 +14,7 @@ const retry = function (axios, error) {
             } else {
                 reject(error);
             }
-        }, 10000);
+        }, 2000);
     });
 }
 
@@ -33,12 +33,14 @@ export default function(axios, httpsAgent, userAgent) {
     }
 
     // Retry
-    axios.interceptors.response.use(null, (error) => {
-        if (error.config) {
-            return retry(axios, error);
-        }
-        return Promise.reject(error);
-    });
+    axios.interceptors.response.use(
+        response => response,
+        error => {
+            if (error.config) {
+                return retry(axios, error);
+            }
+            return Promise.reject(error);
+        });
 
     return axios;
 }

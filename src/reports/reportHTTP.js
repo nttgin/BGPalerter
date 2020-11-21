@@ -67,6 +67,7 @@ export default class ReportHTTP extends Report {
             context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}.`;
         }
         const blob = this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], context);
+
         this.axios({
             url: url,
             method: "POST",
@@ -78,7 +79,7 @@ export default class ReportHTTP extends Report {
                     level: 'error',
                     message: error
                 });
-            })
+            });
     };
 
     report = (channel, content) => {
