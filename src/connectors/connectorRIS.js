@@ -96,7 +96,6 @@ export default class ConnectorRIS extends Connector {
                 this._appendListeners(resolve, reject);
 
             } catch(error) {
-                console.log(error);
                 this._error(error);
                 reject(error);
             }
