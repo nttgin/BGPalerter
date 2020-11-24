@@ -134,9 +134,10 @@ describe("RPKI monitoring 2", function() {
         let rpkiTestCompletedExternal = false;
         let started = false;
         pubSub.subscribe("rpki", function (type, message) {
-            console.log("received rpki message");
+            console.log("message", started);
 
             if (started && !rpkiTestCompletedExternal) {
+                console.log("received rpki message");
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -164,9 +165,9 @@ describe("RPKI monitoring 2", function() {
         });
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
-            pubSub.publish("test-type", "rpki");
             started = true;
             console.log("start sending BGP data");
+            pubSub.publish("test-type", "rpki");
         }, 8000);
 
     }).timeout(asyncTimeout);
