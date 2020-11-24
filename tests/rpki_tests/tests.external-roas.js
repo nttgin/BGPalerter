@@ -50,7 +50,7 @@ setTimeout(() => {
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 4", function() {
+describe("RPKI monitoring 3", function() {
 
     it("ROA diff - external connector", function (done) {
 

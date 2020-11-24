@@ -15,7 +15,7 @@
     "test-proxy": "./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register",
     "test-generate": "./node_modules/.bin/mocha --exit tests/generate_tests/*.js --require @babel/register",
     "test-kafka": "./node_modules/.bin/mocha --exit tests/kafka_tests/*.js --require @babel/register",
-    "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-removed.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
+    "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
     "build": "./build.sh",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",

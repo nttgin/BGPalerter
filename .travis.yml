@@ -7,18 +7,11 @@ jobs:
     - stage: "Tests"
       name: "Tests without proxy"
       script: npm run test
-    - name: "Tests rpki 1"
+    - name: "Tests rpki"
       before_script:
         - rm -f -R .cache/
       script:
-        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register
-        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register
-    - name: "Tests rpki 2"
-      before_script:
-        - rm -f -R .cache/
-      script:
-        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register
-        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-removed.js --require @babel/register
+        - npm run test-rpki
     - name: "Tests: prefix generation and reports"
       script:
         - npm run test-generate
