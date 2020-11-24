@@ -104,7 +104,7 @@ describe("RPKI monitoring 3", function() {
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
-        }, 5000);
+        }, 8000);
 
     }).timeout(asyncTimeout);
 });
