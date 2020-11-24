@@ -26,12 +26,12 @@
   "author": "Massimo Candela",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@babel/cli": "^7.12.1",
-    "@babel/core": "^7.12.3",
+    "@babel/cli": "^7.12.8",
+    "@babel/core": "^7.12.8",
     "@babel/node": "^7.12.6",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-env": "^7.12.7",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "mocha": "^8.2.1",
@@ -41,7 +41,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^5.27.4",
+    "@sentry/node": "^5.27.6",
     "axios": "^0.21.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
