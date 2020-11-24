@@ -130,10 +130,9 @@ describe("RPKI monitoring 2", function() {
         fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
 
         let rpkiTestCompletedExternal = false;
-        let started = false;
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (started && !rpkiTestCompletedExternal) {
+            if (!rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -158,11 +157,6 @@ describe("RPKI monitoring 2", function() {
                 }
             }
         });
-
-        setTimeout(() => { // Wait that the watcher realizes the file changed
-            started = true;
-            pubSub.publish("test-type", "rpki");
-        }, 8000);
 
     }).timeout(asyncTimeout);
 });
