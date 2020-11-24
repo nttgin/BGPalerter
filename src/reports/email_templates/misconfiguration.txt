@@ -1,5 +1,10 @@
 ${summary}
 
+DETAILS:
+------------------------------------------------------
+Event type:           ${type}
+When event started:   ${earliest} UTC
+Last event:           ${latest} UTC
 
 Top ${pathNumber} most used AS paths:
 ${paths}
