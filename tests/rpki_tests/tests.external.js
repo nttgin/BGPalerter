@@ -126,8 +126,12 @@ describe("RPKI monitoring 2", function() {
 
         fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
 
+        console.log("start");
+
         let rpkiTestCompletedExternal = false;
         pubSub.subscribe("rpki", function (type, message) {
+            console.log("received rpki message");
+
 
             if (!rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
@@ -149,6 +153,7 @@ describe("RPKI monitoring 2", function() {
                     setTimeout(() => {
                         rpkiTestCompletedExternal = true;
                         fs.unlinkSync("tests/rpki_tests/vrp.json");
+                        console.log("stop");
                         done();
                     }, 5000);
                 }
@@ -157,6 +162,7 @@ describe("RPKI monitoring 2", function() {
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
+            console.log("start sending BGP data");
         }, 8000);
 
     }).timeout(asyncTimeout);

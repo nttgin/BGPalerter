@@ -28,6 +28,7 @@ export default class MonitorRPKI extends Monitor {
         this.storage
             .get(this.seenRpkiValidAnnouncementsKey)
             .then(prefixes => {
+                console.log(prefixes);
                 this.seenRpkiValidAnnouncements = (prefixes) ? prefixes : {};
             })
             .catch(error => {
