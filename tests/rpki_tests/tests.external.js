@@ -62,9 +62,11 @@ describe("RPKI monitoring 2", function() {
         };
 
         let rpkiTestCompletedExternal = false;
+        let started = false;
+
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (!rpkiTestCompletedExternal) {
+            if (started && !rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -93,6 +95,7 @@ describe("RPKI monitoring 2", function() {
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
+            started = true;
         }, 16000);
 
     }).timeout(asyncTimeout);
@@ -129,11 +132,11 @@ describe("RPKI monitoring 2", function() {
         console.log("start");
 
         let rpkiTestCompletedExternal = false;
+        let started = false;
         pubSub.subscribe("rpki", function (type, message) {
             console.log("received rpki message");
 
-
-            if (!rpkiTestCompletedExternal) {
+            if (started && !rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -162,6 +165,7 @@ describe("RPKI monitoring 2", function() {
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");
+            started = true;
             console.log("start sending BGP data");
         }, 8000);
 
