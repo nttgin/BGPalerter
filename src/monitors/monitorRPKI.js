@@ -31,6 +31,7 @@ export default class MonitorRPKI extends Monitor {
                 this.seenRpkiValidAnnouncements = (prefixes) ? prefixes : {};
             })
             .catch(error => {
+                console.log(error);
                 this.logger.log({
                     level: 'error',
                     message: error
