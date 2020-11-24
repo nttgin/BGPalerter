@@ -106,10 +106,11 @@ export default class Report {
                 context.pathNumber = Math.min(this.params.showPaths, sortedPathIndex.length);
                 context.paths = sortedPathIndex
                     .slice(0, this.params.showPaths)
-                    .map(i => i[0]).join(",");
+                    .map(i => i[0])
+                    .join(",");
             } else {
-                context.pathNumber = "";
-                context.paths = "Disabled";
+                context.pathNumber = 0;
+                context.paths = "";
             }
 
             switch(channel){
