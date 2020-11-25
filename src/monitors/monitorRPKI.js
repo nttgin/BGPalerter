@@ -1,5 +1,4 @@
 import Monitor from "./monitor";
-import diff from "../utils/rpkiDiffingTool";
 
 export default class MonitorRPKI extends Monitor {
 

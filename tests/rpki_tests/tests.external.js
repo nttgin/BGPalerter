@@ -109,20 +109,6 @@ describe("RPKI monitoring 2", function() {
                 origin: 'rpki-monitor',
                 affected: '82.112.100.0/24',
                 message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA.'
-            },
-
-            "a8_8_8_8_22-2914-null" : {
-                id: 'a8_8_8_8_22-2914-null',
-                origin: 'rpki-monitor',
-                affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is no longer covered by a ROA.'
-            },
-
-            "a103_21_244_0_24-13335-null": {
-                id: 'a103_21_244_0_24-13335-null',
-                origin: 'rpki-monitor',
-                affected: '103.21.244.0/24',
-                message: 'The route 103.21.244.0/24 announced by AS13335 is no longer covered by a ROA.'
             }
 
         };
