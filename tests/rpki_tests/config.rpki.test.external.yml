@@ -13,6 +13,7 @@ monitors:
     params:
       thresholdMinPeers: 1
       checkUncovered: true
+      cacheValidPrefixesSeconds: 3600
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
@@ -39,8 +40,8 @@ rpki:
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false
-fadeOffSeconds: 10
-checkFadeOffGroupsSeconds: 2
+fadeOffSeconds: 1
+checkFadeOffGroupsSeconds: 1
 pidFile: bgpalerter.pid
 multiProcess: false
 maxMessagesPerSecond: 6000

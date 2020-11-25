@@ -1,5 +1,4 @@
 import Monitor from "./monitor";
-import diff from "../utils/rpkiDiffingTool";
 
 export default class MonitorRPKI extends Monitor {
 
@@ -18,7 +17,7 @@ export default class MonitorRPKI extends Monitor {
         }
 
         this.rpki = env.rpki;
-        this.cacheValidPrefixesSeconds = (this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
+        this.cacheValidPrefixesMs = (this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
         this.input.onChange(() => {
             this.updateMonitoredResources();
         });
@@ -86,7 +85,7 @@ export default class MonitorRPKI extends Monitor {
                     if (result.valid === null) {
 
                         const cache = this.seenRpkiValidAnnouncements[cacheKey];
-                        if (cache && cache.rpkiValid  && cache.date + this.cacheValidPrefixesSeconds >= new Date().getTime()) { // valid cache
+                        if (cache && cache.rpkiValid && (cache.date + this.cacheValidPrefixesMs) >= new Date().getTime()) { // valid cache
                             this.publishAlert(key,
                                 prefix,
                                 matchedRule,
@@ -124,7 +123,7 @@ export default class MonitorRPKI extends Monitor {
 
                             // Delete old cache items
                             for (let roa of Object.keys(this.seenRpkiValidAnnouncements)) {
-                                if (this.seenRpkiValidAnnouncements[roa].date + this.cacheValidPrefixesSeconds < now) {
+                                if (this.seenRpkiValidAnnouncements[roa].date + this.cacheValidPrefixesMs < now) {
                                     delete this.seenRpkiValidAnnouncements[roa];
                                 }
                             }

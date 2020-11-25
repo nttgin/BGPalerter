@@ -45,7 +45,7 @@ fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json
 setTimeout(() => {
     // ROAs after
     fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
-}, 40000);
+}, 30000);
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
@@ -91,10 +91,6 @@ describe("RPKI monitoring 3", function() {
                 }
             }
         });
-
-        setTimeout(() => { // Wait that the watcher realizes the file changed
-            pubSub.publish("test-type", "rpki");
-        }, 100000);
 
     }).timeout(asyncTimeout);
 });

@@ -69,9 +69,11 @@ describe("RPKI monitoring 1", function() {
         };
 
         let rpkiTestCompleted = false;
+        let started = false;
+
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (!rpkiTestCompleted) {
+            if (started && !rpkiTestCompleted) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -98,6 +100,7 @@ describe("RPKI monitoring 1", function() {
         });
 
         pubSub.publish("test-type", "rpki");
+        started = true;
 
 
     }).timeout(asyncTimeout);

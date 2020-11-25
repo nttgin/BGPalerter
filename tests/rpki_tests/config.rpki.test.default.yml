@@ -13,6 +13,7 @@ monitors:
     params:
       thresholdMinPeers: 1
       checkUncovered: true
+      cacheValidPrefixesSeconds: 3600
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
