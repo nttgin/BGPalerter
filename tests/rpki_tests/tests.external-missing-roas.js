@@ -37,39 +37,35 @@ const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
-global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
 
-// ROAs before
-fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
+fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
 
-setTimeout(() => {
-    // ROAs after
-    fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
-}, 30000);
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 4", function() {
+describe("RPKI monitoring 3", function() {
 
-    it("ROA diff - external connector", function (done) {
+    it("missing roas", function (done) {
 
         const expectedData = {
 
-            "129aafe3c8402fb045b71e810a73d425": {
-                id: '129aafe3c8402fb045b71e810a73d425',
-                truncated: false,
+            "a82_112_100_0_24-2914-null": {
+                id: 'a82_112_100_0_24-2914-null',
                 origin: 'rpki-monitor',
-                affected: 2914,
-                message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>'
+                affected: '82.112.100.0/24',
+                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA.'
             }
 
         };
 
         let rpkiTestCompletedExternal = false;
+        let started = false;
+
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (!rpkiTestCompletedExternal) {
+            if (started && !rpkiTestCompletedExternal) {
                 message = JSON.parse(JSON.stringify(message));
                 const id = message.id;
 
@@ -86,11 +82,19 @@ describe("RPKI monitoring 4", function() {
 
                 delete expectedData[id];
                 if (Object.keys(expectedData).length === 0) {
-                    rpkiTestCompletedExternal = true;
-                    done();
+                    setTimeout(() => {
+                        rpkiTestCompletedExternal = true;
+                        fs.unlinkSync("tests/rpki_tests/vrp.json");
+                        done();
+                    }, 5000);
                 }
             }
         });
+
+        setTimeout(() => { // Wait that the watcher realizes the file changed
+            pubSub.publish("test-type", "rpki");
+            started = true;
+        }, 16000);
 
     }).timeout(asyncTimeout);
 });

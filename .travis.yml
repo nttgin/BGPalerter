@@ -6,12 +6,14 @@ jobs:
   include:
     - stage: "Tests"
       name: "Tests without proxy"
-      script: npm run test
+      script: npm run test-core
     - name: "Tests rpki"
       before_script:
         - rm -f -R .cache/
       script:
-        - npm run test-rpki
+        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register
+        - ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register
+        - rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register
     - name: "Tests: prefix generation and reports"
       script:
         - npm run test-generate
