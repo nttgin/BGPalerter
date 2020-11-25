@@ -27,7 +27,7 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@babel/cli": "^7.12.8",
-    "@babel/core": "^7.12.8",
+    "@babel/core": "^7.12.9",
     "@babel/node": "^7.12.6",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
@@ -50,7 +50,7 @@
     "ip-address": "^6.3.0",
     "ip-sub": "^1.0.16",
     "js-yaml": "^3.14.0",
-    "kafkajs": "^1.14.0",
+    "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
     "nodemailer": "^6.4.16",
