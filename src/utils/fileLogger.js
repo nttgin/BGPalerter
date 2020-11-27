@@ -1,6 +1,7 @@
-import fs from "fs";
 import moment from "moment";
-import { createStream } from "rotating-file-stream";
+import rotatingLogStream from "file-stream-rotator";
+import zlib from 'zlib';
+import fs from 'fs';
 
 export default class FileLogger {
 
@@ -24,25 +25,31 @@ export default class FileLogger {
         }
 
         const streamOptions = {
-            size: `${this.maxFileSizeMB}M`,
-            interval: "1d"
+            filename: `${this.directory}/${this.filename}`,
+            size: `${this.maxFileSizeMB}m`,
+            frequency: "custom",
+            max_logs: this.maxRetainedFiles,
+            date_format: this.logRotatePattern,
+            utc: this.useUTC,
+            verbose: false
         };
+
+        this.stream = rotatingLogStream.getStream(streamOptions);
+
         if (this.compressOnRotation) {
-            streamOptions.compress = "gzip";
+            this.stream.on('rotate', (oldFile, newFile) => {
+                const tmpFile = newFile + ".tmp";
+                const zip = zlib.createGzip();
+                const read = fs.createReadStream(newFile);
+                const write = fs.createWriteStream(tmpFile);
+                read.pipe(zip).pipe(write);
+                write.on('finish', () => {
+                    fs.unlinkSync(newFile);
+                    fs.renameSync(tmpFile, newFile);
+                });
+            })
         }
-        this.stream = createStream(this.getCurrentFile, streamOptions);
-    };
 
-    getCurrentFile = (time, index) => {
-        let suffix = "";
-        if (index >= 1) {
-            suffix = `.${index}`;
-            if (this.compressOnRotation) {
-                suffix += ".gz";
-            }
-        }
-
-        return `${this.directory}/${this.filename.replace("%DATE%", this.getCurrentDate().format(this.logRotatePattern))}${suffix}`;
     };
 
     defaultFormat = (json) => {
