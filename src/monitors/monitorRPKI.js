@@ -71,8 +71,6 @@ export default class MonitorRPKI extends Monitor {
             });
 
         this.queue = [];
-
-        setInterval(this._validateBatch, 500); // Periodically validate prefixes-origin pairs
     };
 
     updateMonitoredResources = () => {
@@ -176,45 +174,8 @@ export default class MonitorRPKI extends Monitor {
         }
     };
 
-    _validateBatch = () => {
-        const batch = {};
-
-        for (let { message, matchedRule } of this.queue) {
-
-            const key = message.originAS.getId() + "-" + message.prefix;
-            batch[key] = batch[key] || [];
-            batch[key].push({ message, matchedRule });
-        }
-        this.queue = [];
-
-        this.rpki
-            .validateBatch(Object
-                .values(batch)
-                .map((elements) => {
-                    const { message } = elements[0];
-                    return {
-                        prefix: message.prefix,
-                        origin: message.originAS
-                    };
-                }))
-            .then(results => {
-                for (let result of results) {
-                    const key = result.origin.getId() + "-" + result.prefix;
-                    for (let { message, matchedRule } of batch[key]) {
-                        this._validate(result, message, matchedRule);
-                    }
-                }
-            })
-            .catch(error => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
-            });
-    }
-
-    validate = ({ message, matchedRule }) => {
-        this.queue.push({ message, matchedRule });
+    validate = (message, matchedRule) => {
+        this.rpki.addToValidationQueue(message, matchedRule, this._validate);
     };
 
     monitor = (message) => {
@@ -224,11 +185,11 @@ export default class MonitorRPKI extends Monitor {
         const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false);
 
         if (matchedPrefixRule && !matchedPrefixRule.ignore) {
-            this.validate({ message, matchedRule: matchedPrefixRule });
+            this.validate(message, matchedPrefixRule);
         } else {
             const matchedASRule = this.getMonitoredAsMatch(messageOrigin);
             if (matchedASRule) {
-                this.validate({ message, matchedRule: matchedASRule });
+                this.validate(message, matchedASRule);
             }
         }
 

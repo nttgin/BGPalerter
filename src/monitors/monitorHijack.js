@@ -66,6 +66,21 @@ export default class MonitorHijack extends Monitor {
         return false;
     };
 
+    validate = (message, matchedRule) => {
+        this.rpki.addToValidationQueue(message, matchedRule, this._validate);
+    };
+
+    _validate = (result, message, matchedRule) => {
+        if (!result.valid) {
+            this.publishAlert(message.originAS.getId() + "-" + message.prefix,
+                matchedRule.asn.getId(),
+                matchedRule,
+                message,
+                {});
+        }
+    }
+
+
     monitor = (message) =>
         new Promise((resolve, reject) => {
 
@@ -73,20 +88,8 @@ export default class MonitorHijack extends Monitor {
             const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 
             if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
-
-                this.rpki.validate(messagePrefix, message.originAS)
-                    .then(result => {
-
-                        if (!result.valid) {
-                            this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                                matchedRule.asn.getId(),
-                                matchedRule,
-                                message,
-                                {});
-                        }
-
-                        resolve(true);
-                    });
+                this.validate(message, matchedRule);
+                resolve(true);
             }
         });
 

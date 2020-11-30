@@ -63,16 +63,16 @@ export default class Input {
                     process.exit();
                 });
         }, 200);
-
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
-        const p1b = ipUtils.getNetmask(prefix);
         const p1af = ipUtils.getAddressFamily(prefix);
+        const p1b = ipUtils.getNetmask(prefix, p1af);
 
         for (let p2 of lessSpecifics) {
-            if (p1af === ipUtils.getAddressFamily(p2.prefix) &&
-                ipUtils.isSubnetBinary(ipUtils.getNetmask(p2.prefix), p1b)) {
+            const p2af = ipUtils.getAddressFamily(p2.prefix);
+            if (p1af === p2af &&
+                ipUtils.isSubnetBinary(ipUtils.getNetmask(p2.prefix, p2af), p1b)) {
                 return true;
             }
 
@@ -127,13 +127,13 @@ export default class Input {
 
                 if (!this.cache.af[p.prefix] || !this.cache.binaries[p.prefix]) {
                     this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
-                    this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix);
+                    this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix, this.cache.af[p.prefix]);
                 }
                 const prefixAf = ipUtils.getAddressFamily(prefix);
 
                 if (prefixAf === this.cache.af[p.prefix]) {
 
-                    const prefixBinary = ipUtils.getNetmask(prefix);
+                    const prefixBinary = ipUtils.getNetmask(prefix, prefixAf);
                     if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
                         if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
                             return p;

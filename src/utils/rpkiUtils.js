@@ -53,6 +53,9 @@ export default class RpkiUtils {
         if (this.params.markDataAsStaleAfterMinutes > 0) {
             setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
         }
+
+        this.queue = [];
+        setInterval(this._validateQueue, 500); // Periodically validate prefixes-origin pairs
     };
 
     _loadRpkiValidatorFromVrpProvider = () => {
@@ -186,6 +189,45 @@ export default class RpkiUtils {
             this.status.stale = false;
             return Promise.resolve();
         }
+    };
+
+    _validateQueue = () => {
+        const batch = {};
+
+        for (let { message, matchedRule, callback } of this.queue) {
+            const key = message.originAS.getId() + "-" + message.prefix;
+            batch[key] = batch[key] || [];
+            batch[key].push({ message, matchedRule, callback });
+        }
+        this.queue = [];
+
+        this.validateBatch(Object
+                .values(batch)
+                .map((elements) => {
+                    const { message } = elements[0];
+                    return {
+                        prefix: message.prefix,
+                        origin: message.originAS
+                    };
+                }))
+            .then(results => {
+                for (let result of results) {
+                    const key = result.origin.getId() + "-" + result.prefix;
+                    for (let { message, matchedRule, callback } of batch[key]) {
+                        callback(result, message, matchedRule);
+                    }
+                }
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+    };
+
+    addToValidationQueue = (message, matchedRule, callback) => {
+        this.queue.push({ message, matchedRule, callback });
     };
 
     validate = (prefix, origin) => {
