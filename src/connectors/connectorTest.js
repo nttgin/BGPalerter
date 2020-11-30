@@ -107,6 +107,17 @@ export default class ConnectorTest extends Connector{
                 updates = [
                     {
                         data: {
+                            announcements: [{ // RPKI valid announcement, no alert should be triggered (issue #358)
+                                prefixes: ["193.0.0.0/21"],
+                                next_hop: "1.2.3.4"
+                            }],
+                            peer: "1.2.3.5",
+                            path: [1, 2, 3, 3333]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
                             announcements: [{
                                 prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
                                 next_hop: "124.0.0.3"

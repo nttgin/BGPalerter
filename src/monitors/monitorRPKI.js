@@ -1,3 +1,36 @@
+
+/*
+ * 	BSD 3-Clause License
+ *
+ * Copyright (c) 2019, NTT Ltd.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ *  Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ *  Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 import Monitor from "./monitor";
 
 export default class MonitorRPKI extends Monitor {
@@ -24,7 +57,8 @@ export default class MonitorRPKI extends Monitor {
 
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
-        this.storage
+
+        this.storage // Reload the previously discovered ROAs (needed to alert in case of disappearing ROAs)
             .get(this.seenRpkiValidAnnouncementsKey)
             .then(prefixes => {
                 this.seenRpkiValidAnnouncements = (prefixes) ? prefixes : {};
@@ -35,6 +69,10 @@ export default class MonitorRPKI extends Monitor {
                     message: error
                 });
             });
+
+        this.queue = [];
+
+        setInterval(this._validateBatch, 500); // Periodically validate prefixes-origin pairs
     };
 
     updateMonitoredResources = () => {
@@ -66,77 +104,104 @@ export default class MonitorRPKI extends Monitor {
         }
     };
 
-    validate = ({ message, matchedRule} ) => {
-        const prefix = message.prefix;
-        const origin = message.originAS.getValue();
-        return this.rpki
-            .validate(prefix, origin.toString(), true)
-            .then(result => {
-                if (result) {
+    _validate = (result, message, matchedRule) => {
+        const prefix = result.prefix;
+        const origin = result.origin.getValue();
+        if (result) {
 
-                    const cacheKey = "a" + [prefix, origin]
-                        .join("-")
-                        .replace(/\./g, "_")
-                        .replace(/\:/g, "_")
-                        .replace(/\//g, "_");
+            const cacheKey = "a" + [prefix, origin]
+                .join("-")
+                .replace(/\./g, "_")
+                .replace(/\:/g, "_")
+                .replace(/\//g, "_");
 
-                    const key = `${cacheKey}-${result.valid}`;
+            const key = `${cacheKey}-${result.valid}`;
 
-                    if (result.valid === null) {
+            if (result.valid === null) {
 
-                        const cache = this.seenRpkiValidAnnouncements[cacheKey];
-                        if (cache && cache.rpkiValid && (cache.date + this.cacheValidPrefixesMs) >= new Date().getTime()) { // valid cache
-                            this.publishAlert(key,
-                                prefix,
-                                matchedRule,
-                                message,
-                                { covering: null, valid: null, roaDisappeared: true });
-                        } else if (this.params.checkUncovered) {
-                            this.publishAlert(key,
-                                prefix,
-                                matchedRule,
-                                message,
-                                { covering: null, valid: null });
+                const cache = this.seenRpkiValidAnnouncements[cacheKey];
+                if (cache && cache.rpkiValid && (cache.date + this.cacheValidPrefixesMs) >= new Date().getTime()) { // valid cache
+                    this.publishAlert(key,
+                        prefix,
+                        matchedRule,
+                        message,
+                        { covering: null, valid: null, roaDisappeared: true });
+                } else if (this.params.checkUncovered) {
+                    this.publishAlert(key,
+                        prefix,
+                        matchedRule,
+                        message,
+                        { covering: null, valid: null });
+                }
+            } else if (result.valid === false) {
+                this.publishAlert(key,
+                    prefix,
+                    matchedRule,
+                    message,
+                    { covering: result.covering, valid: false });
+
+            } else if (result.valid) {
+
+                // Refresh dictionary
+                this.seenRpkiValidAnnouncements[cacheKey] = {
+                    date: new Date().getTime(),
+                    rpkiValid: true
+                };
+
+                if (this.seenRpkiValidAnnouncementsTimer) {
+                    clearTimeout(this.seenRpkiValidAnnouncementsTimer);
+                }
+
+                // Store dictionary
+                this.seenRpkiValidAnnouncementsTimer = setTimeout(() => {
+                    const now = new Date().getTime();
+
+                    // Delete old cache items
+                    for (let roa of Object.keys(this.seenRpkiValidAnnouncements)) {
+                        if (this.seenRpkiValidAnnouncements[roa].date + this.cacheValidPrefixesMs < now) {
+                            delete this.seenRpkiValidAnnouncements[roa];
                         }
-                    } else if (result.valid === false) {
-                        this.publishAlert(key,
-                            prefix,
-                            matchedRule,
-                            message,
-                            { covering: result.covering, valid: false });
+                    }
+                    this.storage
+                        .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements)
+                        .catch(error => {
+                            this.logger.log({
+                                level: 'error',
+                                message: error
+                            });
+                        });
+                }, 1000);
 
-                    } else if (result.valid) {
+            }
+        }
+    };
 
-                        // Refresh dictionary
-                        this.seenRpkiValidAnnouncements[cacheKey] = {
-                            date: new Date().getTime(),
-                            rpkiValid: true
-                        };
+    _validateBatch = () => {
+        const batch = {};
 
-                        if (this.seenRpkiValidAnnouncementsTimer) {
-                            clearTimeout(this.seenRpkiValidAnnouncementsTimer);
-                        }
+        for (let { message, matchedRule } of this.queue) {
 
-                        // Store dictionary
-                        this.seenRpkiValidAnnouncementsTimer = setTimeout(() => {
-                            const now = new Date().getTime();
+            const key = message.originAS.getId() + "-" + message.prefix;
+            batch[key] = batch[key] || [];
+            batch[key].push({ message, matchedRule });
+        }
+        this.queue = [];
 
-                            // Delete old cache items
-                            for (let roa of Object.keys(this.seenRpkiValidAnnouncements)) {
-                                if (this.seenRpkiValidAnnouncements[roa].date + this.cacheValidPrefixesMs < now) {
-                                    delete this.seenRpkiValidAnnouncements[roa];
-                                }
-                            }
-                            this.storage
-                                .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements)
-                                .catch(error => {
-                                    this.logger.log({
-                                        level: 'error',
-                                        message: error
-                                    });
-                                });
-                        }, 1000);
-
+        this.rpki
+            .validateBatch(Object
+                .values(batch)
+                .map((elements) => {
+                    const { message } = elements[0];
+                    return {
+                        prefix: message.prefix,
+                        origin: message.originAS
+                    };
+                }))
+            .then(results => {
+                for (let result of results) {
+                    const key = result.origin.getId() + "-" + result.prefix;
+                    for (let { message, matchedRule } of batch[key]) {
+                        this._validate(result, message, matchedRule);
                     }
                 }
             })
@@ -146,7 +211,10 @@ export default class MonitorRPKI extends Monitor {
                     message: error
                 });
             });
+    }
 
+    validate = ({ message, matchedRule }) => {
+        this.queue.push({ message, matchedRule });
     };
 
     monitor = (message) => {
@@ -155,7 +223,7 @@ export default class MonitorRPKI extends Monitor {
         const prefix = message.prefix;
         const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false);
 
-        if (matchedPrefixRule) {
+        if (matchedPrefixRule && !matchedPrefixRule.ignore) {
             this.validate({ message, matchedRule: matchedPrefixRule });
         } else {
             const matchedASRule = this.getMonitoredAsMatch(messageOrigin);

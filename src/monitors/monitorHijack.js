@@ -74,12 +74,10 @@ export default class MonitorHijack extends Monitor {
 
             if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
 
-                const origins = [].concat.apply([], [message.originAS.getValue()]);
-                Promise
-                    .all(origins.map(asn => this.rpki.validate(messagePrefix, asn, true)))
-                    .then(results => {
+                this.rpki.validate(messagePrefix, message.originAS)
+                    .then(result => {
 
-                        if (!results.every(result => result && result.valid)) {
+                        if (!result.valid) {
                             this.publishAlert(message.originAS.getId() + "-" + message.prefix,
                                 matchedRule.asn.getId(),
                                 matchedRule,

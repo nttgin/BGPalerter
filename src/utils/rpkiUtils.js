@@ -189,9 +189,47 @@ export default class RpkiUtils {
     };
 
     validate = (prefix, origin) => {
+        return this.validateBatch([{ prefix, origin }])
+            .then(results => results[0]);
+    };
+
+    validateBatch = (batch) => {
         return this._preCache()
             .then(() => {
-                return this.rpki.validate(prefix, origin, true);
+                return Promise.all(batch
+                    .map(({ prefix, origin }) => {
+                        const origins = [].concat.apply([], [origin.getValue()]);
+                        return Promise
+                            .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
+                            .then(results => {
+                                if (results.length === 1) { // Only one result = only one origin, just return
+                                    return { ...results[0], prefix, origin };
+                                } else { // Multiple origin
+                                    if (results.every(result => result && result.valid)) { // All valid
+                                        return {
+                                            valid: true,
+                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            prefix,
+                                            origin
+                                        };
+                                    } else if (results.some(result => result && !result.valid)) { // At least one not valid
+                                        return {
+                                            valid: false,
+                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            prefix,
+                                            origin
+                                        };
+                                    } else { // return not covered
+                                        return {
+                                            valid: null,
+                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            prefix,
+                                            origin
+                                        };
+                                    }
+                                }
+                            });
+                    }))
             });
     };
 
