@@ -69,26 +69,29 @@ describe("RPKI monitoring 4", function() {
         let rpkiTestCompletedExternal = false;
         pubSub.subscribe("rpki", function (type, message) {
 
-            if (!rpkiTestCompletedExternal) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
+            try {
+                if (!rpkiTestCompletedExternal) {
+                    message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to.containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to.containSubset(expectedData[id]);
-
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    rpkiTestCompletedExternal = true;
-                    done();
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        rpkiTestCompletedExternal = true;
+                        done();
+                    }
                 }
+            } catch (error) {
+                rpkiTestCompletedExternal = true;
+                done(error);
             }
         });
 

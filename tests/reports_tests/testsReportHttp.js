@@ -53,7 +53,6 @@ describe("Reports 2", function() {
             "A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45. Top 1 most used AS paths: [2,3,208585].",
         ];
 
-
         pubSub.publish("test-type", "hijack");
         server.post('/test', function (req, res, next) {
             const text = req.body.text;

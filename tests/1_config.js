@@ -223,11 +223,20 @@ describe("Core functions", function() {
 
         it("loading prefixes", function () {
 
-            expect(input.prefixes.length).to.equal(14);
+            expect(input.prefixes.length).to.equal(15);
 
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
                     "prefixes": [
+                        {
+                            "asn": [1234],
+                            "description": "rpki valid not monitored AS",
+                            "ignoreMorespecifics": false,
+                            "prefix": "193.0.0.0/21",
+                            "group": "default",
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
+                        },
                         {
                             "asn": [15562],
                             "description": "description 1",

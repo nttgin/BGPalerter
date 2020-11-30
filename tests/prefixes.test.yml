@@ -1,3 +1,8 @@
+193.0.0.0/21:
+  description: rpki valid not monitored AS
+  asn: 1234
+  ignoreMorespecifics: false
+
 165.254.225.0/24:
   description: description 1
   asn: 15562

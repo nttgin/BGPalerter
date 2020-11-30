@@ -65,31 +65,35 @@ describe("RPKI monitoring 2", function() {
         let started = false;
 
         pubSub.subscribe("rpki", function (type, message) {
+            try {
+                if (started && !rpkiTestCompletedExternal) {
+                    message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-            if (started && !rpkiTestCompletedExternal) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        rpkiTestCompletedExternal = true;
-                        fs.unlinkSync("tests/rpki_tests/vrp.json");
-                        done();
-                    }, 8000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            rpkiTestCompletedExternal = true;
+                            fs.unlinkSync("tests/rpki_tests/vrp.json");
+                            done();
+                        }, 8000);
+                    }
                 }
+            } catch (error) {
+                rpkiTestCompletedExternal = true;
+                done(error);
             }
         });
 

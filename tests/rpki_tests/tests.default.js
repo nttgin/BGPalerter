@@ -70,39 +70,39 @@ describe("RPKI monitoring 1", function() {
 
         let rpkiTestCompleted = false;
         let started = false;
-
         pubSub.subscribe("rpki", function (type, message) {
+            try {
+                if (started && !rpkiTestCompleted) {
+                    message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-            if (started && !rpkiTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        rpkiTestCompleted = true;
-                        done();
-                    }, 5000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            rpkiTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
                 }
+            } catch (error) {
+                rpkiTestCompleted = true;
+                done(error);
             }
         });
-
         pubSub.publish("test-type", "rpki");
         started = true;
-
-
     }).timeout(asyncTimeout);
 
 });
