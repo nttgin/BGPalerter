@@ -238,7 +238,6 @@ persistStatus: true
 logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD
-  backlogSize: 1000  #Advanced option, read the doc
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: false

@@ -20,7 +20,6 @@ monitoredPrefixesFiles:
 logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
-  backlogSize: 1
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: true

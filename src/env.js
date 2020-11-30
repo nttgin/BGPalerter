@@ -136,7 +136,6 @@ let config = {
     logging: {
         directory: "logs",
         logRotatePattern: "YYYY-MM-DD",
-        backlogSize: 1000,
         maxRetainedFiles: 10,
         maxFileSizeMB: 15,
         compressOnRotation: false,
@@ -213,7 +212,6 @@ const errorTransport = new FileLogger({
     filename: 'error-%DATE%.log',
     symLink: 'error.log',
     directory: config.volume + config.logging.directory,
-    backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
@@ -227,7 +225,6 @@ const verboseTransport = new FileLogger({
     filename: 'reports-%DATE%.log',
     symLink: 'reports.log',
     directory: config.volume + config.logging.directory,
-    backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,

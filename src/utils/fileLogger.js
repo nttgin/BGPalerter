@@ -9,6 +9,7 @@ export default class FileLogger {
         this.format = params.format || this.defaultFormat;
         this.logRotatePattern = params.logRotatePattern || "YYYY-MM-DD";
         this.filename = params.filename;
+        this.symLinkName = params.symLink;
         this.useUTC = params.useUTC;
         this.directory = params.directory;
         this.levels = params.levels || ['error', 'info', 'verbose'];
@@ -18,8 +19,6 @@ export default class FileLogger {
         this.maxFileSizeMB = parseFloat(params.maxFileSizeMB  || 20);
         this.maxRetainedFiles = parseFloat(params.maxRetainedFiles  || 20);
 
-        this.backlogSize = parseFloat(params.backlogSize || 100);
-
         if (!fs.existsSync(this.directory)){
             fs.mkdirSync(this.directory);
         }
@@ -28,9 +27,12 @@ export default class FileLogger {
             filename: `${this.directory}/${this.filename}`,
             size: `${this.maxFileSizeMB}m`,
             frequency: "custom",
+            end_stream: true,
             max_logs: this.maxRetainedFiles,
             date_format: this.logRotatePattern,
             utc: this.useUTC,
+            create_symlink: true,
+            symlink_name: this.symLinkName,
             verbose: false
         };
 
