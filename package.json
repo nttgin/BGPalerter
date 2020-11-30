@@ -30,6 +30,17 @@
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
+  "keywords": [
+    "BGP",
+    "monitoring",
+    "rpki",
+    "network",
+    "internet",
+    "real-time",
+    "hijack",
+    "detection",
+    "measurements"
+  ],
   "devDependencies": {
     "@babel/cli": "^7.12.8",
     "@babel/core": "^7.12.9",
