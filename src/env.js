@@ -211,6 +211,7 @@ if (config.volume && config.volume.length) {
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',
+    symLink: 'error.log',
     directory: config.volume + config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,
@@ -224,6 +225,7 @@ const errorTransport = new FileLogger({
 const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'reports-%DATE%.log',
+    symLink: 'reports.log',
     directory: config.volume + config.logging.directory,
     backlogSize: config.logging.backlogSize,
     maxRetainedFiles: config.logging.maxRetainedFiles,

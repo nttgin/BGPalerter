@@ -30,7 +30,7 @@ Instead, if you want to run the source code (which is completely open) or develo
 The first time you run it, the auto-configuration will start.  
 
 
-If something happens (e.g. a hijack) you will see the alerts in `logs/reports-YYYY-MM-DD.log`. 
+If something happens (e.g. a hijack) you will see the alerts in `logs/reports.log`.
 In `config.yml` you can find other reporting mechanisms (e.g. email, Slack, Kafka) in addition to logging on files. 
 Please uncomment the related section and configure according to your needs. 
 
