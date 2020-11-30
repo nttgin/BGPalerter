@@ -14,7 +14,7 @@
     "./view",
     "./tests",
     "./logs",
-    "./build",
-    "./bin.js"
+    "./dist",
+    "./build"
   ]
 }

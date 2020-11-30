@@ -35,7 +35,7 @@ import fs from "fs";
 import path from "path";
 import PubSub from './utils/pubSub';
 import FileLogger from './utils/fileLogger';
-import {version} from '../package.json';
+import { version } from '../package.json';
 import Storage from './utils/storages/storageFile';
 import axios from 'axios';
 import url from 'url';

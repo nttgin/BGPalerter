@@ -2,7 +2,12 @@
   "name": "bgpalerter",
   "version": "1.26.2",
   "description": "Software to monitor streams of BGP data. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, and more.",
-  "main": "index.js",
+  "author": {
+    "name": "Massimo Candela",
+    "url": "https://massimocandela.com"
+  },
+  "license": "BSD-3-Clause",
+  "main": "src/worker.js",
   "bin": "index.js",
   "repository": {
     "type": "git",
@@ -18,14 +23,13 @@
     "test-kafka": "./node_modules/.bin/mocha --exit tests/kafka_tests/*.js --require @babel/register",
     "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
     "build": "./build.sh",
+    "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json",
     "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
     "inspect": "node --inspect --require @babel/register index.js",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
     "generate-prefixes": "babel-node index.js generate"
   },
-  "author": "Massimo Candela",
-  "license": "BSD-3-Clause",
   "devDependencies": {
     "@babel/cli": "^7.12.8",
     "@babel/core": "^7.12.9",

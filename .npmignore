@@ -4,6 +4,7 @@ prefixes.yml
 node_modules/
 bin/
 build/
+src/
 logs/
 .DS_Store
 bgpalerter.pid
@@ -11,5 +12,15 @@ alertdata/
 .npmrc
 .cache/
 volumetests/
-tests/rpki_tests/vrp.json
-tests/generate_tests/prefixes.yml
+tests/
+Dockerfile
+.travis.yml
+docs/
+prefixes.yml.example
+config.yml.example
+build.sh
+index.js
+.github/
+.hound.yml
+.eslintrc.json
+.babelrc
