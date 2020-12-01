@@ -92,27 +92,29 @@ export default class Monitor {
     _squash = (id) => {
 
         const alerts = this.alerts[id] || [];
-        const message = this.squashAlerts(alerts);
+        if (alerts && alerts.length) {
+            const message = this.squashAlerts(alerts);
 
-        if (message) {
-            const firstAlert = alerts[0];
-            let earliest = Infinity;
-            let latest = -Infinity;
+            if (message) {
+                const firstAlert = alerts[0];
+                let earliest = Infinity;
+                let latest = -Infinity;
 
-            for (let alert of alerts) {
-                earliest = Math.min(alert.timestamp, earliest);
-                latest = Math.max(alert.timestamp, latest);
-            }
+                for (let alert of alerts) {
+                    earliest = Math.min(alert.timestamp, earliest);
+                    latest = Math.max(alert.timestamp, latest);
+                }
 
-            return {
-                id,
-                truncated: this.truncated[id] || false,
-                origin: this.name,
-                earliest,
-                latest,
-                affected: firstAlert.affected,
-                message,
-                data: alerts
+                return {
+                    id,
+                    truncated: this.truncated[id] || false,
+                    origin: this.name,
+                    earliest,
+                    latest,
+                    affected: firstAlert.affected,
+                    message,
+                    data: alerts
+                }
             }
         }
     };

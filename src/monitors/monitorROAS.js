@@ -53,7 +53,7 @@ export default class MonitorROAS extends Monitor {
     filter = (message) => false;
 
     squashAlerts = (alerts) => {
-        return alerts[0].matchedMessage;
+        return (alerts[0]) ? alerts[0].matchedMessage : false;
     };
 
     monitor = (message) => {
