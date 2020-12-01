@@ -51,7 +51,7 @@ reports:
           {"title": "Expected from:", "value": "AS ${asn}", "short": "true"},
           {"title": "Seen from:", "value": "AS ${neworigin}", "short": "true"},
           {"title": "Since:", "value": "${earliest}", "short": "true"},
-          {"title": "Event description":, "value": "${summary}"} ], 
+          {"title": "Event description", "value": "${summary}"} ], 
           "text": "#bgpalerter #${type}", "color": "#ffffff"}]}'
       isTemplateJSON: true
       headers:
@@ -85,3 +85,50 @@ Pushover is an app that makes it easy to get real-time notifications on your And
 ```
 
 Thanks to [Hugo Salgado](https://twitter.com/huguei/status/1278771420525408258).
+
+## MS Teams
+
+Microsoft Teams is a proprietary business communication platform developed by Microsoft, as part of the Microsoft 365 family of products
+
+```yaml
+reports:
+  - file: reportHTTP
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      templates:
+        default: '{
+                    "@type": "MessageCard",
+                    "@context": "http://schema.org/extensions",
+                    "themeColor": "d76100",
+                    "summary": "BGPAlerter has detected an issue",
+                    "sections": [{
+                        "activityTitle": "${summary}",
+                        "activitySubtitle": "BGPAlerter has detected an issue",
+                        "facts": [{
+                            "name": "Prefix",
+                            "value": "${prefix}"
+                        }, {
+                            "name": "Expected from",
+                            "value": "AS ${asn}"
+                        }, {
+                            "name": "Seen from",
+                            "value": "AS ${neworigin}"
+                        }, {
+                            "name": "Since:",
+                            "value": "${earliest}"
+                        }],
+                        "markdown": true
+                    }]
+                }'
+      isTemplateJSON: true
+      headers:
+      showPaths: 0 # Amount of AS_PATHs to report in the alert
+      hooks:
+        default: https: WEBHOOK_URL
+```
