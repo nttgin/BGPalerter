@@ -1,6 +1,8 @@
 import rpki from "rpki-validator";
 import fs from "fs";
 import md5 from "md5";
+import axiosEnrich from "./axiosEnrich";
+import axios from "axios";
 
 export default class RpkiUtils {
     constructor(env) {
@@ -9,6 +11,7 @@ export default class RpkiUtils {
         this.params = this.config.rpki || {};
         this.clientId = env.clientId || "";
         this.logger = env.logger;
+        this.userAgent = `${this.clientId}/${env.version}`;
 
         const defaultMarkDataAsStaleAfterMinutes = 60;
 
@@ -63,12 +66,9 @@ export default class RpkiUtils {
         if (!this.rpki) {
             const rpkiValidatorOptions = {
                 connector: this.params.vrpProvider,
-                clientId: this.clientId
+                clientId: this.clientId,
+                axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
             };
-
-            if (!this.params.noProxy && this.agent) {
-                rpkiValidatorOptions.httpsAgent = this.agent;
-            }
 
             this.rpki = new rpki(rpkiValidatorOptions);
 
