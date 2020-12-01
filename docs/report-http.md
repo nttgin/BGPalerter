@@ -16,7 +16,7 @@ Example:
         noc: https://MY_WEB_HOOK_FOR_THE_NOC_GROUP
 ```
 
-You can also specify a template for each type of alert (channel).  
+You can also specify a template for each type of alert (channel). More information about templates is available [here](context.md).
 Example:
 ```yaml
       isTemplateJSON: true
@@ -47,12 +47,16 @@ reports:
     params:
       templates:
         default: '{"attachments": [
-          {"fields": [ {"title": "Prefix:", "value": "${prefix}", "short": "false"},
-          {"title": "Expected from:", "value": "AS ${asn}", "short": "true"},
-          {"title": "Seen from:", "value": "AS ${neworigin}", "short": "true"},
-          {"title": "Since:", "value": "${earliest}", "short": "true"},
-          {"title": "Event description", "value": "${summary}"} ], 
-          "text": "#bgpalerter #${type}", "color": "#ffffff"}]}'
+              {
+                "author_name" : "BGPalerter",
+                "fields": [ 
+                      {"title": "Event type:", "value": "${type}", "short": "true"},
+                      {"title": "First event:", "value": "${earliest} UTC", "short": "true"},
+                      {"title": "Last event:", "value": "${latest} UTC", "short": "true"}
+                ], 
+                "text": "${channel}: ${summary}", "color": "#ffffff"
+              }
+          ]}'
       isTemplateJSON: true
       headers:
       showPaths: 0 # Amount of AS_PATHs to report in the alert
@@ -88,7 +92,7 @@ Thanks to [Hugo Salgado](https://twitter.com/huguei/status/1278771420525408258).
 
 ## MS Teams
 
-Microsoft Teams is a proprietary business communication platform developed by Microsoft, as part of the Microsoft 365 family of products
+Microsoft Teams is a communication platform developed by Microsoft, as part of the Microsoft 365 family of products.
 
 ```yaml
 reports:
@@ -106,22 +110,22 @@ reports:
                     "@type": "MessageCard",
                     "@context": "http://schema.org/extensions",
                     "themeColor": "d76100",
-                    "summary": "BGPAlerter has detected an issue",
+                    "summary": "BGPalerter",
                     "sections": [{
-                        "activityTitle": "${summary}",
-                        "activitySubtitle": "BGPAlerter has detected an issue",
+                        "activityTitle": "BGPalerter",
+                        "activitySubtitle": "${channel}",
                         "facts": [{
-                            "name": "Prefix",
-                            "value": "${prefix}"
+                            "name": "Summary",
+                            "value": "${summary}"
                         }, {
-                            "name": "Expected from",
-                            "value": "AS ${asn}"
+                            "name": "Event type",
+                            "value": "${type}"
                         }, {
-                            "name": "Seen from",
-                            "value": "AS ${neworigin}"
+                            "name": "First event",
+                            "value": "${earliest} UTC"
                         }, {
-                            "name": "Since:",
-                            "value": "${earliest}"
+                            "name": "Last event",
+                            "value": "${latest} UTC"
                         }],
                         "markdown": true
                     }]
@@ -130,5 +134,7 @@ reports:
       headers:
       showPaths: 0 # Amount of AS_PATHs to report in the alert
       hooks:
-        default: https: WEBHOOK_URL
+        default: https://WEBHOOK_URL
 ```
+
+Thanks [arpanet-creeper](https://github.com/nttgin/BGPalerter/pull/412) for the help.
