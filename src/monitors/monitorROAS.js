@@ -30,7 +30,7 @@ export default class MonitorROAS extends Monitor {
             const matchedRules = impactedASes.map(asn => this.getMonitoredAsMatch(new AS(asn)));
 
             for (let matchedRule of matchedRules) { // An alert for each AS involved (they may have different user group)
-                const message = "ROAs change detected: " + roaDiff.map(this._roaToString).join(";");
+                const message = "ROAs change detected: " + roaDiff.map(this._roaToString).join("; ");
 
                 this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                     matchedRule.asn.getId(),
