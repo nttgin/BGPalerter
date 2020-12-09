@@ -41,15 +41,19 @@ export default class FileLogger {
 
         if (this.compressOnRotation) {
             this.stream.on('rotate', (oldFile, newFile) => {
-                const tmpFile = newFile + ".tmp";
-                const zip = zlib.createGzip();
-                const read = fs.createReadStream(newFile);
-                const write = fs.createWriteStream(tmpFile);
-                read.pipe(zip).pipe(write);
-                write.on('finish', () => {
-                    fs.unlinkSync(newFile);
-                    fs.renameSync(tmpFile, newFile);
-                });
+                try {
+                    const tmpFile = newFile + ".tmp";
+                    const zip = zlib.createGzip();
+                    const read = fs.createReadStream(newFile);
+                    const write = fs.createWriteStream(tmpFile);
+                    read.pipe(zip).pipe(write);
+                    write.on('finish', () => {
+                        fs.unlinkSync(newFile);
+                        fs.renameSync(tmpFile, newFile);
+                    });
+                } catch (error) {
+                    console.log(error); // Nothing else we can do
+                }
             })
         }
 
@@ -68,12 +72,15 @@ export default class FileLogger {
     };
 
     log = (data) => {
-
-        const item = this.format({
-            timestamp: this.getCurrentDate().format('YYYY-MM-DDTHH:mm:ssZ'),
-            data
-        });
-
-        this.stream.write(item + "\n");
+        try {
+            const item = this.format({
+                timestamp: this.getCurrentDate().format('YYYY-MM-DDTHH:mm:ssZ'),
+                data
+            });
+            this.stream.write(item + "\n");
+        } catch (error) {
+            console.log(data);
+            console.log(error);
+        }
     };
 };
