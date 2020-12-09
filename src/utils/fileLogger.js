@@ -33,7 +33,8 @@ export default class FileLogger {
             utc: this.useUTC,
             create_symlink: true,
             symlink_name: this.symLinkName,
-            verbose: false
+            verbose: false,
+            audit_file: `${this.directory}/.${this.symLinkName.replace(".log", "")}`
         };
 
         this.stream = rotatingLogStream.getStream(streamOptions);
