@@ -78,7 +78,7 @@ export default class MonitorRPKI extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement' && message.originAS.numbers.length === 1;
+        return message.type === 'announcement';
     };
 
     squashAlerts = (alerts) => {
@@ -182,6 +182,7 @@ export default class MonitorRPKI extends Monitor {
 
         const messageOrigin = message.originAS;
         const prefix = message.prefix;
+
         const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false);
 
         if (matchedPrefixRule && !matchedPrefixRule.ignore) {
