@@ -257,6 +257,7 @@ export default class ConnectorRIS extends Connector {
                 const communities = message["community"] || [];
                 const timestamp = message["timestamp"] * 1000;
                 let path, originAS;
+
                 if (message["path"] && message["path"].length) {
                     path = new Path(message["path"].map(i => new AS(i)));
                     originAS = path.getLast();
@@ -265,23 +266,28 @@ export default class ConnectorRIS extends Connector {
                     originAS = null;
                 }
 
-                for (let announcement of announcements) {
-                    const nextHop = announcement["next_hop"];
-                    const prefixes = announcement["prefixes"] || [];
+                if (originAS && path.length()) {
+                    for (let announcement of announcements) {
+                        const nextHop = announcement["next_hop"];
 
-                    for (let prefix of prefixes) {
+                        if (ipUtils.isValidIP(nextHop)) {
+                            const prefixes = (announcement["prefixes"] || [])
+                                .filter(prefix => ipUtils.isValidPrefix(prefix));
 
-                        components.push({
-                            type: "announcement",
-                            prefix,
-                            peer,
-                            path,
-                            originAS,
-                            nextHop,
-                            aggregator,
-                            timestamp,
-                            communities
-                        })
+                            for (let prefix of prefixes) {
+                                components.push({
+                                    type: "announcement",
+                                    prefix,
+                                    peer,
+                                    path,
+                                    originAS,
+                                    nextHop,
+                                    aggregator,
+                                    timestamp,
+                                    communities
+                                });
+                            }
+                        }
                     }
                 }
 
@@ -296,7 +302,7 @@ export default class ConnectorRIS extends Connector {
 
                 return components;
             } catch (error) {
-                throw new Error(`Error during tranform (${this.name}): ` + error.message);
+                throw new Error(`Error during transform (${this.name}): ` + error.message);
             }
         } else if (message.type === 'ris_error') {
             throw new Error("Error from RIS: " + message.data.message);

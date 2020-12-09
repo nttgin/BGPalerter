@@ -7,6 +7,10 @@ export class Path {
         return this.value[this.value.length - 1];
     };
 
+    length () {
+        return this.value.length;
+    };
+
     toString () {
         return JSON.stringify(this.toJSON());
     };
