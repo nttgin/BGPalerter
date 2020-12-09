@@ -68,12 +68,15 @@ export default class FileLogger {
     };
 
     log = (data) => {
-
-        const item = this.format({
-            timestamp: this.getCurrentDate().format('YYYY-MM-DDTHH:mm:ssZ'),
-            data
-        });
-
-        this.stream.write(item + "\n");
+        try {
+            const item = this.format({
+                timestamp: this.getCurrentDate().format('YYYY-MM-DDTHH:mm:ssZ'),
+                data
+            });
+            this.stream.write(item + "\n");
+        } catch (error) {
+            console.log(data);
+            console.log(error);
+        }
     };
 };
