@@ -55,7 +55,7 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 3. Execute `npm install` to install all dependencies.
 
-4. Run `npm run watch-and-serve` to run the application. At every file change it will self-reload.
+4. Run `npm run serve` to run the application.
 
 
 ## Running BGPalerter in Docker
