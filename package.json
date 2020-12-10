@@ -24,7 +24,6 @@
     "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
     "build": "./build.sh",
     "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json && cp README.md dist/README.md",
-    "watch-and-serve": "nodemon -e yml,js,json,txt --inspect --exec babel-node index.js",
     "serve": "babel-node index.js",
     "inspect": "node --inspect --require @babel/register index.js",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
@@ -42,16 +41,15 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.8",
-    "@babel/core": "^7.12.9",
-    "@babel/node": "^7.12.6",
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-env": "^7.12.10",
     "chai": "^4.2.0",
     "chai-subset": "^1.6.0",
     "mocha": "^8.2.1",
-    "nodemon": "^2.0.6",
     "pkg": "^4.4.9",
     "read-last-lines": "^1.7.2",
     "syslogd": "^1.1.2"
@@ -66,7 +64,7 @@
     "inquirer": "^7.3.3",
     "ip-address": "^6.4.0",
     "ip-sub": "^1.0.17",
-    "js-yaml": "^3.14.0",
+    "js-yaml": "^3.14.1",
     "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
@@ -74,10 +72,10 @@
     "path": "^0.12.7",
     "restify": "^8.5.1",
     "rpki-validator": "^2.2.10",
-    "semver": "^7.3.2",
+    "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
     "ws": "^7.4.0",
-    "yargs": "^16.1.1"
+    "yargs": "^16.2.0"
   },
   "pkg": {
     "scripts": [

@@ -5,9 +5,7 @@ To start development see how to install the source [here](installation.md#runnin
 
 ## All npm commands
 
-* `npm run watch-and-serve` to run the application from source code and monitor for file changes
-
-* `npm run serve` to run the application from the source
+* `npm run serve` to run the application from the source code
 
 * `npm run test` to run the tests
 
