@@ -19,11 +19,11 @@ monitors:
     params:
       thresholdMinPeers: 2
 
-  - file: monitorNewPrefix
-    channel: newprefix
-    name: prefix-detection
-    params:
-      thresholdMinPeers: 3
+#  - file: monitorNewPrefix
+#    channel: newprefix
+#    name: prefix-detection
+#    params:
+#      thresholdMinPeers: 3
 
   - file: monitorPath
     channel: path
