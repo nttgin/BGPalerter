@@ -6,8 +6,9 @@
 Self-configuring BGP monitoring tool, which allows you to monitor in **real-time** if:
 * any of your prefixes loses visibility;
 * any of your prefixes is hijacked;
-* your AS is announcing RPKI invalid prefixes (e.g. not matching prefix length);
-* your AS is announcing prefixes not covered by a ROAs;
+* your AS is announcing RPKI invalid prefixes (e.g., not matching prefix length);
+* your AS is announcing prefixes not covered by ROAs;
+* ROAs covering your prefixes are no longer reachable (e.g., TA malfunction);
 * a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
 * one of the AS path used to reach your prefix matches a specific condition defined by you.
@@ -54,6 +55,7 @@ Read the documentation below for more options.
         - [Hijacks](docs/configuration.md#monitorhijack)
         - [Visibility loss](docs/configuration.md#monitorvisibility)
         - [RPKI invalid announcements](docs/configuration.md#monitorrpki)
+        - [RPKI ROAs diffs](docs/configuration.md#monitorroas)
         - [Announcements of more specifics](docs/configuration.md#monitornewprefix)
         - [Announcements of new prefixes](docs/configuration.md#monitoras)
         - [Path matching](docs/configuration.md#monitorpath)
@@ -69,9 +71,11 @@ Read the documentation below for more options.
         - [Telegram](docs/configuration.md#reporttelegram)
         - [Mattermost](docs/report-http.md#mattermost)
         - [Pushover](docs/report-http.md#pushover)
+        - [Microsoft Teams](docs/report-http.md#ms-teams)
     - [Test report configuration](docs/installation.md#bgpalerter-parameters)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
+    - [RPKI configuration](docs/rpki.md)
     - [HTTP/HTTPS proxy](docs/http-proxy.md)
 - [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
