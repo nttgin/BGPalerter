@@ -6,17 +6,18 @@
 Self-configuring BGP monitoring tool, which allows you to monitor in **real-time** if:
 * any of your prefixes loses visibility;
 * any of your prefixes is hijacked;
-* your AS is announcing RPKI invalid prefixes (e.g. not matching prefix length);
-* your AS is announcing prefixes not covered by a ROAs;
+* your AS is announcing RPKI invalid prefixes (e.g., not matching prefix length);
+* your AS is announcing prefixes not covered by ROAs;
+* ROAs covering your prefixes are no longer reachable (e.g., TA malfunction);
 * a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
-* one of the AS path used to reach your prefix matches a specific condition defined by you.
+* one of the AS paths used to reach your prefix matches a specific condition defined by you.
 
 You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to [public repos](docs/datasets.md).
 
-It can deliver alerts on files, by email, on slack, and more.
+It can deliver alerts on files, email, kafka, slack, and more.
 
-![BGPalerter](https://massimocandela.com/img/bgpalerter_github_image.png)
+![BGPalerter](http://massimocandela.com/img/bgpalerter_github_image.png)
 
 > BGPalerter connects to public BGP data repos (not managed by NTT), and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
@@ -30,8 +31,8 @@ Instead, if you want to run the source code (which is completely open) or develo
 The first time you run it, the auto-configuration will start.  
 
 
-If something happens (e.g. a hijack) you will see the alerts in `logs/reports.log`.
-In `config.yml` you can find other reporting mechanisms (e.g. email, Slack, Kafka) in addition to logging on files. 
+If something happens (e.g., a hijack) you will see the alerts in `logs/reports.log`.
+In `config.yml` you can find other reporting mechanisms (e.g., email, Slack, Kafka) in addition to logging on files. 
 Please uncomment the related section and configure according to your needs. 
 
 If the installation doesn't go smoothly, read [here](docs/installation.md).  
@@ -54,6 +55,7 @@ Read the documentation below for more options.
         - [Hijacks](docs/configuration.md#monitorhijack)
         - [Visibility loss](docs/configuration.md#monitorvisibility)
         - [RPKI invalid announcements](docs/configuration.md#monitorrpki)
+        - [RPKI ROAs diffs](docs/configuration.md#monitorroas)
         - [Announcements of more specifics](docs/configuration.md#monitornewprefix)
         - [Announcements of new prefixes](docs/configuration.md#monitoras)
         - [Path matching](docs/configuration.md#monitorpath)
@@ -69,9 +71,11 @@ Read the documentation below for more options.
         - [Telegram](docs/configuration.md#reporttelegram)
         - [Mattermost](docs/report-http.md#mattermost)
         - [Pushover](docs/report-http.md#pushover)
+        - [Microsoft Teams](docs/report-http.md#ms-teams)
     - [Test report configuration](docs/installation.md#bgpalerter-parameters)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
+    - [RPKI configuration](docs/rpki.md)
     - [HTTP/HTTPS proxy](docs/http-proxy.md)
 - [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
