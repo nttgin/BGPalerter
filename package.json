@@ -55,7 +55,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^5.27.6",
+    "@sentry/node": "^5.29.0",
     "axios": "^0.21.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
@@ -75,7 +75,7 @@
     "rpki-validator": "^2.2.11",
     "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
-    "ws": "^7.4.0",
+    "ws": "^7.4.1",
     "yargs": "^16.2.0"
   },
   "pkg": {
