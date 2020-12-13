@@ -4,7 +4,7 @@
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-2. Execute the binary (e.g. `chmod +x bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
+2. Execute the binary (e.g., `chmod +x bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
 The first time you run it, the auto-configuration will start.
 
 ## Running BGPalerter from binaries - All steps
@@ -15,7 +15,7 @@ The first time you run it, the auto-configuration will start.
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Make the binary executable (e.g. `chmod +x bgpalerter-linux-x64`)
+3. Make the binary executable (e.g., `chmod +x bgpalerter-linux-x64`)
 
 4. Auto-configure it: `./bgpalerter-linux-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
@@ -30,7 +30,7 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
 
-3. Make the binary executable (e.g. `chmod +x bgpalerter-macos-x64`)
+3. Make the binary executable (e.g., `chmod +x bgpalerter-macos-x64`)
 
 4. Auto-configure it: `./bgpalerter-macos-x64 generate -a _YOUR_ASN_ -o prefixes.yml -i -m`  
 
@@ -78,7 +78,7 @@ docker run -i --name bgpalerter \
 
 With this command, a new directory `./volume` will be created in the current position.
 Such directory will contain all the persistent data that BGPalerter will generate, including configuration and alert logs.  
-You can specify another directory by changing the directory before the colon in the -v flag (e.g. `-v _LOCATION_YOU_WANT_/volume:/opt/bgpalerter/volume`).
+You can specify another directory by changing the directory before the colon in the -v flag (e.g., `-v _LOCATION_YOU_WANT_/volume:/opt/bgpalerter/volume`).
 
 The command above runs BGPalerter in interactive mode (`-i` flag), which is necessary if you want to run the auto configuration.
 
@@ -97,7 +97,7 @@ docker run -i --name bgpalerter \
 ```
 
 The `uptimeApi` module has to be enabled in `volume/config.yml` as described [here](process-monitors.md).
-Now you can monitor `http://127.0.0.1:8011/status` (e.g. in Nagios) to check the status of the BGPalerter monitoring.
+Now you can monitor `http://127.0.0.1:8011/status` (e.g., in Nagios) to check the status of the BGPalerter monitoring.
 Such API may return a negative result when there is a misconfiguration or when BGPalerter failed to connect to the data repository.
 
 

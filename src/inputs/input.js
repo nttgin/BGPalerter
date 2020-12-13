@@ -181,7 +181,7 @@ export default class Input {
                             {
                                 type: 'input',
                                 name: 'asns',
-                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g. 2914,3333)",
+                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
                                 default: null,
                                 validate: function(value) {
                                     const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
@@ -248,11 +248,12 @@ export default class Input {
         return this.retrieve()
             .then(oldPrefixList => {
                 const inputParameters = oldPrefixList.options.generate;
-                inputParameters.httpProxy = this.config.httpProxy || null;
 
                 if (!inputParameters) {
-                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically or the cache has been deleted.");
+                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically.");
                 }
+
+                inputParameters.httpProxy = this.config.httpProxy || null;
 
                 inputParameters.logger = (message) => {
                     // Nothing, ignore logs in this case (too many otherwise)

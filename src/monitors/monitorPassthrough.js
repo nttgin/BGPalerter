@@ -28,7 +28,7 @@ export default class monitorPassthrough extends Monitor {
                 {
                     prefix: "0.0.0.0/0",
                     asn: "1234",
-                    description: "test",
+                    description: "test"
                 },
                 message,
                 {});
@@ -36,9 +36,5 @@ export default class monitorPassthrough extends Monitor {
             this.count++;
 
             resolve(true);
-
         });
-
-
-
 }

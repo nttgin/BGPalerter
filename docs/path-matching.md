@@ -46,7 +46,7 @@ Each matching rule is composed of:
 
 If you want to specify multiple conditions in AND in the same match parameter, you can use the positive lookahead construct offered natively by regular expressions.
 A positive lookahead is in the form `(?=exp1)(?=exp2)` where `exp1` and `exp2` are regular expressions.
-Positive lookaheads work also for expressing negative conditions (e.g. `(?!exp)`), but in most of the cases this is redundant with the `notMatch` parameter.
+Positive lookaheads work also for expressing negative conditions (e.g., `(?!exp)`), but in most of the cases this is redundant with the `notMatch` parameter.
 
 
 

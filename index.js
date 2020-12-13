@@ -167,8 +167,7 @@ switch(params._[0]) {
             append: !!params.A,
             logger: null,
             getCurrentPrefixesList: () => {
-                const content = JSON.parse( yaml.safeLoad(fs.readFileSync(params.o, "utf8")) || {});
-                return Promise.resolve(content);
+                return Promise.resolve(yaml.safeLoad(fs.readFileSync(params.o, "utf8")));
             }
         };
 
