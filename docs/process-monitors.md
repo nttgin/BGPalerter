@@ -74,7 +74,7 @@ Parameters for this module are:
 
 The uptimeHealthcheck module is a component that will start polling a provided URL at a regular interval.
 
-This can be used to send a heartbeat signal to a monitoring system (e.g. https://healthchecks.io/).
+This can be used to send a heartbeat signal to a monitoring system (e.g., https://healthchecks.io/).
 If there is any warning about any component activated in BGPalerter, the heartbeat will not be issued (independently from the fact that the process is still running).
 
 

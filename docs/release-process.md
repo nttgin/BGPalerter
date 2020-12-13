@@ -41,7 +41,7 @@ The release number is composed of 3 digis `x.x.x`:
 * The third number identifies a minor release. The third number is incremented when there are changes which don't introduce any new functionality but improve the available ones.
 
 ### Patching
-In the event a serious bug (e.g. affecting one of the core functionalities) is discovered in a released version, we will not follow the timing described above and release as soon as possible a minor release.
+In the event a serious bug (e.g., affecting one of the core functionalities) is discovered in a released version, we will not follow the timing described above and release as soon as possible a minor release.
 Minor releases are anyway tested and deployed for the monitoring of our network.
 
 A minor release can also be released as a part of the normal release cycle in case there are no new features to justify a major release. 

@@ -56,7 +56,7 @@ export default class Monitor {
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
         this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>
         this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples
-        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
+        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g., thresholdMinPeers not yet reached)
 
         this._retrieveStatus();
         this.internalConfig = {

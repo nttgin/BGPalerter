@@ -27,7 +27,7 @@ Instead, if you want to run the source code (which is completely open) or develo
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
-2. Execute the binary (e.g. `chmod +x bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
+2. Execute the binary (e.g., `chmod +x bgpalerter-linux-x64 && ./bgpalerter-linux-x64`)  
 The first time you run it, the auto-configuration will start.  
 
 

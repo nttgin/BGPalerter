@@ -16,11 +16,11 @@ Such tags are reported in the table below.
 | paths | The AS Paths involved in the alert |
 | pathNumber | The count of AS Paths in the alert |
 | peers | The number of peers that were able to see the issue |
-| neworigin | The AS announcing the monitored prefix (e.g. in case of a hijack, `neworigin` will contain the hijacker, `asn` will contain the usual origin) |
-| newprefix | The prefix announced (e.g. in case of a hijack, `newprefix` will contain the more specific prefix used for the hijack, `prefix` will contain the usual prefix) |
+| neworigin | The AS announcing the monitored prefix (e.g., in case of a hijack, `neworigin` will contain the hijacker, `asn` will contain the usual origin) |
+| newprefix | The prefix announced (e.g., in case of a hijack, `newprefix` will contain the more specific prefix used for the hijack, `prefix` will contain the usual prefix) |
 | bgplay | The link to BGPlay on RIPEstat |
 
 
 Usage example: `The alert involves ${prefix} in ${earliest}` will be translated in something like `The alert involves 1.2.3.4/24 in 2020-04-14 04:02:13`.
 
-> The same approach must be used to populate the templates available in config.yml. If you are writing a template for an API call, convert the JSON to string (e.g. '{"text": "${summary}"}').
+> The same approach must be used to populate the templates available in config.yml. If you are writing a template for an API call, convert the JSON to string (e.g., '{"text": "${summary}"}').

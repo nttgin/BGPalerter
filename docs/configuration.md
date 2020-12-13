@@ -15,8 +15,8 @@ The following are common parameters which it is possible to specify in the confi
 |logging.maxFileSizeMB| Indicates the maximum file size in MB allowed before to be rotated. This allows to rotate files when logRotatePattern still the same but the file is too big | An integer | 15 | Yes |
 |logging.maxRetainedFiles| Indicates the maximum amount of log files retained. When this threshold is passed, files are deleted. | An integer | 10 | Yes |
 |logging.useUTC| If set to true, logs will be reported in UTC time. Is set to false or missing, the timezone of the machine will be used. This parameter affects only the timestamp reported at the beginning of each log entry, it doesn't affect the time reported in the data/alerts which is always in UTC.  | A boolean | true | No |
-|checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g. debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
-|processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g. API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
+|checkForUpdatesAtBoot| Indicates if at each booth the application should check for updates. If an update is available, a notification will be sent to the default group. If you restart the process often (e.g., debugging, experimenting etc.) set this to false to avoid notifications. Anyway, BGPalerter checks for updates every 10 days.| A boolean | true | Yes |
+|processMonitors| A list of modules allowing various ways to check for the status of BGPalerter (e.g., API, heartbeat). See [here](process-monitors.md) for more information. | | | No | 
 |httpProxy| Defines the HTTP/HTTPS proxy server to be used by BGPalerter and its submodules (reporters/connectors/monitors). See [here](http-proxy.md) for more information. | A string | http://usr:psw@ prxy.org:8080 | No | 
 |volume| Defines a directory that will contain the data that needs persistence. For example, configuration files and logs will be created in such directory (default to "./"). | A string | /home/bgpalerter/ | No | 
 |persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No |
@@ -33,7 +33,7 @@ The following are advanced parameters, please don't touch them if you are not do
 |pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
 |maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any production rate. Changing this value may be useful only for research measurements on the entire address space. | An integer | 6000 | No | 
 |multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
-|fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g. not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
+|fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g., not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
 |checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
 
 
@@ -44,7 +44,7 @@ You can compose the tool with 3 main components: connectors, monitors, and repor
 
 * Connectors retrieve/listen to the data from different sources and transform them to a common format.
 * Monitors analyze the data flow and produce alerts. Different monitors try to detect different issues.
-* Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
+* Reports send/store the alerts, e.g., by email or to a file. Reports can also provide the data triggering such alerts.
 
 > In config.yml.example there are all the possible components declarations (similar to the one of the example below). You can enable the various components by uncommenting the related block.
 
@@ -228,7 +228,7 @@ In particular, it will monitor for all the declared prefixes and will trigger an
 >    description: an example
 >    ignoreMorespecifics: false
 > ```
-> If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g. 50.82.4.0/24) is announced by AS58302.
+> If in config.yml monitorNewPrefix is enabled you will receive alerts every time a more specific prefix (e.g., 50.82.4.0/24) is announced by AS58302.
 
 
 Example of alert:
@@ -245,7 +245,7 @@ Parameters for this monitor module:
 #### monitorAS
 
 This monitor will listen for all announcements produced by the monitored Autonomous Systems and will detect when a prefix, which is not in the monitored prefixes list, is announced.
-This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g. misconfiguration, typo).
+This is useful if you want to be alerted in case your AS starts announcing something you didn't intend to announce (e.g., misconfiguration, typo).
 
 
 > Example: 
@@ -305,7 +305,7 @@ This monitor is particularly useful when:
 > If in config.yml monitorRPKI is enabled, you will receive alerts every time:
 >  * 103.21.244.0/24 is announced and it is not covered by ROAs, or the announcement is RPKI invalid;
 >  * AS13335 announces something that is not covered by ROAs, or the announcement is RPKI invalid;
->  * A prefix you announce used to be covered by a ROA but such ROA is no longer available (e.g. RPKI repositories past failures: [ARIN](https://www.arin.net/announcements/20200813/), [RIPE NCC](https://www.ripe.net/support/service-announcements/accidental-roa-deletion))
+>  * A prefix you announce used to be covered by a ROA but such ROA is no longer available (e.g., RPKI repositories past failures: [ARIN](https://www.arin.net/announcements/20200813/), [RIPE NCC](https://www.ripe.net/support/service-announcements/accidental-roa-deletion))
 
 
 Examples of alerts:
@@ -322,7 +322,7 @@ Parameters for this monitor module:
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
-|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g. disappearing ROAs). Default to 7 days. |
+|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g., disappearing ROAs). Default to 7 days. |
 
 
 #### monitorROAS
@@ -357,7 +357,7 @@ Example of alerts:
     
 ### Reports
 
-Reports send/store the alerts, e.g. by email or to a file. Reports can also provide the data triggering such alerts.
+Reports send/store the alerts, e.g., by email or to a file. Reports can also provide the data triggering such alerts.
 
 After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
 This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
@@ -421,9 +421,9 @@ Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
-|host| Host of the Kafka instance/broker (e.g. localhost).| 
-|port| Port of the Kafka instance/broker (e.g. 9092).| 
-|topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g. `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
+|host| Host of the Kafka instance/broker (e.g., localhost).| 
+|port| Port of the Kafka instance/broker (e.g., 9092).| 
+|topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g., `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
  
 #### reportSyslog
  
@@ -434,8 +434,8 @@ Parameters for this report module:
 |Parameter| Description| 
 |---|---|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
-|host| Host of the Syslog server (e.g. localhost).| 
-|port| Port of the Syslog server  (e.g. 514).| 
+|host| Host of the Syslog server (e.g., localhost).| 
+|port| Port of the Syslog server  (e.g., 514).| 
 |transport| The transport protocol to use. Two options: `udp` or `tcp`| 
 |templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
 

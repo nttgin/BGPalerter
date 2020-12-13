@@ -3,8 +3,8 @@
 ## <a name="generate"></a>Auto-generate prefixes list
 
 To auto generate the monitored prefixes file (by default called `prefixes.yml`) execute:
-* If you are using the binary `./bgpalerter-linux-x64 generate -a ASN(S) -o OUTPUT_FILE` (e.g. `./bgpalerter-linux-x64 generate -a 2914 -o prefixes.yml`).
-* If you are using the source code `npm run generate-prefixes -- --a ASN(S) --o OUTPUT_FILE` (e.g. `npm run generate-prefixes -- --a 2914 --o prefixes.yml`).
+* If you are using the binary `./bgpalerter-linux-x64 generate -a ASN(S) -o OUTPUT_FILE` (e.g., `./bgpalerter-linux-x64 generate -a 2914 -o prefixes.yml`).
+* If you are using the source code `npm run generate-prefixes -- --a ASN(S) --o OUTPUT_FILE` (e.g., `npm run generate-prefixes -- --a 2914 --o prefixes.yml`).
 
 The script will detect whatever is currently announced by the provided AS and will take this as "the expected status".
 

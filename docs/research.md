@@ -30,7 +30,7 @@ If during your analysis you will find a warning of messages dropped in the logs,
 
 If the memory consumption during your analysis increases drastically, you may want to:
 1) Check your code for memory leaks
-2) Check you are not doing many async calls accumulating in the stack (e.g. if you monitor the entire v6 address space, like on the example above, you cannot do a single network call for each BGP message received. You can instead bundle together multiple calls or pre-filter better).
+2) Check you are not doing many async calls accumulating in the stack (e.g., if you monitor the entire v6 address space, like on the example above, you cannot do a single network call for each BGP message received. You can instead bundle together multiple calls or pre-filter better).
 3) Check that the `squashAlerts` of your monitor component is working as expected. In particular, if the squashAlerts methods returns null it means the bucket of BGP messages is not yet ready for squashing, remaining in memory. See below for more information.
 4) Reduce the `fadeOffSeconds`. This will drop all the BGP messages that took too long to be squashed by `squashAlerts`.
 
@@ -62,7 +62,7 @@ export default class myMonitor extends Monitor { // It MUST extend Monitor
     filter = (message) => {
         /* Pre-filtering. This filtering is blocking since it happens synchronously.
          * Make this filtering as tight as possible without involving external resources
-         * (e.g. do NOT do database or API call here). For example base your filtering
+         * (e.g., do NOT do database or API call here). For example base your filtering
          * on the properties of the BGP message received */
         return message.type === 'announcement';
     };
@@ -75,7 +75,7 @@ export default class myMonitor extends Monitor { // It MUST extend Monitor
          * squash attempt is going to be when another alert with the same signature is received.
          * With this method you can collect alerts and decide when it's time to send them. */
 
-        if (alerts.length > 5) { // Useless condition just to explain the concept (e.g. you could instead check how many different peers saw the issue before to report it)
+        if (alerts.length > 5) { // Useless condition just to explain the concept (e.g., you could instead check how many different peers saw the issue before to report it)
             return "summary of the alerts";
         }
 
@@ -109,5 +109,5 @@ export default class myMonitor extends Monitor { // It MUST extend Monitor
 
 Useful for research are the following pre-made monitors:
 * monitorPath - will detect specific conditions on AS paths
-* monitorPassthrough - will let everything pass to the report component. This is useful if you want to use BGPalerter as a data connector and you want to pass the data to another application (e.g. you can send them to Kafka with `reportKafka` or you can create a report wit a `console.log` to pipe everything into standard output)
+* monitorPassthrough - will let everything pass to the report component. This is useful if you want to use BGPalerter as a data connector and you want to pass the data to another application (e.g., you can send them to Kafka with `reportKafka` or you can create a report wit a `console.log` to pipe everything into standard output)
 * monitorRPKI - will detect RPKI invalid announcements. I use this on the entire v4 and v6 address space. It can be used as an example of "complex" monitoring.
