@@ -59,6 +59,7 @@
     "axios": "^0.21.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
+    "deepmerge": "^4.2.2",
     "file-stream-rotator": "^0.5.7",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.3.3",

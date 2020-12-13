@@ -1,11 +1,13 @@
 import axios from "axios";
 import url from "url";
 import brembo from "brembo";
+import merge from "deepmerge";
 import batchPromises from "batch-promises";
 import RpkiValidator from "rpki-validator";
 import { AS } from "./model";
+
 const apiTimeout = 120000;
-const clientId = "ntt-bgpalerter"
+const clientId = "ntt-bgpalerter";
 const rpki = new RpkiValidator({clientId});
 import axiosEnrich from "./utils/axiosEnrich";
 
@@ -273,32 +275,6 @@ module.exports = function generatePrefixes(inputParameters) {
         }
     };
 
-    const mergeCurrentPrefixes = (current, yamlContent) => {
-
-        function isObject (item) {
-            return (item && typeof item === 'object' && !Array.isArray(item));
-        }
-        function mergeDeep(target, ...sources) {
-            if (!sources.length) return target;
-            const source = sources.shift();
-
-            if (isObject(target) && isObject(source)) {
-                for (const key in source) {
-                    if (isObject(source[key])) {
-                        if (!target[key]) Object.assign(target, { [key]: {} });
-                        mergeDeep(target[key], source[key]);
-                    } else {
-                        Object.assign(target, { [key]: source[key] });
-                    }
-                }
-            }
-
-            return mergeDeep(target, ...sources);
-        }
-
-        return mergeDeep(current, yamlContent);
-    };
-
     return getBaseRules(prefixes)
         .then(items => [].concat.apply([], items))
         .then(prefixes => {
@@ -319,7 +295,8 @@ module.exports = function generatePrefixes(inputParameters) {
         })
         .then(() => rpki.preCache())
         .then(() => { // Check
-            return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
+            return Promise
+                .all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
                     logger(`ROA check failed due to error ${e}`);
                 })
@@ -349,15 +326,8 @@ module.exports = function generatePrefixes(inputParameters) {
             }
         })
         .then(() => {
-            return (append)
-                ? getCurrentPrefixesList()
-                    .then(current => {
-                        return mergeCurrentPrefixes(current, generateList)
-                    })
-                : generateList;
-        })
-        .then(list => {
-            const options = {
+            generateList.options = generateList.options || {};
+            generateList.options.generate = {
                 asnList,
                 exclude,
                 excludeDelegated,
@@ -366,8 +336,15 @@ module.exports = function generatePrefixes(inputParameters) {
                 historical,
                 group
             };
-            list.options = Object.assign({}, list.options, { generate: options });
-            return list;
+
+            return (append)
+                ? getCurrentPrefixesList()
+                    .then(current => merge(current, generateList, {
+                        arrayMerge: (destinationArray, sourceArray) => {
+                            return [...new Set([...destinationArray, ...sourceArray])];
+                        }
+                    }))
+                : generateList;
         })
         .catch((e) => {
             logger(`Something went wrong ${e}`);
