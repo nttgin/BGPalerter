@@ -80,11 +80,10 @@ Read the documentation below for more options.
 - [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)
-    - [Git flow](docs/release-process.md#git-flow)
-    - [Report context](docs/context.md)
-    - [Release process](docs/release-process.md)
+    - [Reports/alerts templates](docs/context.md)
+    - [Release process and Git flow](docs/release-process.md)
 - [BGPalerter for researchers](docs/research.md)
-- [Release process and Git flow](docs/release-process.md)
+
 
 
 If you are using BGPalerter, feel free to sign here: [Who is using BGPalerter](docs/friends.md)
