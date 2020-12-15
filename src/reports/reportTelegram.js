@@ -35,23 +35,12 @@ import ReportHTTP from "./reportHTTP";
 export default class reportTelegram extends ReportHTTP {
 
     constructor(channels, params, env) {
-        const templates = {};
         const hooks = {};
 
-        const getTemplateItem = (chatId) => {
-            return JSON.stringify({
-                "chat_id": chatId,
-                "text": "${summary}",
-                "parse_mode": 'HTML',
-                "disable_web_page_preview": true
-            });
-        };
-
-        for (let channel in params.chatIds) {
-            templates[channel] = getTemplateItem(params.chatIds[channel]);
-            hooks[channel] = params.botUrl;
+        for (let userGroup in params.chatIds) {
+            hooks[userGroup] = params.botUrl;
         }
-
+        hooks["default"] = params.botUrl;
 
         const telegramParams = {
             headers: {},
@@ -59,10 +48,11 @@ export default class reportTelegram extends ReportHTTP {
             showPaths: params.showPaths,
             hooks: hooks,
             name: "reportTelegram",
-            templates
+            templates: {}
         };
 
         super(channels, telegramParams, env);
+        this.chatIds = params.chatIds;
 
         if (!params.botUrl) {
             this.logger.log({
@@ -70,6 +60,21 @@ export default class reportTelegram extends ReportHTTP {
                 message: `${this.name} reporting is not enabled: no botUrl provided`
             });
             this.enabled = false;
+        } else if (!params.chatIds["default"]) {
+            this.logger.log({
+                level: 'error',
+                message: `${this.name} reporting is not enabled: no default chat id provided`
+            });
+            this.enabled = false;
         }
-    }
+    };
+
+    getTemplate = (group, channel, content) => {
+        return JSON.stringify({
+            "chat_id": this.chatIds[group] || this.chatIds["default"],
+            "text": "${summary}",
+            "parse_mode": 'HTML',
+            "disable_web_page_preview": true
+        });
+    };
 }
