@@ -281,8 +281,6 @@ if (!config.reports.some((report) => report.channels.includes("software-update")
   })
 }
 
-console.dir(config.reports)
-
 config.connectors = config.connectors || [];
 
 config.connectors.push({
