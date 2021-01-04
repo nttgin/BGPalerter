@@ -32,6 +32,7 @@
 
 import Connector from "./connector";
 import {AS, Path} from "../model";
+import ipUtils from "ip-sub";
 
 export default class ConnectorTest extends Connector{
 
@@ -451,41 +452,65 @@ export default class ConnectorTest extends Connector{
 
     static transform = (message) => {
         if (message.type === 'ris_message') {
-            message = message.data;
-            const components = [];
-            const announcements = message["announcements"] || [];
-            const withdrawals = message["withdrawals"] || [];
-            const aggregator = message["aggregator"] || null;
-            const peer = message["peer"];
+            try {
+                message = message.data;
+                const components = [];
+                const announcements = message["announcements"] || [];
+                const aggregator = message["aggregator"] || null;
+                const withdrawals = message["withdrawals"] || [];
+                const peer = message["peer"];
+                const communities = message["community"] || [];
+                const timestamp = message["timestamp"] * 1000;
+                let path, originAS;
 
-            for (let announcement of announcements){
-                const nextHop = announcement["next_hop"];
-                const prefixes = announcement["prefixes"] || [];
-                let path = new Path(message["path"].map(i => new AS(i)));
-                let originAS = path.getLast();
+                if (message["path"] && message["path"].length) {
+                    path = new Path(message["path"].map(i => new AS(i)));
+                    originAS = path.getLast();
+                } else {
+                    path = new Path([]);
+                    originAS = null;
+                }
 
-                for (let prefix of prefixes){
+                if (originAS && path.length()) {
+                    for (let announcement of announcements) {
+                        const nextHop = announcement["next_hop"];
+
+                        if (ipUtils.isValidIP(nextHop)) {
+                            const prefixes = (announcement["prefixes"] || [])
+                                .filter(prefix => ipUtils.isValidPrefix(prefix));
+
+                            for (let prefix of prefixes) {
+                                components.push({
+                                    type: "announcement",
+                                    prefix,
+                                    peer,
+                                    path,
+                                    originAS,
+                                    nextHop,
+                                    aggregator,
+                                    timestamp,
+                                    communities
+                                });
+                            }
+                        }
+                    }
+                }
+
+                for (let prefix of withdrawals) {
                     components.push({
-                        type: "announcement",
+                        type: "withdrawal",
                         prefix,
                         peer,
-                        path,
-                        originAS,
-                        nextHop,
-                        aggregator
+                        timestamp
                     })
                 }
-            }
 
-            for (let prefix of withdrawals){
-                components.push({
-                    type: "withdrawal",
-                    prefix,
-                    peer
-                })
+                return components;
+            } catch (error) {
+                throw new Error(`Error during transform (${this.name}): ` + error.message);
             }
-
-            return components;
+        } else if (message.type === 'ris_error') {
+            throw new Error("Error from RIS: " + message.data.message);
         }
     };
 }
