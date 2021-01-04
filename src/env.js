@@ -269,16 +269,14 @@ config.reports = (config.reports || [])
 
         return {
             class: require("./reports/" + item.file).default,
-            channels: [...item.channels],
+            channels: item.channels,
             params: item.params
         };
 
     });
 
-if (!config.reports.some((report) => report.channels.includes("software-update"))) {
-  config.reports.forEach((report) => {
-    report.channels.push("software-update");
-  })
+if (!config.reports.some(report => report.channels.includes("software-update"))) { // Check if software-update channel is declared
+    config.reports.forEach(report => report.channels.push("software-update")); // If not, declare it everywhere
 }
 
 config.connectors = config.connectors || [];
