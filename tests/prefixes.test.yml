@@ -50,6 +50,7 @@
   excludeMonitors:
     - basic-hijack-detection
     - withdrawal-detection
+    - rpki-monitor
 
 170.254.205.0/24:
   description: include exclude test

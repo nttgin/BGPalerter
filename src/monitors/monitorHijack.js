@@ -57,7 +57,7 @@ export default class MonitorHijack extends Monitor {
             const message = alerts[0].matchedMessage;
             const asnText = matchedRule.asn;
 
-            return (ipUtils._isEqualPrefix(message.prefix, matchedRule.prefix)) ?
+            return (ipUtils.isEqualPrefix(message.prefix, matchedRule.prefix)) ?
                 `The prefix ${matchedRule.prefix} (${matchedRule.description}) is announced by ${message.originAS} instead of ${asnText}` :
                 `A new prefix ${message.prefix} is announced by ${message.originAS}. ` +
                 `It should be instead ${matchedRule.prefix} (${matchedRule.description}) announced by ${asnText}`;
@@ -79,7 +79,6 @@ export default class MonitorHijack extends Monitor {
                 {});
         }
     }
-
 
     monitor = (message) =>
         new Promise((resolve, reject) => {
