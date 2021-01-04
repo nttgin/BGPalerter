@@ -185,7 +185,7 @@ export default class MonitorRPKI extends Monitor {
 
             const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false, true);
 
-            if (matchedPrefixRule.matched) { // There is a prefix match
+            if (matchedPrefixRule && matchedPrefixRule.matched) { // There is a prefix match
                 if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) { // The prefix match is not excluded in any way
                     this.validate(message, matchedPrefixRule.matched);
                 }
