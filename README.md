@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/nttgin/BGPalerter.svg?branch=master)](https://travis-ci.org/nttgin/BGPalerter)
+[![Build Status](https://github.com/nttgin/BGPalerter/workflows/Main/badge.svg)](https://github.com/nttgin/BGPalerter/actions?query=workflow%3AMain)
 ![Dependabot Status](https://badgen.net/dependabot/nttgin/BGPalerter/?icon=dependabot)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 

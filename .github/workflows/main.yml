@@ -1,0 +1,111 @@
+name: Main
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Javascript/Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Build
+      run: |
+        npm install
+        npm run compile
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: logs
+        path: ~/.npm/_logs/*
+        retention-days: 14
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Javascript/Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
+
+    - name: Check out code
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: '0'
+
+    - name: Cache multiple paths
+      uses: actions/cache@v2
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install
+      run: |
+        npm install
+
+    - name: Tests
+      run: |
+        npm run test-core
+        npm run test-generate
+        npm run test-reports
+      
+    - name: Tests RPKI
+      run: |
+        rm -f -R .cache/
+        ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register
+        ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register
+        rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register
+
+    - name: Tests Proxy
+      run: |
+        npm install -g anyproxy
+        nohup anyproxy --port 8001 &
+        ANYPROXY_PID=$!
+        npm run test-proxy
+        kill $ANYPROXY_PID
+
+    - name: Tests Kafka
+      run: |
+        sudo apt-get -y install tar
+        sudo apt-get -y install wget
+        wget https://mirror.lyrahosting.com/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
+        tar -xzf kafka_2.13-2.6.0.tgz
+        nohup ./kafka_2.13-2.6.0/bin/zookeeper-server-start.sh ./kafka_2.13-2.6.0/config/zookeeper.properties &
+        nohup ./kafka_2.13-2.6.0/bin/kafka-server-start.sh ./kafka_2.13-2.6.0/config/server.properties &
+        nohup ./kafka_2.13-2.6.0/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 &
+        npm run test-kafka
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: logs
+        path: ~/.npm/_logs/*
+        retention-days: 14
