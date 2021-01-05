@@ -75,7 +75,7 @@ export default class Worker {
         // Write pid on a file
         if (this.config.pidFile) {
             try {
-                fs.writeFileSync(this.config.pidFile, process.pid);
+                fs.writeFileSync(this.config.pidFile, (process.pid || "").toString());
             } catch (error) {
                 this.logger.log({
                     level: 'error',

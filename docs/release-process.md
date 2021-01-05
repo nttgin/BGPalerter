@@ -60,7 +60,7 @@ If a component is not enabled from the config file, the component file is not lo
 
 We currently use the following automation on the repository:
 
-* [Travis CI](https://travis-ci.org/) to perform tests on each commit and pull request.
+* [GitHub Actions](https://github.com/nttgin/BGPalerter/actions) to perform tests on each commit and pull request.
 * [Dependabot](https://dependabot.com/) to check for newer version of the dependencies used.
 * [Hound](https://houndci.com/) to check code correctness and style. 
 * [GitHub Security Alerts](https://github.com/nttgin/BGPalerter/network/alerts) to check for vulnerabilities on the entire repository.
