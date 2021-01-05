@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@sentry/node": "^5.27.6",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
     "deepmerge": "^4.2.2",
