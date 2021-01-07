@@ -11,3 +11,7 @@ Please, let me know so I can add your company name here.
 * MTLNOG
 * EBOX (AS1403)
 * Cloudflare (AS13335)
+* Vocus (AS4826 & AS9443)
+* HEAnet (AS1213)
+* Tech Futures (AS394256)
+* Fastly (AS54113)
