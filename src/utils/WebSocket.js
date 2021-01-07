@@ -101,5 +101,5 @@ export default class WebSocket {
     };
 
 
-    on = (event, callback) => this.pubsub.subscribe(event, (_, data) => callback(data));
+    on = (event, callback) => this.pubsub.subscribe(event, callback);
 }

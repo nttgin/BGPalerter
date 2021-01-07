@@ -210,7 +210,7 @@ describe("Core functions", function() {
             const worker = require("../index");
             const pubSub = worker.pubSub;
 
-            pubSub.subscribe("software-update", function (type, message) {
+            pubSub.subscribe("software-update", function (message, type) {
                 expect(type).to.equal("software-update");
                 done();
             });

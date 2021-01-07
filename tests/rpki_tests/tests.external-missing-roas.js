@@ -63,7 +63,7 @@ describe("RPKI monitoring 3", function() {
         let rpkiTestCompletedExternal = false;
         let started = false;
 
-        pubSub.subscribe("rpki", function (type, message) {
+        pubSub.subscribe("rpki", function (message, type) {
             try {
                 if (started && !rpkiTestCompletedExternal) {
                     message = JSON.parse(JSON.stringify(message));

@@ -38,7 +38,7 @@ export default class ConnectorTest extends Connector{
 
     constructor(name, params, env) {
         super(name, params, env);
-        this.pubSub.subscribe("test-type", (type, message) => {
+        this.pubSub.subscribe("test-type", (message, type) => {
             clearInterval(this.timer);
             this.subscribe({type: message});
         });
