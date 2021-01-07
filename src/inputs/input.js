@@ -121,7 +121,7 @@ export default class Input {
     getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
 
         for (let p of this.prefixes) {
-            if (ipUtils.isEqualPrefix(p.prefix, prefix)) {
+            if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
                 return p;
             } else {
 
