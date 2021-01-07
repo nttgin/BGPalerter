@@ -67,7 +67,7 @@ describe("RPKI monitoring 4", function() {
         };
 
         let rpkiTestCompletedExternal = false;
-        pubSub.subscribe("rpki", function (type, message) {
+        pubSub.subscribe("rpki", function (message, type) {
 
             try {
                 if (!rpkiTestCompletedExternal) {

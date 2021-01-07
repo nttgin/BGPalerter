@@ -70,7 +70,7 @@ export default class MonitorNewPrefix extends Monitor {
 
             if (matchedRule && !matchedRule.ignore &&
                 matchedRule.asn.includes(message.originAS) &&
-                !ipUtils.isEqualPrefix(matchedRule.prefix, messagePrefix)) {
+                !ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 
                 this.publishAlert(message.originAS.getId() + "-" + message.prefix,
                     matchedRule.asn.getId(),
