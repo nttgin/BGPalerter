@@ -141,7 +141,7 @@ export default class ConnectorRIS extends Connector {
 
         if (monitoredPrefixes
             .filter(
-                i => (ipUtils._isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils._isEqualPrefix(i.prefix,'0.0.0.0/0'))
+                i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))
             ).length === 2) {
 
             delete params.prefix;
@@ -307,6 +307,5 @@ export default class ConnectorRIS extends Connector {
         } else if (message.type === 'ris_error') {
             throw new Error("Error from RIS: " + message.data.message);
         }
-
     }
 };

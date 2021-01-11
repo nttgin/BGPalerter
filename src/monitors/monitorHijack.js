@@ -80,10 +80,8 @@ export default class MonitorHijack extends Monitor {
         }
     }
 
-
     monitor = (message) =>
         new Promise((resolve, reject) => {
-
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 

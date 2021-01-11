@@ -1,6 +1,6 @@
 {
   "name": "bgpalerter",
-  "version": "1.27.0",
+  "version": "1.27.1",
   "description": "Software to monitor streams of BGP data. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, and more.",
   "author": {
     "name": "Massimo Candela",
@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "@sentry/node": "^5.27.6",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
     "deepmerge": "^4.2.2",
@@ -72,7 +72,7 @@
     "nodemailer": "^6.4.16",
     "path": "^0.12.7",
     "restify": "^8.5.1",
-    "rpki-validator": "^2.2.11",
+    "rpki-validator": "^2.2.12",
     "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
     "ws": "^7.4.0",

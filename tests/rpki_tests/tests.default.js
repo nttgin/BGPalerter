@@ -70,7 +70,7 @@ describe("RPKI monitoring 1", function() {
 
         let rpkiTestCompleted = false;
         let started = false;
-        pubSub.subscribe("rpki", function (type, message) {
+        pubSub.subscribe("rpki", function (message, type) {
             try {
                 if (started && !rpkiTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));

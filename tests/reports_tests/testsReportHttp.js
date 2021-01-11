@@ -50,6 +50,7 @@ describe("Reports 2", function() {
         server.use(restify.plugins.bodyParser({ mapParams: true }));
         let expectedData = [
             "The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45. Top 1 most used AS paths: [2,3,15563].",
+            "A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562. Top 1 most used AS paths: [2,3,[15562,4]].",
             "A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45. Top 1 most used AS paths: [2,3,208585].",
         ];
 

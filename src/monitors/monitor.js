@@ -253,18 +253,35 @@ export default class Monitor {
                 return m;
             }
         }
+
+        return null;
     };
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
+    _included = (matched) => {
+        if (matched.includeMonitors.length > 0) {
+            return matched.includeMonitors.includes(this.name);
+        } else {
+            return !matched.excludeMonitors.includes(this.name);
+        }
+    };
+
+    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics, verbose=false) => {
         const matched = this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
 
         if (matched) {
-            if (matched.includeMonitors.length > 0 && !matched.includeMonitors.includes(this.name)) {
-                return null;
-            }
+            const included = this._included(matched);
 
-            return (matched.excludeMonitors.includes(this.name)) ? null : matched;
+            if (verbose) {
+                return {
+                    matched,
+                    included
+                };
+            } else if (included) {
+                return matched;
+            }
         }
+
+        return null;
     };
 
 }

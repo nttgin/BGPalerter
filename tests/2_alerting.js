@@ -69,7 +69,7 @@ describe("Alerting", function () {
         };
 
         let visibilityTestCompleted = false;
-        pubSub.subscribe("visibility", (type, message) => {
+        pubSub.subscribe("visibility", (message, type) => {
             try {
                 if (!visibilityTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));
@@ -189,7 +189,7 @@ describe("Alerting", function () {
             }
         };
         let hijackTestCompleted = false
-        pubSub.subscribe("hijack", (type, message) => {
+        pubSub.subscribe("hijack", (message, type) => {
             try {
                 if (!hijackTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));
@@ -336,7 +336,7 @@ describe("Alerting", function () {
         };
 
         let newprefixTestCompleted = false;
-        pubSub.subscribe("newprefix", (type, message) => {
+        pubSub.subscribe("newprefix", (message, type) => {
             try {
                 if (!newprefixTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));
@@ -462,7 +462,7 @@ describe("Alerting", function () {
         };
 
         let pathTestCompleted = false;
-        pubSub.subscribe("path", (type, message) => {
+        pubSub.subscribe("path", (message, type) => {
             try {
                 if (!pathTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));
@@ -515,7 +515,7 @@ describe("Alerting", function () {
         };
 
         let misconfigurationTestCompleted = false;
-        pubSub.subscribe("misconfiguration", (type, message) => {
+        pubSub.subscribe("misconfiguration", (message, type) => {
 
             if (!misconfigurationTestCompleted) {
                 try {
@@ -559,7 +559,7 @@ describe("Alerting", function () {
             }
         }, 15000);
 
-        pubSub.subscribe("visibility", function (type, message) {
+        pubSub.subscribe("visibility", function (message, type) {
             notReceived = false;
         });
         pubSub.publish("test-type", "fade-off");

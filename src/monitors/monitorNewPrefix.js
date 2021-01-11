@@ -31,6 +31,7 @@
  */
 
 import Monitor from "./monitor";
+import ipUtils from "ip-sub";
 
 export default class MonitorNewPrefix extends Monitor {
 
@@ -56,7 +57,6 @@ export default class MonitorNewPrefix extends Monitor {
             const matchedRule = alerts[0].matchedRule;
 
             return `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description})`;
-
         }
 
         return false;
@@ -68,7 +68,9 @@ export default class MonitorNewPrefix extends Monitor {
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 
-            if (matchedRule && !matchedRule.ignore && matchedRule.asn.includes(message.originAS) && matchedRule.prefix !== messagePrefix) {
+            if (matchedRule && !matchedRule.ignore &&
+                matchedRule.asn.includes(message.originAS) &&
+                !ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 
                 this.publishAlert(message.originAS.getId() + "-" + message.prefix,
                     matchedRule.asn.getId(),

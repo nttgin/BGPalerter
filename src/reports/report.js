@@ -46,7 +46,7 @@ export default class Report {
         this.params = params;
 
         for (let channel of channels){
-            env.pubSub.subscribe(channel, (message, content) => {
+            env.pubSub.subscribe(channel, (content, message) => {
                 return this.report(message, content);
             });
         }

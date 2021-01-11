@@ -55,10 +55,7 @@ export default class Consumer {
             });
         }
         process.on('message', this.dispatch);
-        env.pubSub.subscribe('data', (type, data) => {
-            this.dispatch(data);
-        });
-
+        env.pubSub.subscribe('data', this.dispatch);
     };
 
     dispatch = (buffer) => {

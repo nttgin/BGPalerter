@@ -60,26 +60,33 @@ export default class ReportHTTP extends Report {
         }
     }
 
-    _sendHTTPMessage = (url, channel, content) => {
-        const context = this.getContext(channel, content);
+    getTemplate = (group, channel, content) => {
+        return this.params.templates[channel] || this.params.templates["default"];
+    };
 
-        if (this.params.showPaths > 0 && context.pathNumber > 0) {
-            context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}.`;
-        }
-        const blob = this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], context);
+    _sendHTTPMessage = (group, channel, content) => {
+        const url = this.params.hooks[group] || this.params.hooks["default"];
+        if (url) {
+            const context = this.getContext(channel, content);
 
-        this.axios({
-            url: url,
-            method: "POST",
-            headers: this.headers,
-            data: (this.params.isTemplateJSON) ? JSON.parse(blob) : blob
-        })
-            .catch((error) => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
+            if (this.params.showPaths > 0 && context.pathNumber > 0) {
+                context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}.`;
+            }
+            const blob = this.parseTemplate(this.getTemplate(group, channel, content), context);
+
+            this.axios({
+                url: url,
+                method: "POST",
+                headers: this.headers,
+                data: (this.params.isTemplateJSON) ? JSON.parse(blob) : blob
+            })
+                .catch((error) => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                 });
-            });
+        }
     };
 
     report = (channel, content) => {
@@ -89,11 +96,8 @@ export default class ReportHTTP extends Report {
             groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there is no specific group defined, send to all of them
 
             for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendHTTPMessage(this.params.hooks[group], channel, content);
-                }
+                this._sendHTTPMessage(group, channel, content);
             }
         }
-
-    }
+    };
 }
