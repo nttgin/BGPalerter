@@ -15,3 +15,4 @@ Please, let me know so I can add your company name here.
 * HEAnet (AS1213)
 * Tech Futures (AS394256)
 * Fastly (AS54113)
+* EDGOO Networks (AS47787)
