@@ -18,3 +18,4 @@ Please, let me know so I can add your company name here.
 * EDGOO Networks (AS47787)
 * IT.Gate (AS12779)
 * Sky (AS5607)
+* SBTAP (AS59715)
