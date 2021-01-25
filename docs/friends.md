@@ -17,3 +17,4 @@ Please, let me know so I can add your company name here.
 * Fastly (AS54113)
 * EDGOO Networks (AS47787)
 * IT.Gate (AS12779)
+* Sky (AS5607)
