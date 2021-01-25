@@ -155,7 +155,7 @@ const ymlBasicConfig = yaml.dump(config);
 
 if (fs.existsSync(vector.configFile)) {
     try {
-        config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8')) || config;
+        config = yaml.load(fs.readFileSync(vector.configFile, 'utf8')) || config;
     } catch (error) {
         throw new Error("The file " + vector.configFile + " is not valid yml: " + error.message.split(":")[0]);
     }
@@ -169,7 +169,7 @@ if (fs.existsSync(vector.configFile)) {
     })
         .then((response) => {
             fs.writeFileSync(vector.configFile, response.data);
-            yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8')); // Test readability and format
+            yaml.load(fs.readFileSync(vector.configFile, 'utf8')); // Test readability and format
         })
         .catch(() => {
             fs.writeFileSync(vector.configFile, ymlBasicConfig); // Download failed, write simple default config
@@ -269,11 +269,16 @@ config.reports = (config.reports || [])
 
         return {
             class: require("./reports/" + item.file).default,
-            channels: [...item.channels, "software-update"],
+            channels: item.channels,
             params: item.params
         };
 
     });
+
+if (!config.reports.some(report => report.channels.includes("software-update"))) { // Check if software-update channel is declared
+    config.reports.forEach(report => report.channels.push("software-update")); // If not, declare it everywhere
+}
+
 config.connectors = config.connectors || [];
 
 config.connectors.push({
