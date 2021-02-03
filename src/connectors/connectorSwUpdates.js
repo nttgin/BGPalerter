@@ -74,13 +74,18 @@ export default class ConnectorSwUpdates extends Connector{
             // parse to verify the BGPAlerter configuration.  This is distinct from the log stream that generates
             // ./log/error... ./log/reports... because these files are not cleared after each BGPAlerter restart
             if (this.config.checkForUpdates) {
+                // The function test cases require this to be logged to stdout, because STDOUT is captured and parse to
+                // verify the configuration for restart of the BGPAlerter daemon
                 console.log("Software updates enabled");
                 if (this.config.checkForUpdatesAtBoot){
                     this._checkForUpdates();
                 }
+
                 setInterval(this._checkForUpdates, this.config.checkForUpdatesInterval); // Check every 5 days
             }
             else {
+                // The function test cases require this to be logged to stdout, because STDOUT is captured and parse to
+                // verify the configuration for restart of the BGPAlerter daemon
                 console.log("Software updates disabled");
             }
             resolve(true);

@@ -14,6 +14,7 @@ fi
 
 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ALIAS}.dkr.ecr.us-east-1.amazonaws.com/bgp-alerter-binary
 docker build -t bgpalerter-binary .
+
 docker tag bgp-alerter-binary:latest ${ACCOUNT_ALIAS}.dkr.ecr.us-east-1.amazonaws.com/bgp-alerter-binary:latest
 docker push ${ACCOUNT_ALIAS}.dkr.ecr.us-east-1.amazonaws.com/bgp-alerter-binary:latest
 

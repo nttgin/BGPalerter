@@ -58,7 +58,33 @@ export default class ReportEmail extends Report {
                 });
             }
 
+            if (this.params.smtp.host !== null) {
+                this.logger.log({
+                    level: 'info',
+                    message: `SMTP Host ${this.params.smtp.host} PORT: ${this.params.smtp.port}`
+                });
+            }
+
+            if (this.params.smtp.auth !== null) {
+                this.logger.log({
+                    level: 'info',
+                    message: `User: ${this.params.smtp.auth.user}`
+                });
+            }
+
             this.transporter = nodemailer.createTransport(this.params.smtp);
+
+            this.transporter.verify(function(error, success) {
+                // The functional test cases require this to be logged to stdout, because STDOUT is captured and
+                // parse to verify the BGPAlerter configuration.  This is distinct from the log stream that generates
+                // ./log/error... ./log/reports... because these files are not cleared after each BGPAlerter restart
+                if (error) {
+                    console.log('SMTP connection and auth FAILED: ' + error);
+                }
+                else {
+                    console.log('SMTP connection and auth SUCCESS');
+                }
+             });
 
             for (let channel of channels) {
                 try {

@@ -143,6 +143,18 @@ if (fs.existsSync(vector.configFile)) {
     }
 } else {
     console.log("Impossible to load config.yml. A default configuration file has been generated.");
+    //axios({
+    //    url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example',
+    //    method: 'GET',
+    //    responseType: 'blob', // important
+    //})
+    //    .then((response) => {
+    //        fs.writeFileSync(defaultConfigFilePath, response.data);
+    //    })
+    //    .catch(() => {
+    //        fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
+    //    })
+
 }
 
 const errorTransport = new FileLogger({
@@ -190,7 +202,6 @@ config.monitors.push({
     name: "software-update",
 });
 
-
 config.monitors = config.monitors
     .map(item => {
         return {
@@ -203,13 +214,17 @@ config.monitors = config.monitors
 
 config.reports = (config.reports || [])
     .map(item => {
-
+        if (item.file === "reportEmail") {
+            item.params.smtp.auth = {
+              user: process.env.SMTPU,
+              pass: process.env.SMTPP
+            };
+        }
         return {
             class: require("./reports/" + item.file).default,
             channels: [...item.channels, "software-update"],
             params: item.params
         };
-
     });
 config.connectors = config.connectors || [];
 
