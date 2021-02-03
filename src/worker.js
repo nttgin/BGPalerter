@@ -35,7 +35,8 @@ import cluster from "cluster";
 import fs from "fs";
 
 export default class Worker {
-    constructor(configFile, volume) {
+    constructor({ configFile, volume, configConnector }) {
+        global.EXTERNAL_CONFIG_CONNECTOR = global.EXTERNAL_CONFIG_CONNECTOR || configConnector;
         global.EXTERNAL_CONFIG_FILE = global.EXTERNAL_CONFIG_FILE || configFile;
         global.EXTERNAL_VOLUME_DIRECTORY = global.EXTERNAL_VOLUME_DIRECTORY || volume;
 
