@@ -37,14 +37,15 @@ import { version } from '../package.json';
 import Storage from './utils/storages/storageFile';
 import url from 'url';
 import RpkiUtils from './utils/rpkiUtils';
+import ConfigYml from './config/configYml';
 
-const configConnector = global.EXTERNAL_CONFIG_CONNECTOR || "./config/configYml";
+const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
     clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
 };
 
-const config = (new (require(configConnector)).default).retrieve();
+const config = configConnector.retrieve();
 
 if (global.DRY_RUN) {
     config.connectors = [{

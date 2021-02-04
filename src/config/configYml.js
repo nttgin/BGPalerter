@@ -10,6 +10,8 @@ export default class ConfigYml extends Config {
         ((global.EXTERNAL_VOLUME_DIRECTORY)
             ? global.EXTERNAL_VOLUME_DIRECTORY + 'config.yml'
             : path.resolve(process.cwd(), 'config.yml'));
+
+        console.log("Loaded config:", this.configFile);
     };
 
     save = (config) => {
