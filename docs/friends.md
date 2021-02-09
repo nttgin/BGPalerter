@@ -19,3 +19,4 @@ Please, let me know so I can add your company name here.
 * IT.Gate (AS12779)
 * Sky (AS5607)
 * SBTAP (AS59715)
+* WiscNet (AS2381)
