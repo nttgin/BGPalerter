@@ -88,8 +88,8 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
         getMultipleOrigins(prefix)
             .then(asns => {
 
-                if (asns.length) {
-                    const origin = (asns && asns.length) ? asns : [asn];
+                const origin = (asns && asns.length) ? asns : [asn];
+                if (origin.length) {
 
                     for (let o of origin) {
                         allOrigins[o] = true;
