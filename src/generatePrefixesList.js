@@ -2,7 +2,16 @@ import axios from "axios";
 import brembo from "brembo";
 import yaml from "js-yaml";
 import fs from "fs";
+import https from 'https';
+
 const batchPromises = require('batch-promises');
+
+const httpsAgentOptions = {
+    keepAlive: (process.env.KEEP_ALIVE || 'true') === 'true',
+    maxSockets: parseInt(process.env.MAX_SOCKETS || '10', 10)
+}
+console.log(`Using HTTPS Agent Options: ${JSON.stringify(httpsAgentOptions)}`);
+axios.defaults.httpsAgent = new https.Agent(httpsAgentOptions);
 
 module.exports = function generatePrefixes(asnList, outputFile, exclude, excludeDelegated, prefixes, monitoredASes) {
     const generateList = {};
@@ -42,8 +51,10 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
 
                 return asns;
             })
-            .catch(() => {
+            .catch((error) => {
                 console.log("RIPEstat prefix-overview query failed: cannot retrieve information for " + prefix);
+                console.log(error.toJSON());
+                throw error;
             });
     };
 
@@ -134,7 +145,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
             })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
             .then(list => {
-                return Promise.all(list.map(i => generateRule(i.prefix, asn, false, null, false)))
+                return batchPromises(10, list, i => generateRule(i.prefix, asn, false, null, false))
                     .then(() => list.map(i => i.prefix))
             })
 
@@ -198,7 +209,7 @@ module.exports = function generatePrefixes(asnList, outputFile, exclude, exclude
                 })
         })
         .then(() => { // Check
-            return Promise.all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
+            return batchPromises(10, Object.keys(generateList), prefix => validatePrefix(generateList[prefix].asn[0], prefix))
                 .catch((e) => {
                     console.log("ROA check failed due to error", e);
                 })
