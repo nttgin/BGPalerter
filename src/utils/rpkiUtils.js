@@ -276,7 +276,7 @@ export default class RpkiUtils {
     };
 
     getVrps = () => {
-        return [].concat.apply([],[...this.rpki.getRadixTrie().v4.values(), ...this.rpki.getRadixTrie().v6.values()]);
+        return this.rpki.toArray();
     };
 
     getStatus = () => {
