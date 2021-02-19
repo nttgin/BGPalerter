@@ -102,7 +102,7 @@ export default class InputYml extends Input {
                 if (fs.existsSync(file)) {
                     fileContent = fs.readFileSync(file, 'utf8');
                     try {
-                        monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
+                        monitoredPrefixesFile = yaml.load(fileContent) || {};
                         this._watchPrefixFile(file);
                     } catch (error) {
                         reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
