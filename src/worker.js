@@ -35,10 +35,11 @@ import fs from "fs";
 import inputYml from "./inputs/inputYml";
 
 export default class Worker {
-    constructor({ configFile, volume, configConnector, inputConnector }) {
+    constructor({ configFile, volume, configConnector, inputConnector, groupFile }) {
         global.EXTERNAL_CONFIG_CONNECTOR = global.EXTERNAL_CONFIG_CONNECTOR || configConnector;
         global.EXTERNAL_INPUT_CONNECTOR = global.EXTERNAL_INPUT_CONNECTOR || inputConnector;
         global.EXTERNAL_CONFIG_FILE = global.EXTERNAL_CONFIG_FILE || configFile;
+        global.EXTERNAL_GROUP_FILE = global.EXTERNAL_GROUP_FILE || groupFile;
         global.EXTERNAL_VOLUME_DIRECTORY = global.EXTERNAL_VOLUME_DIRECTORY || volume;
 
         const env = require("./env");

@@ -189,6 +189,7 @@ switch(params._[0]) {
         const Worker = require("./src/worker").default;
         module.exports = new Worker({
             configFile: params.c,
-            volume: params.d
+            volume: params.d,
+            groupFile: params.E
         });
 }

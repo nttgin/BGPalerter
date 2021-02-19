@@ -37,13 +37,13 @@ import axios from "axios";
 import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Report {
-
     constructor(channels, params, env) {
 
         this.config = env.config;
         this.logger = env.logger;
         this.pubSub = env.pubSub;
         this.params = params;
+        this.enabled = true;
 
         for (let channel of channels){
             env.pubSub.subscribe(channel, (content, message) => {
@@ -191,5 +191,10 @@ export default class Report {
 
     report = (message, content) => {
         throw new Error('The method report must be implemented');
-    }
+    };
+
+    getUserGroup = (group) => {
+        throw new Error('The method getUserGroup must be implemented');
+    };
+
 }

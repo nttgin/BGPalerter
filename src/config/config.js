@@ -113,4 +113,12 @@ export default class Config {
             .then(response => response.data);
     };
 
+    retrieve = () => {
+        throw new Error('The method retrieve must be implemented in the config connector');
+    };
+
+    save = () => {
+        throw new Error('The method save must be implemented in the config connector');
+    };
+
 }
