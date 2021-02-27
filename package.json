@@ -41,21 +41,21 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.13",
-    "@babel/core": "^7.12.13",
-    "@babel/node": "^7.12.13",
-    "@babel/plugin-proposal-class-properties": "^7.12.13",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.13",
-    "@babel/preset-env": "^7.12.13",
-    "chai": "^4.2.0",
+    "@babel/cli": "^7.13.0",
+    "@babel/core": "^7.13.8",
+    "@babel/node": "^7.13.0",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
+    "@babel/preset-env": "^7.13.8",
+    "chai": "^4.3.0",
     "chai-subset": "^1.6.0",
-    "mocha": "^8.2.1",
+    "mocha": "^8.3.0",
     "pkg": "^4.4.9",
-    "read-last-lines": "^1.7.2",
+    "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^6.0.4",
+    "@sentry/node": "^6.2.0",
     "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.4",
@@ -63,16 +63,16 @@
     "file-stream-rotator": "^0.5.7",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^7.3.3",
-    "ip-address": "^6.4.0",
-    "ip-sub": "^1.0.17",
+    "ip-address": "6.4.0",
+    "ip-sub": "^1.0.19",
     "js-yaml": "^4.0.0",
     "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "nodemailer": "^6.4.17",
+    "nodemailer": "^6.5.0",
     "path": "^0.12.7",
     "restify": "^8.5.1",
-    "rpki-validator": "^2.3.0",
+    "rpki-validator": "^2.4.0",
     "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
     "ws": "^7.4.3",
@@ -95,6 +95,6 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.3",
-    "utf-8-validate": "^5.0.3"
+    "utf-8-validate": "^5.0.4"
   }
 }
