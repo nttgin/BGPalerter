@@ -62,7 +62,7 @@
     "deepmerge": "^4.2.2",
     "file-stream-rotator": "^0.5.7",
     "https-proxy-agent": "^5.0.0",
-    "inquirer": "^7.3.3",
+    "inquirer": "^8.0.0",
     "ip-address": "6.4.0",
     "ip-sub": "^1.0.19",
     "js-yaml": "^4.0.0",
