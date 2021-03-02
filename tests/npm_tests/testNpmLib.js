@@ -32,43 +32,35 @@
 
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
-const axios = require('axios');
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
 const asyncTimeout = 20000;
-const Worker = require("../src/worker").default;
-const Config = require("../src/config/config").default;
+
+const Config = require("../../src/config/config").default;
 
 const ConfigTest = function () {
 
     this.retrieve = () => {
-        const data = Config.default;
+        const data = (new Config()).default;
 
         data.test = true;
+
         return data;
     }
 
     this.save = () => {
         return true;
     }
-}
+};
 
+describe("External Connector", function() {
 
-describe("Uptime Monitor", function() {
-
-    const configConnector = ConfigTest();
-    const worker = new Worker({ volume, configConnector });
-
-    it("uptime config", function () {
-        expect(config.processMonitors[0]).to
-            .containSubset({
-                params: {
-                    useStatusCodes: true,
-                    host: null,
-                    port: 8011
-                }
-            });
+    it("load external connector", function () {
+        const Worker = require("../../src/worker").default;
+        const worker = new Worker({ volume, configConnector: ConfigTest });
+        const config = worker.config;
+        expect(config.test).to.equal(true);
     })
         .timeout(asyncTimeout);
 });

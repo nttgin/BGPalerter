@@ -57,8 +57,8 @@ export default class ConfigYml extends Config {
 
     _readUserGroupsFiles = (config) => {
         if (config.groupsFile) {
-            this.groupsFile = ((global.EXTERNAL_VOLUME_DIRECTORY)
-                ? global.EXTERNAL_VOLUME_DIRECTORY + config.groupsFile
+            this.groupsFile = ((config.volume)
+                ? config.volume + config.groupsFile
                 : path.resolve(process.cwd(), config.groupsFile));
 
             const userGroups = yaml.load(fs.readFileSync(this.groupsFile, 'utf8'));
@@ -67,7 +67,7 @@ export default class ConfigYml extends Config {
                 const name = report.file;
                 const groups = userGroups[name];
                 if (userGroups[name]) {
-                    report.userGroups = groups;
+                    report.params.userGroups = groups;
                 }
             }
 
@@ -77,11 +77,13 @@ export default class ConfigYml extends Config {
                 }
                 this._watchPrefixFileTimer = setTimeout(() => {
                     const userGroups = yaml.load(fs.readFileSync(this.groupsFile, 'utf8'));
+
                     for (let report of config.reports) {
                         const name = report.file;
                         const groups = userGroups[name];
+
                         if (userGroups[name]) {
-                            report.userGroups = groups;
+                            report.params.userGroups = groups;
                         }
                     }
                 }, 5000);

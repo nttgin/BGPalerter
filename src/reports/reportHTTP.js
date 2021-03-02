@@ -55,7 +55,7 @@ export default class ReportHTTP extends Report {
     }
 
     getUserGroup = (group) => {
-        const groups = this.params.hooks || this.userGroups;
+        const groups = this.params.hooks || this.params.userGroups;
 
         return groups[group] || groups["default"];
     };

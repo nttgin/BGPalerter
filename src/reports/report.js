@@ -188,7 +188,6 @@ export default class Report {
         return template.replace(/\${([^}]*)}/g, (r,k)=>context[k]);
     };
 
-
     report = (message, content) => {
         throw new Error('The method report must be implemented');
     };

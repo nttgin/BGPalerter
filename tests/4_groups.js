@@ -30,59 +30,57 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Report from "./report";
+const chai = require("chai");
+const fs = require("fs");
+const chaiSubset = require('chai-subset');
+chai.use(chaiSubset);
+const expect = chai.expect;
+const volume = "volumetests/";
+const asyncTimeout = 20000;
 
-export default class ReportWebex extends Report {
-
-    constructor(channels, params, env) {
-        super(channels, params, env);
-
-
-        if (!this.getUserGroup("default")) {
-            this.logger.log({
-                level: 'error',
-                message: `Webex reporting is not enabled: no default group defined`
-            });
-            this.enabled = false;
-        }
-    };
-
-    getUserGroup = (group) => {
-        const groups = this.params.hooks || this.params.userGroups;
-
-        return groups[group] || groups["default"];
-    };
-
-    _sendWebexMessage = (url, message, content) => {
-
-        this.axios({
-            url: url,
-            method: "POST",
-            resposnseType: "json",
-            data: {
-                markdown: `**${message}**: ${content.message}`
-            }
-        })
-            .catch((error) => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
-            })
-    };
-
-    report = (message, content) => {
-        if (this.enabled){
-            let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
-
-            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
-
-            for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendWebexMessage(this.params.hooks[group], message, content);
-                }
-            }
-        }
-
-    }
+// Prepare test environment
+if (!fs.existsSync(volume)) {
+    fs.mkdirSync(volume);
 }
+fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
+fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
+fs.copyFileSync("tests/groups.test.yml", volume + "groups.test.yml");
+
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
+
+const worker = require("../index");
+
+// Check if groups are loaded on file change
+
+describe("External groups file", function() {
+
+    it("load groups", function () {
+        const config = worker.config;
+        expect(config.groupsFile).to.equal("groups.test.yml");
+        expect(config.reports[0].params.userGroups).to
+            .containSubset({
+                test:  [
+                    "filename"
+                ]
+            });
+    })
+        .timeout(asyncTimeout);
+
+    it("watch groups", function (done) {
+
+        fs.copyFileSync("tests/groups.test.after.yml", "volumetests/groups.test.yml");
+
+        setTimeout(() => {
+            const config = worker.config;
+            expect(config.reports[0].params.userGroups).to
+                .containSubset({
+                    test:  [
+                        "filename-after"
+                    ]
+                });
+            done();
+        }, 10000);
+
+    })
+        .timeout(asyncTimeout);
+});

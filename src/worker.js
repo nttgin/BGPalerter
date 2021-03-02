@@ -32,7 +32,7 @@
 
 import cluster from "cluster";
 import fs from "fs";
-import inputYml from "./inputs/inputYml";
+import inputYml from "./inputs/inputYml"; // Default input connector
 
 export default class Worker {
     constructor({ configFile, volume, configConnector, inputConnector, groupFile }) {
@@ -46,7 +46,7 @@ export default class Worker {
 
         this.config = env.config;
         this.logger = env.logger;
-        this.input = new (inputConnector || inputYml)(env);
+        this.input = new (global.EXTERNAL_INPUT_CONNECTOR || inputYml)(env);
         this.pubSub = env.pubSub;
         this.version = env.version;
 

@@ -21,6 +21,7 @@
     "test-proxy": "./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register",
     "test-generate": "./node_modules/.bin/mocha --exit tests/generate_tests/*.js --require @babel/register",
     "test-kafka": "./node_modules/.bin/mocha --exit tests/kafka_tests/*.js --require @babel/register",
+    "test-npm": "./node_modules/.bin/mocha --exit tests/npm_tests/*.js --require @babel/register",
     "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
     "build": "./build.sh",
     "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json && cp README.md dist/README.md && cp .npm* dist/",

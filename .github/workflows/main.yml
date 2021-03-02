@@ -75,7 +75,7 @@ jobs:
         npm run test-core
         npm run test-generate
         npm run test-reports
-      
+
     - name: Tests RPKI
       run: |
         rm -f -R .cache/
@@ -90,6 +90,10 @@ jobs:
         ANYPROXY_PID=$!
         npm run test-proxy
         kill $ANYPROXY_PID
+
+    - name: Tests NPM
+      run: |
+        npm run test-npm
 
     - name: Tests Kafka
       run: |

@@ -98,7 +98,7 @@ export default class ReportAlerta extends Report {
     };
 
     getUserGroup = (group) => {
-        const groups = this.params.urls || this.userGroups;
+        const groups = this.params.urls || this.params.userGroups;
 
         return groups[group] || groups["default"];
     };

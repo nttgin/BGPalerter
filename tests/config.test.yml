@@ -79,13 +79,14 @@ persistStatus: true
 
 volume: volumetests/
 
+groupsFile: groups.test.yml
+
 processMonitors:
   - file: uptimeApi
     params:
       useStatusCodes: true
       host: null
       port: 8011
-
 
 rpki:
   vrpProvider: ntt

@@ -36,7 +36,7 @@ import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
 
-    constructor(channels,params, env) {
+    constructor(channels, params, env) {
         super(channels, params, env);
         this.emailTemplates = new emailTemplates(this.logger);
         this.templates = {};
@@ -82,7 +82,7 @@ export default class ReportEmail extends Report {
 
 
     getUserGroup = (group) => {
-        const groups = this.params.notifiedEmails || this.userGroups;
+        const groups = this.params.notifiedEmails || this.params.userGroups;
 
         return groups[group] || groups["default"];
     };

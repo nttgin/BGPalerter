@@ -139,6 +139,7 @@ config.reports = (config.reports || [])
     .map(item => {
 
         return {
+            file: item.file,
             class: require("./reports/" + item.file).default,
             channels: item.channels,
             params: item.params
