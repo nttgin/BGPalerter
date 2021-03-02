@@ -59,7 +59,7 @@ export default class Config {
                 {
                     file: "monitorAS",
                     channel: "misconfiguration",
-                    name: "as-monitor",
+                    name: "asn-monitor",
                     params: {
                         thresholdMinPeers: 3
                     }
