@@ -30,6 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// IMPORTANT: This Connector is used by the automated tests. Please, ignore!
+
 import Connector from "./connector";
 import {AS, Path} from "../model";
 import ipUtils from "ip-sub";

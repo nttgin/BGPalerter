@@ -30,59 +30,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Report from "./report";
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+chai.use(chaiSubset);
+const expect = chai.expect;
+const volume = "volumetests/";
+const asyncTimeout = 20000;
 
-export default class ReportWebex extends Report {
+const Config = require("../../src/config/config").default;
 
-    constructor(channels, params, env) {
-        super(channels, params, env);
+const ConfigTest = function () {
 
+    this.retrieve = () => {
+        const data = (new Config()).default;
 
-        if (!this.getUserGroup("default")) {
-            this.logger.log({
-                level: 'error',
-                message: `Webex reporting is not enabled: no default group defined`
-            });
-            this.enabled = false;
-        }
-    };
+        data.test = true;
 
-    getUserGroup = (group) => {
-        const groups = this.params.hooks || this.params.userGroups;
-
-        return groups[group] || groups["default"];
-    };
-
-    _sendWebexMessage = (url, message, content) => {
-
-        this.axios({
-            url: url,
-            method: "POST",
-            resposnseType: "json",
-            data: {
-                markdown: `**${message}**: ${content.message}`
-            }
-        })
-            .catch((error) => {
-                this.logger.log({
-                    level: 'error',
-                    message: error
-                });
-            })
-    };
-
-    report = (message, content) => {
-        if (this.enabled){
-            let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
-
-            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
-
-            for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendWebexMessage(this.params.hooks[group], message, content);
-                }
-            }
-        }
-
+        return data;
     }
-}
+
+    this.save = () => {
+        return true;
+    }
+};
+
+describe("External Connector", function() {
+
+    it("load external connector", function () {
+        const Worker = require("../../src/worker").default;
+        const worker = new Worker({ volume, configConnector: ConfigTest });
+        const config = worker.config;
+        expect(config.test).to.equal(true);
+    })
+        .timeout(asyncTimeout);
+});

@@ -1,5 +1,6 @@
 config.yml
 prefixes.yml
+groups.yml
 .idea/
 node_modules/
 bin/
