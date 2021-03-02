@@ -22,7 +22,7 @@ The following are common parameters which it is possible to specify in the confi
 |persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No |
 |generatePrefixListEveryDays| This parameter allows to automatically re-generate the prefix list after the specified amount of days. Set to 0 to disable it. It works only if you have one prefix list file. | An integer | 0 | No |
 |rpki| A dictionary containing the RPKI configuration (see [here](rpki.md) for more details). |  |  | Yes |
- 
+|groupsFile| A file containing user groups definition (see [here](usergroups.md) for more details). | A string | groups.yml | No | 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 
@@ -35,6 +35,7 @@ The following are advanced parameters, please don't touch them if you are not do
 |multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
 |fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g., not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
 |checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
+
 
 
 

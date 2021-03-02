@@ -50,8 +50,6 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 const worker = require("../index");
 
-// Check if groups are loaded on file change
-
 describe("External groups file", function() {
 
     it("load groups", function () {

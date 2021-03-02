@@ -278,7 +278,7 @@ monitoredPrefixesFiles:
 ############################
 # The file containing the user groups.
 # User groups can be specified
-# 1) directly in config.yml, in each report module, or
+# 1) directly above, in each report module; or
 # 2) inside an external file, as specified below (disabled by default).
 # Using an external file allows BGPalerter to auto-reload the user group definitions
 # when the external file is changed.
