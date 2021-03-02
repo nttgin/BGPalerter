@@ -29,7 +29,7 @@ export default class Config {
                     channel: "hijack",
                     name: "basic-hijack-detection",
                     params: {
-                        thresholdMinPeers: 2
+                        thresholdMinPeers: 3
                     }
                 },
                 {
@@ -69,9 +69,15 @@ export default class Config {
                     channel: "rpki",
                     name: "rpki-monitor",
                     params: {
-                        thresholdMinPeers: 1,
+                        thresholdMinPeers: 3,
                         checkUncovered: false
                     }
+                },
+                {
+                    file: "monitorROAS",
+                    channel: "rpki",
+                    name: "rpki-diff",
+                    params: {}
                 }
             ],
             reports: [

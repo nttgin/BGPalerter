@@ -17,7 +17,7 @@ monitors:
     channel: hijack
     name: basic-hijack-detection
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
 #  - file: monitorNewPrefix
 #    channel: newprefix
@@ -47,12 +47,12 @@ monitors:
     channel: rpki
     name: rpki-monitor
     params:
-      thresholdMinPeers: 1
+      thresholdMinPeers: 3
       checkUncovered: false
 
   - file: monitorROAS
     channel: rpki
-    name: rpki-monitor
+    name: rpki-diff
 
 reports:
   - file: reportFile
