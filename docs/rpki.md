@@ -16,7 +16,7 @@ Below you can see the parameters available:
 |Parameter| Description| 
 |---|---|
 |preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
-|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
+|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (read [here](https://github.com/massimocandela/rpki-validator#rpki-auto-refresh-limits) for the minimum refresh time allowed). |
 |vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `cloudflare`, `rpkiclient`, `ripe`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
 |vrpFile| A JSON file with an array of VRPs. See example below.|
 |markDataAsStaleAfterMinutes| The amount of minutes (integer) after which an unchanged VRP list is marked as stale. Set to 0 to disable the check. |

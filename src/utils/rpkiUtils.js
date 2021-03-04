@@ -15,7 +15,12 @@ export default class RpkiUtils {
 
         const defaultMarkDataAsStaleAfterMinutes = 60;
 
-        const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external"]; // First provider is the default one
+        const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external", "api"]; // First provider is the default one
+
+        if (this.params.api) {
+            this.params.vrpProvider = "api";
+            this.params.preCacheROAs = true;
+        }
 
         if (this.params.vrpFile) {
             this.params.vrpProvider = "external";
@@ -31,7 +36,7 @@ export default class RpkiUtils {
                     message: "The specified vrpProvider is not valid. Using default vrpProvider."
                 });
             }
-            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 15);
+            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
             this.params.preCacheROAs = this.params.preCacheROAs !== false;
         }
 
@@ -69,6 +74,10 @@ export default class RpkiUtils {
                 clientId: this.clientId,
                 axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
             };
+
+            if (this.params.api) {
+                rpkiValidatorOptions.api = this.params.api;
+            }
 
             this.rpki = new rpki(rpkiValidatorOptions);
 
@@ -202,14 +211,14 @@ export default class RpkiUtils {
         this.queue = [];
 
         this.validateBatch(Object
-                .values(batch)
-                .map((elements) => {
-                    const { message } = elements[0];
-                    return {
-                        prefix: message.prefix,
-                        origin: message.originAS
-                    };
-                }))
+            .values(batch)
+            .map((elements) => {
+                const { message } = elements[0];
+                return {
+                    prefix: message.prefix,
+                    origin: message.originAS
+                };
+            }))
             .then(results => {
                 for (let result of results) {
                     const key = result.origin.getId() + "-" + result.prefix;

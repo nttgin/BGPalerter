@@ -45,7 +45,7 @@ fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json"
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 3", function() {
+describe("RPKI monitoring external", function() {
 
     it("missing roas", function (done) {
 

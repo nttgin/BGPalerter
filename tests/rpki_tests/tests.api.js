@@ -47,7 +47,7 @@ const worker = require("../../index");
 const pubSub = worker.pubSub;
 
 
-describe("RPKI monitoring default", function() {
+describe("RPKI monitoring api", function() {
 
     it("default connector", function (done) {
 
