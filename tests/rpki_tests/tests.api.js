@@ -42,14 +42,14 @@ if (fs.existsSync(cacheFile)) {
     fs.unlinkSync(cacheFile);
 }
 
-global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.default.yml";
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.api.yml";
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
 
 describe("RPKI monitoring api", function() {
 
-    it("default connector", function (done) {
+    it("api connector", function (done) {
 
         const expectedData = {
 

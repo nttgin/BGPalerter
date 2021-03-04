@@ -17,7 +17,7 @@ export default class RpkiUtils {
 
         const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external", "api"]; // First provider is the default one
 
-        if (this.params.api) {
+        if (this.params.url) {
             this.params.vrpProvider = "api";
             this.params.preCacheROAs = true;
         }
@@ -75,20 +75,13 @@ export default class RpkiUtils {
                 axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
             };
 
-            if (this.params.api) {
-                rpkiValidatorOptions.api = this.params.api;
+            if (this.params.url) {
+                rpkiValidatorOptions.url = this.params.url;
             }
-
             this.rpki = new rpki(rpkiValidatorOptions);
 
             if (!!this.params.preCacheROAs) {
-                this._preCache()
-                    .catch(() => {
-                        this.logger.log({
-                            level: 'error',
-                            message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
-                        });
-                    });
+                this._preCache();
             }
         }
     };
@@ -132,14 +125,7 @@ export default class RpkiUtils {
                         });
 
                         this.rpki.setVRPs(vrps);
-
-                        this._preCache()
-                            .catch(() => {
-                                this.logger.log({
-                                    level: 'error',
-                                    message: "It was not possible to load correctly the VRPs file. Possibly there is an error in the format. The RPKI monitoring should be working anyway with one of the on-line providers."
-                                });
-                            });
+                        this._preCache();
 
                     } else {
                         this.logger.log({
@@ -186,13 +172,14 @@ export default class RpkiUtils {
                     return data;
                 })
                 .catch(() => {
-                    this.status.data = false;
-                    this.status.stale = true;
-                    this.logger.log({
-                        level: 'error',
-                        message: "The VRP list cannot be downloaded."
-                    });
-                });
+                    if (!this._cannotDownloadErrorOnce) {
+                        this.logger.log({
+                            level: 'error',
+                            message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                        });
+                    }
+                    this._cannotDownloadErrorOnce = true;
+                })
         } else {
             this.status.data = true;
             this.status.stale = false;
@@ -281,6 +268,12 @@ export default class RpkiUtils {
                                 }
                             });
                     }))
+                    .catch(error => {
+                        this.logger.log({
+                            level: 'error',
+                            message: "RPKI validation failed due to:" + error
+                        });
+                    })
             });
     };
 
