@@ -21,3 +21,4 @@ Please, let me know so I can add your company name here.
 * SBTAP (AS59715)
 * WiscNet (AS2381)
 * Artfiles GmbH (AS8893)
+* Namex IXP (AS24796)
