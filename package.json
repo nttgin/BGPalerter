@@ -73,7 +73,7 @@
     "nodemailer": "^6.5.0",
     "path": "^0.12.7",
     "restify": "^8.5.1",
-    "rpki-validator": "^2.5.1",
+    "rpki-validator": "^2.5.5",
     "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
     "ws": "^7.4.3",
