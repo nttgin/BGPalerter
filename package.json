@@ -42,21 +42,21 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.13.0",
-    "@babel/core": "^7.13.8",
-    "@babel/node": "^7.13.0",
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.10",
+    "@babel/node": "^7.13.10",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
-    "@babel/preset-env": "^7.13.9",
-    "chai": "^4.3.3",
+    "@babel/preset-env": "^7.13.10",
+    "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
-    "mocha": "^8.3.0",
+    "mocha": "^8.3.2",
     "pkg": "^4.4.9",
     "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^6.2.1",
+    "@sentry/node": "^6.2.2",
     "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.5",
@@ -76,7 +76,7 @@
     "rpki-validator": "^2.5.5",
     "semver": "^7.3.4",
     "syslog-client": "^1.1.1",
-    "ws": "^7.4.3",
+    "ws": "^7.4.4",
     "yargs": "^16.2.0"
   },
   "pkg": {
