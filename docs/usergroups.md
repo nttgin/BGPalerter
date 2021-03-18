@@ -128,6 +128,8 @@ reports:
         group2: _SLACK_WEBOOK_FOR_GROUP2_
 ```
 
+> User groups associated to prefixes have always precedence on user groups associated to ASes. If an alert matches both a prefix rule and an AS rule, the prefix rule will define which user group will receive the alert.
+
 ## Define an external user groups file
 
 Edit `config.yml`, uncomment the `groupsFile` option, and add the position of the file (e.g., `groupsFile: groups.yml`).
