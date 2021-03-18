@@ -101,6 +101,18 @@ You can use any of the RPKI validator that support JSON as output format to gene
       preCacheROAs: true
     ```
 
+#### Routinator
 
+* Download Routinator [here](https://github.com/NLnetLabs/routinator)
 
+* Run the Routinator [daemon](https://rpki.readthedocs.io/en/latest/routinator/daemon.html) with the HTTP service
+  * `routinator server --http 127.0.0.1:8323`
+
+* Set the `vrpProvider` parameter in `config.yml`
+    ```yaml
+    vrpProvider: api
+    url: http://127.0.0.1:8323/json
+    preCacheROAs: true
+    ```
+    
 > Please, help with other examples    
