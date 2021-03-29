@@ -36,15 +36,15 @@ chai.use(chaiSubset);
 const expect = chai.expect;
 const axios = require('axios');
 
-const asyncTimeout = 30000;
+const asyncTimeout = 60000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/proxy_tests/config.proxy.test.yml";
 
-const worker = require("../../index");
-const pubSub = worker.pubSub;
-const config = worker.config;
-
 describe("Composition", function() {
+
+    const worker = require("../../index");
+    const pubSub = worker.pubSub;
+    const config = worker.config;
 
     describe("Software updates check", function () {
         it("new version detected with proxy", function (done) {
@@ -85,7 +85,7 @@ describe("Composition", function() {
 
     });
 
-    describe("Uptime Monitor", function() {
+    describe("Uptime Monitor", function () {
 
         it("uptime config", function () {
             expect(config.processMonitors[0]).to
@@ -102,15 +102,23 @@ describe("Composition", function() {
 
             const port = config.processMonitors[0].params.port;
 
-            axios({
-                method: 'get',
-                responseType: 'json',
-                url: `http://localhost:${port}/status`
-            })
-                .then(data => {
-                    expect(data.status).to.equal(200);
-                    expect(data.data.warning).to.equal(false);
-                    done();
+            const action = () => {
+                return axios({
+                    method: 'get',
+                    responseType: 'json',
+                    url: `http://localhost:${port}/status`
+                })
+                    .then(data => {
+                        expect(data.status).to.equal(200);
+                        expect(data.data.warning).to.equal(false);
+                        done();
+                    });
+            }
+
+
+            action()
+                .catch(() => {
+                    return action(); // Trying again
                 })
                 .catch(error => {
                     console.log(error);
