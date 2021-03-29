@@ -216,7 +216,7 @@ describe("Core functions", function() {
                 expect(type).to.equal("software-update");
                 done();
             });
-        }).timeout(asyncTimeout);
+        }).timeout(40000);
     });
 
     describe("Input loader", function () {
