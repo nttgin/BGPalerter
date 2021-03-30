@@ -17,9 +17,17 @@ export default class RpkiUtils {
 
         const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external", "api"]; // First provider is the default one
 
-        if (this.params.url) {
+        if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
             this.params.preCacheROAs = true;
+            if (!this.params.url) {
+                this.params.vrpProvider = providers[0];
+                this.params.url = null;
+                this.logger.log({
+                    level: 'error',
+                    message: "No url provided for the vrps api. Using default vrpProvider."
+                });
+            }
         }
 
         if (this.params.vrpFile) {
