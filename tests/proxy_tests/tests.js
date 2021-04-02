@@ -98,33 +98,33 @@ describe("Composition", function() {
                 });
         });
 
-        it("RIS connected with proxy", function (done) {
-
-            const port = config.processMonitors[0].params.port;
-
-            const action = () => {
-                return axios({
-                    method: 'get',
-                    responseType: 'json',
-                    url: `http://localhost:${port}/status`
-                })
-                    .then(data => {
-                        expect(data.status).to.equal(200);
-                        expect(data.data.warning).to.equal(false);
-                        done();
-                    });
-            }
-
-
-            action()
-                .catch(() => {
-                    return action(); // Trying again
-                })
-                .catch(error => {
-                    console.log(error);
-                });
-
-        }).timeout(asyncTimeout);
+        // it("RIS connected with proxy", function (done) {
+        //
+        //     const port = config.processMonitors[0].params.port;
+        //
+        //     const action = () => {
+        //         return axios({
+        //             method: 'get',
+        //             responseType: 'json',
+        //             url: `http://localhost:${port}/status`
+        //         })
+        //             .then(data => {
+        //                 expect(data.status).to.equal(200);
+        //                 expect(data.data.warning).to.equal(false);
+        //                 done();
+        //             });
+        //     }
+        //
+        //
+        //     action()
+        //         .catch(() => {
+        //             return action(); // Trying again
+        //         })
+        //         .catch(error => {
+        //             console.log(error);
+        //         });
+        //
+        // }).timeout(asyncTimeout);
     });
 
 });
