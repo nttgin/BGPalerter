@@ -61,7 +61,7 @@
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.5",
     "deepmerge": "^4.2.2",
-    "fast-file-logger": "^1.0.2",
+    "fast-file-logger": "^1.0.3",
     "file-stream-rotator": "^0.5.7",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^8.0.0",
