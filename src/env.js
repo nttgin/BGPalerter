@@ -32,7 +32,7 @@
 
 import fs from "fs";
 import PubSub from './utils/pubSub';
-import FileLogger from './utils/fileLogger';
+import FileLogger from 'fast-file-logger';
 import { version } from '../package.json';
 import Storage from './utils/storages/storageFile';
 import url from 'url';
