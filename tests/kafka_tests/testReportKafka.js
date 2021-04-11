@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
-const asyncTimeout = 20000;
+const asyncTimeout = 60000;
 chai.use(chaiSubset);
 const { Kafka } = require('kafkajs')
 
