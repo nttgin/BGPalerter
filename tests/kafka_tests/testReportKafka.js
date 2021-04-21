@@ -34,12 +34,12 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const asyncTimeout = 60000;
 chai.use(chaiSubset);
-const { Kafka } = require('kafkajs')
 
+const { Kafka } = require('kafkajs')
 const kafka = new Kafka({
     clientId: 'bgpalerter',
     brokers: ['localhost:9092']
-})
+});
 
 global.EXTERNAL_CONFIG_FILE = "tests/kafka_tests/config.kafka.test.yml";
 

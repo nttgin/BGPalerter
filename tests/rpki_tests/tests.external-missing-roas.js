@@ -38,9 +38,7 @@ const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
-
 fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
-
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
