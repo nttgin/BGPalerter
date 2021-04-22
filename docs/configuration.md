@@ -183,16 +183,16 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 > The prefixes list of BGPalerter has an entry such as:
 > ```yaml
 > 165.254.255.0/24:
->    asn: 15562
->    description: an example on path matching
->    ignoreMorespecifics: false
->  path:
->    - match: ".*2194,1234$"
->      notMatch: ".*5054.*"
->      matchDescription: detected scrubbing center
->    - match: ".*123$"
->      notMatch: ".*5056.*"
->      matchDescription: other match
+>   asn: 15562
+>   description: an example on path matching
+>   ignoreMorespecifics: false
+>   path:
+>     - match: ".*2194,1234$"
+>       notMatch: ".*5054.*"
+>       matchDescription: detected scrubbing center
+>     - match: ".*123$"
+>       notMatch: ".*5056.*"
+>       matchDescription: other match
 > ```
 
 Path is a list of matching rules, in this way multiple matching rules can be defined for the same prefix (rules are in OR).
