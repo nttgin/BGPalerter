@@ -313,21 +313,21 @@ export default class InputYml extends Input {
     retrieve = () =>
         new Promise((resolve, reject) => {
             const prefixes = {};
-            for (let rule of this.prefixes) {
-                const prefix = rule.prefix;
-                prefixes[prefix] = {
-                    asn: rule.asn.getValue(),
-                    description: rule.description,
-                    group: rule.group,
-                    ignore: rule.ignore,
-                    ignoreMorespecifics: rule.ignoreMorespecifics,
-                };
+            const monitorASns = {};
 
-                if (rule.excludeMonitors.length) prefixes[prefix].excludeMonitors = rule.excludeMonitors;
-                if (rule.includeMonitors.length) prefixes[prefix].includeMonitors = rule.includeMonitors;
+            for (let rule of this.prefixes) {
+                const item = JSON.parse(JSON.stringify(rule));
+                prefixes[rule.prefix] = item;
+                item.asn = rule.asn.getValue();
+                delete item.prefix;
+                if (!item.includeMonitors.length) {
+                    delete item.includeMonitors;
+                }
+                if (!item.excludeMonitors.length) {
+                    delete item.excludeMonitors;
+                }
             }
 
-            const monitorASns = {};
             for (let asnRule of this.asns) {
                 monitorASns[asnRule.asn.getValue()] = {
                     group: asnRule.group
@@ -336,6 +336,6 @@ export default class InputYml extends Input {
 
             const options = Object.assign({}, this.options, { monitorASns });
 
-            resolve(JSON.parse(JSON.stringify({ ...prefixes, options })));
+            resolve({ ...prefixes, options });
         });
 }

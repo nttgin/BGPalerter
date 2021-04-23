@@ -48,6 +48,7 @@ export default class Input {
         this.storage = env.storage;
         this.logger = env.logger;
         this.callbacks = [];
+        this.prefixListDiffFailThreshold = 50;
 
         setTimeout(() => {
             this.loadPrefixes()
@@ -262,7 +263,11 @@ export default class Input {
                 return generatePrefixes(inputParameters)
                     .then(newPrefixList => {
 
-                        const newPrefixes = [];
+                        if (Object.keys(newPrefixList).length <= (Object.keys(oldPrefixList).length / 100) * this.prefixListDiffFailThreshold) {
+                            throw new Error("Prefix list generation failed.");
+                        }
+
+                        const newPrefixesNotMergeable = [];
                         const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))]
                             .filter(prefix => ipUtils.isValidPrefix(prefix));
                         const asns = [...new Set(Object
@@ -276,7 +281,7 @@ export default class Input {
 
                             // Apply old description to the prefix
                             if (newPrefix && oldPrefix) {
-                                newPrefix.description = oldPrefix.description;
+                                newPrefixList[prefix] = oldPrefix;
                             }
 
                             // The prefix didn't exist
@@ -285,18 +290,17 @@ export default class Input {
                                 if (!newPrefix.valid) {
                                     // The prefix is not announced by a monitored ASn
                                     if (!newPrefix.asn.some(p => asns.includes(p))) {
-                                        newPrefixes.push(prefix);
+                                        newPrefixesNotMergeable.push(prefix);
                                         delete newPrefixList[prefix];
                                     }
                                 }
                             }
-
                         }
 
-                        if (newPrefixes.length) {
+                        if (newPrefixesNotMergeable.length) {
                             this.logger.log({
                                 level: 'info',
-                                message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                                message: `The rules about ${newPrefixesNotMergeable.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
                             });
                         }
 
