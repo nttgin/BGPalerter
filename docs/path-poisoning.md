@@ -43,6 +43,11 @@ If you delete only one of the upstreams and downstreams lists, the monitoring wi
 >        - 98
 > ```
 
+Example of alert:
+> A new upstream of AS100 has been detected: AS30
+> 
+
+
 If you provide empty lists, the monitoring will be performed and you will receive an alert for every upstream/downstream.
 
 > E.g., the config below monitors only for downstreams and expects to never see any downstream AS (stub network)
@@ -56,9 +61,6 @@ If you provide empty lists, the monitoring will be performed and you will receiv
 > ```
 
 
-
-Example of alert:
-> A new upstream of AS100 has been detected: AS30
 
 Parameters for this monitor module:
 
