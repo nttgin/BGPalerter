@@ -54,6 +54,12 @@ monitors:
     channel: rpki
     name: rpki-diff
 
+  - file: monitorPathPoisoning
+    channel: hijack
+    name: path-poisoning
+    params:
+      thresholdMinPeers: 3
+
 reports:
   - file: reportFile
     channels:

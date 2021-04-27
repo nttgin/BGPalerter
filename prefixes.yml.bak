@@ -1,0 +1,79 @@
+193.0.22.0/23:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+193.0.0.0/21:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+  path:
+    - match: .*2194,1234$
+      notMatch: .*5054.*
+      matchDescription: detected scrubbing center
+    - match: .*123$
+      notMatch: .*5056.*
+      matchDescription: other match
+2001:67c:2e8::/48:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+193.0.10.0/23:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+193.0.12.0/23:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+193.0.18.0/23:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+193.0.20.0/23:
+  group: noc
+  ignore: false
+  description: No description provided
+  asn: 3333
+  ignoreMorespecifics: false
+options:
+  monitorASns:
+    '18747':
+      group: noc
+      upstreams:
+        - 1103
+        - 1257
+        - 1273
+        - 12859
+      downstreams:
+        - 12654
+    '3333':
+      group: noc
+      upstreams:
+        - 1103
+        - 1257
+        - 1273
+        - 12859
+      downstreams:
+        - 12654
+  generate:
+    asnList:
+      - '3333'
+    exclude: []
+    excludeDelegated: true
+    prefixes: null
+    monitoredASes:
+      - '3333'
+    historical: false
+    group: noc

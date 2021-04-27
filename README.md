@@ -11,6 +11,8 @@ Self-configuring BGP monitoring tool, which allows you to monitor in **real-time
 * ROAs covering your prefixes are no longer reachable (e.g., TA malfunction);
 * a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
+* an unexpected upstream (left-side) AS appears in an AS path (possible path poisoning);
+* an unexpected downstream (right-side) AS appears in an AS path;
 * one of the AS paths used to reach your prefix matches a specific condition defined by you.
 
 You just run it. You don't need to provide any data source or connect it to anything in your network since it connects to [public repos](docs/datasets.md).

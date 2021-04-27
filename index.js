@@ -114,6 +114,14 @@ const params = yargs
             .nargs('H', 0)
             .describe('H', 'Use historical visibility data for generating prefix list (prefixes visible in the last week).')
 
+            .alias('u', 'upstreams')
+            .nargs('u', 0)
+            .describe('u', 'Detect a list of allowed upstream ASes, useful to monitor for path poisoning.')
+
+            .alias('n', 'downstreams')
+            .nargs('n', 0)
+            .describe('n', 'Detect a list of allowed downstream ASes, useful to monitor for path poisoning.')
+
             .demandOption(['o']);
     })
     .example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914')
@@ -166,6 +174,8 @@ switch(params._[0]) {
             group: params.g || null,
             append: !!params.A,
             logger: null,
+            upstreams: !!params.u,
+            downstreams: !!params.n,
             getCurrentPrefixesList: () => {
                 return Promise.resolve(yaml.load(fs.readFileSync(params.o, "utf8")));
             }

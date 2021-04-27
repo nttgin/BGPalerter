@@ -78,6 +78,14 @@ export default class Config {
                     channel: "rpki",
                     name: "rpki-diff",
                     params: {}
+                },
+                {
+                    file: "monitorPathPoisoning",
+                    channel: "hijack",
+                    name: "path-poisoning",
+                    params: {
+                        thresholdMinPeers: 3
+                    }
                 }
             ],
             reports: [

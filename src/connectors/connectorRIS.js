@@ -176,16 +176,17 @@ export default class ConnectorRIS extends Connector {
     };
 
     _subscribeToASns = (input) => {
-        const monitoredASns = input.getMonitoredASns().map(i => i.asn);
+        const monitoredASns = input.getMonitoredASns();
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let asn of monitoredASns){
-            const asnString = asn.getValue();
+            const asnString = asn.asn.getValue();
 
             if (!this.subscribed[asnString]) {
                 console.log(`Monitoring AS${asnString}`);
                 this.subscribed[asnString] = true;
             }
+
             params.path = `${asnString}\$`;
 
             this.ws.send(JSON.stringify({

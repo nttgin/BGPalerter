@@ -27,6 +27,8 @@ Below the list of possible parameters. **Remember to prepend them with a `--` in
 | -D  | Enable debug mode. All queries executed in background will be shown. | Nothing |  | No |
 | -H  | Use historical visibility data for generating prefix list (prefixes visible in the last week). Useful in case the prefix generation process returns an empty dataset. | Nothing |  | No |
 | -g  | The name of the user group that will be assigned to all the generated rules. See [here](usergroups.md). | A string | noc | No |
+| -u  | Calculate all upstream ASes and enable path poisoning monitoring. See [here](path-poisoning.md). | Nothing |  | No |
+| -n  | Calculate all downstream ASes and enable detection of new customer ASes. See [here](path-poisoning.md). | Nothing |  | No |
 
 
 ## <a name="prefixes-fields"></a>Prefixes list fields

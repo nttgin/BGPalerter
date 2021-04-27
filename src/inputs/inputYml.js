@@ -128,10 +128,15 @@ export default class InputYml extends Input {
                                             return;
                                         }
                                         uniqueAsns[asn] = true;
-                                        return Object.assign({
+                                        const item = Object.assign({
                                             asn: new AS(asn),
                                             group: 'default'
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
+
+                                        if (item.upstreams) item.upstreams = new AS(item.upstreams);
+                                        if (item.downstreams) item.downstreams = new AS(item.downstreams);
+
+                                        return item;
                                     });
 
                                 this.asns = this.asns.concat(newAsnSet);
@@ -330,7 +335,9 @@ export default class InputYml extends Input {
 
             for (let asnRule of this.asns) {
                 monitorASns[asnRule.asn.getValue()] = {
-                    group: asnRule.group
+                    group: asnRule.group,
+                    upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
+                    downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null,
                 };
             }
 
