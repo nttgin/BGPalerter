@@ -23,7 +23,7 @@ Every time an AS path is detected with a different upstream/downstream AS, an al
 According to the above configuration, 
 * the AS path [10, 20, 30, 100, 101] will generate an alert since AS30 is not an upstream of AS100;
 * the AS path [10, 20, 30, 100] will generate an alert since AS30 is not an upstream of AS100;
-* the AS path [10, 20, 99, 100, 101] will not generate an alert since AS99 is an upstream of AS100;
+* the AS path [10, 20, 99, 100, 101] will not generate an alert since AS99 is an upstream of AS100 and AS101 is a downstream of of AS100;
 * the AS path [10, 20, 99, 100, 104] will generate an alert since AS104 is not a downstream of AS100;
 * the AS path [100, 104] will generate an alert since AS104 is not a downstream of AS100.
 
