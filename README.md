@@ -55,6 +55,7 @@ Read the documentation below for more options.
     - [Composition](docs/configuration.md#composition)
     - [Monitor for](docs/configuration.md#monitors)
         - [Hijacks](docs/configuration.md#monitorhijack)
+        - [Path poisoning](docs/path-poisoning.md)
         - [Visibility loss](docs/configuration.md#monitorvisibility)
         - [RPKI invalid announcements](docs/configuration.md#monitorrpki)
         - [RPKI ROAs diffs](docs/configuration.md#monitorroas)
