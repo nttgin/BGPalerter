@@ -36,27 +36,19 @@ import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
 
-    constructor(channels,params, env) {
+    constructor(channels, params, env) {
         super(channels, params, env);
         this.emailTemplates = new emailTemplates(this.logger);
-
         this.templates = {};
         this.emailBacklog = [];
 
-        if (!this.params.notifiedEmails || !Object.keys(this.params.notifiedEmails).length) {
+        if (!this.getUserGroup("default")) {
+            this.enabled = false;
             this.logger.log({
                 level: 'error',
-                message: "Email reporting is not enabled: no group is defined"
+                message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
             });
-
         } else {
-
-            if (!this.params.notifiedEmails["default"] || !this.params.notifiedEmails["default"].length) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
-                });
-            }
 
             this.transporter = nodemailer.createTransport(this.params.smtp);
 
@@ -71,6 +63,14 @@ export default class ReportEmail extends Report {
                 }
             }
 
+            if (Object.keys(this.templates).length) {
+                this.enabled = false;
+                this.logger.log({
+                    level: 'error',
+                    message: "Email templates cannot be associated to channels."
+                });
+            }
+
             setInterval(() => {
                 const nextEmail = this.emailBacklog.pop();
                 if (nextEmail) {
@@ -78,7 +78,14 @@ export default class ReportEmail extends Report {
                 }
             }, 3000);
         }
-    }
+    };
+
+
+    getUserGroup = (group) => {
+        const groups = this.params.notifiedEmails || this.params.userGroups;
+
+        return groups[group] || groups["default"];
+    };
 
     getEmails = (content) => {
         const users = content.data
@@ -92,13 +99,9 @@ export default class ReportEmail extends Report {
             .filter(item => !!item);
 
         try {
-            const emails = [...new Set(users)]
-                .map(user => {
-                    return this.params.notifiedEmails[user];
-                })
+            return [...new Set(users)]
+                .map(user => this.getUserGroup(user))
                 .filter(item => !!item);
-
-            return (emails.length) ? emails : [this.params.notifiedEmails["default"]];
         } catch (error) {
             this.logger.log({
                 level: 'error',
@@ -117,24 +120,19 @@ export default class ReportEmail extends Report {
     };
 
     _sendEmail = (email) => {
-        if (this.transporter) {
-            this.transporter
-                .sendMail(email)
-                .catch(error => {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                })
-        }
+        this.transporter
+            .sendMail(email)
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
     };
 
     report = (channel, content) => {
 
-        if (Object.keys(this.templates).length > 0 &&
-            this.params.notifiedEmails &&
-            this.params.notifiedEmails["default"] &&
-            this.params.notifiedEmails["default"].length) {
+        if (this.enabled) {
             const emailGroups = this.getEmails(content);
 
             for (let emails of emailGroups) {

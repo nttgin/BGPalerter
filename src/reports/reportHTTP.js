@@ -39,19 +39,13 @@ export default class ReportHTTP extends Report {
 
         this.name = "reportHTTP" || this.params.name;
         this.enabled = true;
-        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
+
+        if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} reporting is not enabled: no group is defined`
+                message: `${this.name} reporting is not enabled: no default group defined`
             });
             this.enabled = false;
-        } else {
-            if (!this.params.hooks["default"]) {
-                this.logger.log({
-                    level: 'error',
-                    message: `In hooks, for ${this.name}, a group named 'default' is required for communications to the admin.`
-                });
-            }
         }
 
         this.headers = this.params.headers || {};
@@ -60,12 +54,18 @@ export default class ReportHTTP extends Report {
         }
     }
 
+    getUserGroup = (group) => {
+        const groups = this.params.hooks || this.params.userGroups;
+
+        return groups[group] || groups["default"];
+    };
+
     getTemplate = (group, channel, content) => {
         return this.params.templates[channel] || this.params.templates["default"];
     };
 
     _sendHTTPMessage = (group, channel, content) => {
-        const url = this.params.hooks[group] || this.params.hooks["default"];
+        const url = this.getUserGroup(group);
         if (url) {
             const context = this.getContext(channel, content);
 
@@ -93,7 +93,7 @@ export default class ReportHTTP extends Report {
         if (this.enabled) {
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there is no specific group defined, send to all of them
+            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
 
             for (let group of groups) {
                 this._sendHTTPMessage(group, channel, content);

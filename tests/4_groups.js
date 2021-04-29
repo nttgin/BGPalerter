@@ -31,45 +31,54 @@
  */
 
 const chai = require("chai");
+const fs = require("fs");
 const chaiSubset = require('chai-subset');
-const asyncTimeout = 60000;
 chai.use(chaiSubset);
+const expect = chai.expect;
+const volume = "volumetests/";
+const asyncTimeout = 20000;
 
-const { Kafka } = require('kafkajs')
-const kafka = new Kafka({
-    clientId: 'bgpalerter',
-    brokers: ['localhost:9092']
-});
+// Prepare test environment
+if (!fs.existsSync(volume)) {
+    fs.mkdirSync(volume);
+}
+fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
+fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
+fs.copyFileSync("tests/groups.test.yml", volume + "groups.test.yml");
 
-global.EXTERNAL_CONFIG_FILE = "tests/kafka_tests/config.kafka.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
-describe("Reports 1", function() {
-    const worker = require("../../index");
-    const pubSub = worker.pubSub;
+const worker = require("../index");
 
-    it("kafka", function (done) {
-        let doneCalled = false;
-        const consumer = kafka.consumer({ groupId: 'bgpalerter' });
-        consumer.connect()
-        consumer
-            .subscribe({ topic: 'bgpalerter', fromBeginning: true })
-            .then(() => {
+describe("External groups file", function() {
 
-                pubSub.publish("test-type", "visibility");
-                consumer.run({
-                    eachMessage: ({ topic, partition, message }) => {
-                        if (!doneCalled) {
-                            done();
-                            doneCalled = true;
-                        }
-                        return Promise.resolve()
-                    },
-                });
-            })
-            .catch(error => {
-                console.log(error);
+    it("load groups", function () {
+        const config = worker.config;
+        expect(config.groupsFile).to.equal("groups.test.yml");
+        expect(config.reports[0].params.userGroups).to
+            .containSubset({
+                test:  [
+                    "filename"
+                ]
             });
+    })
+        .timeout(asyncTimeout);
 
-    }).timeout(asyncTimeout);
+    it("watch groups", function (done) {
 
+        fs.copyFileSync("tests/groups.test.after.yml", "volumetests/groups.test.yml");
+
+        setTimeout(() => {
+            const config = worker.config;
+            expect(config.reports[0].params.userGroups).to
+                .containSubset({
+                    test:  [
+                        "filename-after"
+                    ]
+                });
+            done();
+        }, 10000);
+
+    })
+        .timeout(asyncTimeout);
 });

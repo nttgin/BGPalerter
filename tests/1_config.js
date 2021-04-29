@@ -48,6 +48,7 @@ if (!fs.existsSync(volume)) {
 }
 fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
+fs.copyFileSync("tests/groups.test.yml", volume + "groups.test.yml");
 
 describe("Core functions", function() {
 
@@ -74,6 +75,7 @@ describe("Core functions", function() {
                     "fadeOffSeconds",
                     "checkFadeOffGroupsSeconds",
                     "volume",
+                    "groupsFile",
                     "persistStatus",
                     "rpki"
                 ]);
@@ -214,7 +216,7 @@ describe("Core functions", function() {
                 expect(type).to.equal("software-update");
                 done();
             });
-        }).timeout(asyncTimeout);
+        }).timeout(40000);
     });
 
     describe("Input loader", function () {

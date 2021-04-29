@@ -31,45 +31,56 @@
  */
 
 const chai = require("chai");
+const fs = require("fs");
 const chaiSubset = require('chai-subset');
-const fs = require('fs');
 const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
-global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
-fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
+const cacheFile = ".cache/seen-rpki-valid-announcements.json";
+if (fs.existsSync(cacheFile)) {
+    fs.unlinkSync(cacheFile);
+}
 
+global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.api.yml";
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external", function() {
 
-    it("missing roas", function (done) {
+describe("RPKI monitoring api", function() {
+
+    it("api connector", function (done) {
 
         const expectedData = {
 
-            "a82_112_100_0_24-2914-null": {
-                id: 'a82_112_100_0_24-2914-null',
+            "a103_21_244_0_24-13335-false": {
+                id:  "a103_21_244_0_24-13335-false",
                 origin: 'rpki-monitor',
-                affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA.'
-            }
+                affected: '103.21.244.0/24',
+                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23',
+            },
 
+            "a8_8_8_8_22-2914-null": {
+                id:  "a8_8_8_8_22-2914-null",
+                origin: 'rpki-monitor',
+                affected: '8.8.8.8/22',
+                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA',
+            }
         };
 
-        let rpkiTestCompletedExternal = false;
+        let rpkiTestCompleted = false;
         let started = false;
-
         pubSub.subscribe("rpki", function (message, type) {
             try {
-                if (started && !rpkiTestCompletedExternal) {
+                if (started && !rpkiTestCompleted) {
                     message = JSON.parse(JSON.stringify(message));
                     const id = message.id;
 
                     expect(Object.keys(expectedData).includes(id)).to.equal(true);
                     expect(expectedData[id] != null).to.equal(true);
-                    expect(message).to.containSubset(expectedData[id]);
+
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
                     expect(message).to.contain
                         .keys([
@@ -80,22 +91,18 @@ describe("RPKI monitoring external", function() {
                     delete expectedData[id];
                     if (Object.keys(expectedData).length === 0) {
                         setTimeout(() => {
-                            rpkiTestCompletedExternal = true;
-                            fs.unlinkSync("tests/rpki_tests/vrp.json");
+                            rpkiTestCompleted = true;
                             done();
                         }, 5000);
                     }
                 }
             } catch (error) {
-                rpkiTestCompletedExternal = true;
+                rpkiTestCompleted = true;
                 done(error);
             }
         });
-
-        setTimeout(() => { // Wait that the watcher realizes the file changed
-            pubSub.publish("test-type", "rpki");
-            started = true;
-        }, 20000);
-
+        pubSub.publish("test-type", "rpki");
+        started = true;
     }).timeout(asyncTimeout);
+
 });

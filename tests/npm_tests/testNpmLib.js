@@ -30,53 +30,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Connector from "./connector";
-import semver from "semver";
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+chai.use(chaiSubset);
+const expect = chai.expect;
+const volume = "volumetests/";
+const asyncTimeout = 20000;
 
-export default class ConnectorSwUpdates extends Connector{
+const Config = require("../../src/config/config").default;
 
-    constructor(name, params, env) {
-        super(name, params, env);
+const ConfigTest = function () {
+
+    this.retrieve = () => {
+        const data = (new Config()).default;
+
+        data.test = true;
+
+        return data;
     }
 
-    connect = () =>
-        new Promise((resolve, reject) => {
-            resolve(true);
-        });
-
-    _checkForUpdates = () => {
-        return this.axios({
-            responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
-        })
-            .then(data => {
-                if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
-                    this._message({
-                        type: "software-update",
-                        currentVersion: this.version,
-                        newVersion: data.data.version,
-                        repo: "https://github.com/nttgin/BGPalerter"
-                    });
-                }
-            })
-            .catch(() => {
-                this.logger.log({
-                    level: 'error',
-                    message: "It was not possible to check for software updates"
-                });
-            });
-    };
-
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
-                setTimeout(this._checkForUpdates, 20000); // Check after 20 seconds from boot
-            }
-            setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
-            resolve(true);
-        });
-
-    static transform = (message) => {
-        return [ message ];
+    this.save = () => {
+        return true;
     }
 };
+
+describe("External Connector", function() {
+
+    it("load external connector", function () {
+        const Worker = require("../../src/worker").default;
+        const worker = new Worker({ volume, configConnector: ConfigTest });
+        const config = worker.config;
+        expect(config.test).to.equal(true);
+    })
+        .timeout(asyncTimeout);
+});

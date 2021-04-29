@@ -16,42 +16,83 @@ Below you can see the parameters available:
 |Parameter| Description| 
 |---|---|
 |preCacheROAs| When this parameter is set to true (default), BGPalerter will download Validated ROA Payloads (VRPs) lists locally instead of using online validation. More info [here](https://github.com/massimocandela/rpki-validator).|
-|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (it has to be > 15 minutes) |
-|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `ripe`, `cloudflare`, `external`. Use external only if you wish to specify a file with `vrpFile`. More info [here](https://github.com/massimocandela/rpki-validator#options).|
+|refreshVrpListMinutes| If `preCacheROAs` is set to true, this parameter allows to specify a refresh time for the VRPs lists (read [here](https://github.com/massimocandela/rpki-validator#rpki-auto-refresh-limits) for the minimum refresh time allowed). |
+|vrpProvider| A string indicating the provider of the VRPs list. Possible options are: `ntt` (default), `cloudflare`, `rpkiclient`, `ripe`, `external`, `api`. The `external` and `api` options are used to specify your own VRP source, read here.|
 |vrpFile| A JSON file with an array of VRPs. See example below.|
 |markDataAsStaleAfterMinutes| The amount of minutes (integer) after which an unchanged VRP list is marked as stale. Set to 0 to disable the check. |
 
 
-## Generating a VRP file
-Using external VRP providers for the monitoring is quick and easy, but you are essentially trusting somebody else writing the VRP file correctly.
+## Use your own VRPs
+Using external VRP providers for the monitoring is quick and easy, but you are essentially trusting somebody else writing the VRP file correctly. 
 
-You can generate your JSON VRP file periodically and BGPalerter will load it automatically.
+Instead, you can specify your own VRPs in two ways:
 
-VRPs file example:
+* Using your own API producing JSON output;
+* Using your favourite rpki validator to generate a file locally.
+
+> In case the download of the VRP data fails, an online provider is used (the error is reported in the logs).
+
+### Use your own API
+To use your own API you need to set the following options in config.yml:
+
+```yaml
+rpki:
+  vrpProvider: api
+  url: https://my-api.api.com/vrps/
+  preCacheROAs: true
+```
+
+> Remember, you must specify the url when you use "api" as vrpProvider
+
+The API must return the JSON format described [here](https://github.com/massimocandela/rpki-validator#vrps-on-custom-api);
+
+### Use your own VRP file
+
+You can generate your JSON VRP file periodically and BGPalerter will detect changes and reload it automatically.
+To do so, you have to use the following options in config.yml:
+
+```yaml
+rpki:
+  vrpProvider: external
+  vrpFile: myfile.json
+  preCacheROAs: true
+```
+
+> Remember, you must specify vrpFile when you use "external" as vrpProvider
+
+
+The VRPs file must be in the following format:
 ```json5
 [
-    {
-        "prefix": "123.4.5.0/22",
-        "asn": "1234",
-        "maxLength": 24
-    },
-    {
-        "prefix": "321.4.5.0/22",
-        "asn": "9876",
-        "maxLength": 22
-    }
+  {
+    "prefix": "123.4.5.0/22",
+    "asn": 1234,
+    "maxLength": 24
+  },
+  {
+    "prefix": "321.4.5.0/22",
+    "asn": 9876,
+    "maxLength": 22
+  }
 ]
 ```
 
-You can use any of the RPKI validator that support JSON as output format. Below some copy-paste examples.
+Also the following format is supported:
+```json5
+{
+  roas: [ ... ] // containing items as described above
+}
+```
+
+You can use any of the RPKI validator that support JSON as output format to generate it. Below some copy-paste examples.
 
 
-### rpki-client
+#### rpki-client
 
 * Download rpki-client [here](https://www.rpki-client.org/);
 
 * Create a cron job every 15 minutes with the following
-    * `rpki-client -j test/`
+  * `rpki-client -j test/`
 
 * Set the `vrpFile` parameter in `config.yml`
     ```yaml
@@ -59,7 +100,19 @@ You can use any of the RPKI validator that support JSON as output format. Below 
       vrpFile: test/export.json
       preCacheROAs: true
     ```
-    
-    
+
+#### Routinator
+
+* Download Routinator [here](https://github.com/NLnetLabs/routinator)
+
+* Run the Routinator [daemon](https://rpki.readthedocs.io/en/latest/routinator/daemon.html) with the HTTP service
+  * `routinator server --http 127.0.0.1:8323`
+
+* Set the `vrpProvider` parameter in `config.yml`
+    ```yaml
+    vrpProvider: api
+    url: http://127.0.0.1:8323/json
+    preCacheROAs: true
+    ```
     
 > Please, help with other examples    

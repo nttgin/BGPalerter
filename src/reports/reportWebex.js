@@ -38,22 +38,20 @@ export default class ReportWebex extends Report {
         super(channels, params, env);
 
 
-        this.enabled = true;
-        if (!this.params.hooks || !Object.keys(this.params.hooks).length){
+        if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: "Webex reporting is not enabled: no group is defined"
+                message: `Webex reporting is not enabled: no default group defined`
             });
             this.enabled = false;
-        } else {
-            if (!this.params.hooks["default"]) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In hooks, for reportWebex, a group named 'default' is required for communications to the admin."
-                });
-            }
         }
-    }
+    };
+
+    getUserGroup = (group) => {
+        const groups = this.params.hooks || this.params.userGroups;
+
+        return groups[group] || groups["default"];
+    };
 
     _sendWebexMessage = (url, message, content) => {
 
@@ -77,7 +75,7 @@ export default class ReportWebex extends Report {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.hooks); // If there is no specific group defined, send to all of them
+            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
 
             for (let group of groups) {
                 if (this.params.hooks[group]) {

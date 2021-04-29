@@ -21,6 +21,7 @@ The AS_PATH parsed by BGPalerter are in the form `137,3333,1335,2914`.
 >        matchDescription: other match
 > ```
 
+
 Each item in the `path` list is a matching rule.
 Each matching rule is composed of:
 * `match`, the regular expression that will be tested on each AS path. If the expression tests positive, the BGP message triggers an alert. ASns are comma separated (see example above).

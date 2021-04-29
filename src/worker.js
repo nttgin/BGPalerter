@@ -30,23 +30,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import Input from "./inputs/inputYml";
 import cluster from "cluster";
 import fs from "fs";
+import inputYml from "./inputs/inputYml"; // Default input connector
 
 export default class Worker {
-    constructor(configFile, volume) {
+    constructor({ configFile, volume, configConnector, inputConnector, groupFile }) {
+        global.EXTERNAL_CONFIG_CONNECTOR = global.EXTERNAL_CONFIG_CONNECTOR || configConnector;
+        global.EXTERNAL_INPUT_CONNECTOR = global.EXTERNAL_INPUT_CONNECTOR || inputConnector;
         global.EXTERNAL_CONFIG_FILE = global.EXTERNAL_CONFIG_FILE || configFile;
+        global.EXTERNAL_GROUP_FILE = global.EXTERNAL_GROUP_FILE || groupFile;
         global.EXTERNAL_VOLUME_DIRECTORY = global.EXTERNAL_VOLUME_DIRECTORY || volume;
 
         const env = require("./env");
 
         this.config = env.config;
         this.logger = env.logger;
-        this.input = new Input(env);
+        this.input = new (global.EXTERNAL_INPUT_CONNECTOR || inputYml)(env);
         this.pubSub = env.pubSub;
         this.version = env.version;
-        this.configFile = env.configFile;
 
         if (!this.config.multiProcess) {
             const Consumer = require("./consumer").default;
@@ -70,7 +72,6 @@ export default class Worker {
         const ConnectorFactory = require("./connectorFactory").default;
 
         console.log("BGPalerter, version:", this.version, "environment:", this.config.environment);
-        console.log("Loaded config:", this.configFile);
 
         // Write pid on a file
         if (this.config.pidFile) {
