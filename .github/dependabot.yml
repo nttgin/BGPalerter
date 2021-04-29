@@ -1,0 +1,64 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  target-branch: dev
+  ignore:
+  - dependency-name: pkg
+    versions:
+    - 5.0.0
+  - dependency-name: ws
+    versions:
+    - 7.4.3
+    - 7.4.5
+  - dependency-name: js-yaml
+    versions:
+    - 4.1.0
+  - dependency-name: "@babel/preset-env"
+    versions:
+    - 7.12.13
+    - 7.13.0
+    - 7.13.15
+    - 7.13.5
+    - 7.13.9
+  - dependency-name: "@babel/cli"
+    versions:
+    - 7.12.13
+    - 7.13.0
+    - 7.13.14
+  - dependency-name: "@babel/core"
+    versions:
+    - 7.12.13
+    - 7.13.1
+    - 7.13.14
+  - dependency-name: rpki-validator
+    versions:
+    - 2.3.0
+    - 2.3.1
+    - 2.4.0
+    - 2.5.3
+  - dependency-name: "@sentry/node"
+    versions:
+    - 6.0.4
+    - 6.2.1
+  - dependency-name: inquirer
+    versions:
+    - 8.0.0
+  - dependency-name: nodemailer
+    versions:
+    - 6.5.0
+  - dependency-name: "@babel/plugin-proposal-class-properties"
+    versions:
+    - 7.12.13
+    - 7.13.0
+  - dependency-name: "@babel/plugin-proposal-object-rest-spread"
+    versions:
+    - 7.12.13
+    - 7.13.0
+  - dependency-name: "@babel/node"
+    versions:
+    - 7.12.13
+    - 7.13.0
