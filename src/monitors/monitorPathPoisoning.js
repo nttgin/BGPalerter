@@ -64,7 +64,6 @@ export default class MonitorPathPoisoning extends Monitor {
 
     monitor = (message) =>
         new Promise((resolve, reject) => {
-
             const path = message.path;
 
             for (let monitoredAs of this.monitored) {

@@ -36,7 +36,7 @@ import Connector from "./connector";
 import {AS, Path} from "../model";
 import ipUtils from "ip-sub";
 
-export default class ConnectorTest extends Connector{
+export default class ConnectorTest extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
@@ -445,6 +445,78 @@ export default class ConnectorTest extends Connector{
                     }
                 ];
                 break;
+
+            case "path-poisoning":
+                updates = [
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["9.5.4.3/22"], // Path not ok but prefix not monitored
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 100, 101, 106]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored but path ok
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 100, 101, 104]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with wrong downstream
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 100, 101, 106]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with wrong upstream
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 30, 101, 104]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with empty downstream ok
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 80]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with empty downstream not ok
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 80, 100]
+                        },
+                        type: "ris_message"
+                    }
+                ];
+                break;
+
             default:
                 return;
         }
