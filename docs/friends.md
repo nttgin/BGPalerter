@@ -23,3 +23,4 @@ Please, let me know so I can add your company name here.
 * Artfiles GmbH (AS8893)
 * Namex IXP (AS24796)
 * Zero Attack Vector LLC (AS212996 & AS398549)
+* 12128489 Canada Inc dba Accuris Hosting (AS212934)

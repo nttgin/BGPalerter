@@ -48,7 +48,7 @@
     "@babel/node": "^7.13.13",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.13.8",
-    "@babel/preset-env": "^7.14.0",
+    "@babel/preset-env": "^7.14.1",
     "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
     "mocha": "^8.3.2",
@@ -57,7 +57,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^6.3.4",
+    "@sentry/node": "^6.3.5",
     "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.5",
@@ -79,7 +79,7 @@
     "semver": "^7.3.5",
     "syslog-client": "^1.1.1",
     "ws": "^7.4.5",
-    "yargs": "^16.2.0"
+    "yargs": "^17.0.1"
   },
   "pkg": {
     "scripts": [
@@ -98,6 +98,6 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.3",
-    "utf-8-validate": "^5.0.4"
+    "utf-8-validate": "^5.0.5"
   }
 }
