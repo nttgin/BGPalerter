@@ -1,6 +1,6 @@
-# Path poisoning / upstream and downstream AS monitoring
+# Upstream and downstream AS monitoring
 
-The component `monitorPathPoisoning` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
+The component `monitorPathNeighbors` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
 
 > For example, imagine AS100 has two upstreams, AS99 and AS98, and one downstream, AS101. You can express the following rule in 'prefixes.yml'
 > 
@@ -27,7 +27,7 @@ According to the above configuration,
 * the AS path [10, 20, 99, 100, 104] will generate an alert since AS104 is not a downstream of AS100;
 * the AS path [100, 104] will generate an alert since AS104 is not a downstream of AS100.
 
-You can disable the monitoring by removing the upstreams and downstreams lists or by commenting the `monitorPathPoisoning` block in `config.yml`.
+You can disable the monitoring by removing the upstreams and downstreams lists or by commenting the `monitorPathNeighbors` block in `config.yml`.
 
 If you delete only one of the upstreams and downstreams lists, the monitoring will continue on the remaining one.
 

@@ -446,7 +446,7 @@ export default class ConnectorTest extends Connector {
                 ];
                 break;
 
-            case "path-poisoning":
+            case "path-neighbors":
                 updates = [
                     {
                         data: {

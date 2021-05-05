@@ -48,9 +48,9 @@ monitors:
     channel: rpki
     name: rpki-monitor
 
-  - file: monitorPathPoisoning
-    channel: path-poisoning
-    name: path-poisoning
+  - file: monitorPathNeighbors
+    channel: path-neighbors
+    name: path-neighbors
     params:
       thresholdMinPeers: 0
 

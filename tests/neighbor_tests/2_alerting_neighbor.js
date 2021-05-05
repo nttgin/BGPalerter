@@ -57,13 +57,13 @@ const pubSub = worker.pubSub;
 
 describe("Alerting", function () {
 
-    it("path-poisoning monitoring reporting", function (done) {
+    it("path-neighbors monitoring reporting", function (done) {
 
         const expectedData = {
             "101-30": {
                 "id": "101-30",
                 "truncated": false,
-                "origin": "path-poisoning",
+                "origin": "path-neighbors",
                 "affected": 101,
                 "message": "A new upstream of AS101 has been detected: AS30",
                 "data": [{
@@ -93,7 +93,7 @@ describe("Alerting", function () {
             "80-100": {
                 "id": "80-100",
                 "truncated": false,
-                "origin": "path-poisoning",
+                "origin": "path-neighbors",
                 "affected": 80,
                 "message": "A new downstream of AS80 has been detected: AS100",
                 "data": [{
@@ -122,7 +122,7 @@ describe("Alerting", function () {
             "101-106": {
                 "id": "101-106",
                 "truncated": false,
-                "origin": "path-poisoning",
+                "origin": "path-neighbors",
                 "affected": 101,
                 "message": "A new downstream of AS101 has been detected: AS106",
                 "data": [{
@@ -149,10 +149,10 @@ describe("Alerting", function () {
             }
         };
 
-        let pathPoisoningTestcompleted = false;
-        pubSub.subscribe("path-poisoning", (message, type) => {
+        let pathNeighborsTestcompleted = false;
+        pubSub.subscribe("path-neighbors", (message, type) => {
 
-            if (!pathPoisoningTestcompleted) {
+            if (!pathNeighborsTestcompleted) {
                 try {
                     message = JSON.parse(JSON.stringify(message));
                     const id = message.id;
@@ -169,17 +169,17 @@ describe("Alerting", function () {
                     delete expectedData[id];
                     if (Object.keys(expectedData).length === 0) {
                         setTimeout(() => {
-                            pathPoisoningTestcompleted = true;
+                            pathNeighborsTestcompleted = true;
                             done();
                         }, 5000);
                     }
                 } catch (error) {
-                    pathPoisoningTestcompleted = true;
+                    pathNeighborsTestcompleted = true;
                     done(error);
                 }
             }
         });
-        pubSub.publish("test-type", "path-poisoning");
+        pubSub.publish("test-type", "path-neighbors");
 
     }).timeout(asyncTimeout);
 

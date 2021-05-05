@@ -355,11 +355,11 @@ Example of alerts:
 > ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
 
 
-#### monitorPathPoisoning
+#### monitorPathNeighbors
 
-The component `monitorPathPoisoning` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
+The component `monitorPathNeighbors` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
 
-Refer to the [documentation for this monitor](path-poisoning.md).
+Refer to the [documentation for this monitor](path-neighbors.md).
 
     
 ### Reports

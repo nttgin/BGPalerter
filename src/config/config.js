@@ -80,9 +80,9 @@ export default class Config {
                     params: {}
                 },
                 {
-                    file: "monitorPathPoisoning",
+                    file: "monitorPathNeighbors",
                     channel: "hijack",
-                    name: "path-poisoning",
+                    name: "path-neighbors",
                     params: {
                         thresholdMinPeers: 3
                     }

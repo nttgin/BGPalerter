@@ -11,7 +11,7 @@ Self-configuring BGP monitoring tool, which allows you to monitor in **real-time
 * ROAs covering your prefixes are no longer reachable (e.g., TA malfunction);
 * a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
-* an unexpected upstream (left-side) AS appears in an AS path (possible path poisoning);
+* an unexpected upstream (left-side) AS appears in an AS path;
 * an unexpected downstream (right-side) AS appears in an AS path;
 * one of the AS paths used to reach your prefix matches a specific condition defined by you.
 
@@ -55,7 +55,7 @@ Read the documentation below for more options.
     - [Composition](docs/configuration.md#composition)
     - [Monitor for](docs/configuration.md#monitors)
         - [Hijacks](docs/configuration.md#monitorhijack)
-        - [Path poisoning](docs/path-poisoning.md)
+        - [Path neighbors](docs/path-neighbors.md)
         - [Visibility loss](docs/configuration.md#monitorvisibility)
         - [RPKI invalid announcements](docs/configuration.md#monitorrpki)
         - [RPKI ROAs diffs](docs/configuration.md#monitorroas)

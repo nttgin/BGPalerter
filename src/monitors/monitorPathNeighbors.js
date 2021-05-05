@@ -32,7 +32,7 @@
 
 import Monitor from "./monitor";
 
-export default class MonitorPathPoisoning extends Monitor {
+export default class MonitorPathNeighbors extends Monitor {
 
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);

@@ -116,11 +116,11 @@ const params = yargs
 
             .alias('u', 'upstreams')
             .nargs('u', 0)
-            .describe('u', 'Detect a list of allowed upstream ASes, useful to monitor for path poisoning.')
+            .describe('u', 'Detect a list of allowed upstream ASes and enable detection of new left-side ASes')
 
             .alias('n', 'downstreams')
             .nargs('n', 0)
-            .describe('n', 'Detect a list of allowed downstream ASes, useful to monitor for path poisoning.')
+            .describe('n', 'Detect a list of allowed downstream ASes and enable detection of new right-side ASes.')
 
             .demandOption(['o']);
     })
