@@ -7,7 +7,7 @@ The component `monitorPathNeighbors` allows to monitor for unexpected neighbor A
 > ```yaml
 > options:
 >  monitorASns:
->    '2914':
+>    100:
 >      group: noc
 >      upstreams:
 >        - 99
@@ -36,7 +36,7 @@ If you delete only one of the upstreams and downstreams lists, the monitoring wi
 > ```yaml
 > options:
 >  monitorASns:
->    '2914':
+>    100:
 >      group: noc
 >      upstreams:
 >        - 99
@@ -55,7 +55,7 @@ If you provide empty lists, the monitoring will be performed and you will receiv
 > ```yaml
 > options:
 >  monitorASns:
->    '2914':
+>    100:
 >      group: noc
 >      downstreams:
 > ```
