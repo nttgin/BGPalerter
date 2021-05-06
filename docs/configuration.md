@@ -266,7 +266,7 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 > 
 > If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
-You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
+You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` of the [auto configuration](prefixes.md#generate).
 
 
 Example of alert:
@@ -354,6 +354,12 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 Example of alerts:
 > ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
 
+
+#### monitorPathNeighbors
+
+The component `monitorPathNeighbors` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
+
+Refer to the [documentation for this monitor](path-neighbors.md).
 
     
 ### Reports

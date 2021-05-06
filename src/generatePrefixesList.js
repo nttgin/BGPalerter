@@ -26,7 +26,9 @@ module.exports = function generatePrefixes(inputParameters) {
         append,
         logger,
         getCurrentPrefixesList,
-        enriched
+        enriched,
+        upstreams,
+        downstreams
     } = inputParameters;
 
     exclude = exclude || [];
@@ -68,6 +70,56 @@ module.exports = function generatePrefixes(inputParameters) {
             throw new Error("One of the AS number is not valid");
         }
     }
+
+    const getNeighbors = (asn) => {
+        const url = brembo.build("https://stat.ripe.net", {
+            path: ["data", "asn-neighbours", "data.json"],
+            params: {
+                client: clientId,
+                resource: asn
+            }
+        });
+
+        if (debug) {
+            logger("Query", url)
+        }
+
+        return axios({
+            url,
+            method: 'GET',
+            responseType: 'json',
+            timeout: apiTimeout
+        })
+            .then(data => {
+                let neighbors = [];
+
+                if (data.data && data.data.data && data.data.data.neighbours){
+                    const items = data.data.data.neighbours;
+
+                    for (let item of items) {
+                        if (item.type === "left" || item.type === "right") {
+                            neighbors.push({asn: item.asn, type: item.type});
+                        }
+                    }
+
+                }
+
+                const out =  {
+                    asn,
+                    upstreams: neighbors.filter(i => i.type === "left").map(i => i.asn),
+                    downstreams: neighbors.filter(i => i.type === "right").map(i => i.asn),
+                };
+
+                logger(`Detected upstreams for ${out.asn}: ${out.upstreams.join(", ")}`);
+                logger(`Detected downstreams for ${out.asn}: ${out.downstreams.join(", ")}`);
+
+                return out;
+            })
+            .catch((error) => {
+                logger(error);
+                logger(`RIPEstat asn-neighbours query failed: cannot retrieve information for ${asn}`);
+            });
+    };
 
     const getMultipleOrigins = (prefix) => {
         const url = brembo.build("https://stat.ripe.net", {
@@ -303,26 +355,36 @@ module.exports = function generatePrefixes(inputParameters) {
         })
         .then(() => { // Add the options for monitorASns
 
-            const generateMonitoredAsObject = function (list) {
+            const generateMonitoredAsObject = function (list, asnNeighbors) {
                 generateList.options = generateList.options || {};
                 generateList.options.monitorASns = generateList.options.monitorASns || {};
                 for (let monitoredAs of list) {
                     logger(`Generating generic monitoring rule for AS${monitoredAs}`);
+                    const neighbors = asnNeighbors.filter(i => i.asn.toString() === monitoredAs.toString());
                     generateList.options.monitorASns[monitoredAs] = {
-                        group: group
+                        group: group,
+                        upstreams: upstreams && neighbors.length ? neighbors[0].upstreams : null,
+                        downstreams: downstreams && neighbors.length ? neighbors[0].downstreams : null
                     };
                 }
             };
+
+            let createASesRules = [];
             if (monitoredASes === true) {
-                generateMonitoredAsObject(asnList);
+                createASesRules = asnList;
             } else if (monitoredASes.length) {
-                generateMonitoredAsObject(monitoredASes);
+                createASesRules = monitoredASes;
             }
+
+            return batchPromises(1, asnList, getNeighbors)
+                .then(asnNeighbors => {
+                    generateMonitoredAsObject(createASesRules, asnNeighbors);
+                })
             // Otherwise nothing
         })
         .then(() => {
             if (someNotValidatedPrefixes) {
-                logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated or are RPKI invalid. Please, verify the config file by hand!");
+                logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated. Please, verify the config file by hand!");
             }
         })
         .then(() => {

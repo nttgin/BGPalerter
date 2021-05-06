@@ -21,7 +21,28 @@ export class Path {
 
     toJSON () {
         return this.getValues();
-    }
+    };
+
+    getNeighbors (asn) {
+        const path = this.value;
+        const length = path.length - 1
+        for (let n=0; n < length; n++) {
+            const current = path[n] || null;
+            if (current.getId() === asn.getId()) {
+                const left = path[n - 1] || null;
+                const right = path[n + 1] || null;
+
+                return [left, current, right];
+            }
+        }
+
+        return [null, null, null];
+    };
+
+    includes (asn) {
+        console.log(this.value);
+        return this.value.some(i => i.includes(asn));
+    };
 }
 
 
@@ -109,5 +130,5 @@ export class AS {
 
     toJSON () {
         return this.numbers;
-    }
+    };
 }

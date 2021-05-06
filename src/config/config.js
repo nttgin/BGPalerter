@@ -78,6 +78,14 @@ export default class Config {
                     channel: "rpki",
                     name: "rpki-diff",
                     params: {}
+                },
+                {
+                    file: "monitorPathNeighbors",
+                    channel: "hijack",
+                    name: "path-neighbors",
+                    params: {
+                        thresholdMinPeers: 3
+                    }
                 }
             ],
             reports: [
