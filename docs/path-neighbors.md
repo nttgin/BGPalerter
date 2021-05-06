@@ -27,7 +27,7 @@ According to the above configuration,
 * the AS path [10, 20, 99, 100, 104] will generate an alert since AS104 is not a downstream of AS100;
 * the AS path [100, 104] will generate an alert since AS104 is not a downstream of AS100.
 
-You can disable the monitoring by removing the upstreams and downstreams lists or by commenting the `monitorPathNeighbors` block in `config.yml`.
+You can disable the monitoring by removing the upstreams and downstreams lists or by removing the `monitorPathNeighbors` block in `config.yml`.
 
 If you delete only one of the upstreams and downstreams lists, the monitoring will continue on the remaining one.
 
