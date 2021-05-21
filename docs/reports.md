@@ -8,7 +8,18 @@ This will generate fake alerts. [Read more here](installation.md#bgpalerter-para
 > By default all communications will be sent to the default user group, so it is not mandatory to configure any user group.
 > Note that the default group is used also for administrative and error communications, if you want to filter out such communications you need to [create another user group](usergroups.md).
 
-Possible reports are:
+#### Possible reports are:
+
+- [reportFile](reports.md#reportFile)
+- [reportEmail](reports.md#reportEmail)
+- [reportSlack](reports.md#reportSlack)
+- [reportKafka](reports.md#reportKafka)
+- [reportSyslog](reports.md#reportSyslog)
+- [reportAlerta](reports.md#reportAlerta)
+- [reportWebex](reports.md#reportWebex)
+- [reportHTTP](reports.md#reportHTTP)
+- [reportTelegram](reports.md#reportTelegram)
+- [reportPullAPI](reports.md#reportPullAPI)
 
 ## reportFile
 
@@ -20,9 +31,7 @@ Parameters for this report module:
 |Parameter| Description| 
 |---|---|
 |persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.| 
-|alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. | 
-
-
+|alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. |
 
 ## reportEmail
 
@@ -54,7 +63,6 @@ Parameters for this report module:
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
-
 
 ## reportKafka
 
@@ -151,7 +159,6 @@ Parameters for this report module:
 |botUrl| The Telegram bot URL. Usually `https://api.telegram.org/bot_BOT_ID_/` where `_BOT_ID_` is your both ID. |
 |chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).| 
 |chatIds.default| The chat ID of the default user group.| 
-
 
 ## reportPullAPI
 
