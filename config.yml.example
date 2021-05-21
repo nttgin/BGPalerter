@@ -228,6 +228,16 @@ reports:
 #        default: _CHAT_ID_
 #        noc: _CHAT_ID_
 
+#  - file: reportPullAPI
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      maxAlertsAmount: 10
 
 ############################
 # Notification settings:
@@ -240,6 +250,18 @@ reports:
 
 notificationIntervalSeconds: 86400
 persistStatus: true
+
+
+############################
+# REST API settings:
+# - rest.host
+#       The IP address the server will listen. By default is localhost
+# - rest.port
+#       The port the server will listen
+
+rest:
+  host: localhost
+  port: 8011
 
 logging:
   directory: logs
@@ -260,8 +282,6 @@ generatePrefixListEveryDays: 0
 #  - file: uptimeApi
 #    params:
 #      useStatusCodes: true
-#      host: null
-#      port: 8011
 #
 #  - file: uptimeHealthcheck
 #    params:

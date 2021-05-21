@@ -53,7 +53,7 @@ export default class Input {
         // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
         setInterval(() => {
             if (Object.keys(this.cache.matched).length > 10000) {
-                delete this.cache.matched;
+                this.cache.matched = {};
             }
         }, 10000);
 
