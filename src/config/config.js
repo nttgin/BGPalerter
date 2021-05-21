@@ -111,6 +111,10 @@ export default class Config {
                 preCacheROAs: true,
                 refreshVrpListMinutes: 15
             },
+            rest: {
+              host: null,
+              port: 8011
+            },
             checkForUpdatesAtBoot: true,
             pidFile: "bgpalerter.pid",
             fadeOffSeconds: 360,

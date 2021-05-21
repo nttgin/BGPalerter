@@ -241,6 +241,10 @@ reports:
 notificationIntervalSeconds: 86400
 persistStatus: true
 
+rest:
+  host: null
+  port: 8011
+
 logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD

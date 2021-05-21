@@ -31,8 +31,8 @@
  */
 
 import Uptime from "./uptime";
-import restify from "restify";
 import env from "../env";
+import RestApi from "../utils/restApi";
 
 export default class UptimeApi extends Uptime {
 
@@ -40,23 +40,16 @@ export default class UptimeApi extends Uptime {
         super(connectors, params);
         this.server = null;
         this.connectors = connectors;
+        let restDefault = env.config.rest || { port: params.port, host: params.host };
+        const rest = new RestApi(restDefault);
 
-        try {
-            this.server = restify.createServer();
-            this.server.pre(restify.pre.sanitizePath());
-            this.server.get('/status', this.respond);
-            this.server.head('/status', this.respond);
-            if (params.host) {
-                this.server.listen(params.port, params.host);
-            } else {
-                this.server.listen(params.port);
-            }
-        } catch (error) {
-            env.logger.log({
-                level: 'error',
-                message: error
+        rest.addUrl('/status', this.respond)
+            .catch(error => {
+                env.logger.log({
+                    level: 'error',
+                    message: error
+                });
             });
-        }
     };
 
     respond = (req, res, next) => {
