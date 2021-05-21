@@ -77,7 +77,8 @@ describe("Core functions", function() {
                     "volume",
                     "groupsFile",
                     "persistStatus",
-                    "rpki"
+                    "rpki",
+                    "rest"
                 ]);
 
             expect(config.connectors[0]).to.have

@@ -40,6 +40,7 @@ const cacheCloneDirectory = "tests/.cache_clone/";
 const asyncTimeout = 120000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
+const axios = require("axios");
 
 const worker = require("../index");
 const pubSub = worker.pubSub;
@@ -563,6 +564,19 @@ describe("Alerting", function () {
             notReceived = false;
         });
         pubSub.publish("test-type", "fade-off");
+    }).timeout(asyncTimeout);
+
+    it("pull API alerting", function (done) {
+
+        axios({
+            url: "http://localhost:8011/alerts/8e402e65f393ba4812df5da0db7605e9",
+            responseType: "json",
+            method: "GET"
+        })
+            .then(a => {
+                expect(a.data.data[0].hash).to.equal("8e402e65f393ba4812df5da0db7605e9");
+                done();
+            })
     }).timeout(asyncTimeout);
 });
 

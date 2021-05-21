@@ -49,21 +49,17 @@ describe("Uptime Monitor", function() {
         expect(config.processMonitors[0]).to
             .containSubset({
                 params: {
-                    useStatusCodes: true,
-                    host: null,
-                    port: 8011
+                    useStatusCodes: true
                 }
             });
     });
 
     it("API format and header", function (done) {
 
-        const port = config.processMonitors[0].params.port;
-
         axios({
             method: 'get',
             responseType: 'json',
-            url: `http://localhost:${port}/status`
+            url: `http://localhost:8011/status`
         })
             .then(data => {
                 expect(data.status).to.equal(200);

@@ -92,8 +92,7 @@ export default class ReportPullAPI extends Report {
         if (group) {
             alerts = this.alerts.filter(i => i.group === group);
         } else if (hash) {
-            const mid = md5(hash);
-            alerts = this.alerts.filter(i => i.alert.hash === mid);
+            alerts = this.alerts.filter(i => i.alert.hash === hash);
         } else {
             alerts = this.alerts;
         }
@@ -121,7 +120,6 @@ export default class ReportPullAPI extends Report {
                 });
                 this.alerts = this.alerts.slice(-this.maxAlertsAmount);
             }
-
         }
     };
 }
