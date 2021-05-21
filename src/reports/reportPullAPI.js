@@ -33,7 +33,6 @@
 import Report from "./report";
 import RestApi from "../utils/restApi";
 import md5 from "md5";
-import moment from "moment";
 
 export default class ReportPullAPI extends Report {
 
@@ -42,8 +41,8 @@ export default class ReportPullAPI extends Report {
 
         this.name = "reportPullAPI" || this.params.name;
         this.enabled = true;
-        this.maxAlertsAmount = 100;
-        this.lastCheck = null;
+        this.maxAlertsAmount = this.params.maxAlertsAmount || 100;
+        this.lastQuery = null;
 
         let restDefault = env.config.rest || { port: params.port, host: params.host };
         const rest = new RestApi(restDefault);
@@ -79,12 +78,12 @@ export default class ReportPullAPI extends Report {
         res.contentType = 'json';
         res.send({
             meta: {
-                lastCheck: this.lastCheck
+                lastQuery: this.lastQuery
             },
             data: this._getAlerts(req.params)
         });
         next();
-        this.lastCheck = moment(new Date()).utc();
+        this.lastQuery = new Date().getTime();
     };
 
     _getAlerts = ({ hash, group }) => {

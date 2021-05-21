@@ -112,7 +112,7 @@ export default class Config {
                 refreshVrpListMinutes: 15
             },
             rest: {
-              host: null,
+              host: "localhost",
               port: 8011
             },
             checkForUpdatesAtBoot: true,
