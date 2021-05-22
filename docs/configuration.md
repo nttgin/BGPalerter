@@ -343,19 +343,48 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 >    asn: 1234
 >    description: an example
 >    ignoreMorespecifics: false
+>    group: noc1
 > 
 > options:
 >  monitorASns:
 >    2914:
->      group: default
+>      group: noc2
 > ```
 > If in config.yml monitorROAS is enabled, you will receive alerts every time:
->  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed.
->  * A ROA that is, or was, involving AS2914 is added/edited/removed.
+>  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed (based on the prefix `1.2.3.4/24` matching rule).
+>  * A ROA that is, or was, involving AS2914 is added/edited/removed (based on the `monitorASns` section).
 
+**Important 1:** for a complete monitoring, configure also the `monitorASns` section. Setting only prefix matching rules is not sufficient: prefix matching rules are based on the longest prefix match, less specific ROAs impacting the prefix will NOT be matched. On the other side, setting only the `monitorASns` section is instead perfectly fine for ROA monitoring purposes.
+
+**Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyAsns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
 
 Example of alerts:
-> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
+> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>; added <5.5.3.4/24, 1234, 25, apnic>
+
+**This monitor also alerts about ROAs expiration.**
+
+This feature requires a vrps file having a `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file having such field or use as vrp provider one of: `ntt`, `rpkiclient` ([more info](rpki.md)).
+
+ROAs are affected by a series of expiration times:
+* Certificate Authority's "notAfter" date;
+* each CRL's "nextUpdate" date;
+* each manifest's EE certificate notAfter, and each manifests eContent "nextUpdate";
+* the ROA's own EE certificate "notAfter".
+
+The field `expire` must be the closest expiration time of all of the above.
+
+Example of alerts:
+> The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
+
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|enableDiffAlerts| Enables alerts showing edits impacting ROAs for the monitored resources. Default true|
+|enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.|
+|roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means. |
+|checkOnlyAsns| If set to true (default false), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above). |
+
 
 
 #### monitorPathNeighbors
