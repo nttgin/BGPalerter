@@ -3,7 +3,7 @@
 rm -rf bin
 mkdir bin
 
-npm install --silent
+npm ci --silent
 
 npm run compile
 
