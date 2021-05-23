@@ -54,10 +54,14 @@ monitors:
     channel: rpki
     name: rpki-diff
     params:
-        enableDiffAlerts: true,
-        enableExpirationAlerts: true,
-        roaExpirationAlertHours: 2,
-        checkOnlyAsns: false
+      enableDiffAlerts: true
+      enableExpirationAlerts: true
+      enableExpirationCheckTA: true
+      enableDeletedCheckTA: true
+      roaExpirationAlertHours: 2
+      checkOnlyAsns: false
+      toleranceDeletedRoasTA: 20
+      toleranceExpiredRoasTA: 20
 
   - file: monitorPathNeighbors
     channel: hijack

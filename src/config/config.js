@@ -85,7 +85,7 @@ export default class Config {
                         roaExpirationAlertHours: 2,
                         checkOnlyAsns: false,
                         toleranceDeletedRoasTA: 20,
-                        toleranceExpiredRoasTA: 20,
+                        toleranceExpiredRoasTA: 20
                     }
                 },
                 {
