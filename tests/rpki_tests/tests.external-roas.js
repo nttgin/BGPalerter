@@ -38,6 +38,7 @@ const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
+global.EXTERNAL_ROA_EXPIRATION_TEST = 5000;
 
 // ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
@@ -52,10 +53,31 @@ const pubSub = worker.pubSub;
 
 describe("RPKI monitoring external", function() {
 
-    it("ROA diff - external connector", function (done) {
+    it("ROA diff and expiration - external connector", function (done) {
 
         const expectedData = {
+            "28c7aa78b6286e0e3c6583797f7df47c": {
+                id: '28c7aa78b6286e0e3c6583797f7df47c',
+                truncated: false,
+                origin: 'rpki-monitor',
+                affected: 2914,
+                message: 'The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>',
 
+            },
+            "47807c7558dbe001b4aad9f3a87eb427": {
+                id: '47807c7558dbe001b4aad9f3a87eb427',
+                truncated: false,
+                origin: 'rpki-monitor',
+                affected: '94.5.4.3/22',
+                message: 'ROAs change detected: removed <94.5.4.3/22, 2914, 22, ripe>'
+            },
+            "de3bd9a6cdeeb05e1c2c7c04f7220485" : {
+                id: 'de3bd9a6cdeeb05e1c2c7c04f7220485',
+                truncated: false,
+                origin: 'rpki-monitor',
+                affected: '2001:db8:123::/48',
+                message: 'ROAs change detected: removed <2001:db8:123::/48, 65000, 48, ripe>'
+            },
             "129aafe3c8402fb045b71e810a73d425": {
                 id: '129aafe3c8402fb045b71e810a73d425',
                 truncated: false,
@@ -63,12 +85,10 @@ describe("RPKI monitoring external", function() {
                 affected: 2914,
                 message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>'
             }
-
         };
 
         let rpkiTestCompletedExternal = false;
         pubSub.subscribe("rpki", function (message, type) {
-
             try {
                 if (!rpkiTestCompletedExternal) {
                     message = JSON.parse(JSON.stringify(message));

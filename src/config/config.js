@@ -77,7 +77,16 @@ export default class Config {
                     file: "monitorROAS",
                     channel: "rpki",
                     name: "rpki-diff",
-                    params: {}
+                    params: {
+                        enableDiffAlerts: true,
+                        enableExpirationAlerts: true,
+                        enableExpirationCheckTA: true,
+                        enableDeletedCheckTA: true,
+                        roaExpirationAlertHours: 2,
+                        checkOnlyAsns: false,
+                        toleranceDeletedRoasTA: 20,
+                        toleranceExpiredRoasTA: 20,
+                    }
                 },
                 {
                     file: "monitorPathNeighbors",
