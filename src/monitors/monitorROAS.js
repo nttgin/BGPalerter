@@ -11,10 +11,20 @@ export default class MonitorROAS extends Monitor {
 
         this.logger = env.logger;
         this.rpki = env.rpki;
-        this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
-        this.checkOnlyAsns = params.checkOnlyAsns || false;
+
+        // Enabled checks
         this.enableDiffAlerts = params.enableDiffAlerts != null ? params.enableDiffAlerts : true;
         this.enableExpirationAlerts = params.enableExpirationAlerts != null ? params.enableExpirationAlerts : true;
+        this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
+        this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
+
+        // Default parameters
+        this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
+        this.checkOnlyAsns = params.checkOnlyAsns || false;
+        this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
+        this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
+        this.timesExpirationTAs = {};
+        this.timesDeletedTAs = {};
 
         if (this.enableDiffAlerts) {
             setInterval(this._diffVrps, 20000);
@@ -24,11 +34,72 @@ export default class MonitorROAS extends Monitor {
         }
     };
 
+    _calculateSizes = (vrps) => {
+        const times = {};
+
+        for (let vrp of vrps) {
+            times[vrp.ta] = times[vrp.ta] || 0;
+            times[vrp.ta]++
+        }
+
+        return times;
+    };
+
+    _checkDeletedRoasTAs = (vrps) => {
+        const sizes =  this._calculateSizes(vrps);
+
+        for (let ta in sizes) {
+            if (this.timesDeletedTAs[ta]) {
+                const min = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
+                const max = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
+                const diff = max - min;
+                const percentage = 100 / max * diff;
+
+                if (percentage > this.toleranceDeletedRoasTA) {
+                    const message = `Possible TA malfunction: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
+
+                    this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        ta,
+                        { group: "default" },
+                        message,
+                        {});
+                }
+            }
+        }
+        this.timesDeletedTAs = sizes;
+    };
+
+    _checkExpirationTAs = (vrps) => {
+        const sizes =  this._calculateSizes(vrps);
+
+        for (let ta in sizes) {
+            if (this.timesExpirationTAs[ta]) {
+                const min = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
+                const max = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
+                const diff = max - min;
+                const percentage = 100 / max * diff;
+
+                if (percentage > this.toleranceExpiredRoasTA) {
+                    const message = `Possible TA malfunction: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
+
+                    this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        ta,
+                        { group: "default" },
+                        message,
+                        {});
+                }
+            }
+        }
+        this.timesExpirationTAs = sizes;
+    };
+
     _verifyExpiration = () => {
         const vrps = this.rpki.getVrps()
             .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < this.roaExpirationAlertHours * 3600));
 
-        // We can check here if too many vrps are expiring, maybe TA malfunction
+        if (this.enableExpirationCheckTA) {
+            this._checkExpirationTAs(vrps); // Check for TA malfunctions
+        }
 
         const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
         const asnsIn = this.monitored.asns.map(i => i.asn.getValue());
@@ -99,6 +170,10 @@ export default class MonitorROAS extends Monitor {
 
     _diffVrps = () => {
         const newVrps = this.rpki.getVrps(); // Get all the vrps as retrieved from the rpki validator
+
+        if (this.enableDeletedCheckTA) {
+            this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas
+        }
 
         if (this._oldVrps) { // No diff if there were no vrps before
             const prefixesIn = this.monitored.prefixes.map(i => i.prefix);

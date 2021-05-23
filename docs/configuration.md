@@ -331,7 +331,8 @@ Parameters for this monitor module:
 
 #### monitorROAS
 
-This monitor will periodically check and report diffs in ROAs repos involving any of your ASes or prefixes.
+This monitor will periodically check the ROAs involving any of your ASes or prefixes.
+In particular, it will report about: ROAs involving your resources being edited, added or removed; expiring ROAs; TA malfunctions.
 You need to configure your RPKI data source as described [here](rpki.md).
 Note, while BGPalerter will perform the check near real time, many RIRs have delayed ROAs publication times.
 
@@ -358,8 +359,12 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 
 **Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyAsns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
 
+**Important 3:** alerts about the generic health status of TAs are generated according to the provided VRP file. This types of alerts are not necessarily related to the monitored resources and they are send to the `default` user group.
+
 Example of alerts:
 > ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>; added <5.5.3.4/24, 1234, 25, apnic>
+> 
+> Possible TA malfunction: 24% of the ROAs disappeared from APNIC
 
 **This monitor also alerts about ROAs expiration.**
 
@@ -375,6 +380,9 @@ The field `expire` must be the closest expiration time of all of the above.
 
 Example of alerts:
 > The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
+> 
+> Possible TA malfunction: 24% of the ROAs are expiring in APNIC
+
 
 Parameters for this monitor module:
 
@@ -382,10 +390,12 @@ Parameters for this monitor module:
 |---|---|
 |enableDiffAlerts| Enables alerts showing edits impacting ROAs for the monitored resources. Default true|
 |enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.|
+|enableExpirationCheckTA| Enables alerts about TA malfunctions detected when too many ROAs expire in the same TA. Default true.|
+|enableDeletedCheckTA| Enables alerts about TA malfunctions detected when too many ROAs are deleted in the same TA. Default true.|
 |roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means. |
 |checkOnlyAsns| If set to true (default false), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above). |
-
-
+|toleranceExpiredRoasTA|The percentage of expiring ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
+|toleranceDeletedRoasTA|The percentage of deleted ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
 
 #### monitorPathNeighbors
 

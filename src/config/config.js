@@ -80,8 +80,12 @@ export default class Config {
                     params: {
                         enableDiffAlerts: true,
                         enableExpirationAlerts: true,
+                        enableExpirationCheckTA: true,
+                        enableDeletedCheckTA: true,
                         roaExpirationAlertHours: 2,
-                        checkOnlyAsns: false
+                        checkOnlyAsns: false,
+                        toleranceDeletedRoasTA: 20,
+                        toleranceExpiredRoasTA: 20,
                     }
                 },
                 {

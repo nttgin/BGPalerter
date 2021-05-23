@@ -9,7 +9,8 @@ Self-configuring BGP monitoring tool, which allows you to monitor in **real-time
 * your AS is announcing RPKI invalid prefixes (e.g., not matching prefix length);
 * your AS is announcing prefixes not covered by ROAs;
 * any of your ROAs is expiring;
-* ROAs covering your prefixes are no longer reachable (e.g., TA malfunction);
+* ROAs covering your prefixes are no longer reachable;
+* RPKI Trust Anchors malfunctions;
 * a ROA involving any of your prefixes or ASes was deleted/added/edited;
 * your AS is announcing a new prefix that was never announced before;
 * an unexpected upstream (left-side) AS appears in an AS path;
