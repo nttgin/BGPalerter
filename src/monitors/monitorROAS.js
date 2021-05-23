@@ -27,10 +27,10 @@ export default class MonitorROAS extends Monitor {
         this.timesDeletedTAs = {};
 
         if (this.enableDiffAlerts) {
-            setInterval(this._diffVrps, 20000);
+            setInterval(this._diffVrps, 30000);
         }
         if (this.enableExpirationAlerts) {
-            setInterval(this._verifyExpiration, global.EXTERNAL_ROA_EXPIRATION_TEST || 440000);
+            setInterval(this._verifyExpiration, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };
 
