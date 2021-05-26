@@ -52,7 +52,7 @@
     "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
     "mocha": "^8.4.0",
-    "pkg": "^5.2.0",
+    "pkg": "^5.2.1",
     "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
   },
@@ -75,10 +75,10 @@
     "nodemailer": "^6.6.1",
     "path": "^0.12.7",
     "restify": "^8.5.1",
-    "rpki-validator": "^2.6.1",
+    "rpki-validator": "^2.6.2",
     "semver": "^7.3.5",
     "syslog-client": "^1.1.1",
-    "ws": "^7.4.5",
+    "ws": "^7.4.6",
     "yargs": "^17.0.1"
   },
   "pkg": {
