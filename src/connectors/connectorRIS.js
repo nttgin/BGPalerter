@@ -44,6 +44,7 @@ export default class ConnectorRIS extends Connector {
         this.subscription = null;
         this.agent = env.agent;
         this.subscribed = {};
+        this.canaryBeacons = {};
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -51,6 +52,8 @@ export default class ConnectorRIS extends Connector {
                 client: env.clientId
             }
         });
+
+        setTimeout(this._startCanary, 60000);
     };
 
     _openConnect = (resolve) => {
@@ -63,7 +66,13 @@ export default class ConnectorRIS extends Connector {
     };
 
     _messageToJson = (message) => {
-        this._message(JSON.parse(message));
+        const messageObj = JSON.parse(message);
+        const path = (messageObj.data.path || []);
+        if (path[path.length - 1] === 12654) {
+            this._checkCanary();
+        } else {
+            this._message(messageObj);
+        }
     };
 
     _appendListeners = (resolve, reject) => {
@@ -194,6 +203,58 @@ export default class ConnectorRIS extends Connector {
                 data: params
             }));
         }
+    };
+
+    _startCanary = () => {
+        const beacons = {
+            v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
+                "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
+                "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
+                "93.175.153.0/24"],
+            v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
+                "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
+                "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
+                "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
+                "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
+        };
+
+        const selected = [
+            ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 2),
+            ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 2)
+        ];
+
+        for (let prefix of selected) {
+            this.canaryBeacons[prefix] = true;
+            this.ws.send(JSON.stringify({
+                type: "ris_subscribe",
+                data: {
+                    moreSpecific: false,
+                    lessSpecific: false,
+                    prefix,
+                    type: "UPDATE",
+                    socketOptions: {
+                        includeRaw: false,
+                        acknowledge: false
+                    }
+                }
+            }));
+        }
+
+        this._checkCanary();
+    };
+
+    _checkCanary = () => {
+        clearTimeout(this._timerCheckCanary);
+        this.connected = true;
+        this._timerCheckCanary = setTimeout(() => {
+            if (this.connected) {
+                this.connected = false;
+                this.logger.log({
+                    level: 'error',
+                    message: "RIS has been silent for too long, probably there is something wrong"
+                });
+            }
+        }, 3600 * 1000 * 4);
     };
 
     _onInputChange = (input) => {
