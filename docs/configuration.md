@@ -132,6 +132,9 @@ Parameters for this connector module:
 |carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
 |perMessageDeflate| Enable gzip compression on the connection. |
 
+#### connectorRISDump
+It connects to the RIPEstat's BGPlay API and retrieves a RIS dump about the monitored resources. The retrieved dump is 2 hours old, due to limitations on the API side.
+
 #### connectorTest
 
 Connector used for testing purposes, it provokes all types of alerting. Needed to run the tests (`npm run test`) .

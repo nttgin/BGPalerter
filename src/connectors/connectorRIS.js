@@ -359,7 +359,7 @@ export default class ConnectorRIS extends Connector {
                         prefix,
                         peer,
                         timestamp
-                    })
+                    });
                 }
 
                 return components;
