@@ -75,6 +75,7 @@ jobs:
         npm run test-core
         npm run test-generate
         npm run test-reports
+        npm run test-neighbor
 
     - name: Tests RPKI
       run: |
