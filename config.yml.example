@@ -67,7 +67,7 @@ monitors:
       toleranceExpiredRoasTA: 20
 
   - file: monitorPathNeighbors
-    channel: hijack
+    channel: path
     name: path-neighbors
     params:
       thresholdMinPeers: 3
