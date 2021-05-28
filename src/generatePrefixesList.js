@@ -125,6 +125,7 @@ module.exports = function generatePrefixes(inputParameters) {
         const url = brembo.build("https://stat.ripe.net", {
             path: ["data", "prefix-overview", "data.json"],
             params: {
+                min_peers_seeing: 0,
                 client: clientId,
                 resource: prefix
             }
