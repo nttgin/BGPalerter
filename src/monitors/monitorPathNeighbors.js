@@ -103,11 +103,13 @@ export default class MonitorPathNeighbors extends Monitor {
                         if (match) {
                             const monitoredId = monitoredAs.asn.getId();
 
-                            this.publishAlert([monitoredId, id].join("-"),
-                                monitoredId,
-                                monitoredAs,
-                                message,
-                                {side, neighbor: id});
+                            if (monitoredId !== id) { // Skip prepending
+                                this.publishAlert([monitoredId, id].join("-"),
+                                    monitoredId,
+                                    monitoredAs,
+                                    message,
+                                    {side, neighbor: id});
+                            }
                         }
                     }
                 }
