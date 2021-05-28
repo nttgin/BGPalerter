@@ -38,6 +38,7 @@ import Storage from './utils/storages/storageFile';
 import url from 'url';
 import RpkiUtils from './utils/rpkiUtils';
 import ConfigYml from './config/configYml';
+import Config from "./config/config";
 
 const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
 const vector = {
@@ -78,7 +79,7 @@ if (config.volume && config.volume.length) {
     }
 }
 
-if (!config.configVersion || config.configVersion < configConnector.default.configVersion) {
+if (!config.configVersion || config.configVersion < Config.configVersion) {
     console.log("Your config.yml file is old. It works, but it may not support all the new features. You can delete it and run BGPalerter again to generate a new one.");
 }
 

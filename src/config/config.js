@@ -1,9 +1,10 @@
 import axios from "axios";
 
 export default class Config {
+    static configVersion = 2;
     constructor(params) {
         this.default = {
-            configVersion: 2,
+            configVersion: Config.configVersion,
             environment: "production",
             connectors: [
                 {
