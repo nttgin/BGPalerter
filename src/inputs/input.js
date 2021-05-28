@@ -140,7 +140,6 @@ export default class Input {
                     return p;
                 } else {
 
-                    // if (!this.cache.af[p.prefix] || !this.cache.binaries[p.prefix]) {
                     if (!this.cache.af[p.prefix]) {
                         this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
                         this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix, this.cache.af[p.prefix]);
