@@ -1,0 +1,7 @@
+193.0.20.0/23:
+  description: No description provided
+  asn:
+    - 1234
+  ignoreMorespecifics: false
+  ignore: false
+  group: noc

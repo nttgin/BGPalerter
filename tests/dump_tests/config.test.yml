@@ -1,0 +1,57 @@
+environment: test
+
+connectors:
+  - file: connectorRISDump
+    name: dmp
+
+monitors:
+  - file: monitorHijack
+    channel: hijack
+    name: basic-hijack-detection
+    params:
+      thresholdMinPeers: 0
+
+reports:
+  - file: reportFile
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
+
+
+# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# This is an array (use new lines and dashes!)
+monitoredPrefixesFiles:
+  - prefixes.test.yml
+
+logging:
+  directory: logs
+  logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
+
+checkForUpdatesAtBoot: true
+persistStatus: true
+
+volume: volumetests/
+
+
+rpki:
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  vrpFile: tests/dump_tests/vrps.json
+
+notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
+alertOnlyOnce: false
+fadeOffSeconds: 10
+checkFadeOffGroupsSeconds: 2
+pidFile: bgpalerter.pid
+multiProcess: false
+maxMessagesPerSecond: 6000
