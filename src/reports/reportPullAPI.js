@@ -101,16 +101,14 @@ export default class ReportPullAPI extends Report {
     }
 
     getUserGroup = (group) => {
-        const groups = this.params.hooks || this.params.userGroups;
-
-        return groups[group] || groups["default"];
+        return null;
     };
 
     report = (channel, content) => {
         if (this.enabled) {
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
+            groups = (groups.length) ? [...new Set(groups)] : ["default"];
             content.hash = md5(content.id);
 
             for (let group of groups) {

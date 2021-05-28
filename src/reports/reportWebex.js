@@ -56,7 +56,7 @@ export default class ReportWebex extends Report {
     _sendWebexMessage = (url, message, content) => {
 
         this.axios({
-            url: url,
+            url,
             method: "POST",
             resposnseType: "json",
             data: {
@@ -75,11 +75,12 @@ export default class ReportWebex extends Report {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
+            groups = (groups.length) ? [...new Set(groups)] : ["default"];
 
             for (let group of groups) {
-                if (this.params.hooks[group]) {
-                    this._sendWebexMessage(this.params.hooks[group], message, content);
+                const url = this.getUserGroup(group);
+                if (url) {
+                    this._sendWebexMessage(url, message, content);
                 }
             }
         }

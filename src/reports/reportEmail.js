@@ -63,7 +63,7 @@ export default class ReportEmail extends Report {
                 }
             }
 
-            if (Object.keys(this.templates).length) {
+            if (Object.keys(this.templates).length === 0) {
                 this.enabled = false;
                 this.logger.log({
                     level: 'error',
@@ -148,7 +148,6 @@ export default class ReportEmail extends Report {
                     });
                 }
             }
-
         }
     }
 }

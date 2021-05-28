@@ -107,7 +107,7 @@ export default class ReportAlerta extends Report {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : [this.getUserGroup("default")];
+            groups = (groups.length) ? [...new Set(groups)] : ["default"];
 
             for (let group of groups) {
                 const url = this.getUserGroup(group);
