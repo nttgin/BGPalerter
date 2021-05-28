@@ -25,6 +25,10 @@ export default class MonitorROAS extends Monitor {
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
         this.timesExpirationTAs = {};
         this.timesDeletedTAs = {};
+        this.monitored = {
+            asns: [],
+            prefixes: []
+        };
 
         if (this.enableDiffAlerts) {
             setInterval(this._diffVrps, 30000);
