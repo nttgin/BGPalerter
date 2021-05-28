@@ -78,6 +78,10 @@ if (config.volume && config.volume.length) {
     }
 }
 
+if (!config.configVersion || config.configVersion < configConnector.default.configVersion) {
+    console.log("Your config.yml file is old. It works, but it may not support all the new features. You can delete it and run BGPalerter again to generate a new one.");
+}
+
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',

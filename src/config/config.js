@@ -3,6 +3,7 @@ import axios from "axios";
 export default class Config {
     constructor(params) {
         this.default = {
+            configVersion: 2,
             environment: "production",
             connectors: [
                 {
@@ -21,6 +22,10 @@ export default class Config {
                             }
                         }
                     }
+                },
+                {
+                    file: "connectorRISDump",
+                    name: "dmp"
                 }
             ],
             monitors: [
@@ -121,8 +126,8 @@ export default class Config {
                 refreshVrpListMinutes: 15
             },
             rest: {
-              host: "localhost",
-              port: 8011
+                host: "localhost",
+                port: 8011
             },
             checkForUpdatesAtBoot: true,
             pidFile: "bgpalerter.pid",

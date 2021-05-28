@@ -355,4 +355,5 @@ pidFile: bgpalerter.pid
 maxMessagesPerSecond: 6000
 multiProcess: false
 environment: production
+configVersion: 2
 
