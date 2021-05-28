@@ -104,10 +104,11 @@ module.exports = function generatePrefixes(inputParameters) {
 
                 }
 
+                const uncertain = neighbors.filter(i => i.type === "uncertain");
                 const out =  {
                     asn,
-                    upstreams: neighbors.filter(i => i.type === "left").map(i => i.asn),
-                    downstreams: neighbors.filter(i => i.type === "right").map(i => i.asn),
+                    upstreams: neighbors.filter(i => i.type === "left").concat(uncertain).map(i => i.asn),
+                    downstreams: neighbors.filter(i => i.type === "right").concat(uncertain).map(i => i.asn)
                 };
 
                 logger(`Detected upstreams for ${out.asn}: ${out.upstreams.join(", ")}`);
