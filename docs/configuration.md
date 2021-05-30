@@ -24,7 +24,7 @@ The following are common parameters which it is possible to specify in the confi
 |rpki| A dictionary containing the RPKI configuration (see [here](rpki.md) for more details). |  |  | Yes |
 |groupsFile| A file containing user groups definition (see [here](usergroups.md) for more details). | A string | groups.yml | No | 
 |rest| A dictionary containing the parameters to run the server for all APIs provided by BGPalerter. | | | No | 
-|rest.host| The IP/host on which the API will be reachable. The default value is localhost, this means the API will not be reachable from another host. To make it public use null or 0.0.0.0. | A string or null | localhost | No | 
+|rest.host| The IP/host on which the APIs will be reachable. The default value is localhost, this means the API will not be reachable from another host. To make it public use null or 0.0.0.0. | A string or null | localhost | No | 
 |rest.port| The port of the REST API. The default value is 8011. | An integer | 8011 | No | 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.

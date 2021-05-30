@@ -41,6 +41,7 @@ export default class ConnectorRIS extends Connector {
     constructor(name, params, env) {
         super(name, params, env);
         this.ws = null;
+        this.environment = env.config.environment;
         this.subscription = null;
         this.agent = env.agent;
         this.subscribed = {};
@@ -67,12 +68,10 @@ export default class ConnectorRIS extends Connector {
 
     _messageToJson = (message) => {
         const messageObj = JSON.parse(message);
-        const path = (messageObj.data.path || []);
-        if (path[path.length - 1] === 12654) {
+        if (this.environment !== "research") {
             this._checkCanary();
-        } else {
-            this._message(messageObj);
         }
+        this._message(messageObj);
     };
 
     _appendListeners = (resolve, reject) => {
@@ -245,6 +244,12 @@ export default class ConnectorRIS extends Connector {
 
     _checkCanary = () => {
         clearTimeout(this._timerCheckCanary);
+        if (!this.connected) {
+            this.logger.log({
+                level: 'error',
+                message: "RIS connected again, the streaming session is working properly"
+            });
+        }
         this.connected = true;
         this._timerCheckCanary = setTimeout(() => {
             if (this.connected) {
@@ -254,7 +259,7 @@ export default class ConnectorRIS extends Connector {
                     message: "RIS has been silent for too long, probably there is something wrong"
                 });
             }
-        }, 3600 * 1000 * 4);
+        }, 3600 * 1000 * 4.5); // every 4.5 hours
     };
 
     _onInputChange = (input) => {
