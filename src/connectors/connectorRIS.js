@@ -53,8 +53,9 @@ export default class ConnectorRIS extends Connector {
                 client: env.clientId
             }
         });
-
-        setTimeout(this._startCanary, 60000);
+        if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
+            setTimeout(this._startCanary, 60000);
+        }
     };
 
     _openConnect = (resolve) => {
