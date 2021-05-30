@@ -267,7 +267,8 @@ persistStatus: true
 ############################
 # REST API settings:
 # - rest.host
-#       The IP address the server will listen. By default is localhost
+#       The IP address the server will listen. The default value is localhost, this means the API will not be reachable
+#       from another host. To make it public use null or 0.0.0.0.
 # - rest.port
 #       The port the server will listen
 
