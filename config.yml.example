@@ -12,8 +12,8 @@ connectors:
         socketOptions:
           includeRaw: false
 
-  - file: connectorRISDump
-    name: dmp
+#  - file: connectorRISDump
+#    name: dmp
 
 monitors:
   - file: monitorHijack

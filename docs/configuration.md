@@ -133,7 +133,14 @@ Parameters for this connector module:
 |perMessageDeflate| Enable gzip compression on the connection. |
 
 #### connectorRISDump
-It connects to the RIPEstat's BGPlay API and retrieves a RIS dump about the monitored resources. The retrieved dump is 2 hours old, due to limitations on the API side.
+It connects to the RIPEstat's BGPlay API and retrieves a RIS dump about the monitored resources. The retrieved dump is 2 hours old, due to limitations on the API side. 
+
+Without this connector, when you start BGPalerter the monitoring will start based on new BGP updates. This means that you will not receive alerts before a new BGP update is propagated; e.g., if one of your prefixes is already hijacked when you start BGPalerter, you will not get notified immediately.
+
+This connector runs only in the two following conditions:
+- you enable it in the config.yml (commented out by default);
+- you didn't start BGPalerter in the last two hours.
+
 
 #### connectorTest
 

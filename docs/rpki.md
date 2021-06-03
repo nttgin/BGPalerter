@@ -116,3 +116,17 @@ You can use any of the RPKI validator that support JSON as output format to gene
     ```
     
 > Please, help with other examples    
+
+
+### Staging/testing ROAs
+You can use BGPalerter to test ROAs before deploying them for real.
+
+How:
+- enable [connectorRISDump](configuration.md#connectorrisdump) (optional but useful);
+- add the "ROA" in the VRP file using the JSON format described above;
+- be sure there is a prefix rule in config.yml covering the prefix of the ROA;
+- leave BGPalerter on for some time.
+
+You will get notified if your new staged roa conflicts with what announced at the BGP level.
+If you are starting BGPalerter after you already created the VRP file, by enabling connectorRISDump you would be able to get an immediate feedback based on a BGP dump. In any case, new BGP updates are going to be processed in real-time and compared with the VRP file provided.
+
