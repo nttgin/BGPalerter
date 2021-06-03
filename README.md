@@ -81,6 +81,7 @@ Read the documentation below for more options.
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
     - [RPKI configuration](docs/rpki.md)
+        - [Staging/testing ROAs](docs/rpki.md#stagingtesting-roas)
     - [HTTP/HTTPS proxy](docs/http-proxy.md)
 - [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
