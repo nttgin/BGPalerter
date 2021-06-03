@@ -24,10 +24,10 @@ export default class Config {
                         }
                     }
                 },
-                {
-                    file: "connectorRISDump",
-                    name: "dmp"
-                }
+                // {
+                //     file: "connectorRISDump",
+                //     name: "dmp"
+                // }
             ],
             monitors: [
                 {
