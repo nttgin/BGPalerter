@@ -89,7 +89,7 @@ export default class Config {
                         enableExpirationCheckTA: true,
                         enableDeletedCheckTA: true,
                         roaExpirationAlertHours: 2,
-                        checkOnlyAsns: false,
+                        checkOnlyASns: true,
                         toleranceDeletedRoasTA: 20,
                         toleranceExpiredRoasTA: 20
                     }
