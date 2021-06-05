@@ -8,7 +8,6 @@ export default class MonitorROAS extends Monitor {
 
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
-
         this.logger = env.logger;
         this.rpki = env.rpki;
 
@@ -20,7 +19,8 @@ export default class MonitorROAS extends Monitor {
 
         // Default parameters
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
-        this.checkOnlyASns = params.checkOnlyASns || true;
+        this.checkOnlyASns = params.checkOnlyASns != null ? params.checkOnlyASns : true;
+
         this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
         this.timesExpirationTAs = {};

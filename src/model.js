@@ -40,7 +40,6 @@ export class Path {
     };
 
     includes (asn) {
-        console.log(this.value);
         return this.value.some(i => i.includes(asn));
     };
 }
