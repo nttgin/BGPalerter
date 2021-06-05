@@ -11,6 +11,7 @@ monitors:
     channel: rpki
     name: rpki-monitor
     params:
+      checkDisappearing: true
       thresholdMinPeers: 1
       checkUncovered: true
       cacheValidPrefixesSeconds: 3600

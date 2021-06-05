@@ -10,6 +10,15 @@ monitors:
   - file: monitorROAS
     channel: rpki
     name: rpki-monitor
+    params:
+      enableDiffAlerts: true
+      enableExpirationAlerts: true
+      enableExpirationCheckTA: true
+      enableDeletedCheckTA: true
+      roaExpirationAlertHours: 2
+      checkOnlyASns: false
+      toleranceDeletedRoasTA: 20
+      toleranceExpiredRoasTA: 20
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
