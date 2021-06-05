@@ -20,7 +20,7 @@ export default class MonitorROAS extends Monitor {
 
         // Default parameters
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
-        this.checkOnlyAsns = params.checkOnlyAsns || false;
+        this.checkOnlyASns = params.checkOnlyASns || true;
         this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
         this.timesExpirationTAs = {};
@@ -111,7 +111,7 @@ export default class MonitorROAS extends Monitor {
 
         let alerts =  [];
         if (relevantVrps.length) {
-            if (!this.checkOnlyAsns) {
+            if (!this.checkOnlyASns) {
                 alerts = this._checkExpirationPrefixes(relevantVrps);
             }
             for (let asn of asnsIn) {
@@ -183,7 +183,7 @@ export default class MonitorROAS extends Monitor {
             const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
             const asns = this.monitored.asns.map(i => i.asn.getValue());
             let alerts =  [];
-            if (!this.checkOnlyAsns){
+            if (!this.checkOnlyASns){
                 alerts = this._diffVrpsPrefixes(this._oldVrps, newVrps, prefixesIn);
             }
             for (let asn of asns) {

@@ -76,7 +76,8 @@ export default class Config {
                     name: "rpki-monitor",
                     params: {
                         thresholdMinPeers: 3,
-                        checkUncovered: false
+                        checkUncovered: false,
+                        checkDisappearing: false
                     }
                 },
                 {
@@ -89,7 +90,7 @@ export default class Config {
                         enableExpirationCheckTA: true,
                         enableDeletedCheckTA: true,
                         roaExpirationAlertHours: 2,
-                        checkOnlyAsns: false,
+                        checkOnlyASns: true,
                         toleranceDeletedRoasTA: 20,
                         toleranceExpiredRoasTA: 20
                     }
