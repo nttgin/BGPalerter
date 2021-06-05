@@ -52,6 +52,7 @@ monitors:
     params:
       thresholdMinPeers: 3
       checkUncovered: false
+      checkDisappearing: false
 
   - file: monitorROAS
     channel: rpki

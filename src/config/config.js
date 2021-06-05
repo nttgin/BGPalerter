@@ -76,7 +76,8 @@ export default class Config {
                     name: "rpki-monitor",
                     params: {
                         thresholdMinPeers: 3,
-                        checkUncovered: false
+                        checkUncovered: false,
+                        checkDisappearing: false
                     }
                 },
                 {
