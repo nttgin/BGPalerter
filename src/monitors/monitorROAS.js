@@ -38,8 +38,12 @@ export default class MonitorROAS extends Monitor {
         }
     };
 
-    _calculateSizes = (vrps) => {
+    _calculateSizes = (vrps, old) => {
         const times = {};
+
+        for (let ta of old) {
+            times[ta] = 0;
+        }
 
         for (let vrp of vrps) {
             times[vrp.ta] = times[vrp.ta] || 0;
@@ -50,7 +54,7 @@ export default class MonitorROAS extends Monitor {
     };
 
     _checkDeletedRoasTAs = (vrps) => {
-        const sizes =  this._calculateSizes(vrps);
+        const sizes =  this._calculateSizes(vrps, this.timesDeletedTAs);
 
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
@@ -74,12 +78,12 @@ export default class MonitorROAS extends Monitor {
     };
 
     _checkExpirationTAs = (vrps) => {
-        const sizes =  this._calculateSizes(vrps);
+        const sizes =  this._calculateSizes(vrps, this.timesExpirationTAs);
 
         for (let ta in sizes) {
             if (this.timesExpirationTAs[ta]) {
                 const min = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
-                const max = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
+                const max = Math.max(this.timesExpirationTAs[ta], sizes[ta]);
                 const diff = max - min;
                 const percentage = 100 / max * diff;
 
