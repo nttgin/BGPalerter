@@ -38,10 +38,10 @@ export default class MonitorROAS extends Monitor {
         }
     };
 
-    _calculateSizes = (vrps, old) => {
+    _calculateSizes = (vrps, old={}) => {
         const times = {};
 
-        for (let ta of old) {
+        for (let ta in old) {
             times[ta] = 0;
         }
 
