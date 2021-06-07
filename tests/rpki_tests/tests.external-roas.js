@@ -56,6 +56,19 @@ describe("RPKI monitoring external", function() {
     it("ROA diff and expiration - external connector", function (done) {
 
         const expectedData = {
+            "disappeared-ripe": {
+                id: 'disappeared-ripe',
+                truncated: false,
+                origin: 'rpki-monitor',
+                affected: 'ripe',
+                message: 'Possible TA malfunction: 60.00% of the ROAs disappeared from ripe',
+                data: [
+                    {
+                        affected: 'ripe',
+                        matchedMessage: 'Possible TA malfunction: 60.00% of the ROAs disappeared from ripe'
+                    }
+                ]
+            },
             "28c7aa78b6286e0e3c6583797f7df47c": {
                 id: '28c7aa78b6286e0e3c6583797f7df47c',
                 truncated: false,

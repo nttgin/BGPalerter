@@ -55,7 +55,7 @@ export default class MonitorROAS extends Monitor {
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
                 const min = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
-                const max = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
+                const max = Math.max(this.timesDeletedTAs[ta], sizes[ta]);
                 const diff = max - min;
                 const percentage = 100 / max * diff;
 
