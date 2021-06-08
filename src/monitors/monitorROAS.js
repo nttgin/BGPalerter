@@ -25,6 +25,7 @@ export default class MonitorROAS extends Monitor {
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
         this.timesExpirationTAs = {};
         this.timesDeletedTAs = {};
+        this.seenTAs = {};
         this.monitored = {
             asns: [],
             prefixes: []
@@ -38,23 +39,24 @@ export default class MonitorROAS extends Monitor {
         }
     };
 
-    _calculateSizes = (vrps, old={}) => {
+    _calculateSizes = (vrps) => {
         const times = {};
 
-        for (let ta in old) {
+        for (let ta in this.seenTAs) {
             times[ta] = 0;
         }
 
         for (let vrp of vrps) {
             times[vrp.ta] = times[vrp.ta] || 0;
             times[vrp.ta]++
+            this.seenTAs[vrp.ta] = true;
         }
 
         return times;
     };
 
     _checkDeletedRoasTAs = (vrps) => {
-        const sizes =  this._calculateSizes(vrps, this.timesDeletedTAs);
+        const sizes =  this._calculateSizes(vrps);
 
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
@@ -78,7 +80,7 @@ export default class MonitorROAS extends Monitor {
     };
 
     _checkExpirationTAs = (vrps) => {
-        const sizes =  this._calculateSizes(vrps, this.timesExpirationTAs);
+        const sizes =  this._calculateSizes(vrps);
 
         for (let ta in sizes) {
             if (this.timesExpirationTAs[ta]) {
