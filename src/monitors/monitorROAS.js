@@ -25,15 +25,16 @@ export default class MonitorROAS extends Monitor {
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
         this.timesExpirationTAs = {};
         this.timesDeletedTAs = {};
+        this.seenTAs = {};
         this.monitored = {
             asns: [],
             prefixes: []
         };
 
-        if (this.enableDiffAlerts) {
+        if (this.enableDiffAlerts || this.enableDeletedCheckTA) {
             setInterval(this._diffVrps, 30000);
         }
-        if (this.enableExpirationAlerts) {
+        if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
             setInterval(this._verifyExpiration, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };
@@ -41,9 +42,14 @@ export default class MonitorROAS extends Monitor {
     _calculateSizes = (vrps) => {
         const times = {};
 
+        for (let ta in this.seenTAs) {
+            times[ta] = 0;
+        }
+
         for (let vrp of vrps) {
             times[vrp.ta] = times[vrp.ta] || 0;
             times[vrp.ta]++
+            this.seenTAs[vrp.ta] = true;
         }
 
         return times;
@@ -55,7 +61,7 @@ export default class MonitorROAS extends Monitor {
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
                 const min = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
-                const max = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
+                const max = Math.max(this.timesDeletedTAs[ta], sizes[ta]);
                 const diff = max - min;
                 const percentage = 100 / max * diff;
 
@@ -64,7 +70,9 @@ export default class MonitorROAS extends Monitor {
 
                     this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                         ta,
-                        { group: "default" },
+                        {
+                            group: "default"
+                        },
                         message,
                         {});
                 }
@@ -79,7 +87,7 @@ export default class MonitorROAS extends Monitor {
         for (let ta in sizes) {
             if (this.timesExpirationTAs[ta]) {
                 const min = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
-                const max = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
+                const max = Math.max(this.timesExpirationTAs[ta], sizes[ta]);
                 const diff = max - min;
                 const percentage = 100 / max * diff;
 
@@ -105,17 +113,19 @@ export default class MonitorROAS extends Monitor {
             this._checkExpirationTAs(vrps); // Check for TA malfunctions
         }
 
-        const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
-        const asnsIn = this.monitored.asns.map(i => i.asn.getValue());
-        const relevantVrps = getRelevant(vrps, prefixesIn, asnsIn);
+        if (this.enableExpirationAlerts) {
+            const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
+            const asnsIn = this.monitored.asns.map(i => i.asn.getValue());
+            const relevantVrps = getRelevant(vrps, prefixesIn, asnsIn);
 
-        let alerts =  [];
-        if (relevantVrps.length) {
-            if (!this.checkOnlyASns) {
-                alerts = this._checkExpirationPrefixes(relevantVrps);
-            }
-            for (let asn of asnsIn) {
-                this._checkExpirationAs(relevantVrps, asn, alerts);
+            let alerts = [];
+            if (relevantVrps.length) {
+                if (!this.checkOnlyASns) {
+                    alerts = this._checkExpirationPrefixes(relevantVrps);
+                }
+                for (let asn of asnsIn) {
+                    this._checkExpirationAs(relevantVrps, asn, alerts);
+                }
             }
         }
     };
@@ -179,20 +189,22 @@ export default class MonitorROAS extends Monitor {
             this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas
         }
 
-        if (this._oldVrps) { // No diff if there were no vrps before
-            const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
-            const asns = this.monitored.asns.map(i => i.asn.getValue());
-            let alerts =  [];
-            if (!this.checkOnlyASns){
-                alerts = this._diffVrpsPrefixes(this._oldVrps, newVrps, prefixesIn);
+        if (this.enableDiffAlerts) {
+            if (this._oldVrps) { // No diff if there were no vrps before
+                const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
+                const asns = this.monitored.asns.map(i => i.asn.getValue());
+                let alerts = [];
+                if (!this.checkOnlyASns) {
+                    alerts = this._diffVrpsPrefixes(this._oldVrps, newVrps, prefixesIn);
+                }
+                for (let asn of asns) {
+                    this._diffVrpsAs(this._oldVrps, newVrps, asn, alerts);
+                }
             }
-            for (let asn of asns) {
-                this._diffVrpsAs(this._oldVrps, newVrps, asn, alerts);
-            }
-        }
 
-        if (newVrps.length) {
-            this._oldVrps = newVrps;
+            if (newVrps.length) {
+                this._oldVrps = newVrps;
+            }
         }
     };
 
