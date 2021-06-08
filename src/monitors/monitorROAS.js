@@ -70,7 +70,9 @@ export default class MonitorROAS extends Monitor {
 
                     this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                         ta,
-                        { group: "default" },
+                        {
+                            group: "default"
+                        },
                         message,
                         {});
                 }

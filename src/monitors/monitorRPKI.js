@@ -90,14 +90,14 @@ export default class MonitorRPKI extends Monitor {
             const message = firstAlert.matchedMessage;
             const extra = firstAlert.extra;
             const covering = (extra.covering && extra.covering.length) ? extra.covering.map(i => `${i.prefix}|AS${i.asn}|maxLength:${i.maxLength}`).join(", ") : false;
-            const coveringString = (covering) ? `Valid ROAs: ${covering}`: '';
+            const coveringString = (covering) ? `. Valid ROAs: ${covering}`: '';
 
             if (extra.roaDisappeared && this.params.checkDisappearing) {
                 return `The route ${message.prefix} announced by ${message.originAS} is no longer covered by a ROA`;
             } else if (extra.valid === null && this.params.checkUncovered) {
                 return `The route ${message.prefix} announced by ${message.originAS} is not covered by a ROA`;
             } else if (extra.valid === false) {
-                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid. ${coveringString}`;
+                return `The route ${message.prefix} announced by ${message.originAS} is not RPKI valid${coveringString}`;
             }
         }
     };
