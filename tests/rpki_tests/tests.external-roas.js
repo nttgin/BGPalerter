@@ -69,6 +69,21 @@ describe("RPKI monitoring external", function() {
                     }
                 ]
             },
+            "expiring-ripe": {
+                id: 'expiring-ripe',
+                truncated: false,
+                origin: 'rpki-monitor',
+                affected: 'ripe',
+                message: 'Possible TA malfunction: 50.00% of the ROAs are expiring in ripe',
+                data: [
+                    {
+                        affected: 'ripe',
+                        matchedMessage: 'Possible TA malfunction: 50.00% of the ROAs are expiring in ripe',
+                        extra: {}
+                    }
+                ]
+            }
+            ,
             "28c7aa78b6286e0e3c6583797f7df47c": {
                 id: '28c7aa78b6286e0e3c6583797f7df47c',
                 truncated: false,
@@ -102,6 +117,7 @@ describe("RPKI monitoring external", function() {
 
         let rpkiTestCompletedExternal = false;
         pubSub.subscribe("rpki", function (message, type) {
+
             try {
                 if (!rpkiTestCompletedExternal) {
                     message = JSON.parse(JSON.stringify(message));
