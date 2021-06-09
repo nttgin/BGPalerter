@@ -23,7 +23,6 @@ export default class MonitorROAS extends Monitor {
 
         this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
         this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
-        this.timesExpirationTAs = {};
         this.timesDeletedTAs = {};
         this.seenTAs = {};
         this.monitored = {
@@ -81,42 +80,40 @@ export default class MonitorROAS extends Monitor {
         this.timesDeletedTAs = sizes;
     };
 
-    _checkExpirationTAs = (vrps) => {
+    _checkExpirationTAs = (vrps, expiringVrps) => {
         const sizes =  this._calculateSizes(vrps);
+        const expiringSizes =  this._calculateSizes(expiringVrps);
 
         for (let ta in sizes) {
-            if (this.timesExpirationTAs[ta]) {
-                const min = Math.min(this.timesExpirationTAs[ta], sizes[ta]);
-                const max = Math.max(this.timesExpirationTAs[ta], sizes[ta]);
-                const diff = max - min;
-                const percentage = 100 / max * diff;
+            const min = expiringSizes[ta];
+            const max = sizes[ta];
+            const percentage = (100 / max) * min;
 
-                if (percentage > this.toleranceExpiredRoasTA) {
-                    const message = `Possible TA malfunction: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
+            if (percentage > this.toleranceExpiredRoasTA) {
+                const message = `Possible TA malfunction: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
-                    this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-                        ta,
-                        { group: "default" },
-                        message,
-                        {});
-                }
+                this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                    ta,
+                    { group: "default" },
+                    message,
+                    {});
             }
         }
-        this.timesExpirationTAs = sizes;
     };
 
     _verifyExpiration = () => {
-        const vrps = this.rpki.getVrps()
+        const roas = this.rpki.getVrps();
+        const expiringRoas = roas
             .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < this.roaExpirationAlertHours * 3600));
 
         if (this.enableExpirationCheckTA) {
-            this._checkExpirationTAs(vrps); // Check for TA malfunctions
+            this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
         }
 
         if (this.enableExpirationAlerts) {
             const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
             const asnsIn = this.monitored.asns.map(i => i.asn.getValue());
-            const relevantVrps = getRelevant(vrps, prefixesIn, asnsIn);
+            const relevantVrps = getRelevant(expiringRoas, prefixesIn, asnsIn);
 
             let alerts = [];
             if (relevantVrps.length) {
