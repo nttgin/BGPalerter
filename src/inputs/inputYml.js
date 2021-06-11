@@ -110,7 +110,7 @@ export default class InputYml extends Input {
                     }
 
                     if (Object.keys(monitoredPrefixesFile).length === 0) {
-                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md"));
+                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/main/docs/prefixes.md"));
                         return;
                     }
 

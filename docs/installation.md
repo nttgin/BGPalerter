@@ -13,7 +13,7 @@ The first time you run it, the auto-configuration will start.
 
 1. Download the binary:  `wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64`
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example) as `config.yml` (in the same directory of the binary)
 
 3. Make the binary executable (e.g., `chmod +x bgpalerter-linux-x64`)
 
@@ -28,7 +28,7 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-macos-x64).
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example) as `config.yml` (in the same directory of the binary)
 
 3. Make the binary executable (e.g., `chmod +x bgpalerter-macos-x64`)
 
@@ -41,7 +41,7 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-win-x64.exe).
 
-2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example) as `config.yml` (in the same directory of the binary)
+2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example) as `config.yml` (in the same directory of the binary)
 
 3. Open cmd (press `ctrl + R` and type `cmd`) and `cd` on the directory where you downloaded the binary (usually `cd C:\Users\_USER_\Downloads`)
 

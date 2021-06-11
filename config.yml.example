@@ -165,7 +165,7 @@ reports:
 #      host: 127.0.0.1
 #      port: 514
 #      transport: udp
-#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
 #        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
 #        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
@@ -186,7 +186,7 @@ reports:
 #        newprefix: informational
 #        visibility: debug
 #        path: trace
-#      resourceTemplates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+#      resourceTemplates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"
 #        newprefix: "newprefix::${prefix}@@${asn}"
@@ -217,7 +217,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
-#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: '{"text": "${summary}"}'
 #      headers:
 #      isTemplateJSON: true
@@ -329,7 +329,7 @@ monitoredPrefixesFiles:
 # HTTP proxy setting:
 # Allow to run BGPalerter behind an HTTP/HTTPS proxy.
 # You can also specify which module can bypass the proxy.
-# More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/http-proxy.md
+# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/http-proxy.md
 
 # httpProxy: http://username:password@127.0.0.1:9000
 
@@ -337,7 +337,7 @@ monitoredPrefixesFiles:
 ############################
 # RPKI settings:
 # Global RPKI settings shared across all monitors requiring RPKI data
-# More information here: https://github.com/nttgin/BGPalerter/blob/master/docs/rpki.md
+# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md
 
 rpki:
   vrpProvider: ntt

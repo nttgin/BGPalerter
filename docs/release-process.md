@@ -77,6 +77,6 @@ We currently use the following automation on the repository:
 5) The pre-release is tested
 6) After the test period, the pre-released is marked as latest and released as stable.
     1) Clients will be notified of the new release.
-7) The `release` branch is merged in `master` and after deleted.
+7) The `release` branch is merged in `main` and after deleted.
 
 All pull requests must happen against the `dev` branch (or rebased during review). If needed they will be cherry-picked in the `release` branch.
