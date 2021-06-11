@@ -44,7 +44,7 @@ export default class MonitorRPKI extends Monitor {
             if (deprecated.includes(configParamKey)) {
                 this.logger.log({
                     level: 'error',
-                    message: `The parameters ${deprecated.join(",")} are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/master/docs/rpki.md`
+                    message: `The parameters ${deprecated.join(",")} are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md`
                 });
             }
         }

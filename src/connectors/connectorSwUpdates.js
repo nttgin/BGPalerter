@@ -47,7 +47,7 @@ export default class ConnectorSwUpdates extends Connector{
     _checkForUpdates = () => {
         return this.axios({
             responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
+            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/package.json"
         })
             .then(data => {
                 if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {

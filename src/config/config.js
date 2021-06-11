@@ -140,7 +140,7 @@ export default class Config {
 
     downloadDefault = () => {
         return axios({
-            url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example',
+            url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example',
             method: 'GET',
             responseType: 'blob', // important
         })

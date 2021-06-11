@@ -80,7 +80,7 @@ export default class ConnectorRIS extends Connector {
         this.ws.on('close', (error) => {
 
             if (this.connected) {
-                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/main/docs/ris-disconnections.md");
             } else {
                 this._disconnect("It was not possible to establish a connection with RIPE RIS");
                 reject();
