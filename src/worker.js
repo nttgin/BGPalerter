@@ -53,12 +53,12 @@ export default class Worker {
         if (!this.config.multiProcess) {
             const Consumer = require("./consumer").default;
 
-            this.master();
+            this.main();
             new Consumer(env, this.input);
 
         } else {
             if (cluster.isMaster) {
-                this.master(cluster.fork());
+                this.main(cluster.fork());
             } else {
                 const Consumer = require("./consumer").default;
                 new Consumer(env, this.input);
@@ -67,7 +67,7 @@ export default class Worker {
 
     };
 
-    master = (worker) => {
+    main = (worker) => {
         const LossyBuffer = require("./utils/lossyBuffer").default;
         const ConnectorFactory = require("./connectorFactory").default;
 
@@ -90,7 +90,7 @@ export default class Worker {
         if (this.config.uptimeMonitor) {
             this.logger.log({
                 level: 'error',
-                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/master/docs/process-monitors.md"
+                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/main/docs/process-monitors.md"
             });
         }
 

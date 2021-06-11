@@ -59,7 +59,7 @@ reports:
       host: 127.0.0.1
       port: 1516
       transport: udp
-      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
         default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
         hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
         newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
@@ -75,7 +75,7 @@ reports:
       - misconfiguration
       - rpki
     params:
-      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/master/docs/context.md
+      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
         default: '{"text": "${summary}"}'
       headers:
       isTemplateJSON: true

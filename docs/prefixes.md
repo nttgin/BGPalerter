@@ -71,7 +71,7 @@ Below the complete list of attributes (the dot notation is used to represent yml
 | ignoreMorespecifics | Prefixes more specific of the current one will be excluded from monitoring. | A boolean | Yes |
 | ignore | Exclude the current prefix from monitoring. Useful when you are monitoring a prefix and you want to exclude a particular sub-prefix. | A boolean | No |
 | includeMonitors | The list of monitors you want to run on this prefix. If this attribute is not declared, all monitors will be used. Not compatible with excludeMonitors. | An array of strings (monitors name according to config.yml) | No |
-| excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. Use monitors `name` attributes, as defined in the monitor list in [config.yml](https://github.com/nttgin/BGPalerter/blob/master/config.yml.example). | An array of strings (monitors name according to config.yml) | No |
+| excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. Use monitors `name` attributes, as defined in the monitor list in [config.yml](https://github.com/nttgin/BGPalerter/blob/main/config.yml.example). | An array of strings (monitors name according to config.yml) | No |
 | path | A list path matching rules, read more [here](path-matching.md). |  | No |
 | group | The name of the group that will receive alerts about this monitored prefix. See [here](usergroups.md).| A string | No |
 
