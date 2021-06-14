@@ -9,7 +9,7 @@ export default class WebSocket {
         this.options = options;
         this.ws = null;
         this.alive = false;
-        this.pingInterval = options.pingInterval || 20000;
+        this.pingInterval = options.pingInterval || 40000;
         this.reconnectSeconds = options.reconnectSeconds || 40000;
         this.lastPingReceived = null;
     }
@@ -29,8 +29,10 @@ export default class WebSocket {
     };
 
     _pingCheck = () => {
+        const nPings = 4;
         if (this.ws) {
-            if (this.lastPingReceived + (this.pingInterval * 3) < new Date().getTime()) {
+            if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
+                this.pubsub.publish("error", `The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
                 this.disconnect();
                 this.connect();
             }
@@ -91,10 +93,13 @@ export default class WebSocket {
             this.ws.removeAllListeners("close");
             this.ws.removeAllListeners("error");
             this.ws.removeAllListeners("open");
-            this.ws.removeAllListeners("ping");
+            this.ws.removeAllListeners("pong");
             this.ws.terminate();
             this.ws = null;
             this.alive = false;
+            if (this.pingIntervalTimer) {
+                clearInterval(this.pingIntervalTimer);
+            }
         } catch (e) {
             // Nobody cares
         }
