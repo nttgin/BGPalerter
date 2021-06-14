@@ -50,6 +50,7 @@ export default class ConnectorSwUpdates extends Connector{
             url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/package.json"
         })
             .then(data => {
+
                 if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
                     this._message({
                         type: "software-update",

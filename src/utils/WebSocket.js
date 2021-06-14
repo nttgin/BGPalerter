@@ -9,8 +9,9 @@ export default class WebSocket {
         this.options = options;
         this.ws = null;
         this.alive = false;
-        this.pingInterval = options.pingInterval || 40000;
-        this.reconnectSeconds = options.reconnectSeconds || 30000;
+        this.pingInterval = options.pingIntervalSeconds ? options.pingIntervalSeconds * 1000 : 40000;
+        this.reconnectSeconds = options.reconnectSeconds ? options.reconnectSeconds * 1000 : 30000;
+        this.connectionDelay = 5000;
         this.lastPingReceived = null;
     }
 
@@ -85,7 +86,9 @@ export default class WebSocket {
         if (this.connectTimeout) {
             clearTimeout(this.connectTimeout);
         }
-        this.connectTimeout = setTimeout(this._connect, this.reconnectSeconds);
+        this.connectTimeout = setTimeout(this._connect, this.connectionDelay);
+
+        this.connectionDelay = this.reconnectSeconds;
     };
 
     disconnect = () => {
