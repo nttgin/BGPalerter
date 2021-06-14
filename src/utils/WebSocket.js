@@ -10,7 +10,7 @@ export default class WebSocket {
         this.ws = null;
         this.alive = false;
         this.pingInterval = options.pingInterval || 40000;
-        this.reconnectSeconds = options.reconnectSeconds || 40000;
+        this.reconnectSeconds = options.reconnectSeconds || 30000;
         this.lastPingReceived = null;
     }
 
@@ -35,6 +35,8 @@ export default class WebSocket {
                 this.pubsub.publish("error", `The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
                 this.disconnect();
                 this.connect();
+            } else {
+                this._ping();
             }
         }
     };
@@ -45,7 +47,6 @@ export default class WebSocket {
         }
         this._pingReceived(); // Set initial ping timestamp
         this.pingIntervalTimer = setInterval(() => {
-            this._ping();
             this._pingCheck();
         }, this.pingInterval);
     };
@@ -84,7 +85,7 @@ export default class WebSocket {
         if (this.connectTimeout) {
             clearTimeout(this.connectTimeout);
         }
-        this.connectTimeout = setTimeout(this._connect, 5000);
+        this.connectTimeout = setTimeout(this._connect, this.reconnectSeconds);
     };
 
     disconnect = () => {
