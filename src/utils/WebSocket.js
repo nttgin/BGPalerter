@@ -9,8 +9,9 @@ export default class WebSocket {
         this.options = options;
         this.ws = null;
         this.alive = false;
-        this.pingInterval = options.pingInterval || 20000;
-        this.reconnectSeconds = options.reconnectSeconds || 40000;
+        this.pingInterval = options.pingIntervalSeconds ? options.pingIntervalSeconds * 1000 : 40000;
+        this.reconnectSeconds = options.reconnectSeconds ? options.reconnectSeconds * 1000 : 30000;
+        this.connectionDelay = 5000;
         this.lastPingReceived = null;
     }
 
@@ -29,10 +30,14 @@ export default class WebSocket {
     };
 
     _pingCheck = () => {
+        const nPings = 4;
         if (this.ws) {
-            if (this.lastPingReceived + (this.pingInterval * 3) < new Date().getTime()) {
+            if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
+                this.pubsub.publish("error", `The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
                 this.disconnect();
                 this.connect();
+            } else {
+                this._ping();
             }
         }
     };
@@ -43,7 +48,6 @@ export default class WebSocket {
         }
         this._pingReceived(); // Set initial ping timestamp
         this.pingIntervalTimer = setInterval(() => {
-            this._ping();
             this._pingCheck();
         }, this.pingInterval);
     };
@@ -82,7 +86,9 @@ export default class WebSocket {
         if (this.connectTimeout) {
             clearTimeout(this.connectTimeout);
         }
-        this.connectTimeout = setTimeout(this._connect, 5000);
+        this.connectTimeout = setTimeout(this._connect, this.connectionDelay);
+
+        this.connectionDelay = this.reconnectSeconds;
     };
 
     disconnect = () => {
@@ -91,10 +97,13 @@ export default class WebSocket {
             this.ws.removeAllListeners("close");
             this.ws.removeAllListeners("error");
             this.ws.removeAllListeners("open");
-            this.ws.removeAllListeners("ping");
+            this.ws.removeAllListeners("pong");
             this.ws.terminate();
             this.ws = null;
             this.alive = false;
+            if (this.pingIntervalTimer) {
+                clearInterval(this.pingIntervalTimer);
+            }
         } catch (e) {
             // Nobody cares
         }
