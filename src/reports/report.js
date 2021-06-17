@@ -160,14 +160,14 @@ export default class Report {
                     matched = content.data[0].matchedRule;
                     context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
-                    context.description = matched.description;
+                    context.description = matched.description || "";
                     break;
 
                 default:
                     matched = content.data[0].matchedRule;
                     context.prefix = matched.prefix;
-                    context.description = matched.description;
-                    context.asn = matched.asn.toString();
+                    context.description = matched.description || "";
+                    context.asn = (matched.asn || "").toString();
             }
 
             return context;
