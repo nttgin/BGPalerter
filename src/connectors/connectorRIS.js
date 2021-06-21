@@ -93,6 +93,9 @@ export default class ConnectorRIS extends Connector {
     connect = () =>
         new Promise((resolve, reject) => {
             try {
+                if (this.ws) {
+                    this.ws.disconnect();
+                }
                 const wsOptions = {
                     perMessageDeflate: this.params.perMessageDeflate
                 };
@@ -284,6 +287,8 @@ export default class ConnectorRIS extends Connector {
 
     onInputChange = (input) => {
         input.onChange(() => {
+            // An external process may write bits of the file and trigger the reload multiple times
+            // the timer is reset on each change and it triggers the reload 2 sec after the process stops writing.
             if (this._timeoutFileChange) {
                 clearTimeout(this._timeoutFileChange);
             }

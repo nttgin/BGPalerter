@@ -30,7 +30,7 @@ export default class WebSocket {
     };
 
     _pingCheck = () => {
-        const nPings = 4;
+        const nPings = 6;
         if (this.ws) {
             if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
                 this.pubsub.publish("error", `The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
