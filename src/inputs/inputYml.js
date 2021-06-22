@@ -102,7 +102,7 @@ export default class InputYml extends Input {
                 if (fs.existsSync(file)) {
                     fileContent = fs.readFileSync(file, 'utf8');
                     try {
-                        monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
+                        monitoredPrefixesFile = yaml.load(fileContent) || {};
                         this._watchPrefixFile(file);
                     } catch (error) {
                         reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
@@ -110,7 +110,7 @@ export default class InputYml extends Input {
                     }
 
                     if (Object.keys(monitoredPrefixesFile).length === 0) {
-                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md"));
+                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/main/docs/prefixes.md"));
                         return;
                     }
 
@@ -128,10 +128,15 @@ export default class InputYml extends Input {
                                             return;
                                         }
                                         uniqueAsns[asn] = true;
-                                        return Object.assign({
+                                        const item = Object.assign({
                                             asn: new AS(asn),
                                             group: 'default'
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
+
+                                        if (item.upstreams) item.upstreams = new AS(item.upstreams);
+                                        if (item.downstreams) item.downstreams = new AS(item.downstreams);
+
+                                        return item;
                                     });
 
                                 this.asns = this.asns.concat(newAsnSet);
@@ -313,29 +318,31 @@ export default class InputYml extends Input {
     retrieve = () =>
         new Promise((resolve, reject) => {
             const prefixes = {};
-            for (let rule of this.prefixes) {
-                const prefix = rule.prefix;
-                prefixes[prefix] = {
-                    asn: rule.asn.getValue(),
-                    description: rule.description,
-                    group: rule.group,
-                    ignore: rule.ignore,
-                    ignoreMorespecifics: rule.ignoreMorespecifics,
-                };
+            const monitorASns = {};
 
-                if (rule.excludeMonitors.length) prefixes[prefix].excludeMonitors = rule.excludeMonitors;
-                if (rule.includeMonitors.length) prefixes[prefix].includeMonitors = rule.includeMonitors;
+            for (let rule of this.prefixes) {
+                const item = JSON.parse(JSON.stringify(rule));
+                prefixes[rule.prefix] = item;
+                item.asn = rule.asn.getValue();
+                delete item.prefix;
+                if (!item.includeMonitors.length) {
+                    delete item.includeMonitors;
+                }
+                if (!item.excludeMonitors.length) {
+                    delete item.excludeMonitors;
+                }
             }
 
-            const monitorASns = {};
             for (let asnRule of this.asns) {
                 monitorASns[asnRule.asn.getValue()] = {
-                    group: asnRule.group
+                    group: asnRule.group,
+                    upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
+                    downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null,
                 };
             }
 
             const options = Object.assign({}, this.options, { monitorASns });
 
-            resolve(JSON.parse(JSON.stringify({ ...prefixes, options })));
+            resolve({ ...prefixes, options });
         });
 }

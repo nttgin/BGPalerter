@@ -47,9 +47,10 @@ export default class ConnectorSwUpdates extends Connector{
     _checkForUpdates = () => {
         return this.axios({
             responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
+            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/package.json"
         })
             .then(data => {
+
                 if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
                     this._message({
                         type: "software-update",
@@ -70,7 +71,7 @@ export default class ConnectorSwUpdates extends Connector{
     subscribe = (input) =>
         new Promise((resolve, reject) => {
             if (this.config.checkForUpdatesAtBoot){
-                setTimeout(this._checkForUpdates, 6000);
+                setTimeout(this._checkForUpdates, 20000); // Check after 20 seconds from boot
             }
             setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);

@@ -61,6 +61,21 @@ reports:
       persistAlertData: false
       alertDataDirectory: alertdata/
 
+  - file: reportPullAPI
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      maxAlertsAmount: 100
+
+rest:
+  host: null
+  port: 8011
+
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
@@ -79,13 +94,12 @@ persistStatus: true
 
 volume: volumetests/
 
+groupsFile: groups.test.yml
+
 processMonitors:
   - file: uptimeApi
     params:
       useStatusCodes: true
-      host: null
-      port: 8011
-
 
 rpki:
   vrpProvider: ntt

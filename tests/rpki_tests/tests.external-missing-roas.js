@@ -38,14 +38,12 @@ const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
-
 fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json");
-
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 3", function() {
+describe("RPKI monitoring external", function() {
 
     it("missing roas", function (done) {
 
@@ -55,7 +53,7 @@ describe("RPKI monitoring 3", function() {
                 id: 'a82_112_100_0_24-2914-null',
                 origin: 'rpki-monitor',
                 affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA.'
+                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA'
             }
 
         };

@@ -41,9 +41,11 @@ export default class ConnectorRIS extends Connector {
     constructor(name, params, env) {
         super(name, params, env);
         this.ws = null;
+        this.environment = env.config.environment;
         this.subscription = null;
         this.agent = env.agent;
         this.subscribed = {};
+        this.canaryBeacons = {};
 
         this.url = brembo.build(this.params.url, {
             path: [],
@@ -51,6 +53,9 @@ export default class ConnectorRIS extends Connector {
                 client: env.clientId
             }
         });
+        if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
+            setTimeout(this._startCanary, 60000);
+        }
     };
 
     _openConnect = (resolve) => {
@@ -63,7 +68,11 @@ export default class ConnectorRIS extends Connector {
     };
 
     _messageToJson = (message) => {
-        this._message(JSON.parse(message));
+        const messageObj = JSON.parse(message);
+        if (this.environment !== "research") {
+            this._checkCanary();
+        }
+        this._message(messageObj);
     };
 
     _appendListeners = (resolve, reject) => {
@@ -71,7 +80,7 @@ export default class ConnectorRIS extends Connector {
         this.ws.on('close', (error) => {
 
             if (this.connected) {
-                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/master/docs/ris-disconnections.md");
+                this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/main/docs/ris-disconnections.md");
             } else {
                 this._disconnect("It was not possible to establish a connection with RIPE RIS");
                 reject();
@@ -84,6 +93,9 @@ export default class ConnectorRIS extends Connector {
     connect = () =>
         new Promise((resolve, reject) => {
             try {
+                if (this.ws) {
+                    this.ws.disconnect();
+                }
                 const wsOptions = {
                     perMessageDeflate: this.params.perMessageDeflate
                 };
@@ -176,16 +188,17 @@ export default class ConnectorRIS extends Connector {
     };
 
     _subscribeToASns = (input) => {
-        const monitoredASns = input.getMonitoredASns().map(i => i.asn);
+        const monitoredASns = input.getMonitoredASns();
 
         const params = JSON.parse(JSON.stringify(this.params.subscription));
         for (let asn of monitoredASns){
-            const asnString = asn.getValue();
+            const asnString = asn.asn.getValue();
 
             if (!this.subscribed[asnString]) {
                 console.log(`Monitoring AS${asnString}`);
                 this.subscribed[asnString] = true;
             }
+
             params.path = `${asnString}\$`;
 
             this.ws.send(JSON.stringify({
@@ -193,6 +206,64 @@ export default class ConnectorRIS extends Connector {
                 data: params
             }));
         }
+    };
+
+    _startCanary = () => {
+        const beacons = {
+            v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
+                "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
+                "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
+                "93.175.153.0/24"],
+            v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
+                "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
+                "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
+                "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
+                "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
+        };
+
+        const selected = [
+            ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 2),
+            ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 2)
+        ];
+
+        for (let prefix of selected) {
+            this.canaryBeacons[prefix] = true;
+            this.ws.send(JSON.stringify({
+                type: "ris_subscribe",
+                data: {
+                    moreSpecific: false,
+                    lessSpecific: false,
+                    prefix,
+                    type: "UPDATE",
+                    socketOptions: {
+                        includeRaw: false,
+                        acknowledge: false
+                    }
+                }
+            }));
+        }
+
+        this._checkCanary();
+    };
+
+    _checkCanary = () => {
+        clearTimeout(this._timerCheckCanary);
+        if (!this.connected) {
+            this.logger.log({
+                level: 'error',
+                message: "RIS connected again, the streaming session is working properly"
+            });
+        }
+        this.connected = true;
+        this._timerCheckCanary = setTimeout(() => {
+            if (this.connected) {
+                this.connected = false;
+                this.logger.log({
+                    level: 'error',
+                    message: "RIS has been silent for too long, probably there is something wrong"
+                });
+            }
+        }, 3600 * 1000 * 4.5); // every 4.5 hours
     };
 
     _onInputChange = (input) => {
@@ -216,6 +287,8 @@ export default class ConnectorRIS extends Connector {
 
     onInputChange = (input) => {
         input.onChange(() => {
+            // An external process may write bits of the file and trigger the reload multiple times
+            // the timer is reset on each change and it triggers the reload 2 sec after the process stops writing.
             if (this._timeoutFileChange) {
                 clearTimeout(this._timeoutFileChange);
             }
@@ -297,7 +370,7 @@ export default class ConnectorRIS extends Connector {
                         prefix,
                         peer,
                         timestamp
-                    })
+                    });
                 }
 
                 return components;

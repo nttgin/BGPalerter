@@ -10,9 +10,6 @@ processMonitors:
   - file: uptimeApi
     params:
       useStatusCodes: true
-      host: null
-      port: 8011
-
   - file: uptimeHealthcheck
     params:
       url: url_to_poll
@@ -49,15 +46,23 @@ In `config.yml` the uptimeApi is declared as:
 
 ```yaml
 processMonitors:
-
   - file: uptimeApi
     params:
       useStatusCodes: true
-      host: null
-      port: 8011
 ```
 
-When the uptimeApi block is commented/deleted from the config file, no extra dependencies are loaded and no open port is required. 
+When the uptimeApi block is commented/deleted from the config file, no extra dependencies are loaded and no open port is required.
+
+
+The REST API uses the generic `rest` configuration in `config.yml`. Read [here](configuration.md) or see `config.yml.example` for more information.
+The REST configuration is by default:
+```yaml
+rest:
+  host: localhost
+  port: 8011
+```
+
+
 
 The API, in addition to the JSON answer, can use HTTP status codes for an easier integration with Nagios and similar.
 
@@ -65,9 +70,7 @@ Parameters for this module are:
 
 |Parameter| Description| 
 |---|---|
-|useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. | 
-|host| The IP address on which the API will be reachable. If `null` or missing, the API will be reachable on all the addresses of the machine.| 
-|port| The port on which the API will be reachable. | 
+|useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. |
 
 
 ## uptimeHealthcheck

@@ -20,9 +20,12 @@ The following are common parameters which it is possible to specify in the confi
 |httpProxy| Defines the HTTP/HTTPS proxy server to be used by BGPalerter and its submodules (reporters/connectors/monitors). See [here](http-proxy.md) for more information. | A string | http://usr:psw@ prxy.org:8080 | No | 
 |volume| Defines a directory that will contain the data that needs persistence. For example, configuration files and logs will be created in such directory (default to "./"). | A string | /home/bgpalerter/ | No | 
 |persistStatus| If set to true, when BGPalerter is restarted the list of alerts already sent is recovered. This avoids duplicated alerts. The process must be able to write on disc inside `.cache/`. | A boolean | true | No |
-|generatePrefixListEveryDays| This parameter allows to automatically re-generate the prefix list after the specified amount of days. Set to 0 to disable it. It works only if you have one prefix list file. | An integer | 0 | No |
+|generatePrefixListEveryDays| This parameter allows to automatically re-generate the prefix list after the specified amount of days. Set to 0 to disable it. It works only if you have one prefix list file and if you have used BGPalerter to automatically generate the file (and not if you edited prefixes.yml manually). | An integer | 0 | No |
 |rpki| A dictionary containing the RPKI configuration (see [here](rpki.md) for more details). |  |  | Yes |
- 
+|groupsFile| A file containing user groups definition (see [here](usergroups.md) for more details). | A string | groups.yml | No | 
+|rest| A dictionary containing the parameters to run the server for all APIs provided by BGPalerter. | | | No | 
+|rest.host| The IP/host on which the APIs will be reachable. The default value is localhost, this means the API will not be reachable from another host. To make it public use null or 0.0.0.0. | A string or null | localhost | No | 
+|rest.port| The port of the REST API. The default value is 8011. | An integer | 8011 | No | 
 
 The following are advanced parameters, please don't touch them if you are not doing research/experiments.
 
@@ -30,11 +33,12 @@ The following are advanced parameters, please don't touch them if you are not do
 |---|---|---|---|---|
 |environment| You can specify various environments. The values "production" (not verbose) and "development" (verbose) will affect the verbosity of the error/debug logs. The value "research" is explained [here](research.md). Other values don't affect the functionalities, they will be used to identify from which environment the log is coming from. | A string | production | Yes |
 |alertOnlyOnce| A boolean that, if set to true, will prevent repetitions of the same alert in the future (which it doesn't make sense for production purposes). In this case notificationIntervalSeconds will be ignored. If set to true, the signature of all alerts will be cached in order to recognize if they already happened in the past. This may lead to a memory leak if the amount of alerts is considerable. | A boolean | false | No |
-|pidFile| A file where the PID of the BGP alerter master process is recorded. | A string |  bgpalerter.pid | No |
+|pidFile| A file where the PID of the BGP alerter main process is recorded. | A string |  bgpalerter.pid | No |
 |maxMessagesPerSecond| A cap to the BGP messages received, over such cap the messages will be dropped. The default value is way above any production rate. Changing this value may be useful only for research measurements on the entire address space. | An integer | 6000 | No | 
 |multiProcess| If set to true, the processing of the BGP messages will be distributed on two processes. This may be useful for research measurements on the entire address space. It is discouraged to set this to true for normal production monitoring. | A boolean | false | No | 
 |fadeOffSeconds| If an alert is generated but cannot be yet squashed (e.g., not reached yet the `thresholdMinPeers`), it is inserted in a temporary list which is garbage collected after the amount of seconds expressed in `fadeOffSeconds`. Due to BGP propagation times, values below 5 minutes can result in false negatives.| An integer | 360 | No | 
 |checkFadeOffGroupsSeconds| Amount of seconds after which the process checks for fading off alerts. | An integer | 30 | No | 
+
 
 
 
@@ -128,6 +132,16 @@ Parameters for this connector module:
 |carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
 |perMessageDeflate| Enable gzip compression on the connection. |
 
+#### connectorRISDump
+It connects to the RIPEstat's BGPlay API and retrieves a RIS dump about the monitored resources. The retrieved dump is 2 hours old, due to limitations on the API side. 
+
+Without this connector, when you start BGPalerter the monitoring will start based on new BGP updates. This means that you will not receive alerts before a new BGP update is propagated; e.g., if one of your prefixes is already hijacked when you start BGPalerter, you will not get notified immediately.
+
+This connector runs only in the two following conditions:
+- you enable it in the config.yml (commented out by default);
+- you didn't start BGPalerter in the last two hours.
+
+
 #### connectorTest
 
 Connector used for testing purposes, it provokes all types of alerting. Needed to run the tests (`npm run test`) .
@@ -182,16 +196,16 @@ This monitor detects BGP updates containing AS_PATH which match particular regul
 > The prefixes list of BGPalerter has an entry such as:
 > ```yaml
 > 165.254.255.0/24:
->    asn: 15562
->    description: an example on path matching
->    ignoreMorespecifics: false
->  path:
->    - match: ".*2194,1234$"
->      notMatch: ".*5054.*"
->      matchDescription: detected scrubbing center
->    - match: ".*123$"
->      notMatch: ".*5056.*"
->      matchDescription: other match
+>   asn: 15562
+>   description: an example on path matching
+>   ignoreMorespecifics: false
+>   path:
+>     - match: ".*2194,1234$"
+>       notMatch: ".*5054.*"
+>       matchDescription: detected scrubbing center
+>     - match: ".*123$"
+>       notMatch: ".*5056.*"
+>       matchDescription: other match
 > ```
 
 Path is a list of matching rules, in this way multiple matching rules can be defined for the same prefix (rules are in OR).
@@ -265,7 +279,7 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 > 
 > If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
-You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` in the [auto genere prefixes documentation](prefixes.md#generate).
+You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` of the [auto configuration](prefixes.md#generate).
 
 
 Example of alert:
@@ -320,6 +334,7 @@ Parameters for this monitor module:
 |Parameter| Description| 
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
+|checkDisappearing| If set to true, the monitor will check also for disappearing ROAs. Important: set this feature to false if you have monitorROAS enabled; monitorROAS provides diffs including disappearing ROAs. |
 |thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 |cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g., disappearing ROAs). Default to 7 days. |
@@ -327,7 +342,8 @@ Parameters for this monitor module:
 
 #### monitorROAS
 
-This monitor will periodically check and report diffs in ROAs repos involving any of your ASes or prefixes.
+This monitor will periodically check the ROAs involving any of your ASes or prefixes.
+In particular, it will report about: ROAs involving your resources being edited, added or removed; expiring ROAs; TA malfunctions.
 You need to configure your RPKI data source as described [here](rpki.md).
 Note, while BGPalerter will perform the check near real time, many RIRs have delayed ROAs publication times.
 
@@ -339,172 +355,68 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 >    asn: 1234
 >    description: an example
 >    ignoreMorespecifics: false
+>    group: noc1
 > 
 > options:
 >  monitorASns:
 >    2914:
->      group: default
+>      group: noc2
 > ```
 > If in config.yml monitorROAS is enabled, you will receive alerts every time:
->  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed.
->  * A ROA that is, or was, involving AS2914 is added/edited/removed.
+>  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed (based on the prefix `1.2.3.4/24` matching rule).
+>  * A ROA that is, or was, involving AS2914 is added/edited/removed (based on the `monitorASns` section).
 
+**Important 1:** for a complete monitoring, configure also the `monitorASns` section. Setting only prefix matching rules is not sufficient: prefix matching rules are based on the longest prefix match, less specific ROAs impacting the prefix will NOT be matched. On the other side, setting only the `monitorASns` section is instead perfectly fine for ROA monitoring purposes.
+
+**Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyASns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
+
+**Important 3:** alerts about the generic health status of TAs are generated according to the provided VRP file. This types of alerts are not necessarily related to the monitored resources and they are send to the `default` user group.
 
 Example of alerts:
-> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>  
+> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>; added <5.5.3.4/24, 1234, 25, apnic>
+> 
+> Possible TA malfunction: 24% of the ROAs disappeared from APNIC
+
+**This monitor also alerts about ROAs expiration.**
+
+This feature requires a vrps file having a `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file having such field or use as vrp provider one of: `ntt`, `rpkiclient` ([more info](rpki.md)).
+
+ROAs are affected by a series of expiration times:
+* Certificate Authority's "notAfter" date;
+* each CRL's "nextUpdate" date;
+* each manifest's EE certificate notAfter, and each manifests eContent "nextUpdate";
+* the ROA's own EE certificate "notAfter".
+
+The field `expire` must be the closest expiration time of all of the above.
+
+Example of alerts:
+> The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
+> 
+> Possible TA malfunction: 24% of the ROAs are expiring in APNIC
 
 
-    
-### Reports
+Parameters for this monitor module:
+
+|Parameter| Description| 
+|---|---|
+|enableDiffAlerts| Enables alerts showing edits impacting ROAs for the monitored resources. Default true|
+|enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.|
+|enableExpirationCheckTA| Enables alerts about TA malfunctions detected when too many ROAs expire in the same TA. Default true.|
+|enableDeletedCheckTA| Enables alerts about TA malfunctions detected when too many ROAs are deleted in the same TA. Default true.|
+|roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means. |
+|checkOnlyASns| If set to true (default), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above).  If you are monitoring the origin AS of your prefixes, leave this option to true to avoid noise.|
+|toleranceExpiredRoasTA|The percentage of expiring ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
+|toleranceDeletedRoasTA|The percentage of deleted ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
+
+#### monitorPathNeighbors
+
+The component `monitorPathNeighbors` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
+
+Refer to the [documentation for this monitor](path-neighbors.md).
+
+
+# Reports
 
 Reports send/store the alerts, e.g., by email or to a file. Reports can also provide the data triggering such alerts.
-
-After configuring a report module, you can run the BGPalerter binary with the option `-t` to test the configuration. 
-This will generate fake alerts. [Read more here](installation.md#bgpalerter-parameters).
-
-> By default all communications will be sent to the default user group, so it is not mandatory to configure any user group. 
-> Note that the default group is used also for administrative and error communications, if you want to filter out such communications you need to [create another user group](usergroups.md).
-
-Possible reports are:
-
-#### reportFile
-
-This report module is the default one. It sends the alerts as verbose logs.
-To configure the logs see the [configuration introduction](configuration.md).
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.| 
-|alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. | 
-
-
-
-#### reportEmail
-
-This report module sends the alerts by email.
-
-Read [here](context.md) how to write a template.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
-|senderEmail| The email address that will be used as sender for the alerts. | 
-|smtp| A dictionary containing the SMTP configuration. Some parameters are described in `config.yml.example`. For all the options refer to the [nodemailer documentation](https://nodemailer.com/smtp/). | 
-|notifiedEmails| A dictionary containing email addresses grouped by user groups.  (key: group, value: list of emails)| 
-|notifiedEmails.default| The default user group. Each user group is a [list](prefixes.md#array) of emails. This group should contain at least the admin. | 
-
-After configuring this module, [test the configuration](installation.md#bgpalerter-parameters) (`-t` option) to be sure everything will work once in production.
-
-#### reportSlack
-
-This report module sends alerts on Slack.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|colors| A dictionary having as key the event channel and as value a hex color (string). These colors will be used to make messages in Slack distinguishable. | 
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
-|hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
-|hooks.default| The WebHook (URL) of the default user group.| 
-
-
-#### reportKafka
-
-This report sends the alerts (including the BGP messages triggering them) to Kafka. By default it creates a topic `bgpalerter`.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|host| Host of the Kafka instance/broker (e.g., localhost).| 
-|port| Port of the Kafka instance/broker (e.g., 9092).| 
-|topics| A dictionary containing a mapping from BGPalerter channels to Kafka topics (e.g., `hijack: hijack-topic`). By default all channels are sent to the topic `bgpalerter` (`default: bgpalerter`) |
- 
-#### reportSyslog
- 
-This report module sends the alerts on Syslog.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
-|host| Host of the Syslog server (e.g., localhost).| 
-|port| Port of the Syslog server  (e.g., 514).| 
-|transport| The transport protocol to use. Two options: `udp` or `tcp`| 
-|templates| A dictionary containing string templates for each BGPalerter channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). |
-
-#### reportAlerta
-
-This report module sends alerts to [Alerta](https://alerta.io/).
-Alerta is an open-source and easy to install dashboard that allows you to collect and monitor color-coded alerts.
-
-Parameters for this report module:
-
-|Parameter| Description |
-|---|---|
-|severity| The alert severity, e.g., ``critical``. See https://docs.alerta.io/en/latest/api/alert.html#alert-severities for the list of possible values. |
-|environment| The Alerta environment name. If not specified, it'll use the BGPalerter environment name. |
-|key| Optional, the Alerta API key to use for authenticated requests. |
-|token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
-|resourceTemplates| A dictionary of string templates for each channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template.|
-|urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
-|urls.default| The Alerta API URL of the default user group. |
-
-> If you receive a 403 error in the BGPalerter error logs, try to check if you correctly set the ALLOWED_ENVIRONMENTS in /etc/alertad.conf. 
-> In particular set ALLOWED_ENVIRONMENTS=['Production','Development'].
-
-#### reportWebex
-
-This report module sends alerts on [Webex Teams](https://teams.webex.com).
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|hooks| A dictionary containing Webex Teams WebHooks grouped by user group (key: group, value: WebHook).| 
-|hooks.default| The WebHook (URL) of the default user group.| 
-
-#### reportHTTP
-
-This report module sends alerts on a generic HTTP end-point.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|hooks| A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
-|hooks.default| The URL of the default user group.| 
-|templates| A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
-|isTemplateJSON| A boolean defining if the template provided above are JSON or plain string |
-|headers| Additional headers to use in the GET request. For example for authentication.|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
-
-[See here some examples of how to adapt reportHTTP to some common applications.](report-http.md)
-
-#### reportTelegram
-
-This report module sends alerts directly to specified Telegram users, groups, or channels.
-To send alert to Telegram you need to create a bot.
-
-To create a bot:
-1. Open Telegram, search `@botfather` and open a chat with it.
-2. Type `/newbot` and follow the procedure to create a bot.
-3. Take note of the bot ID provided.
-4. Open the chat (channel, group, user) where you want to send the alerts.
-5. Write something in the chat (from whatever user).
-6. Visit `https://api.telegram.org/bot_BOT_ID_/getUpdates` (replace `_BOT_ID_` with your bot ID) from your browser and take note of the chat ID returned in the answer. In case of multiple chat IDs, use the one with the same text you sent at the previous point.
-
-Parameters for this report module:
-
-|Parameter| Description| 
-|---|---|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
-|botUrl| The Telegram bot URL. Usually `https://api.telegram.org/bot_BOT_ID_/` where `_BOT_ID_` is your both ID. |
-|chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).| 
-|chatIds.default| The chat ID of the default user group.| 
+Refer to the [report's documentation](reports.md).
+    

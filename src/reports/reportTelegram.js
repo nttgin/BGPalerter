@@ -60,7 +60,9 @@ export default class reportTelegram extends ReportHTTP {
                 message: `${this.name} reporting is not enabled: no botUrl provided`
             });
             this.enabled = false;
-        } else if (!params.chatIds["default"]) {
+        }
+
+        if (!params.chatIds || !params.chatIds["default"]) {
             this.logger.log({
                 level: 'error',
                 message: `${this.name} reporting is not enabled: no default chat id provided`

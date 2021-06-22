@@ -1,0 +1,102 @@
+environment: test
+
+connectors:
+  - file: connectorTest
+    name: tes
+    params:
+      testType: withdrawal
+
+monitors:
+  - file: monitorHijack
+    channel: hijack
+    name: basic-hijack-detection
+    params:
+      thresholdMinPeers: 0
+
+  - file: monitorNewPrefix
+    channel: newprefix
+    name: prefix-detection
+    params:
+      thresholdMinPeers: 0
+
+  - file: monitorVisibility
+    channel: visibility
+    name: withdrawal-detection
+    params:
+      thresholdMinPeers: 4
+
+  - file: monitorPath
+    channel: path
+    name: path-matching
+    params:
+      thresholdMinPeers: 0
+
+  - file: monitorAS
+    channel: misconfiguration
+    name: asn-monitor
+    params:
+      thresholdMinPeers: 2
+
+  - file: monitorRPKI
+    channel: rpki
+    name: rpki-monitor
+    params:
+      thresholdMinPeers: 1
+      checkUncovered: true
+
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
+
+  - file: monitorPathNeighbors
+    channel: path-neighbors
+    name: path-neighbors
+    params:
+      thresholdMinPeers: 0
+
+reports:
+  - file: reportFile
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      persistAlertData: false
+      alertDataDirectory: alertdata/
+
+
+# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# This is an array (use new lines and dashes!)
+monitoredPrefixesFiles:
+  - prefixes.test.yml
+
+logging:
+  directory: logs
+  logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
+
+checkForUpdatesAtBoot: true
+persistStatus: true
+
+volume: volumetests/
+
+groupsFile: groups.test.yml
+
+rpki:
+  vrpProvider: ntt
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
+
+notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
+alertOnlyOnce: false
+fadeOffSeconds: 10
+checkFadeOffGroupsSeconds: 2
+pidFile: bgpalerter.pid
+multiProcess: false
+maxMessagesPerSecond: 6000

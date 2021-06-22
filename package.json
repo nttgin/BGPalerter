@@ -1,10 +1,10 @@
 {
   "name": "bgpalerter",
-  "version": "1.27.1",
+  "version": "1.28.0",
   "description": "Software to monitor streams of BGP data. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, and more.",
   "author": {
     "name": "Massimo Candela",
-    "url": "http://massimocandela.com"
+    "url": "https://massimocandela.com"
   },
   "license": "BSD-3-Clause",
   "main": "src/worker.js",
@@ -15,15 +15,18 @@
   },
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "npm run test-core && npm run test-generate && npm run test-reports && npm run test-rpki",
+    "test": "npm run test-core && npm run test-generate && npm run test-reports && npm run test-rpki && npm run test-neighbor",
     "test-core": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/*.js --require @babel/register && rm -rf volumetests/",
     "test-reports": "./node_modules/.bin/mocha --exit tests/reports_tests/testReportSyslog.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/reports_tests/testsReportHttp.js --require @babel/register",
     "test-proxy": "./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register",
     "test-generate": "./node_modules/.bin/mocha --exit tests/generate_tests/*.js --require @babel/register",
     "test-kafka": "./node_modules/.bin/mocha --exit tests/kafka_tests/*.js --require @babel/register",
-    "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register",
+    "test-neighbor": "./node_modules/.bin/mocha --exit tests/neighbor_tests/*.js --require @babel/register",
+    "test-npm": "./node_modules/.bin/mocha --exit tests/npm_tests/*.js --require @babel/register",
+    "test-dump": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/dump_tests/*.js --require @babel/register",
+    "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.api.js --require @babel/register",
     "build": "./build.sh",
-    "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json && cp README.md dist/README.md",
+    "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json && cp README.md dist/README.md && cp .npm* dist/",
     "serve": "babel-node index.js",
     "inspect": "node --inspect --require @babel/register index.js",
     "update": "git update-index --assume-unchanged config.yml && git update-index --assume-unchanged prefixes.yml && git pull",
@@ -41,42 +44,41 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.12.10",
-    "@babel/core": "^7.12.10",
-    "@babel/node": "^7.12.10",
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
-    "@babel/preset-env": "^7.12.10",
-    "chai": "^4.2.0",
+    "@babel/cli": "^7.14.5",
+    "@babel/core": "^7.14.6",
+    "@babel/node": "^7.14.5",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.14.5",
+    "@babel/preset-env": "^7.14.5",
+    "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
-    "mocha": "^8.2.1",
-    "pkg": "^4.4.9",
-    "read-last-lines": "^1.7.2",
+    "mocha": "^9.0.1",
+    "pkg": "^5.2.1",
+    "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^5.27.6",
+    "@sentry/node": "^6.7.1",
     "axios": "^0.21.1",
     "batch-promises": "^0.0.3",
-    "brembo": "^2.0.4",
+    "brembo": "^2.0.5",
     "deepmerge": "^4.2.2",
-    "file-stream-rotator": "^0.5.7",
+    "fast-file-logger": "^1.0.5",
     "https-proxy-agent": "^5.0.0",
-    "inquirer": "^7.3.3",
-    "ip-address": "^6.4.0",
-    "ip-sub": "^1.0.17",
-    "js-yaml": "^3.14.1",
+    "inquirer": "^8.1.1",
+    "ip-sub": "^1.0.23",
+    "js-yaml": "^4.1.0",
     "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
-    "nodemailer": "^6.4.16",
+    "nodemailer": "^6.6.2",
     "path": "^0.12.7",
     "restify": "^8.5.1",
-    "rpki-validator": "^2.2.12",
-    "semver": "^7.3.4",
+    "rpki-validator": "^2.6.3",
+    "semver": "^7.3.5",
     "syslog-client": "^1.1.1",
-    "ws": "^7.4.0",
-    "yargs": "^16.2.0"
+    "ws": "^7.5.0",
+    "yargs": "^17.0.1"
   },
   "pkg": {
     "scripts": [
@@ -94,7 +96,7 @@
     ]
   },
   "optionalDependencies": {
-    "bufferutil": "^4.0.2",
-    "utf-8-validate": "^5.0.3"
+    "bufferutil": "^4.0.3",
+    "utf-8-validate": "^5.0.5"
   }
 }

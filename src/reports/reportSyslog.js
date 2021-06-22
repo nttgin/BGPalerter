@@ -48,7 +48,6 @@ export default class ReportSyslog extends Report {
         };
     }
 
-
     _getMessage = (channel, content) => {
         return this.parseTemplate(this.params.templates[channel] || this.params.templates["default"], this.getContext(channel, content));
     };

@@ -44,7 +44,7 @@ fs.copyFileSync("tests/rpki_tests/vrp.wrong.json", "tests/rpki_tests/vrp.json");
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring 2", function() {
+describe("RPKI monitoring external", function() {
 
     //Test rpki watch file reloading
     fs.copyFileSync("tests/rpki_tests/vrp.correct.json", "tests/rpki_tests/vrp.json");

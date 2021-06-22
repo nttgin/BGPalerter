@@ -15,7 +15,20 @@ export default class RpkiUtils {
 
         const defaultMarkDataAsStaleAfterMinutes = 60;
 
-        const providers = ["ntt", "ripe", "cloudflare", "external"]; // First provider is the default one
+        const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external", "api"]; // First provider is the default one
+
+        if (this.params.url || this.params.vrpProvider === "api") {
+            this.params.vrpProvider = "api";
+            this.params.preCacheROAs = true;
+            if (!this.params.url) {
+                this.params.vrpProvider = providers[0];
+                this.params.url = null;
+                this.logger.log({
+                    level: 'error',
+                    message: "No url provided for the vrps api. Using default vrpProvider."
+                });
+            }
+        }
 
         if (this.params.vrpFile) {
             this.params.vrpProvider = "external";
@@ -31,7 +44,7 @@ export default class RpkiUtils {
                     message: "The specified vrpProvider is not valid. Using default vrpProvider."
                 });
             }
-            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 15);
+            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
             this.params.preCacheROAs = this.params.preCacheROAs !== false;
         }
 
@@ -70,16 +83,13 @@ export default class RpkiUtils {
                 axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
             };
 
+            if (this.params.url) {
+                rpkiValidatorOptions.url = this.params.url;
+            }
             this.rpki = new rpki(rpkiValidatorOptions);
 
             if (!!this.params.preCacheROAs) {
-                this._preCache()
-                    .catch(() => {
-                        this.logger.log({
-                            level: 'error',
-                            message: "One of the VRPs lists cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
-                        });
-                    });
+                this._preCache();
             }
         }
     };
@@ -123,14 +133,7 @@ export default class RpkiUtils {
                         });
 
                         this.rpki.setVRPs(vrps);
-
-                        this._preCache()
-                            .catch(() => {
-                                this.logger.log({
-                                    level: 'error',
-                                    message: "It was not possible to load correctly the VRPs file. Possibly there is an error in the format. The RPKI monitoring should be working anyway with one of the on-line providers."
-                                });
-                            });
+                        this._preCache();
 
                     } else {
                         this.logger.log({
@@ -177,13 +180,14 @@ export default class RpkiUtils {
                     return data;
                 })
                 .catch(() => {
-                    this.status.data = false;
-                    this.status.stale = true;
-                    this.logger.log({
-                        level: 'error',
-                        message: "The VRP list cannot be downloaded."
-                    });
-                });
+                    if (!this._cannotDownloadErrorOnce) {
+                        this.logger.log({
+                            level: 'error',
+                            message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                        });
+                    }
+                    this._cannotDownloadErrorOnce = true;
+                })
         } else {
             this.status.data = true;
             this.status.stale = false;
@@ -202,14 +206,14 @@ export default class RpkiUtils {
         this.queue = [];
 
         this.validateBatch(Object
-                .values(batch)
-                .map((elements) => {
-                    const { message } = elements[0];
-                    return {
-                        prefix: message.prefix,
-                        origin: message.originAS
-                    };
-                }))
+            .values(batch)
+            .map((elements) => {
+                const { message } = elements[0];
+                return {
+                    prefix: message.prefix,
+                    origin: message.originAS
+                };
+            }))
             .then(results => {
                 for (let result of results) {
                     const key = result.origin.getId() + "-" + result.prefix;
@@ -272,11 +276,17 @@ export default class RpkiUtils {
                                 }
                             });
                     }))
+                    .catch(error => {
+                        this.logger.log({
+                            level: 'error',
+                            message: "RPKI validation failed due to:" + error
+                        });
+                    })
             });
     };
 
     getVrps = () => {
-        return [].concat.apply([],[...this.rpki.getRadixTrie().v4.values(), ...this.rpki.getRadixTrie().v6.values()]);
+        return this.rpki.toArray();
     };
 
     getStatus = () => {

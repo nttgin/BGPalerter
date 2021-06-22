@@ -11,6 +11,9 @@ By default, BGPalerter creates two user groups `noc` and `default` (since v1.27.
 
 You can create how many user groups you wish, for example to monitor resources of your customers and forward them the alerts about their resources without sending them administrative communications.
 
+User groups can be specified directly in the report configuration on in an external yaml file.
+Using an external file allows BGPalerter to auto-reload the user group definitions when the external file is changed.
+
 ## Notify only specific users about specific prefixes
 
 Example of configuration.
@@ -124,3 +127,33 @@ reports:
         default: _SLACK_WEBOOK_FOR_ADMIN_
         group2: _SLACK_WEBOOK_FOR_GROUP2_
 ```
+
+> User groups associated to prefixes have always precedence on user groups associated to ASes. If an alert matches both a prefix rule and an AS rule, the prefix rule will define which user group will receive the alert.
+
+## Define an external user groups file
+
+Edit `config.yml`, uncomment the `groupsFile` option, and add the position of the file (e.g., `groupsFile: groups.yml`).
+
+Create the user groups file as follows:
+
+```yaml
+report_module_name1:
+   user_group_to_define:
+      list_of_contacts
+
+report_module_name2:
+  user_group_to_define:
+    list_of_contacts
+```
+The format of the list of contacts depends on the report_module (e.g., emails for reportEmail, urls for reportHTTP).
+
+For example, for reportEmail:
+
+```yaml
+reportEmail:
+   myGroup:
+      example@example.it
+```
+In the repo there is a `config.yaml.example` file that you can use.
+
+It the file is changed, BGPalerter will auto-reload the user groups.

@@ -1,5 +1,6 @@
 config.yml
 prefixes.yml
+groups.yml
 .idea/
 node_modules/
 bin/
@@ -13,6 +14,7 @@ alertdata/
 .cache/
 volumetests/
 tests/rpki_tests/vrp.json
+tests/rpki_tests/roas.json
 tests/generate_tests/prefixes.yml
 export.json
 tests/kafka_tests/kafka_2.13-2.6.0/

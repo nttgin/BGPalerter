@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -42,13 +41,23 @@ export default class Input {
         this.asns = [];
         this.cache = {
             af: {},
-            binaries: {}
+            binaries: {},
+            matched: {}
         };
         this.config = env.config;
         this.storage = env.storage;
         this.logger = env.logger;
         this.callbacks = [];
+        this.prefixListDiffFailThreshold = 50;
 
+        // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
+        setInterval(() => {
+            if (Object.keys(this.cache.matched).length > 10000) {
+                this.cache.matched = {};
+            }
+        }, 10000);
+
+        // This is to load the prefixes after the application is booted
         setTimeout(() => {
             this.loadPrefixes()
                 .then(() => {
@@ -119,26 +128,35 @@ export default class Input {
     };
 
     getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
+        const key = `${prefix}-${includeIgnoredMorespecifics}`;
+        const cached = this.cache.matched[key];
 
-        for (let p of this.prefixes) {
-            if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
-                return p;
-            } else {
+        if (cached !== undefined) {
+            return cached;
+        } else {
+            for (let p of this.prefixes) {
+                if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
+                    this.cache.matched[key] = p;
+                    return p;
+                } else {
 
-                if (!this.cache.af[p.prefix] || !this.cache.binaries[p.prefix]) {
-                    this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
-                    this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix, this.cache.af[p.prefix]);
-                }
-                const prefixAf = ipUtils.getAddressFamily(prefix);
+                    if (!this.cache.af[p.prefix]) {
+                        this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
+                        this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix, this.cache.af[p.prefix]);
+                    }
+                    const prefixAf = ipUtils.getAddressFamily(prefix);
 
-                if (prefixAf === this.cache.af[p.prefix]) {
+                    if (prefixAf === this.cache.af[p.prefix]) {
 
-                    const prefixBinary = ipUtils.getNetmask(prefix, prefixAf);
-                    if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
-                        if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                            return p;
-                        } else {
-                            return null;
+                        const prefixBinary = ipUtils.getNetmask(prefix, prefixAf);
+                        if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
+                            if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
+                                this.cache.matched[key] = p;
+                                return p;
+                            } else {
+                                this.cache.matched[key] = null;
+                                return null;
+                            }
                         }
                     }
                 }
@@ -194,6 +212,19 @@ export default class Input {
                                 name: 'm',
                                 message: "Do you want to be notified when your AS is announcing a new prefix?",
                                 default: true
+                            },
+
+                            {
+                                type: 'confirm',
+                                name: 'upstreams',
+                                message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
+                                default: true
+                            },
+                            {
+                                type: 'confirm',
+                                name: 'downstreams',
+                                message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
+                                default: true
                             }
                         ])
                         .then((answer) => {
@@ -211,6 +242,8 @@ export default class Input {
                                 group: null,
                                 append: false,
                                 logger: null,
+                                upstreams: !!answer.upstreams,
+                                downstreams: !!answer.downstreams,
                                 getCurrentPrefixesList: () => {
                                     return this.retrieve();
                                 }
@@ -254,7 +287,6 @@ export default class Input {
                 }
 
                 inputParameters.httpProxy = this.config.httpProxy || null;
-
                 inputParameters.logger = (message) => {
                     // Nothing, ignore logs in this case (too many otherwise)
                 };
@@ -262,7 +294,13 @@ export default class Input {
                 return generatePrefixes(inputParameters)
                     .then(newPrefixList => {
 
-                        const newPrefixes = [];
+                        newPrefixList.options.monitorASns = oldPrefixList.options.monitorASns;
+
+                        if (Object.keys(newPrefixList).length <= (Object.keys(oldPrefixList).length / 100) * this.prefixListDiffFailThreshold) {
+                            throw new Error("Prefix list generation failed.");
+                        }
+
+                        const newPrefixesNotMergeable = [];
                         const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))]
                             .filter(prefix => ipUtils.isValidPrefix(prefix));
                         const asns = [...new Set(Object
@@ -276,7 +314,7 @@ export default class Input {
 
                             // Apply old description to the prefix
                             if (newPrefix && oldPrefix) {
-                                newPrefix.description = oldPrefix.description;
+                                newPrefixList[prefix] = oldPrefix;
                             }
 
                             // The prefix didn't exist
@@ -285,18 +323,17 @@ export default class Input {
                                 if (!newPrefix.valid) {
                                     // The prefix is not announced by a monitored ASn
                                     if (!newPrefix.asn.some(p => asns.includes(p))) {
-                                        newPrefixes.push(prefix);
+                                        newPrefixesNotMergeable.push(prefix);
                                         delete newPrefixList[prefix];
                                     }
                                 }
                             }
-
                         }
 
-                        if (newPrefixes.length) {
+                        if (newPrefixesNotMergeable.length) {
                             this.logger.log({
                                 level: 'info',
-                                message: `The rules about ${newPrefixes.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                                message: `The rules about ${newPrefixesNotMergeable.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
                             });
                         }
 

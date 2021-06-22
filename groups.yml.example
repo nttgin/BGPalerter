@@ -1,0 +1,12 @@
+# This file is an example of how you can define user groups
+
+# The structure is:
+# report_module_name:
+#    user_group_to_define:
+#       list_of_contacts
+
+# The format of the list of contacts depends on the report_module (e.g., emails for reportEmail, urls for reportHTTP)
+
+reportEmail:
+  mygroup:
+    - example@example.it

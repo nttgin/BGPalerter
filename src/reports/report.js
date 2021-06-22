@@ -37,13 +37,13 @@ import axios from "axios";
 import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Report {
-
     constructor(channels, params, env) {
 
         this.config = env.config;
         this.logger = env.logger;
         this.pubSub = env.pubSub;
         this.params = params;
+        this.enabled = true;
 
         for (let channel of channels){
             env.pubSub.subscribe(channel, (content, message) => {
@@ -90,7 +90,7 @@ export default class Report {
             if (this.params.showPaths > 0) {
                 content.data
                     .filter(i => !!i.matchedMessage && !!i.matchedMessage.path)
-                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
+                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(channel === "path" ? 0 : 1)))
                     .forEach(path => {
                         if (!pathsCount[path]) {
                             pathsCount[path] = 0;
@@ -158,16 +158,16 @@ export default class Report {
 
                 case "rpki":
                     matched = content.data[0].matchedRule;
-                    context.asn = matched.asn.toString();
+                    context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
-                    context.description = matched.description;
+                    context.description = matched.description || "";
                     break;
 
                 default:
                     matched = content.data[0].matchedRule;
                     context.prefix = matched.prefix;
-                    context.description = matched.description;
-                    context.asn = matched.asn.toString();
+                    context.description = matched.description || "";
+                    context.asn = (matched.asn || "").toString();
             }
 
             return context;
@@ -188,8 +188,12 @@ export default class Report {
         return template.replace(/\${([^}]*)}/g, (r,k)=>context[k]);
     };
 
-
     report = (message, content) => {
         throw new Error('The method report must be implemented');
-    }
+    };
+
+    getUserGroup = (group) => {
+        throw new Error('The method getUserGroup must be implemented');
+    };
+
 }

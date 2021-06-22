@@ -1,0 +1,23 @@
+9.5.4.3/22:
+  description: test
+  asn: 101
+  ignoreMorespecifics: false
+
+99.5.4.3/22:
+  description: test
+  asn: 101
+  ignoreMorespecifics: false
+
+options:
+  monitorASns:
+    101:
+      groupd: default
+      upstreams:
+        - 100
+      downstreams:
+        - 104
+    80:
+      groupd: default
+      upstreams:
+        - 99
+      downstreams:

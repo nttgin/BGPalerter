@@ -27,6 +27,8 @@ Below the list of possible parameters. **Remember to prepend them with a `--` in
 | -D  | Enable debug mode. All queries executed in background will be shown. | Nothing |  | No |
 | -H  | Use historical visibility data for generating prefix list (prefixes visible in the last week). Useful in case the prefix generation process returns an empty dataset. | Nothing |  | No |
 | -g  | The name of the user group that will be assigned to all the generated rules. See [here](usergroups.md). | A string | noc | No |
+| -u  | Calculate all upstream ASes and enable detection of new left-side ASes. See [here](path-neighbors.md). | Nothing |  | No |
+| -n  | Calculate all downstream ASes and enable detection of new right-side ASes. See [here](path-neighbors.md). | Nothing |  | No |
 
 
 ## <a name="prefixes-fields"></a>Prefixes list fields
@@ -69,7 +71,7 @@ Below the complete list of attributes (the dot notation is used to represent yml
 | ignoreMorespecifics | Prefixes more specific of the current one will be excluded from monitoring. | A boolean | Yes |
 | ignore | Exclude the current prefix from monitoring. Useful when you are monitoring a prefix and you want to exclude a particular sub-prefix. | A boolean | No |
 | includeMonitors | The list of monitors you want to run on this prefix. If this attribute is not declared, all monitors will be used. Not compatible with excludeMonitors. | An array of strings (monitors name according to config.yml) | No |
-| excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. Use monitors `name` attributes, as defined in the monitor list in [config.yml](https://github.com/nttgin/BGPalerter/blob/master/config.yml.example). | An array of strings (monitors name according to config.yml) | No |
+| excludeMonitors | The list of monitors you want to exclude on this prefix. Not compatible with includeMonitors. Use monitors `name` attributes, as defined in the monitor list in [config.yml](https://github.com/nttgin/BGPalerter/blob/main/config.yml.example). | An array of strings (monitors name according to config.yml) | No |
 | path | A list path matching rules, read more [here](path-matching.md). |  | No |
 | group | The name of the group that will receive alerts about this monitored prefix. See [here](usergroups.md).| A string | No |
 

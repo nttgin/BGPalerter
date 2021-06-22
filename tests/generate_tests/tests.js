@@ -70,8 +70,8 @@ describe("Prefix List", function() {
                 const result = fs.readFileSync(outputFile, 'utf8');
                 fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, 'utf8');
-                const resultJson = yaml.safeLoad(result) || {};
-                const originalJson = yaml.safeLoad(original) || {};
+                const resultJson = yaml.load(result) || {};
+                const originalJson = yaml.load(original) || {};
 
                 expect(resultJson).to.contain.keys(Object.keys(originalJson));
                 expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);
@@ -109,8 +109,8 @@ describe("Prefix List", function() {
                 const result = fs.readFileSync(outputFile, 'utf8');
                 fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, 'utf8');
-                const resultJson = yaml.safeLoad(result) || {};
-                const originalJson = yaml.safeLoad(original) || {};
+                const resultJson = yaml.load(result) || {};
+                const originalJson = yaml.load(original) || {};
 
                 expect(resultJson).to.contain.keys(Object.keys(originalJson));
                 expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);
@@ -141,7 +141,7 @@ describe("Prefix List", function() {
             append: true,
             logger: () => {},
             getCurrentPrefixesList: () => {
-                const content = yaml.safeLoad(fs.readFileSync(outputFile, "utf8"));
+                const content = yaml.load(fs.readFileSync(outputFile, "utf8"));
                 return Promise.resolve(content);
             }
         }
@@ -154,8 +154,8 @@ describe("Prefix List", function() {
                 const result = fs.readFileSync(outputFile, 'utf8');
                 fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, 'utf8');
-                const resultJson = yaml.safeLoad(result) || {};
-                const originalJson = yaml.safeLoad(original) || {};
+                const resultJson = yaml.load(result) || {};
+                const originalJson = yaml.load(original) || {};
 
                 expect(resultJson).to.contain.keys(Object.keys(originalJson));
                 expect(Object.keys(resultJson).length).to.equal(Object.keys(originalJson).length);

@@ -30,6 +30,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+// IMPORTANT: This Connector is just for stress tests during development. Please, ignore!
+
 import Connector from "./connector";
 import {AS, Path} from "../model";
 
@@ -119,17 +122,17 @@ export default class ConnectorFullThrottle extends Connector{
         });
 
     _startStream = () => {
-        setInterval(() => {
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
-            this.updates.forEach(message => this._message(message));
+        setInterval(() => { // just create a huge amount of useless messages
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
+            this.updates.forEach(this._message);
         }, 2);
     };
 
