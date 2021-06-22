@@ -250,7 +250,7 @@ reports:
 #      - misconfiguration
 #      - rpki
 #    params:
-#      maxAlertsAmount: 10
+#      maxAlertsAmount: 25
 
 ############################
 # Notification settings:
