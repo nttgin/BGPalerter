@@ -133,8 +133,12 @@ export default class InputYml extends Input {
                                             group: 'default'
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
 
-                                        if (item.upstreams) item.upstreams = new AS(item.upstreams);
-                                        if (item.downstreams) item.downstreams = new AS(item.downstreams);
+                                        if (item.upstreams && item.upstreams.length) {
+                                            item.upstreams = new AS(item.upstreams);
+                                        }
+                                        if (item.downstreams && item.downstreams.length) {
+                                            item.downstreams = new AS(item.downstreams);
+                                        }
 
                                         return item;
                                     });
@@ -184,13 +188,20 @@ export default class InputYml extends Input {
         const options = fileContent.options;
 
         if (options && options.monitorASns) {
-            optionsError = Object
-                .keys(options.monitorASns)
-                .map(asn => {
-                    if (!new AS(asn).isValid()) {
-                        return "Not a valid AS number in monitorASns";
-                    }
-                });
+
+            for (let item in options.monitorASns) {
+                if (!new AS(item).isValid()) {
+                    optionsError.push("Not a valid AS number in monitorASns");
+                }
+                const upstreams = options.monitorASns[item].upstreams;
+                const downstreams = options.monitorASns[item].downstreams;
+                if (upstreams && upstreams.length && !new AS(upstreams).isValid()) {
+                    optionsError.push(`One of the upstream ASes provided for AS${item} is not valid`);
+                }
+                if (downstreams && downstreams.length && !new AS(downstreams).isValid()) {
+                    optionsError.push(`One of the downstream ASes provided for AS${item} is not valid`);
+                }
+            }
         }
 
         prefixesError = Object
