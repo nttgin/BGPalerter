@@ -56,7 +56,7 @@ export class AS {
         if (["string", "number"].includes(typeof(numbers))) {
             this.numbers = [ numbers ];
         } else if (numbers instanceof Array && numbers.length){
-            if (numbers.length === 1) {
+            if (numbers.length > 1) {
                 this.ASset = true;
             }
             this.numbers = numbers;
