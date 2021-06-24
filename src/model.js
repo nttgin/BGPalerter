@@ -56,24 +56,22 @@ export class AS {
         if (["string", "number"].includes(typeof(numbers))) {
             this.numbers = [ numbers ];
         } else if (numbers instanceof Array && numbers.length){
-            this.ASset = true;
-            if (numbers.length === 1) {
-                this.numbers = [ numbers[0] ];
-            } else {
-                this.numbers = numbers;
+            if (numbers.length > 1) {
+                this.ASset = true;
             }
+            this.numbers = numbers;
         }
 
         if (this.isValid()) {
             this.numbers = this.numbers.map(i => parseInt(i));
-        }
 
-        const key = this.numbers.join("-");
-        if (!!AS._instances[key]) {
-            return AS._instances[key];
-        }
+            const key = this.numbers.join("-");
+            if (!!AS._instances[key]) {
+                return AS._instances[key];
+            }
 
-        AS._instances[key] = this;
+            AS._instances[key] = this;
+        }
     }
 
     getId () {
@@ -82,7 +80,8 @@ export class AS {
 
     isValid () {
         if (this._valid === null) {
-            this._valid = this.numbers.length > 0 &&
+            this._valid = this.numbers &&
+                this.numbers.length > 0 &&
                 this.numbers
                     .every(asn => {
 
