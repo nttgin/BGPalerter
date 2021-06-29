@@ -98,7 +98,7 @@ Each report declaration is composed of:
 | file | Name of the file containing the report implementation. Report implementations are in the `reports` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the report. It is common to have group declarations among the parameters. Different reports with the same implementation can be initialized with different parameters. |
 |params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|channels| A [list](docs/prefixes.md#array) of channels the monitor will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
+|channels| A [list](docs/prefixes.md#array) of channels the report module will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
 
 
 Each connector is composed of:
