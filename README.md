@@ -76,7 +76,7 @@ Read the documentation below for more options.
         - [Mattermost](docs/reports.md#mattermost)
         - [Pushover](docs/report-http.md#pushover)
         - [Microsoft Teams](docs/report-http.md#ms-teams)
-        - [REST API (pull)](reports.md#reportpullapi)
+        - [REST API (pull)](docs/reports.md#reportpullapi)
     - [Test report configuration](docs/installation.md#bgpalerter-parameters)
     - [Process/Uptime monitoring](docs/process-monitors.md)
     - [Notification user groups](docs/usergroups.md)
