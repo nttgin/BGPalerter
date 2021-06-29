@@ -98,7 +98,7 @@ Each report declaration is composed of:
 | file | Name of the file containing the report implementation. Report implementations are in the `reports` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the report. It is common to have group declarations among the parameters. Different reports with the same implementation can be initialized with different parameters. |
 |params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|channels| A [list](docs/prefixes.md#array) of channels the monitor will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
+|channels| A [list](docs/prefixes.md#array) of channels the report module will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
 
 
 Each connector is composed of:
@@ -379,7 +379,7 @@ Example of alerts:
 
 **This monitor also alerts about ROAs expiration.**
 
-This feature requires a vrps file having a `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file having such field or use as vrp provider one of: `ntt`, `rpkiclient` ([more info](rpki.md)).
+**Note:** This feature requires a vrp file having an `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file generated with rpki-client (version 7.1 and newer) or use `vrpProvider: rpkiclient` in your rpki configuration ([more info](rpki.md)).
 
 ROAs are affected by a series of expiration times:
 * Certificate Authority's "notAfter" date;
