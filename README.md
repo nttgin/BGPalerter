@@ -1,5 +1,4 @@
 [![Build Status](https://github.com/nttgin/BGPalerter/workflows/Main/badge.svg)](https://github.com/nttgin/BGPalerter/actions?query=workflow%3AMain)
-![Dependabot Status](https://badgen.net/dependabot/nttgin/BGPalerter/?icon=dependabot)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
 # BGPalerter
@@ -57,10 +56,10 @@ Read the documentation below for more options.
     - [Composition](docs/configuration.md#composition)
     - [Monitor for](docs/configuration.md#monitors)
         - [Hijacks](docs/configuration.md#monitorhijack)
-        - [Path neighbors](docs/path-neighbors.md)
+        - [Path neighbors (downstream/upstream peers)](docs/path-neighbors.md)
         - [Visibility loss](docs/configuration.md#monitorvisibility)
         - [RPKI invalid announcements](docs/configuration.md#monitorrpki)
-        - [RPKI ROAs diffs](docs/configuration.md#monitorroas)
+        - [RPKI ROAs diffs, ROAs expirations, and TA malfunctions](docs/configuration.md#monitorroas)
         - [Announcements of more specifics](docs/configuration.md#monitornewprefix)
         - [Announcements of new prefixes](docs/configuration.md#monitoras)
         - [Path matching](docs/configuration.md#monitorpath)
