@@ -379,7 +379,7 @@ Example of alerts:
 
 **This monitor also alerts about ROAs expiration.**
 
-This feature requires a vrps file having a `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file having such field or use as vrp provider one of: `ntt`, `rpkiclient` ([more info](rpki.md)).
+**Note:** This feature requires a vrp file having an `expires` field for each vrp, currently supported only by [rpki-client](https://www.rpki-client.org/). To enable this feature, provide a file generated with rpki-client (version 7.1 and newer) or use `vrpProvider: rpkiclient` in your rpki configuration ([more info](rpki.md)).
 
 ROAs are affected by a series of expiration times:
 * Certificate Authority's "notAfter" date;
