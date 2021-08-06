@@ -25,3 +25,6 @@ Please, let me know so I can add your company name here.
 * Zero Attack Vector LLC (AS212996 & AS398549)
 * 12128489 Canada Inc dba Accuris Hosting (AS212934)
 * Brennercom S.p.A. (AS20811)
+* Solcon Internetdiensten B.V. (AS12414)
+* Webair (AS27257)
+* Genesis Cloud (AS209045)

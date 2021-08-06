@@ -51,7 +51,7 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 1. Git clone this repo.
 
-2. Install Node.js (version >= 10.16) and npm ([installing node and npm](node.md)).
+2. Install Node.js (version >= 12) and npm ([installing node and npm](node.md)).
 
 3. Execute `npm install` to install all dependencies.
 
