@@ -50,7 +50,7 @@ export default class ReportSlack extends ReportHTTP {
             });
         };
 
-        for (let channel in channels) {
+        for (let channel of channels) {
             templates[channel] = getTemplateItem(colors[channel] || defaultColor);
         }
         templates["default"] = getTemplateItem(defaultColor);
