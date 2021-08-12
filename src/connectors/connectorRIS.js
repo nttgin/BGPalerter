@@ -325,7 +325,7 @@ export default class ConnectorRIS extends Connector {
                 const components = [];
                 const announcements = message["announcements"] || [];
                 const aggregator = message["aggregator"] || null;
-                const withdrawals = message["withdrawals"] || [];
+                const withdrawals = (message["withdrawals"] || []).filter(prefix => ipUtils.isValidPrefix(prefix));
                 const peer = message["peer"];
                 const communities = message["community"] || [];
                 const timestamp = message["timestamp"] * 1000;

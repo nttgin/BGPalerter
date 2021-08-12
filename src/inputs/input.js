@@ -75,16 +75,24 @@ export default class Input {
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
-        const p1af = ipUtils.getAddressFamily(prefix);
-        const p1b = ipUtils.getNetmask(prefix, p1af);
+        let p1af, p1b;
+
+        try {
+            p1af = ipUtils.getAddressFamily(prefix);
+            p1b = ipUtils.applyNetmask(prefix, p1af);
+        } catch (error) {
+            throw new Error(`${error.message}: ${prefix}`);
+        }
 
         for (let p2 of lessSpecifics) {
-            const p2af = ipUtils.getAddressFamily(p2.prefix);
-            if (p1af === p2af &&
-                ipUtils.isSubnetBinary(ipUtils.getNetmask(p2.prefix, p2af), p1b)) {
-                return true;
+            try {
+                const p2af = ipUtils.getAddressFamily(p2.prefix);
+                if (p1af === p2af && ipUtils.isSubnetBinary(ipUtils.applyNetmask(p2.prefix, p2af), p1b)) {
+                    return true;
+                }
+            } catch (error) {
+                throw new Error(`${error.message}: ${p2}`);
             }
-
         }
 
         return false;
@@ -107,15 +115,24 @@ export default class Input {
         }
 
         const lessSpecifics = [];
-        let prefixes = this.prefixes;
-        lessSpecifics.push(prefixes[prefixes.length - 1]);
 
-        for (let n=prefixes.length - 2; n>=0; n--) {
-            const p1 = prefixes[n];
-            if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
-                lessSpecifics.push(p1);
+        try {
+            let prefixes = this.prefixes;
+            lessSpecifics.push(prefixes[prefixes.length - 1]);
+
+            for (let n = prefixes.length - 2; n >= 0; n--) {
+                const p1 = prefixes[n];
+                if (!this._isAlreadyContained(p1.prefix, lessSpecifics)) {
+                    lessSpecifics.push(p1);
+                }
             }
+        } catch (error) {
+            this.logger.log({
+                level: 'error',
+                message: error.message
+            });
         }
+
         return lessSpecifics;
     };
 
@@ -142,13 +159,13 @@ export default class Input {
 
                     if (!this.cache.af[p.prefix]) {
                         this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
-                        this.cache.binaries[p.prefix] = ipUtils.getNetmask(p.prefix, this.cache.af[p.prefix]);
+                        this.cache.binaries[p.prefix] = ipUtils.applyNetmask(p.prefix, this.cache.af[p.prefix]);
                     }
                     const prefixAf = ipUtils.getAddressFamily(prefix);
 
                     if (prefixAf === this.cache.af[p.prefix]) {
 
-                        const prefixBinary = ipUtils.getNetmask(prefix, prefixAf);
+                        const prefixBinary = ipUtils.applyNetmask(prefix, prefixAf);
                         if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
                             if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
                                 this.cache.matched[key] = p;
