@@ -222,8 +222,8 @@ export default class ConnectorRIS extends Connector {
         };
 
         const selected = [
-            ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 2),
-            ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 2)
+            ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 3),
+            ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 3)
         ];
 
         for (let prefix of selected) {
