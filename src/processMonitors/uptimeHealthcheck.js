@@ -60,7 +60,7 @@ export default class UptimeHealthcheck extends Uptime {
                 .catch(error => {
                     env.logger.log({
                         level: 'error',
-                        message: error
+                        message: `UptimeHealthcheck cannot send heartbeat: ${error.message}`
                     });
                 });
         }
