@@ -263,6 +263,9 @@ export default class ConnectorRIS extends Connector {
                     message: "RIS has been silent for too long, probably there is something wrong"
                 });
             }
+            if (this.ws) {
+                this.ws.connect();
+            }
         }, 3600 * 1000 * 4.5); // every 4.5 hours
     };
 
