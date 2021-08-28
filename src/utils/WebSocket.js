@@ -75,7 +75,14 @@ export default class WebSocket {
     };
 
     send = (data) => {
-        this.ws.send(data);
+        return new Promise((resolve, reject) => {
+            try {
+                this.ws.send(data);
+                resolve();
+            } catch (error) {
+                reject(error);
+            }
+        });
     };
 
     connect = () => {

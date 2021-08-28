@@ -54,7 +54,7 @@ export default class ConnectorRIS extends Connector {
             }
         });
         if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
-            setTimeout(this._startCanary, 60000);
+            this._startCanaryInterval = setInterval(this._startCanary, 60000);
         }
     };
 
@@ -120,7 +120,7 @@ export default class ConnectorRIS extends Connector {
     };
 
     _subscribeToAll = (input) => {
-        this.ws.send(JSON.stringify({
+        return this.ws.send(JSON.stringify({
             type: "ris_subscribe",
             data: this.params.subscription
         }));
@@ -151,10 +151,7 @@ export default class ConnectorRIS extends Connector {
         const monitoredPrefixes = input.getMonitoredLessSpecifics();
         const params = JSON.parse(JSON.stringify(this.params.subscription));
 
-        if (monitoredPrefixes
-            .filter(
-                i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))
-            ).length === 2) {
+        if (monitoredPrefixes.filter(i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))).length === 2) {
 
             delete params.prefix;
 
@@ -163,15 +160,14 @@ export default class ConnectorRIS extends Connector {
                 this.subscribed["everything"] = true;
             }
 
-            this.ws.send(JSON.stringify({
+            return this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
             }));
 
         } else {
 
-            for (let p of monitoredPrefixes) {
-
+            return Promise.all(monitoredPrefixes.map(p => {
                 if (!this.subscribed[p.prefix]) {
                     console.log("Monitoring", p.prefix);
                     this.subscribed[p.prefix] = true;
@@ -179,71 +175,84 @@ export default class ConnectorRIS extends Connector {
 
                 params.prefix = p.prefix;
 
-                this.ws.send(JSON.stringify({
+                return this.ws.send(JSON.stringify({
                     type: "ris_subscribe",
                     data: params
                 }));
-            }
+            }));
+
         }
     };
 
     _subscribeToASns = (input) => {
         const monitoredASns = input.getMonitoredASns();
-
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-        for (let asn of monitoredASns){
-            const asnString = asn.asn.getValue();
 
-            if (!this.subscribed[asnString]) {
-                console.log(`Monitoring AS${asnString}`);
-                this.subscribed[asnString] = true;
-            }
+        return Promise.all(monitoredASns
+            .map(asn => {
+                const asnString = asn.asn.getValue();
 
-            params.path = `${asnString}\$`;
+                if (!this.subscribed[asnString]) {
+                    console.log(`Monitoring AS${asnString}`);
+                    this.subscribed[asnString] = true;
+                }
 
-            this.ws.send(JSON.stringify({
-                type: "ris_subscribe",
-                data: params
+                params.path = `${asnString}\$`;
+
+                return this.ws.send(JSON.stringify({
+                    type: "ris_subscribe",
+                    data: params
+                }));
             }));
-        }
     };
 
     _startCanary = () => {
-        const beacons = {
-            v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
-                "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
-                "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
-                "93.175.153.0/24"],
-            v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
-                "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
-                "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
-                "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
-                "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
-        };
+        if (this.connected) {
+            const beacons = {
+                v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
+                    "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
+                    "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
+                    "93.175.153.0/24"],
+                v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
+                    "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
+                    "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
+                    "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
+                    "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
+            };
 
-        const selected = [
-            ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 3),
-            ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 3)
-        ];
+            const selected = [
+                ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 3),
+                ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 3)
+            ];
 
-        for (let prefix of selected) {
-            this.canaryBeacons[prefix] = true;
-            this.ws.send(JSON.stringify({
-                type: "ris_subscribe",
-                data: {
-                    moreSpecific: false,
-                    lessSpecific: false,
-                    prefix,
-                    type: "UPDATE",
-                    socketOptions: {
-                        includeRaw: false,
-                        acknowledge: false
-                    }
-                }
-            }));
+            Promise.all(selected
+                .map(prefix => {
+                    this.canaryBeacons[prefix] = true;
+                    return this.ws.send(JSON.stringify({
+                        type: "ris_subscribe",
+                        data: {
+                            moreSpecific: false,
+                            lessSpecific: false,
+                            prefix,
+                            type: "UPDATE",
+                            socketOptions: {
+                                includeRaw: false,
+                                acknowledge: false
+                            }
+                        }
+                    }));
+                }))
+                .then(() => {
+                    this._checkCanary();
+                    clearInterval(this._startCanaryInterval);
+                })
+                .catch(() => {
+                    this.logger.log({
+                        level: 'error',
+                        message: "Failed to subscribe to beacons"
+                    });
+                });
         }
-
-        this._checkCanary();
     };
 
     _checkCanary = () => {
@@ -301,25 +310,23 @@ export default class ConnectorRIS extends Connector {
         });
     };
 
-    subscribe = (input) =>
-        new Promise((resolve, reject) => {
-            this.subscription = input;
-            try {
-                if (this.params.carefulSubscription) {
-                    this._subscribeToPrefixes(input);
-                    this._subscribeToASns(input);
-                } else {
-                    this._subscribeToAll(input);
-                }
+    subscribe = (input) => {
+        this.subscription = input;
 
+        return (this.params.carefulSubscription
+            ? Promise.all([this._subscribeToPrefixes(input), this._subscribeToASns(input)])
+            : this._subscribeToAll(input))
+            .then(() => {
                 this.onInputChange(input);
 
-                resolve(true);
-            } catch(error) {
+                return true;
+            })
+            .catch(error => {
                 this._error(error);
-                resolve(false);
-            }
-        });
+
+                return false;
+            });
+    }
 
     static transform = (message) => {
         if (message.type === 'ris_message') {
