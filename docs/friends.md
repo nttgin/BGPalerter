@@ -28,3 +28,7 @@ Please, let me know so I can add your company name here.
 * Solcon Internetdiensten B.V. (AS12414)
 * Webair (AS27257)
 * Genesis Cloud (AS209045)
+* Suretec Systems Limited T/A SureVoIP (AS199659)
+* TelcoSwitch Limited (AS45033)
+* Ziron Limited (AS49344)
+* Elite Limited (AS29611)
