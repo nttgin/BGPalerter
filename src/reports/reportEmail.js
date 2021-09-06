@@ -90,8 +90,8 @@ export default class ReportEmail extends Report {
     getEmails = (content) => {
         const users = content.data
             .map(item => {
-                if (item.matchedRule && item.matchedRule.group){
-                    return item.matchedRule.group;
+                if (item.matchedRule){
+                    return item.matchedRule.group || "default";
                 } else {
                     return false;
                 }
