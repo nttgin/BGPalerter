@@ -15,7 +15,7 @@ export default class RpkiUtils {
 
         const defaultMarkDataAsStaleAfterMinutes = 60;
 
-        const providers = ["ntt", "ripe", "cloudflare", "rpkiclient", "external", "api"]; // First provider is the default one
+        const providers = ["rpkiclient", "ntt", "ripe", "cloudflare", "external", "api"]; // First provider is the default one
 
         if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
