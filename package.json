@@ -44,7 +44,7 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.15.4",
+    "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15.5",
     "@babel/node": "^7.15.4",
     "@babel/plugin-proposal-class-properties": "^7.14.5",
@@ -63,10 +63,10 @@
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.5",
     "deepmerge": "^4.2.2",
-    "fast-file-logger": "^1.0.7",
+    "fast-file-logger": "^1.1.0",
     "https-proxy-agent": "^5.0.0",
     "inquirer": "^8.1.5",
-    "ip-sub": "^1.1.0",
+    "ip-sub": "^1.1.1",
     "js-yaml": "^4.1.0",
     "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
