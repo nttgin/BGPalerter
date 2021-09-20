@@ -217,7 +217,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }
 
-                generateList[prefix] = {
+                generateList[prefix] = generateList[prefix] || {
                     description: description || "No description provided",
                     asn: origins,
                     ignoreMorespecifics: ignoreMorespecifics,
