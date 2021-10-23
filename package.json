@@ -92,7 +92,7 @@
       "./bin/config.yml"
     ],
     "targets": [
-      "node12"
+      "node14"
     ]
   },
   "optionalDependencies": {
