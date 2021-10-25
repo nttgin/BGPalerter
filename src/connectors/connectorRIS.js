@@ -49,6 +49,7 @@ export default class ConnectorRIS extends Connector {
 
         this.url = brembo.build(this.params.url, {
             params: {
+                client_version: env.version,
                 client: env.clientId,
                 instance: env.instanceId
             }
@@ -60,7 +61,7 @@ export default class ConnectorRIS extends Connector {
 
     _openConnect = (resolve) => {
         resolve(true);
-        this._connect(this.name + ' connector connected');
+        this._connect(`${this.name} connector connected`);
 
         if (this.subscription) {
             this.subscribe(this.subscription);
@@ -75,7 +76,7 @@ export default class ConnectorRIS extends Connector {
         this._message(messageObj);
     };
 
-    _appendListeners = (resolve, reject) => {
+     _appendListeners = (resolve, reject) => {
         this.ws.on('message', this._messageToJson);
         this.ws.on('close', (error) => {
 

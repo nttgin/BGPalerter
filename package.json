@@ -61,7 +61,7 @@
     "@sentry/node": "^6.13.3",
     "axios": "^0.23.0",
     "batch-promises": "^0.0.3",
-    "brembo": "^2.0.5",
+    "brembo": "^2.0.6",
     "deepmerge": "^4.2.2",
     "fast-file-logger": "^1.1.1",
     "https-proxy-agent": "^5.0.0",

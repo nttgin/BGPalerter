@@ -55,10 +55,11 @@ export default class WebSocket {
     };
 
     _connect = () => {
+        const connectionId = uuidv4();
         const url = brembo.build(this.host.split("?")[0], {
             params: {
                 ...brembo.parse(this.host).params,
-                connection: uuidv4()
+                connection: connectionId
             }
         });
 
