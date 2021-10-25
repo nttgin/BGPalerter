@@ -1,5 +1,7 @@
 import _ws from "ws";
 import PubSub from "../utils/pubSub";
+import brembo from "brembo";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class WebSocket {
     constructor(host, options) {
@@ -53,7 +55,14 @@ export default class WebSocket {
     };
 
     _connect = () => {
-        this.ws = new _ws(this.host, this.options);
+        const url = brembo.build(this.host.split("?")[0], {
+            params: {
+                ...brembo.parse(this.host).params,
+                connection: uuidv4()
+            }
+        });
+
+        this.ws = new _ws(url, this.options);
 
         this.ws.on('message', (data) => {
             this.pubsub.publish("message", data);

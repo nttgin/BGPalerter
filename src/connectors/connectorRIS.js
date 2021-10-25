@@ -49,7 +49,8 @@ export default class ConnectorRIS extends Connector {
 
         this.url = brembo.build(this.params.url, {
             params: {
-                client: env.clientId
+                client: env.clientId,
+                instance: env.instanceId
             }
         });
         if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
