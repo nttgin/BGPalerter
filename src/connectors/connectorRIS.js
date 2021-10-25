@@ -48,7 +48,6 @@ export default class ConnectorRIS extends Connector {
         this.canaryBeacons = {};
 
         this.url = brembo.build(this.params.url, {
-            path: [],
             params: {
                 client: env.clientId
             }
@@ -99,6 +98,13 @@ export default class ConnectorRIS extends Connector {
                 const wsOptions = {
                     perMessageDeflate: this.params.perMessageDeflate
                 };
+
+                if (this.params.authorizationHeader){
+                    wsOptions.headers = {
+                        Authorization: this.params.authorizationHeader
+                    }
+                }
+
                 if (!this.params.noProxy && this.agent) {
                     wsOptions.agent = this.agent;
                 }
