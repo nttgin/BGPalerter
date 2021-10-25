@@ -125,6 +125,9 @@ export default class WebSocket {
     };
 
     setOpenTimeout = (setting) => {
+        if (this.openConnectionTimeout) {
+            clearTimeout(this.openConnectionTimeout);
+        }
         if (setting) {
             this.openConnectionTimeout = setTimeout(() => {
                 this._publishError("connection timed out");
@@ -133,8 +136,6 @@ export default class WebSocket {
                     this.connect();
                 }
             }, this.openConnectionTimeoutSeconds);
-        } else {
-            clearTimeout(this.openConnectionTimeout);
         }
     };
 
