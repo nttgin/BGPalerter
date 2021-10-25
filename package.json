@@ -71,6 +71,7 @@
     "kafkajs": "^1.15.0",
     "md5": "^2.3.0",
     "moment": "^2.29.1",
+    "node-cleanup": "^2.1.2",
     "nodemailer": "^6.7.0",
     "path": "^0.12.7",
     "restify": "^8.6.0",

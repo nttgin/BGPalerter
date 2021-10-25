@@ -46,23 +46,25 @@ export default class ConnectorRIS extends Connector {
         this.agent = env.agent;
         this.subscribed = {};
         this.canaryBeacons = {};
+        this.clientId = env.clientId;
+        this.instanceId = env.instanceId;
 
         this.url = brembo.build(this.params.url, {
             params: {
                 client_version: env.version,
-                client: env.clientId,
-                instance: env.instanceId
+                client: this.clientId,
+                instance: this.instanceId
             }
         });
+
         if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
             this._startCanaryInterval = setInterval(this._startCanary, 60000);
         }
     };
 
-    _openConnect = (resolve) => {
+    _openConnect = (resolve, data) => {
         resolve(true);
-        this._connect(`${this.name} connector connected`);
-
+        this._connect(`${this.name} connector connected (instance:${this.instanceId} connection:${data.connection})`);
         if (this.subscription) {
             this.subscribe(this.subscription);
         }
@@ -76,7 +78,7 @@ export default class ConnectorRIS extends Connector {
         this._message(messageObj);
     };
 
-     _appendListeners = (resolve, reject) => {
+    _appendListeners = (resolve, reject) => {
         this.ws.on('message', this._messageToJson);
         this.ws.on('close', (error) => {
 
@@ -87,8 +89,10 @@ export default class ConnectorRIS extends Connector {
                 reject();
             }
         });
-        this.ws.on('error', this._error);
-        this.ws.on('open', this._openConnect.bind(null, resolve));
+        this.ws.on('error', error => {
+            this._error(`${this.name} ${error.message} (instance:${this.instanceId} connection:${error.connection})`);
+        });
+        this.ws.on('open', data => this._openConnect(resolve, data));
     };
 
     connect = () =>
@@ -314,7 +318,7 @@ export default class ConnectorRIS extends Connector {
             }
             this._timeoutFileChange = setTimeout(() => {
                 this._onInputChange(input);
-            }, 2000);
+            }, 5000);
         });
     };
 
