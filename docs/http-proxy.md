@@ -11,7 +11,7 @@ This will enable the proxy globally on all HTTP/HTTPS/WebSocket traffic generate
 
 While the global configuration will send all requests to the proxy, you can specify which modules are able to bypass the proxy.
 This is useful for example if you want to not proxy requests to internal apps or networks. 
-This can be set per module (i.e reporter/connector/monitor) by adding the `noProxy: true` parameter to the desired module(s) in `config.yml`.
+This can be set per module (i.e., reporter/connector/monitor) by adding the `noProxy: true` parameter to the desired module(s) in `config.yml`.
 For instance, the configuration below allows you to bypass your proxy server for your traffic towards an Alerta dashboard.
 
 
