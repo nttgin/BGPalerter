@@ -5,6 +5,7 @@ connectors:
       carefulSubscription: true
       url: ws://ris-live.ripe.net/v1/ws/
       perMessageDeflate: true
+      authorizationHeader: null
       subscription:
         moreSpecific: true
         type: UPDATE
