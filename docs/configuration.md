@@ -85,7 +85,7 @@ Each monitor declaration is composed of:
 
 | Attribute | Description |
 |---|---|
-| file | Name of the file containing the monitor implementation. Monitor implementations are in the `moniors` directory. |
+| file | Name of the file containing the monitor implementation. Monitor implementations are in the `monitors` directory. |
 | channel | The name of the channel that will be used by the monitor to dispatch messages. If the inserted name doesn't correspond to an already existent channel, a new channel is created.|
 |name| The name associated to the monitor. Multiple monitors with the same implementation can be loaded with different names. This name will be used to annotate messages in order track from where they are coming from.|
 |params| A dictionary of parameters that can be useful for the functioning of the monitor. Different monitors with the same implementation can be initialized with different parameters. |
