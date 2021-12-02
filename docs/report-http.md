@@ -90,6 +90,29 @@ Pushover is an app that makes it easy to get real-time notifications on your And
 
 Thanks to [Hugo Salgado](https://twitter.com/huguei/status/1278771420525408258).
 
+## RocketChat
+
+RocketChat is an open source messaging platform. https://rocket.chat/
+
+```yaml
+- file: reportHTTP
+   channels:
+     - hijack
+     - newprefix
+     - visibility
+     - path
+     - misconfiguration
+     - rpki
+   params:
+     templates:
+       default: 'payload={"username": "BGPalerter ${channel}", "channel": "#CHANNEL", "text": "Type: *${type}* on Prefix *${prefix}* via Peer *${peers}* | Message Summary: ${summary}"}
+     headers:
+     isTemplateJSON: false
+     showPaths: 0
+     hooks:
+       default: 'https://_RC_URL/hooks/_THE_KEY_
+```
+
 ## MS Teams
 
 Microsoft Teams is a communication platform developed by Microsoft, as part of the Microsoft 365 family of products.
