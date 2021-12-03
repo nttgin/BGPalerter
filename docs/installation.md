@@ -128,7 +128,10 @@ The execution of BGPalerter supports some parameters
 | -v | Show version number |
 | -h | Show help |
 | -c | To specify the config file to load (default `./config.yml`) |
-| -d | To specify a directory where configuration and data is persisted (see [volume](configuration.md)). |
+| -d | To specify a directory that will contain all the files used by BGPalerter. See [here](installation.md#volume) before modifying this.|
 | -t | To test the configuration by generating fake BGP updates. This will start sending alerts on all the reports listening the `hijack` channel. |
 
 You can also use the same parameters with npm (if you are running the source code), in the following format `npm run serve -- --h` (replace `h` with the parameter you need).
+
+### Volume
+BGPalerter writes/reads some files on disk (e.g., logs). The positions of these files is set in `config.yml`, where both absolute and relative paths can be used. However, the `volume` parameter can be used to modify this behavior and confine BGPalerter to a specific directory. This is mostly useful in two occasions: (1) when you want to create "virtual environments", e.g., you want to have a single installation of BGPalerter running multiple instances each operating confined in a different directory; or (2) when you are using docker and you want to create a persistent volume (see above).

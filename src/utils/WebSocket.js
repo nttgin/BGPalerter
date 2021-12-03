@@ -1,5 +1,8 @@
 import _ws from "ws";
 import PubSub from "../utils/pubSub";
+import brembo from "brembo";
+import { v4 as uuidv4 } from 'uuid';
+import nodeCleanup from "node-cleanup";
 
 export default class WebSocket {
     constructor(host, options) {
@@ -11,8 +14,16 @@ export default class WebSocket {
         this.alive = false;
         this.pingInterval = options.pingIntervalSeconds ? options.pingIntervalSeconds * 1000 : 40000;
         this.reconnectSeconds = options.reconnectSeconds ? options.reconnectSeconds * 1000 : 30000;
-        this.connectionDelay = 5000;
+        this.connectionDelay = 8000;
+        this.openConnectionTimeoutSeconds = 40000;
         this.lastPingReceived = null;
+
+        nodeCleanup(() => {
+            if (this.ws) {
+                this.pubsub.publish("close", "process termination");
+                this.disconnect();
+            }
+        });
     }
 
     _ping = () => {
@@ -33,7 +44,7 @@ export default class WebSocket {
         const nPings = 6;
         if (this.ws) {
             if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
-                this.pubsub.publish("error", `The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
+                this._publishError(`The WebSocket client didn't receive ${nPings} pings. Disconnecting.`)
                 this.disconnect();
                 this.connect();
             } else {
@@ -53,22 +64,33 @@ export default class WebSocket {
     };
 
     _connect = () => {
-        this.ws = new _ws(this.host, this.options);
+        const connectionId = uuidv4();
+        const url = brembo.build(this.host.split("?")[0], {
+            params: {
+                ...brembo.parse(this.host).params,
+                connection: connectionId
+            }
+        });
+
+        this.ws = new _ws(url, this.options);
+        this.setOpenTimeout(true);
 
         this.ws.on('message', (data) => {
             this.pubsub.publish("message", data);
         });
-        this.ws.on('close', (data) => {
+        this.ws.on('close', data => {
             this.alive = false;
+            this.setOpenTimeout(false);
             this.pubsub.publish("close", data);
         });
         this.ws.on('pong', this._pingReceived);
-        this.ws.on('error', (data) => {
-            this.pubsub.publish("error", data);
+        this.ws.on('error', message => {
+            this._publishError(message, {connection: connectionId});
         });
-        this.ws.on('open', (data) => {
+        this.ws.on('open', () => {
             this.alive = true;
-            this.pubsub.publish("open", data);
+            this.setOpenTimeout(false);
+            this.pubsub.publish("open", { connection: connectionId });
         });
 
         this._startPing();
@@ -96,6 +118,25 @@ export default class WebSocket {
         this.connectTimeout = setTimeout(this._connect, this.connectionDelay);
 
         this.connectionDelay = this.reconnectSeconds;
+    };
+
+    _publishError = (message, extra={}) => {
+        this.pubsub.publish("error", { type: "error", message, ...extra });
+    };
+
+    setOpenTimeout = (setting) => {
+        if (this.openConnectionTimeout) {
+            clearTimeout(this.openConnectionTimeout);
+        }
+        if (setting) {
+            this.openConnectionTimeout = setTimeout(() => {
+                this._publishError("connection timed out");
+                if (this.ws) {
+                    this.disconnect();
+                    this.connect();
+                }
+            }, this.openConnectionTimeoutSeconds);
+        }
     };
 
     disconnect = () => {
