@@ -203,7 +203,7 @@ reports:
      isTemplateJSON: true
      showPaths: 0
      hooks:
-       default: 'https://_RC_URL/hooks/_YOUR_KEY_
+       default: https://_RC_URL/hooks/_YOUR_KEY_
 ```
 
 > Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
