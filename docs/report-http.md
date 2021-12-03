@@ -140,34 +140,6 @@ reports:
 Thanks [arpanet-creeper](https://github.com/nttgin/BGPalerter/pull/412) for the help.
 
 
-## RocketChat
-
-[RocketChat](https://rocket.chat/) is an open source messaging platform.
-
-```yaml
-- file: reportHTTP
-   channels:
-     - hijack
-     - newprefix
-     - visibility
-     - path
-     - misconfiguration
-     - rpki
-   params:
-     templates:
-       default: '{"username": "BGPalerter", "channel": "_CHANNEL_NAME_", "text": "${channel}: ${summary}"}'
-     headers:
-     isTemplateJSON: true
-     showPaths: 0
-     hooks:
-       default: 'https://_RC_URL/hooks/_YOUR_KEY_
-```
-
-> Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
-
-Thanks to [cadirol](https://github.com/nttgin/BGPalerter/pull/704).
-
-
 ## OpsGenie
 
 OpsGenie is an alert management tool by Atlassian. It's also a good example of how to use HTTP headers with reportHTTP.
@@ -209,3 +181,31 @@ reports:
       hooks:
         default: https://api.opsgenie.com/v2/alerts
 ```
+
+
+## RocketChat
+
+[RocketChat](https://rocket.chat/) is an open source messaging platform.
+
+```yaml
+- file: reportHTTP
+   channels:
+     - hijack
+     - newprefix
+     - visibility
+     - path
+     - misconfiguration
+     - rpki
+   params:
+     templates:
+       default: '{"username": "BGPalerter", "channel": "_CHANNEL_NAME_", "text": "${channel}: ${summary}"}'
+     headers:
+     isTemplateJSON: true
+     showPaths: 0
+     hooks:
+       default: 'https://_RC_URL/hooks/_YOUR_KEY_
+```
+
+> Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
+
+Thanks to [cadirol](https://github.com/nttgin/BGPalerter/pull/704).
