@@ -90,29 +90,6 @@ Pushover is an app that makes it easy to get real-time notifications on your And
 
 Thanks to [Hugo Salgado](https://twitter.com/huguei/status/1278771420525408258).
 
-## RocketChat
-
-RocketChat is an open source messaging platform. https://rocket.chat/
-
-```yaml
-- file: reportHTTP
-   channels:
-     - hijack
-     - newprefix
-     - visibility
-     - path
-     - misconfiguration
-     - rpki
-   params:
-     templates:
-       default: 'payload={"username": "BGPalerter ${channel}", "channel": "#CHANNEL", "text": "Type: *${type}* on Prefix *${prefix}* via Peer *${peers}* | Message Summary: ${summary}"}
-     headers:
-     isTemplateJSON: false
-     showPaths: 0
-     hooks:
-       default: 'https://_RC_URL/hooks/_THE_KEY_
-```
-
 ## MS Teams
 
 Microsoft Teams is a communication platform developed by Microsoft, as part of the Microsoft 365 family of products.
@@ -161,3 +138,31 @@ reports:
 ```
 
 Thanks [arpanet-creeper](https://github.com/nttgin/BGPalerter/pull/412) for the help.
+
+
+## RocketChat
+
+[RocketChat](https://rocket.chat/) is an open source messaging platform.
+
+```yaml
+- file: reportHTTP
+   channels:
+     - hijack
+     - newprefix
+     - visibility
+     - path
+     - misconfiguration
+     - rpki
+   params:
+     templates:
+       default: '{"username": "BGPalerter", "channel": "_CHANNEL_NAME_", "text": "${channel}: ${summary}"}'
+     headers:
+     isTemplateJSON: true
+     showPaths: 0
+     hooks:
+       default: 'https://_RC_URL/hooks/_YOUR_KEY_
+```
+
+> Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
+
+Thanks to [cadirol](https://github.com/nttgin/BGPalerter/pull/704).
