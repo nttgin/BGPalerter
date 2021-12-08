@@ -299,7 +299,7 @@ This monitor will listen for all announcements produced by the monitored Autonom
 involving any of the monitored prefixes (independently of who is announcing them), and it will trigger an alert if any of the announcements is RPKI invalid or not covered by ROAs (optional).
 
 This monitor is particularly useful when:
-* Before RPKI deployment, since it will let you test what announcements will be invalid after singing the ROAs.
+* Before RPKI deployment, since it will let you test what announcements will be invalid after creating the ROAs.
 * During RPKI deployment, since it will let you know if any of your announcements are invalid.
 * After you deployed RPKI, in order to be sure all future BGP configurations will be covered by ROAs.
 
