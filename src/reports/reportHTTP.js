@@ -51,7 +51,9 @@ export default class ReportHTTP extends Report {
         this.headers = this.params.headers || {};
         if (this.params.isTemplateJSON) {
             this.headers["Content-Type"] = "application/json";
+
         }
+        this.headers["User-Agent"] = "AppNeta BGP Prefix Monitor";
     }
 
     getUserGroup = (group) => {
