@@ -1,17 +1,17 @@
 165.254.225.0/24:
-  description: Job
+  description: a description about this prefix
   asn: 15562
   ignoreMorespecifics: false
   ignore: false
  
 165.254.255.0/24:
-  description: Job
+  description: the description will be reported in the alerts
   asn: 15562
   ignoreMorespecifics: false
   ignore: false
  
 192.147.168.0/24:
-  description: Job
+  description: descriptions make alerts easier to read
   asn: 15562
   ignoreMorespecifics: false
   ignore: false

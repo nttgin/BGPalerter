@@ -3,21 +3,16 @@
 rm -rf bin
 mkdir bin
 
-npm run babel . --  --ignore node_modules --out-dir build
+npm ci --silent
 
-cp config.yml.example build/config.yml
+npm run compile
 
-cp package.json build/package.json
+./node_modules/.bin/pkg ./dist/package.json --targets node14-win-x64 --output bin/bgpalerter-win-x64 --loglevel=error
 
-cd build
+./node_modules/.bin/pkg ./dist/package.json --targets node14-linux-x64 --output bin/bgpalerter-linux-x64 --loglevel=error
 
-npm install --silent
+./node_modules/.bin/pkg ./dist/package.json --targets node14-macos-x64 --output bin/bgpalerter-macos-x64 --loglevel=error
 
-./node_modules/.bin/pkg . --targets node12-win-x64 --output ../bin/bgpalerter-win-x64
+echo "--> BGPalerter compiled in bin/ (ignore the warnings about files that cannot be resolved)."
 
-./node_modules/.bin/pkg . --targets node12-linux-x64 --output ../bin/bgpalerter-linux-x64
-
-./node_modules/.bin/pkg . --targets node12-macos-x64 --output ../bin/bgpalerter-macos-x64
-
-cd ../
-rm -rf build
+rm -rf dist

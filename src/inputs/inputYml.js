@@ -36,21 +36,25 @@ import Input from "./input";
 import ipUtils from "ip-sub";
 import { AS } from "../model";
 
-
 export default class InputYml extends Input {
 
-    constructor(config){
-        super(config);
+    constructor(env){
+        super(env);
         this.prefixes = [];
         this.asns = [];
+        this.options = {};
+        this.watcherSet = false;
 
-        if (!config.monitoredPrefixesFiles || config.monitoredPrefixesFiles.length === 0) {
+        if (!this.config.monitoredPrefixesFiles || this.config.monitoredPrefixesFiles.length === 0) {
             throw new Error("The monitoredPrefixesFiles key is missing in the config file");
+        } else if (this.config.monitoredPrefixesFiles.length === 1) {
+            this.setReGeneratePrefixList();
         }
     };
 
     loadPrefixes = () => {
-        if (!fs.existsSync('./' + this.config.monitoredPrefixesFiles[0])) {
+        this.defaultPrefixFile = this.config.volume + this.config.monitoredPrefixesFiles[0];
+        if (!fs.existsSync(this.defaultPrefixFile)) {
             return this.generate()
                 .then(() => this._loadPrefixes());
         }
@@ -58,42 +62,89 @@ export default class InputYml extends Input {
         return this._loadPrefixes();
     };
 
+    _watchPrefixFile = (file) => {
+        if (!this.watcherSet) {
+            this.watcherSet = true;
+
+            fs.watchFile(file, () => {
+                if (this._watchPrefixFileTimer) {
+                    clearTimeout(this._watchPrefixFileTimer)
+                }
+                this._watchPrefixFileTimer = setTimeout(() => {
+                    this.prefixes = [];
+                    this.asns = [];
+                    this._loadPrefixes()
+                        .then(() => {
+                            return this._change();
+                        })
+                        .catch(error => {
+                            this.logger.log({
+                                level: 'error',
+                                message: error
+                            });
+                        });
+                }, 5000);
+            });
+        }
+    };
+
     _loadPrefixes = () =>
         new Promise((resolve, reject) => {
             const uniquePrefixes = {};
             const uniqueAsns = {};
+
             for (let prefixesFile of this.config.monitoredPrefixesFiles) {
 
+                const file = this.config.volume + prefixesFile;
                 let monitoredPrefixesFile = {};
                 let fileContent;
 
-                if (fs.existsSync('./' + prefixesFile)) {
-                    fileContent = fs.readFileSync('./' + prefixesFile, 'utf8');
+                if (fs.existsSync(file)) {
+                    fileContent = fs.readFileSync(file, 'utf8');
                     try {
-                        monitoredPrefixesFile = yaml.safeLoad(fileContent) || {};
+                        monitoredPrefixesFile = yaml.load(fileContent) || {};
+                        this._watchPrefixFile(file);
                     } catch (error) {
-                        throw new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]);
+                        reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
+                        return;
                     }
 
                     if (Object.keys(monitoredPrefixesFile).length === 0) {
-                        throw new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/master/docs/prefixes.md");
+                        reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/main/docs/prefixes.md"));
+                        return;
                     }
 
                     if (this.validate(monitoredPrefixesFile)) {
+                        if (monitoredPrefixesFile.options) {
 
-                        if (monitoredPrefixesFile.options && monitoredPrefixesFile.options.monitorASns) {
-                            this.asns = Object
-                                .keys(monitoredPrefixesFile.options.monitorASns)
-                                .map(asn => {
-                                    if (uniqueAsns[asn]) {
-                                        throw new Error("Duplicate entry for monitored AS " + asn);
-                                    }
-                                    uniqueAsns[asn] = true;
-                                    return Object.assign({
-                                        asn: new AS(asn),
-                                        group: 'default'
-                                    }, monitoredPrefixesFile.options.monitorASns[asn]);
-                                });
+                            this.options = Object.assign(this.options, monitoredPrefixesFile.options);
+
+                            if (monitoredPrefixesFile.options.monitorASns) {
+                                const newAsnSet = Object
+                                    .keys(monitoredPrefixesFile.options.monitorASns)
+                                    .map(asn => {
+                                        if (uniqueAsns[asn]) {
+                                            reject(new Error("Duplicate entry for monitored AS " + asn));
+                                            return;
+                                        }
+                                        uniqueAsns[asn] = true;
+                                        const item = Object.assign({
+                                            asn: new AS(asn),
+                                            group: 'default'
+                                        }, monitoredPrefixesFile.options.monitorASns[asn]);
+
+                                        if (item.upstreams && item.upstreams.length) {
+                                            item.upstreams = new AS(item.upstreams);
+                                        }
+                                        if (item.downstreams && item.downstreams.length) {
+                                            item.downstreams = new AS(item.downstreams);
+                                        }
+
+                                        return item;
+                                    });
+
+                                this.asns = this.asns.concat(newAsnSet);
+                            }
                         }
 
                         const monitoredPrefixes = Object
@@ -101,7 +152,8 @@ export default class InputYml extends Input {
                             .filter(i => i !== "options")
                             .map(i => {
                                 if (uniquePrefixes[i]) {
-                                    throw new Error("Duplicate entry for " + i);
+                                    reject(new Error("Duplicate entry for " + i));
+                                    return;
                                 }
                                 uniquePrefixes[i] = true;
                                 monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
@@ -136,13 +188,20 @@ export default class InputYml extends Input {
         const options = fileContent.options;
 
         if (options && options.monitorASns) {
-            optionsError = Object
-                .keys(options.monitorASns)
-                .map(asn => {
-                    if (!new AS(asn).isValid()) {
-                        return "Not a valid AS number in monitorASns";
-                    }
-                });
+
+            for (let item in options.monitorASns) {
+                if (!new AS(item).isValid()) {
+                    optionsError.push("Not a valid AS number in monitorASns");
+                }
+                const upstreams = options.monitorASns[item].upstreams;
+                const downstreams = options.monitorASns[item].downstreams;
+                if (upstreams && upstreams.length && !new AS(upstreams).isValid()) {
+                    optionsError.push(`One of the upstream ASes provided for AS${item} is not valid`);
+                }
+                if (downstreams && downstreams.length && !new AS(downstreams).isValid()) {
+                    optionsError.push(`One of the downstream ASes provided for AS${item} is not valid`);
+                }
+            }
         }
 
         prefixesError = Object
@@ -199,18 +258,22 @@ export default class InputYml extends Input {
                 }
 
                 if (item.path) {
-                    if (!item.path.matchDescription){
-                        return "No matchDescription set";
-                    }
-                    this._validateRegex(item.path.match);
-                    this._validateRegex(item.path.notMatch);
-                    if (item.path.maxLength && !(typeof(item.path.maxLength) == "number" && item.path.maxLength > 1)) {
-                        return "Not valid maxLength";
-                    }
+                    ((item.path.length) ? item.path : [item.path])
+                        .map(rule => {
+                            if (!rule.matchDescription){
+                                return "No matchDescription set";
+                            }
+                            this._validateRegex(rule.match);
+                            this._validateRegex(rule.notMatch);
+                            if (rule.maxLength && !(typeof(rule.maxLength) == "number" && rule.maxLength > 1)) {
+                                return "Not valid maxLength";
+                            }
 
-                    if (item.path.minLength && !(typeof(item.path.minLength) == "number" && item.path.minLength > 1)) {
-                        return "Not valid minLength";
-                    }
+                            if (rule.minLength && !(typeof(rule.minLength) == "number" && rule.minLength > 1)) {
+                                return "Not valid minLength";
+                            }
+                        })
+
                 }
 
                 return null;
@@ -249,37 +312,48 @@ export default class InputYml extends Input {
         return this.asns;
     };
 
-    save = () =>
+    save = (content) =>
+        new Promise((resolve, reject) => {
+            if (content && typeof(content) === "object" && Object.keys(content).length > 0) {
+                try {
+                    fs.writeFileSync(this.defaultPrefixFile, yaml.dump(content));
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }
+            } else {
+                reject(new Error("Empty or not valid prefix list"));
+            }
+        });
+
+    retrieve = () =>
         new Promise((resolve, reject) => {
             const prefixes = {};
+            const monitorASns = {};
+
             for (let rule of this.prefixes) {
-                const prefix = rule.prefix;
-                prefixes[prefix] = {
-                    asn: rule.asn.getValue(),
-                    description: rule.description,
-                    group: rule.group,
-                    ignore: rule.ignore,
-                    ignoreMorespecifics: rule.ignoreMorespecifics,
-                };
-
-                if (rule.excludeMonitors.length) prefixes[prefix].excludeMonitors = rule.excludeMonitors;
-                if (rule.includeMonitors.length) prefixes[prefix].includeMonitors = rule.includeMonitors;
-            }
-
-            const options = {
-                options: {
-                    monitorASns: {
-                    }
+                const item = JSON.parse(JSON.stringify(rule));
+                prefixes[rule.prefix] = item;
+                item.asn = rule.asn.getValue();
+                delete item.prefix;
+                if (!item.includeMonitors.length) {
+                    delete item.includeMonitors;
                 }
-            };
+                if (!item.excludeMonitors.length) {
+                    delete item.excludeMonitors;
+                }
+            }
 
             for (let asnRule of this.asns) {
-                options.options.monitorASns[asnRule.asn.getValue()] = {
-                    group: asnRule.group
+                monitorASns[asnRule.asn.getValue()] = {
+                    group: asnRule.group,
+                    upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
+                    downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null,
                 };
             }
 
-            fs.writeFileSync("prefixes.yml", yaml.dump({ ...prefixes, ...options }));
-            resolve(true)
+            const options = Object.assign({}, this.options, { monitorASns });
+
+            resolve({ ...prefixes, options });
         });
 }

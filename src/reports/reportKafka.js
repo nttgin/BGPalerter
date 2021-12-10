@@ -31,13 +31,14 @@
  */
 
 import Report from "./report";
-import kafka from "kafka-node";
+import { Kafka, logLevel } from "kafkajs";
 
 export default class ReportKafka extends Report {
 
     constructor(channels,params, env) {
         super(channels, params, env);
         this.client = null;
+        this.clientId = env.clientId;
         this.producer = null;
         this.connected = false;
         this.host = [ this.params.host || "localhost", this.params.port ].filter(i => i != null).join(":");
@@ -60,62 +61,52 @@ export default class ReportKafka extends Report {
 
     _connectToKafka = () => {
         if (!this.connecting) {
-            this.connecting = new Promise((resolve, reject) => {
-                if (this.connected) {
-                    resolve(true);
-                } else {
-                    this.client = new kafka.KafkaClient({kafkaHost: this.host});
-                    this.producer = new kafka.HighLevelProducer(this.client);
 
-
-                    this.producer.setMaxListeners(0);
-                    this.producer
-                        .on('ready', () => {
-                            this.connected = true;
-                            resolve(true);
-                        });
-
-                    this.producer
-                        .on('error', (error) => {
-                            this.logger.log({
-                                level: 'error',
-                                message: 'Kafka connector error: ' + error
-                            });
-                        });
-                }
+            this.client = new Kafka({
+                logLevel: logLevel.ERROR,
+                clientId: this.clientId,
+                brokers: [].concat.apply([], [this.host])
             });
+
+            this.producer = this.client.producer();
+
+            this.connecting = this.producer
+                .connect()
+                .then(() => {
+                    this.connected = true;
+                })
+                .catch((error) => {
+                    this.logger.log({
+                        level: 'error',
+                        message: 'Kafka connector error: ' + error
+                    });
+                });
         }
 
         return this.connecting;
     };
 
-    _sendOutcome = (error, data) => {
-        this.logger.log({
-            level: 'error',
-            message: 'Kafka error during send: ' + JSON.stringify(data)
-        });
-    };
-
     _getPayload = (topic, channel, message) => {
-        return [{
+        return {
             topic: topic,
-            messages: JSON.stringify(message),
+            messages: [ { value: JSON.stringify(message) }],
             key: channel,
             attributes: 1,
             timestamp: Date.now()
-        }];
+        };
     };
 
     report = (channel, content) => {
         return this._connectToKafka()
             .then(() => {
                 const topic = this._getTopic(channel);
-                this.producer.send(this._getPayload(topic, channel, content), this._sendOutcome);
+                return this.producer
+                    .send(this._getPayload(topic, channel, content));
             })
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: 'Kafka disconnected: ' + error
+                    message: error
                 });
             });
     }

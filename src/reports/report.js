@@ -33,21 +33,27 @@
 
 import moment from "moment";
 import brembo from "brembo";
+import axios from "axios";
+import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Report {
-
     constructor(channels, params, env) {
 
         this.config = env.config;
         this.logger = env.logger;
         this.pubSub = env.pubSub;
         this.params = params;
+        this.enabled = true;
 
         for (let channel of channels){
-            env.pubSub.subscribe(channel, (message, content) => {
+            env.pubSub.subscribe(channel, (content, message) => {
                 return this.report(message, content);
             });
         }
+
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
     }
 
     getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {
@@ -68,99 +74,126 @@ export default class Report {
     };
 
     getContext = (channel, content) => {
-        let context = {
-            summary: content.message,
-            earliest: moment(content.earliest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            latest: moment(content.latest).utc().format("YYYY-MM-DD hh:mm:ss"),
-            channel,
-            type: content.origin,
-        };
+        try {
+            let context = {
+                summary: content.message,
+                earliest: moment(content.earliest).utc().format("YYYY-MM-DD HH:mm:ss"),
+                latest: moment(content.latest).utc().format("YYYY-MM-DD HH:mm:ss"),
+                channel,
+                type: content.origin,
+            };
 
-        let matched = null;
-        let pathsCount = {};
-        let sortedPathIndex;
+            let matched = null;
+            let pathsCount = {};
+            let sortedPathIndex;
 
-        if (this.params.showPaths > 0) {
-            content.data
-                .filter(i => !!i.matchedMessage && !!i.matchedMessage.path)
-                .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(1)))
-                .forEach(path => {
-                    if (!pathsCount[path]) {
-                        pathsCount[path] = 0;
-                    }
-                    pathsCount[path]++;
-                });
+            if (this.params.showPaths > 0) {
+                content.data
+                    .filter(i => !!i.matchedMessage && !!i.matchedMessage.path)
+                    .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(channel === "path" ? 0 : 1)))
+                    .forEach(path => {
+                        if (!pathsCount[path]) {
+                            pathsCount[path] = 0;
+                        }
+                        pathsCount[path]++;
+                    });
 
-            sortedPathIndex = Object.keys(pathsCount)
-                .map(key => [key, pathsCount[key]]);
 
-            sortedPathIndex.sort((first, second) => second[1] - first[1]);
-            context.pathNumber = Math.min(this.params.showPaths, sortedPathIndex.length);
-            context.paths = sortedPathIndex
-                .slice(0, this.params.showPaths)
-                .map(i => i[0]).join("\n");
-        } else {
-            context.pathNumber = "";
-            context.paths = "Disabled";
+                sortedPathIndex = Object.keys(pathsCount)
+                    .map(key => [key, pathsCount[key]]);
+
+                sortedPathIndex.sort((first, second) => second[1] - first[1]);
+                context.pathNumber = Math.min(this.params.showPaths, sortedPathIndex.length);
+                context.paths = sortedPathIndex
+                    .slice(0, this.params.showPaths)
+                    .map(i => i[0])
+                    .join(",");
+            } else {
+                context.pathNumber = 0;
+                context.paths = "";
+            }
+
+            switch(channel){
+                case "hijack":
+                    matched = content.data[0].matchedRule;
+                    context.prefix = matched.prefix;
+                    context.description = matched.description;
+                    context.asn = matched.asn.toString();
+                    context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
+                    context.neworigin = content.data[0].matchedMessage.originAS;
+                    context.newprefix = content.data[0].matchedMessage.prefix;
+                    context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
+
+                    break;
+
+                case "visibility":
+                    matched = content.data[0].matchedRule;
+                    context.prefix = matched.prefix;
+                    context.description = matched.description;
+                    context.asn = matched.asn.toString();
+                    context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
+                    context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
+                    break;
+
+                case "newprefix":
+                    matched = content.data[0].matchedRule;
+                    context.prefix = matched.prefix;
+                    context.description = matched.description;
+                    context.asn = matched.asn.toString();
+                    context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
+                    context.neworigin = content.data[0].matchedMessage.originAS;
+                    context.newprefix = content.data[0].matchedMessage.prefix;
+                    context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
+                    break;
+
+                case "software-update":
+                    break;
+
+                case "path":
+                    break;
+
+                case "misconfiguration":
+                    context.asn = content.data[0].matchedRule.asn.toString();
+                    break;
+
+                case "rpki":
+                    matched = content.data[0].matchedRule;
+                    context.asn = (matched.asn || "").toString();
+                    context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
+                    context.description = matched.description || "";
+                    break;
+
+                default:
+                    matched = content.data[0].matchedRule;
+                    context.prefix = matched.prefix;
+                    context.description = matched.description || "";
+                    context.asn = (matched.asn || "").toString();
+            }
+
+            return context;
+
+        } catch (error) { // This MUST never happen. But if it happens we need do send a basic alert anyway and don't crash
+            this.logger.log({
+                level: 'error',
+                message: `It was not possible to generate a context: ${error}`
+            });
+
+            return {
+                summary: content.message
+            }
         }
-
-        switch(channel){
-            case "hijack":
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAS;
-                context.newprefix = content.data[0].matchedMessage.prefix;
-                context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-
-                break;
-
-            case "visibility":
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                break;
-
-            case "newprefix":
-                matched = content.data[0].matchedRule;
-                context.prefix = matched.prefix;
-                context.description = matched.description;
-                context.asn = matched.asn.toString();
-                context.peers = [...new Set(content.data.map(alert => alert.matchedMessage.peer))].length;
-                context.neworigin = content.data[0].matchedMessage.originAS;
-                context.newprefix = content.data[0].matchedMessage.prefix;
-                context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                break;
-
-            case "software-update":
-                break;
-
-            case "path":
-                break;
-
-            case "misconfiguration":
-                context.asn = content.data[0].matchedRule.asn.toString();
-
-                break;
-
-            default:
-                return false;
-        }
-
-        return context;
     };
 
     parseTemplate = (template, context) => {
         return template.replace(/\${([^}]*)}/g, (r,k)=>context[k]);
     };
 
-
     report = (message, content) => {
         throw new Error('The method report must be implemented');
-    }
+    };
+
+    getUserGroup = (group) => {
+        throw new Error('The method getUserGroup must be implemented');
+    };
+
 }

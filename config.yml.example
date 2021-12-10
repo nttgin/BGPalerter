@@ -3,8 +3,9 @@ connectors:
     name: ris
     params:
       carefulSubscription: true
-      url: wss://ris-live.ripe.net/v1/ws/
+      url: ws://ris-live.ripe.net/v1/ws/
       perMessageDeflate: true
+      authorizationHeader: null
       subscription:
         moreSpecific: true
         type: UPDATE
@@ -12,36 +13,66 @@ connectors:
         socketOptions:
           includeRaw: false
 
+#  - file: connectorRISDump
+#    name: dmp
+
 monitors:
   - file: monitorHijack
     channel: hijack
     name: basic-hijack-detection
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
 
-  - file: monitorNewPrefix
-    channel: newprefix
-    name: prefix-detection
-    params:
-      thresholdMinPeers: 2
+#  - file: monitorNewPrefix
+#    channel: newprefix
+#    name: prefix-detection
+#    params:
+#      thresholdMinPeers: 3
 
   - file: monitorPath
     channel: path
     name: path-matching
     params:
-      thresholdMinPeers: 0
+      thresholdMinPeers: 1
 
   - file: monitorVisibility
     channel: visibility
     name: withdrawal-detection
     params:
-      thresholdMinPeers: 10
+      thresholdMinPeers: 40
 
   - file: monitorAS
     channel: misconfiguration
     name: asn-monitor
     params:
-      thresholdMinPeers: 2
+      thresholdMinPeers: 3
+
+  - file: monitorRPKI
+    channel: rpki
+    name: rpki-monitor
+    params:
+      thresholdMinPeers: 3
+      checkUncovered: false
+      checkDisappearing: false
+
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-diff
+    params:
+      enableDiffAlerts: true
+      enableExpirationAlerts: true
+      enableExpirationCheckTA: true
+      enableDeletedCheckTA: true
+      roaExpirationAlertHours: 2
+      checkOnlyASns: true
+      toleranceDeletedRoasTA: 20
+      toleranceExpiredRoasTA: 20
+
+  - file: monitorPathNeighbors
+    channel: path
+    name: path-neighbors
+    params:
+      thresholdMinPeers: 3
 
 reports:
   - file: reportFile
@@ -51,6 +82,7 @@ reports:
       - visibility
       - path
       - misconfiguration
+      - rpki
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
@@ -62,6 +94,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -81,8 +114,10 @@ reports:
 #          rejectUnauthorized: true  # Reject unauthorized certificates
 #      notifiedEmails:
 #        default:
+#          - admin@example.org
+#        noc:
 #          - joe@example.org
-#          - noc@example.org
+#          - seb@example.org
 
 #  - file: reportSlack
 #    channels:
@@ -91,6 +126,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
@@ -98,8 +134,10 @@ reports:
 #        newprefix: '#fa9548'
 #        visibility: '#fad648'
 #        path: '#42cbf5'
+#        rpki: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
+#        noc: _YOUR_SLACK_WEBHOOK_URL_
 
 #  - file: reportKafka
 #    channels:
@@ -108,6 +146,7 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      host: localhost
 #      port: 9092
@@ -122,10 +161,12 @@ reports:
 #      - path
 #      - asn-monitor
 #      - misconfiguration
+#      - rpki
 #    params:
-#      host: localhost
+#      host: 127.0.0.1
 #      port: 514
-#      templates:
+#      transport: udp
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: "++BGPalerter-3-${type}: ${summary}|${earliest}|${latest}"
 #        hijack: "++BGPalerter-5-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
 #        newprefix: "++BGPalerter-4-${type}: ${summary}|${prefix}|${description}|${asn}|${newprefix}|${neworigin}|${earliest}|${latest}|${peers}"
@@ -139,19 +180,21 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
 #    params:
 #      severity:
 #        hijack: critical
 #        newprefix: informational
 #        visibility: debug
 #        path: trace
-#      resourceTemplates:
+#      resourceTemplates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: "${type}"
 #        hijack: "hijack::${prefix}@@${asn}"
 #        newprefix: "newprefix::${prefix}@@${asn}"
 #        visibility: "visibility::${prefix}@@${asn}"
 #      urls:
 #        default: _YOUR_ALERTA_API_URL_
+#        noc: _YOUR_ALERTA_API_URL_
 
 #  - file: reportWebex
 #    channels:
@@ -160,32 +203,93 @@ reports:
 #      - visibility
 #      - path
 #      - misconfiguration
+#      - rpki
+#    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
+#        noc: _YOUR_WEBEX_WEBHOOK_URL_
 
+#  - file: reportHTTP
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
+#        default: '{"text": "${summary}"}'
+#      headers:
+#      isTemplateJSON: true
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      hooks:
+#        default: _YOUR_WEBHOOK_URL_
+#        noc: _YOUR_WEBHOOK_URL_
+
+#  - file: reportTelegram
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      botUrl: https://api.telegram.org/bot<_BOT_ID_>/sendMessage
+#      chatIds:
+#        default: _CHAT_ID_
+#        noc: _CHAT_ID_
+
+#  - file: reportPullAPI
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#    params:
+#      maxAlertsAmount: 25
 
 ############################
 # Notification settings:
 # - notificationIntervalSeconds
 #       Defines the amount of seconds after which an alert can be repeated. An alert is repeated only if the event that
 #       triggered it is not yet solved.
-#
+# - persistStatus
+#       Persist the status of BGPalerter. If the process is restarted, the list of alerts already sent is recovered
+#       and they are not repeated. The process must be able to write on disc, this option will create a file inside .cache/
 
-notificationIntervalSeconds: 14400
+notificationIntervalSeconds: 86400
+persistStatus: true
 
+
+############################
+# REST API settings:
+# - rest.host
+#       The IP address the server will listen. The default value is localhost, this means the API will not be reachable
+#       from another host. To make it public use null or 0.0.0.0.
+# - rest.port
+#       The port the server will listen
+
+rest:
+  host: localhost
+  port: 8011
 
 logging:
   directory: logs
   logRotatePattern: YYYY-MM-DD
-  backlogSize: 1000  #Advanced option, read the doc
   maxRetainedFiles: 10
   maxFileSizeMB: 15
   compressOnRotation: false
+  useUTC: true
   
 checkForUpdatesAtBoot: false
 checkForUpdatesInterval: 432000000 #  1000 * 3600 * 24 * 5 // Check every 5 days
 checkForUpdates: false
-
+generatePrefixListEveryDays: 5000
 
 ############################
 # Process monitoring settings:
@@ -195,8 +299,6 @@ checkForUpdates: false
 #  - file: uptimeApi
 #    params:
 #      useStatusCodes: true
-#      host: null
-#      port: 8011
 #
 #  - file: uptimeHealthcheck
 #    params:
@@ -216,6 +318,38 @@ checkForUpdates: false
 monitoredPrefixesFiles:
   - prefixes.yml
 
+############################
+# The file containing the user groups.
+# User groups can be specified
+# 1) directly above, in each report module; or
+# 2) inside an external file, as specified below (disabled by default).
+# Using an external file allows BGPalerter to auto-reload the user group definitions
+# when the external file is changed.
+
+# groupsFile: groups.yml.example
+
+############################
+# HTTP proxy setting:
+# Allow to run BGPalerter behind an HTTP/HTTPS proxy.
+# You can also specify which module can bypass the proxy.
+# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/http-proxy.md
+
+# httpProxy: http://username:password@127.0.0.1:9000
+
+
+############################
+# RPKI settings:
+# Global RPKI settings shared across all monitors requiring RPKI data
+# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md
+#
+# 29/06/2021: rpkiclient has been set as default vrpProvider in this example since is the only one supporting
+# ROAs expiration data. See what expiration data enables you to do: https://github.com/nttgin/BGPalerter/releases/tag/v1.28.1
+
+rpki:
+  vrpProvider: rpkiclient
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  markDataAsStaleAfterMinutes: 120
 
 
 ############################
@@ -229,4 +363,5 @@ pidFile: bgpalerter.pid
 maxMessagesPerSecond: 6000
 multiProcess: false
 environment: production
+configVersion: 2
 

@@ -31,7 +31,6 @@
  */
 
 import Connector from "./connector";
-import axios from "axios";
 import semver from "semver";
 
 export default class ConnectorSwUpdates extends Connector{
@@ -46,11 +45,12 @@ export default class ConnectorSwUpdates extends Connector{
         });
 
     _checkForUpdates = () => {
-        return axios({
+        return this.axios({
             responseType: "json",
-            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/master/package.json"
+            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/package.json"
         })
             .then(data => {
+
                 if (data && data.data && data.data.version && semver.gt(data.data.version, this.version)) {
                     this._message({
                         type: "software-update",
@@ -70,23 +70,8 @@ export default class ConnectorSwUpdates extends Connector{
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
-            // The functional test cases require this to be logged to stdout, because STDOUT is captured and
-            // parse to verify the BGPAlerter configuration.  This is distinct from the log stream that generates
-            // ./log/error... ./log/reports... because these files are not cleared after each BGPAlerter restart
-            if (this.config.checkForUpdates) {
-                // The function test cases require this to be logged to stdout, because STDOUT is captured and parse to
-                // verify the configuration for restart of the BGPAlerter daemon
-                console.log("Software updates enabled");
-                if (this.config.checkForUpdatesAtBoot){
-                    this._checkForUpdates();
-                }
-
-                setInterval(this._checkForUpdates, this.config.checkForUpdatesInterval); // Check every 5 days
-            }
-            else {
-                // The function test cases require this to be logged to stdout, because STDOUT is captured and parse to
-                // verify the configuration for restart of the BGPAlerter daemon
-                console.log("Software updates disabled");
+            if (this.config.checkForUpdatesAtBoot){
+                setTimeout(this._checkForUpdates, 20000000); // Check after 20 seconds from boot
             }
             resolve(true);
         });

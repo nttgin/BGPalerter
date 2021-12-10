@@ -31,7 +31,6 @@
  */
 
 import Report from "./report";
-import axios from "axios";
 
 export default class ReportAlerta extends Report {
 
@@ -40,19 +39,12 @@ export default class ReportAlerta extends Report {
 
         this.environment = env.config.environment;
         this.enabled = true;
-        if (!this.params.urls || !Object.keys(this.params.urls).length){
+        if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: "Alerta reporting is not enabled: no group is defined"
+                message: "Alerta reporting is not enabled: no default group defined"
             });
             this.enabled = false;
-        } else {
-            if (!this.params.urls["default"]) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In urls, for reportAlerta, a group named 'default' is required for communications to the admin."
-                });
-            }
         }
 
         this.headers = {
@@ -76,16 +68,13 @@ export default class ReportAlerta extends Report {
         if (this.params.resource_templates) {
             this.logger.log({
                 level: 'info',
-                message: "The resource_templates parameter will be soon deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
+                message: "The resource_templates parameter is deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
             });
         }
 
-        const resource = this.params.resourceTemplates[channel] ||
-            this.params.resource_templates[channel] ||
-            this.params.resourceTemplates["default"] ||
-            this.params.resource_templates["default"];
+        const resource = this.params.resourceTemplates[channel] || this.params.resourceTemplates["default"];
 
-        axios({
+        this.axios({
             url: url + "/alert",
             method: "POST",
             headers: this.headers,
@@ -108,18 +97,24 @@ export default class ReportAlerta extends Report {
             })
     };
 
+    getUserGroup = (group) => {
+        const groups = this.params.urls || this.params.userGroups;
+
+        return groups[group] || groups["default"];
+    };
+
     report = (channel, content) => {
         if (this.enabled){
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
-            groups = (groups.length) ? [...new Set(groups)] : Object.keys(this.params.urls); // If there are no groups defined, send to all of them
+            groups = (groups.length) ? [...new Set(groups)] : ["default"];
 
             for (let group of groups) {
-                if (this.params.urls[group]) {
-                    this._createAlertaAlert(this.params.urls[group], channel, content);
+                const url = this.getUserGroup(group);
+                if (url) {
+                    this._createAlertaAlert(url, channel, content);
                 }
             }
         }
-
-    }
+    };
 }

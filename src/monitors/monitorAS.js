@@ -34,14 +34,14 @@ import Monitor from "./monitor";
 
 export default class MonitorAS extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
+        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
         this.updateMonitoredResources();
     };
 
     updateMonitoredResources = () => {
-        this.monitored = this.input.getMonitoredASns();
+        // nothing
     };
 
     filter = (message) => {
@@ -69,20 +69,9 @@ export default class MonitorAS extends Monitor {
             return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
         } else if (prefixesOut.length === 1) {
            return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
-
         }
 
         return false;
-    };
-
-    _getMonitoredAS = (message) => {
-        const monitored = this.monitored;
-
-        for (let m of monitored) {
-            if (message.originAS.includes(m.asn)) {
-                return m;
-            }
-        }
     };
 
     monitor = (message) =>
@@ -90,7 +79,7 @@ export default class MonitorAS extends Monitor {
 
             const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this._getMonitoredAS(message);
+            const matchedRule = this.getMonitoredAsMatch(messageOrigin);
 
             if (matchedRule) {
 

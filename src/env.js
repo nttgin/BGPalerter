@@ -30,154 +30,83 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import yaml from "js-yaml";
 import fs from "fs";
-import path from "path";
-import PubSub from './pubSub';
-import FileLogger from './fileLogger';
-import Input from "./inputs/inputYml";
-import {version} from '../package.json';
-import axios from 'axios';
+import PubSub from './utils/pubSub';
+import FileLogger from 'fast-file-logger';
+import { version } from '../package.json';
+import Storage from './utils/storages/storageFile';
+import url from 'url';
+import RpkiUtils from './utils/rpkiUtils';
+import ConfigYml from './config/configYml';
+import Config from "./config/config";
+import { v4 as uuidv4 } from 'uuid';
 
-const defaultConfigFilePath = path.resolve(process.cwd(), 'config.yml');
+const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
-    configFile: global.EXTERNAL_CONFIG_FILE || defaultConfigFilePath,
     clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
 };
-let config = {
-    environment: "production",
 
-    connectors: [
-        {
-            file: "connectorRIS",
-            name: "ris",
-            params: {
-                carefulSubscription: true,
-                url: "wss://ris-live.ripe.net/v1/ws/",
-                perMessageDeflate: true,
-                subscription: {
-                    moreSpecific: true,
-                    type: "UPDATE",
-                    host: null,
-                    socketOptions: {
-                        includeRaw: false
-                    }
-                }
-            }
-        }
-    ],
-    monitors: [
-        {
-            file: "monitorHijack",
-            channel: "hijack",
-            name: "basic-hijack-detection",
-            params: {
-                thresholdMinPeers: 2
-            }
-        },
-        {
-            file: "monitorPath",
-            channel: "path",
-            name: "path-matching",
-            params: {
-                thresholdMinPeers: 0
-            }
-        },
-        {
-            file: "monitorNewPrefix",
-            channel: "newprefix",
-            name: "prefix-detection",
-            params: {
-                thresholdMinPeers: 2
-            }
-        },
-        {
-            file: "monitorVisibility",
-            channel: "visibility",
-            name: "withdrawal-detection",
-            params: {
-                thresholdMinPeers: 10
-            }
-        },
-        {
-            file: "monitorAS",
-            channel: "misconfiguration",
-            name: "as-monitor",
-            params: {
-                thresholdMinPeers: 2
-            }
-        }
-    ],
-    reports: [
-        {
-            file: "reportFile",
-            channels: ["hijack", "newprefix", "visibility", "path", "misconfiguration"]
-        }
-    ],
-    notificationIntervalSeconds: 14400,
-    alarmOnlyOnce: false,
-    monitoredPrefixesFiles: ["prefixes.yml"],
-    logging: {
-        directory: "logs",
-        logRotatePattern: "YYYY-MM-DD",
-        backlogSize: 1000,
-        maxRetainedFiles: 10,
-        maxFileSizeMB: 15,
-        compressOnRotation: false,
-    },
-    checkForUpdatesAtBoot: false,
-    checkForUpdatesInterval: 1000 * 3600 * 24 * 5,  // Check every 5 days
-    checkForUpdates: false,
-    pidFile: "bgpalerter.pid",
-    fadeOffSeconds: 360,
-    checkFadeOffGroupsSeconds: 30
-};
+const config = configConnector.retrieve();
 
+if (global.DRY_RUN) {
+    config.connectors = [{
+        file: "connectorTest",
+        name: "tes",
+        params: {
+            testType: "hijack"
+        }
+    }];
+    config.monitors = [{
+        file: "monitorPassthrough",
+        channel: "hijack",
+        name: "monitor-passthrough",
+        params: {
+            showPaths: 0,
+            thresholdMinPeers: 0
+        }
+    }];
+}
 
-if (fs.existsSync(vector.configFile)) {
-    try {
-        config = yaml.safeLoad(fs.readFileSync(vector.configFile, 'utf8')) || config;
-    } catch (error) {
-        throw new Error("The file " + vector.configFile + " is not valid yml: " + error.message.split(":")[0]);
+config.volume = config.volume || global.EXTERNAL_VOLUME_DIRECTORY || "";
+
+if (config.volume && config.volume.length) {
+    if (config.volume.slice(-1) !== "/") {
+        config.volume += "/";
     }
-} else {
-    console.log("Impossible to load config.yml. A default configuration file has been generated.");
-    //axios({
-    //    url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/master/config.yml.example',
-    //    method: 'GET',
-    //    responseType: 'blob', // important
-    //})
-    //    .then((response) => {
-    //        fs.writeFileSync(defaultConfigFilePath, response.data);
-    //    })
-    //    .catch(() => {
-    //        fs.writeFileSync(defaultConfigFilePath, yaml.dump(config));
-    //    })
 
+    if (!fs.existsSync(config.volume)) {
+        fs.mkdirSync(config.volume);
+    }
+}
+
+if (!config.configVersion || config.configVersion < Config.configVersion) {
+    console.log("Your config.yml file is old. It works, but it may not support all the new features. Update your config file or generate a new one (e.g., rename the file into config.yml.bak, run BGPalerter and proceed with the auto configuration, apply to the new config.yml the personalizations you did in config.yml.bak.");
 }
 
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',
-    directory: config.logging.directory,
-    backlogSize: config.logging.backlogSize,
+    symLink: 'error.log',
+    directory: config.volume + config.logging.directory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
 const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'reports-%DATE%.log',
-    directory: config.logging.directory,
-    backlogSize: config.logging.backlogSize,
+    symLink: 'reports.log',
+    directory: config.volume + config.logging.directory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
     label: config.environment,
+    useUTC: !!config.logging.useUTC,
     format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
 });
 
@@ -194,13 +123,7 @@ const wlogger = {
         }
 };
 
-
 config.monitors = (config.monitors || []);
-config.monitors.push({
-    file: "monitorSwUpdates",
-    channel: "software-update",
-    name: "software-update",
-});
 
 config.monitors = config.monitors
     .map(item => {
@@ -221,17 +144,19 @@ config.reports = (config.reports || [])
             };
         }
         return {
+            file: item.file,
             class: require("./reports/" + item.file).default,
-            channels: [...item.channels, "software-update"],
+            channels: item.channels,
             params: item.params
         };
     });
+
+if (!config.reports.some(report => report.channels.includes("software-update"))) { // Check if software-update channel is declared
+    config.reports.forEach(report => report.channels.push("software-update")); // If not, declare it everywhere
+}
+
 config.connectors = config.connectors || [];
 
-config.connectors.push(        {
-    file: "connectorSwUpdates",
-    name: "upd"
-});
 
 if ([...new Set(config.connectors)].length !== config.connectors.length) {
     throw new Error('Connectors names MUST be unique');
@@ -252,12 +177,16 @@ config.connectors = config.connectors
 
     });
 
+if (config.httpProxy) {
+    const HttpsProxyAgent = require("https-proxy-agent");
+    vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
+}
 
-const input = new Input(config);
-
+vector.storage = new Storage({}, config);
 vector.config = config;
 vector.logger = wlogger;
-vector.input = input;
 vector.pubSub = new PubSub();
+vector.rpki = new RpkiUtils(vector);
+vector.instanceId = uuidv4();
 
 module.exports = vector;

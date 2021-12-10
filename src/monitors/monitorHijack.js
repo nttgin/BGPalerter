@@ -35,8 +35,8 @@ import ipUtils from "ip-sub";
 
 export default class MonitorHijack extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 2;
         this.updateMonitoredResources();
     };
@@ -66,22 +66,29 @@ export default class MonitorHijack extends Monitor {
         return false;
     };
 
+    validate = (message, matchedRule) => {
+        this.rpki.addToValidationQueue(message, matchedRule, this._validate);
+    };
+
+    _validate = (result, message, matchedRule) => {
+        if (!result.valid) {
+            this.publishAlert(message.originAS.getId() + "-" + message.prefix,
+                matchedRule.asn.getId(),
+                matchedRule,
+                message,
+                {});
+        }
+    }
+
     monitor = (message) =>
         new Promise((resolve, reject) => {
-
             const messagePrefix = message.prefix;
             const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
 
             if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
-
-                this.publishAlert(message.originAS.getId() + "-" + message.prefix,
-                    matchedRule.asn.getId(),
-                    matchedRule,
-                    message,
-                    {});
+                this.validate(message, matchedRule);
+                resolve(true);
             }
-
-            resolve(true);
         });
 
 }

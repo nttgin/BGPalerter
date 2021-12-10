@@ -30,23 +30,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
+const chai = require("chai");
+const fs = require("fs");
+const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
-var expect = chai.expect;
-
-let asyncTimeout = 20000;
+const expect = chai.expect;
+const volume = "volumetests/";
+const cacheCloneDirectory = "tests/.cache_clone/";
+const asyncTimeout = 120000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
+const axios = require("axios");
+
+const worker = require("../index");
+const pubSub = worker.pubSub;
 
 describe("Alerting", function () {
-    var worker = require("../index");
-    var pubSub = worker.pubSub;
 
     it("visibility reporting", function(done) {
-
-        pubSub.publish("test-type", "visibility");
-
         const expectedData = {
             "165.254.225.0/24": {
                 id: '165.254.225.0/24',
@@ -69,42 +70,44 @@ describe("Alerting", function () {
         };
 
         let visibilityTestCompleted = false;
-        pubSub.subscribe("visibility", function (type, message) {
+        pubSub.subscribe("visibility", (message, type) => {
+            try {
+                if (!visibilityTestCompleted) {
+                    message = JSON.parse(JSON.stringify(message));
 
-            if (!visibilityTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-                const id = message.id;
-
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
 
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        visibilityTestCompleted = true;
-                        done();
-                    }, 5000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            visibilityTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
                 }
+            } catch (error) {
+                visibilityTestCompleted = true;
+                done(error);
             }
 
         });
-
+        pubSub.publish("test-type", "visibility");
     }).timeout(asyncTimeout);
 
     it("hijack reporting", function(done) {
-
-        pubSub.publish("test-type", "hijack");
 
         const expectedData = {
             "15562-4-165.254.255.0/25": {
@@ -185,43 +188,40 @@ describe("Alerting", function () {
                     }
                 ]
             }
-
         };
         let hijackTestCompleted = false
-        pubSub.subscribe("hijack", function(type, message){
+        pubSub.subscribe("hijack", (message, type) => {
+            try {
+                if (!hijackTestCompleted) {
+                    message = JSON.parse(JSON.stringify(message));
 
-            if (!hijackTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-                const id = message.id;
+                    expect(Object.keys(expectedData).includes(id)).to.be.true;
+                    expect(expectedData[id] != null).to.be.true;
+                    expect(message).to.containSubset(expectedData[id]);
+                    expect(message).to.contain.keys(["latest", "earliest"]);
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    delete expectedData[id];
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
-
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        hijackTestCompleted = true;
-                        done();
-                    }, 5000);
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            hijackTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
                 }
+            } catch (error) {
+                hijackTestCompleted = true;
+                done(error);
             }
         });
+
+        pubSub.publish("test-type", "hijack");
 
     }).timeout(asyncTimeout);
 
     it("newprefix reporting", function (done) {
-
-        pubSub.publish("test-type", "newprefix");
 
         const expectedData = {
             "1234-175.254.205.0/25": {
@@ -337,109 +337,125 @@ describe("Alerting", function () {
         };
 
         let newprefixTestCompleted = false;
-        pubSub.subscribe("newprefix", function (type, message) {
+        pubSub.subscribe("newprefix", (message, type) => {
+            try {
+                if (!newprefixTestCompleted) {
+                    message = JSON.parse(JSON.stringify(message));
 
-            if (!newprefixTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-                const id = message.id;
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        newprefixTestCompleted = true;
-                        done();
-                    }, 5000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            newprefixTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
                 }
+            } catch (error) {
+                newprefixTestCompleted = true;
+                done(error);
             }
         });
-
-
-
+        pubSub.publish("test-type", "newprefix");
     }).timeout(asyncTimeout);
 
     it("path match reporting", function (done) {
-
-        pubSub.publish("test-type", "path");
-
         const expectedData = {
-            "98.5.4.3/22": {
-                id: '98.5.4.3/22',
+            "98.5.4.3/22-1": {
+                id: '98.5.4.3/22-1',
                 origin: 'path-matching',
                 affected: "98.5.4.3/22",
-                message: 'Matched test description on prefix 98.5.4.3/22 (including length violation) 1 times',
-                data: [
-                    {
-                        extra: {
-                            lengthViolation: true
-                        },
-                        matchedRule: {
-                            prefix: '98.5.4.3/22',
-                            group: 'default',
-                            description: 'path matching test regex and maxLength',
-                            asn: [2914],
-                            ignoreMorespecifics: false,
-                            ignore: false,
-                            path: {
-                                match: ".*2914$",
-                                matchDescription: "test description",
-                                maxLength: 3,
+                message: 'Matched test description2 on prefix 98.5.4.3/22 (including length violation) 1 times',
+                "data":
+                    [
+                        {
+
+                            "affected": "98.5.4.3/22",
+                            "matchedRule": {
+                                "prefix": "98.5.4.3/22",
+                                "group": "default",
+                                "ignore": false,
+                                "excludeMonitors": [],
+                                "includeMonitors": [],
+                                "description": "path matching test regex and maxLength",
+                                "asn": [2914],
+                                "ignoreMorespecifics": false,
+                                "path": [
+                                    {
+                                        "match": ".*2915$",
+                                        "maxLength": 4,
+                                        "matchDescription": "test description1"
+                                    }, {
+                                        "match": ".*2914$",
+                                        "maxLength": 3,
+                                        "matchDescription": "test description2"
+                                    }
+                                ]
+                            }, "matchedMessage": {
+                                "type": "announcement",
+                                "prefix": "98.5.4.3/22",
+                                "peer": "124.0.0.3",
+                                "path": [1, 2, 3, 4321, 5060, 2914],
+                                "originAS": [2914],
+                                "nextHop": "124.0.0.3",
+                                "aggregator": null
+                            },
+                            "extra": {
+                                "lengthViolation": true,
+                                "matchDescription": "test description2"
                             }
-                        },
-                        matchedMessage: {
-                            type: 'announcement',
-                            prefix: '98.5.4.3/22',
-                            peer: '124.0.0.3',
-                            path: [1, 2, 3, 4321, 5060, 2914],
-                            originAS: [2914],
-                            nextHop: '124.0.0.3'
                         }
-                    }
-                ]
+                    ]
             },
 
-            "99.5.4.3/22": {
-                id: '99.5.4.3/22',
+            "99.5.4.3/22-0": {
+                id: '99.5.4.3/22-0',
                 origin: 'path-matching',
                 affected: "99.5.4.3/22",
                 message: 'Matched test description on prefix 99.5.4.3/22 1 times',
                 data: [
                     {
-                        extra: {
-                            lengthViolation: false
-                        },
-                        matchedRule: {
-                            prefix: '99.5.4.3/22',
-                            group: 'default',
-                            description: 'path matching test regex and minLength',
-                            asn: [2914],
-                            ignoreMorespecifics: false,
-                            ignore: false,
-                            path: {
-                                match: ".*2914$",
-                                matchDescription: "test description",
-                                minLength: 2,
+                        "affected": "99.5.4.3/22",
+                        "matchedRule": {
+                            "prefix": "99.5.4.3/22",
+                            "group": "default",
+                            "ignore": false,
+                            "excludeMonitors": [],
+                            "includeMonitors": [],
+                            "description": "path matching test regex and minLength",
+                            "asn": [2914],
+                            "ignoreMorespecifics": false,
+                            "path": {
+                                "match": ".*2914$",
+                                "minLength": 2,
+                                "matchDescription": "test description"
                             }
                         },
-                        matchedMessage: {
-                            type: 'announcement',
-                            prefix: '99.5.4.3/22',
-                            peer: '124.0.0.3',
-                            path: [1, 2, 3, 4321, 5060, 2914],
-                            originAS: [2914],
-                            nextHop: '124.0.0.3'
+                        "matchedMessage": {
+                            "type": "announcement",
+                            "prefix": "99.5.4.3/22",
+                            "peer": "124.0.0.3",
+                            "path": [1, 2, 3, 4321, 5060, 2914],
+                            "originAS": [2914],
+                            "nextHop": "124.0.0.3",
+                            "aggregator": null
+                        },
+                        "extra": {
+                            "lengthViolation": false,
+                            "matchDescription": "test description"
                         }
                     }
                 ]
@@ -447,41 +463,42 @@ describe("Alerting", function () {
         };
 
         let pathTestCompleted = false;
-        pubSub.subscribe("path", function (type, message) {
+        pubSub.subscribe("path", (message, type) => {
+            try {
+                if (!pathTestCompleted) {
+                    message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-            if (!pathTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to
+                        .containSubset(expectedData[id]);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        pathTestCompleted = true;
-                        done();
-                    }, 5000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            pathTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
                 }
+            } catch (error) {
+                pathTestCompleted = true;
+                done(error);
             }
         });
+        pubSub.publish("test-type", "path");
 
     }).timeout(asyncTimeout);
 
-
-
     it("asn monitoring reporting", function (done) {
-
-        pubSub.publish("test-type", "misconfiguration");
 
         const expectedData = {
             "2914-2.2.2.3/22": {
@@ -499,53 +516,89 @@ describe("Alerting", function () {
         };
 
         let misconfigurationTestCompleted = false;
-        pubSub.subscribe("misconfiguration", function (type, message) {
+        pubSub.subscribe("misconfiguration", (message, type) => {
 
             if (!misconfigurationTestCompleted) {
-                message = JSON.parse(JSON.stringify(message));
-                const id = message.id;
+                try {
+                    message = JSON.parse(JSON.stringify(message));
+                    const id = message.id;
 
-                expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                expect(expectedData[id] != null).to.equal(true);
+                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
+                    expect(expectedData[id] != null).to.equal(true);
+                    expect(message).to.containSubset(expectedData[id]);
+                    expect(message).to.contain
+                        .keys([
+                            "latest",
+                            "earliest"
+                        ]);
 
-                expect(message).to
-                    .containSubset(expectedData[id]);
-
-                expect(message).to.contain
-                    .keys([
-                        "latest",
-                        "earliest"
-                    ]);
-
-                delete expectedData[id];
-                if (Object.keys(expectedData).length === 0) {
-                    setTimeout(() => {
-                        misconfigurationTestCompleted = true;
-                        done();
-                    }, 5000);
+                    delete expectedData[id];
+                    if (Object.keys(expectedData).length === 0) {
+                        setTimeout(() => {
+                            misconfigurationTestCompleted = true;
+                            done();
+                        }, 5000);
+                    }
+                } catch (error) {
+                    misconfigurationTestCompleted = true;
+                    done(error);
                 }
             }
         });
+        pubSub.publish("test-type", "misconfiguration");
 
     }).timeout(asyncTimeout);
 
-
     it("fading alerting", function (done) {
-
-        pubSub.publish("test-type", "fade-off");
-
         let notReceived = true;
 
         setTimeout(() => {
             if (notReceived){
                 done();
+            } else {
+                done(new Error("Not received"));
             }
         }, 15000);
 
-        pubSub.subscribe("visibility", function (type, message) {
+        pubSub.subscribe("visibility", function (message, type) {
             notReceived = false;
         });
-
+        pubSub.publish("test-type", "fade-off");
     }).timeout(asyncTimeout);
 
+    it("pull API alerting", function (done) {
+
+        axios({
+            url: "http://localhost:8011/alerts/8e402e65f393ba4812df5da0db7605e9",
+            responseType: "json",
+            method: "GET"
+        })
+            .then(a => {
+                expect(a.data.data[0].hash).to.equal("8e402e65f393ba4812df5da0db7605e9");
+                done();
+            })
+    }).timeout(asyncTimeout);
+});
+
+describe("Status storage", function () {
+    it("alerts stored", function (done) {
+
+        const files = fs.readdirSync(cacheCloneDirectory);
+
+        for (let f of files) {
+            const fileClone = cacheCloneDirectory + f;
+            const fileOriginal = volume + ".cache/" + f;
+            const exists = fs.existsSync(fileOriginal);
+
+            expect(exists).to.equal(true);
+
+            if (exists) {
+                const clone = JSON.parse(fs.readFileSync(fileClone, 'utf8')).value;
+                const original = JSON.parse(fs.readFileSync(fileOriginal, 'utf8')).value;
+                expect(original.sent).to.have.keys(Object.keys(clone.sent));
+            }
+        }
+        done();
+
+    }).timeout(asyncTimeout);
 });

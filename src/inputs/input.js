@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -33,37 +32,66 @@
 
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
+import generatePrefixes from "../generatePrefixesList";
 
 export default class Input {
 
-    constructor(config){
+    constructor(env){
         this.prefixes = [];
         this.asns = [];
-        this.cache = {};
-        this.config = config;
+        this.cache = {
+            af: {},
+            binaries: {},
+            matched: {}
+        };
+        this.config = env.config;
+        this.storage = env.storage;
+        this.logger = env.logger;
         this.callbacks = [];
+        this.prefixListDiffFailThreshold = 50;
 
+        // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
+        setInterval(() => {
+            if (Object.keys(this.cache.matched).length > 10000) {
+                this.cache.matched = {};
+            }
+        }, 10000);
+
+        // This is to load the prefixes after the application is booted
         setTimeout(() => {
             this.loadPrefixes()
                 .then(() => {
                     this._change();
                 })
                 .catch(error => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
                     console.log(error);
                     process.exit();
                 });
         }, 200);
-
     };
 
     _isAlreadyContained = (prefix, lessSpecifics) => {
-        const p1b = ipUtils.getNetmask(prefix);
+        let p1af, p1b;
+
+        try {
+            p1af = ipUtils.getAddressFamily(prefix);
+            p1b = ipUtils.applyNetmask(prefix, p1af);
+        } catch (error) {
+            throw new Error(`${error.message}: ${prefix}`);
+        }
 
         for (let p2 of lessSpecifics) {
-            const p2b = ipUtils.getNetmask(p2.prefix);
-
-            if (ipUtils.isSubnetBinary(p2b, p1b)) {
-                return true;
+            try {
+                const p2af = ipUtils.getAddressFamily(p2.prefix);
+                if (p1af === p2af && ipUtils.isSubnetBinary(ipUtils.applyNetmask(p2.prefix, p2af), p1b)) {
+                    return true;
+                }
+            } catch (error) {
+                throw new Error(`${error.message}: ${p2}`);
             }
         }
 
@@ -75,9 +103,9 @@ export default class Input {
     };
 
     _change = () => {
-      for (let call of this.callbacks) {
-          call();
-      }
+        for (let call of this.callbacks) {
+            call();
+        }
     };
 
     getMonitoredLessSpecifics = () => {
@@ -87,15 +115,24 @@ export default class Input {
         }
 
         const lessSpecifics = [];
-        let prefixes = this.prefixes;
-        lessSpecifics.push(prefixes[prefixes.length - 1]);
 
-        for (let n=prefixes.length - 2; n>=0; n--) {
-            const p1 = prefixes[n];
-            if (!this._isAlreadyContained(p1.prefix, lessSpecifics)){
-                lessSpecifics.push(p1);
+        try {
+            let prefixes = this.prefixes;
+            lessSpecifics.push(prefixes[prefixes.length - 1]);
+
+            for (let n = prefixes.length - 2; n >= 0; n--) {
+                const p1 = prefixes[n];
+                if (!this._isAlreadyContained(p1.prefix, lessSpecifics)) {
+                    lessSpecifics.push(p1);
+                }
             }
+        } catch (error) {
+            this.logger.log({
+                level: 'error',
+                message: error.message
+            });
         }
+
         return lessSpecifics;
     };
 
@@ -108,21 +145,36 @@ export default class Input {
     };
 
     getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
+        const key = `${prefix}-${includeIgnoredMorespecifics}`;
+        const cached = this.cache.matched[key];
 
-        for (let p of this.prefixes) {
-            if (ipUtils._isEqualPrefix(p.prefix, prefix)) { // Used internal method to avoid validation overhead
-                return p;
-            } else {
-                if (!this.cache[p.prefix]) {
-                    this.cache[p.prefix] = ipUtils.getNetmask(p.prefix);
-                }
-                const p2 = ipUtils.getNetmask(prefix);
+        if (cached !== undefined) {
+            return cached;
+        } else {
+            for (let p of this.prefixes) {
+                if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
+                    this.cache.matched[key] = p;
+                    return p;
+                } else {
 
-                if (ipUtils.isSubnetBinary(this.cache[p.prefix], p2)) {
-                    if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                        return p;
-                    } else {
-                        return null;
+                    if (!this.cache.af[p.prefix]) {
+                        this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
+                        this.cache.binaries[p.prefix] = ipUtils.applyNetmask(p.prefix, this.cache.af[p.prefix]);
+                    }
+                    const prefixAf = ipUtils.getAddressFamily(prefix);
+
+                    if (prefixAf === this.cache.af[p.prefix]) {
+
+                        const prefixBinary = ipUtils.applyNetmask(prefix, prefixAf);
+                        if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
+                            if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
+                                this.cache.matched[key] = p;
+                                return p;
+                            } else {
+                                this.cache.matched[key] = null;
+                                return null;
+                            }
+                        }
                     }
                 }
             }
@@ -139,8 +191,12 @@ export default class Input {
         throw new Error('The method loadPrefixes MUST be implemented');
     };
 
-    save = () => {
+    save = (data) => {
         throw new Error('The method save MUST be implemented');
+    };
+
+    retrieve = () => {
+        throw new Error('The method retrieve MUST be implemented');
     };
 
     generate = () => {
@@ -160,8 +216,8 @@ export default class Input {
                             {
                                 type: 'input',
                                 name: 'asns',
-                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g. 2914,3333)",
-                                default: true,
+                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
+                                default: null,
                                 validate: function(value) {
                                     const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
                                     return asns.length > 0;
@@ -170,36 +226,160 @@ export default class Input {
 
                             {
                                 type: 'confirm',
-                                name: 'i',
-                                message: "Are there sub-prefixes delegated to other ASes? (e.g. sub-prefixes announced by customers)",
+                                name: 'm',
+                                message: "Do you want to be notified when your AS is announcing a new prefix?",
                                 default: true
                             },
 
                             {
                                 type: 'confirm',
-                                name: 'm',
-                                message: "Do you want to be notified when your AS is announcing a new prefix?",
+                                name: 'upstreams',
+                                message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
+                                default: true
+                            },
+                            {
+                                type: 'confirm',
+                                name: 'downstreams',
+                                message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
                                 default: true
                             }
                         ])
                         .then((answer) => {
-                            const generatePrefixes = require("../generatePrefixesList");
                             const asns = answer.asns.split(",");
-                            return generatePrefixes(
-                                asns,
-                                "prefixes.yml",
-                                [],
-                                answer.i,
-                                null,
-                                answer.m ? asns : []
-                            );
+
+                            const inputParameters = {
+                                asnList: asns,
+                                exclude: [],
+                                excludeDelegated: true,
+                                prefixes: null,
+                                monitoredASes: answer.m ? asns : [],
+                                httpProxy: this.config.httpProxy || null,
+                                debug: false,
+                                historical: false,
+                                group: null,
+                                append: false,
+                                logger: null,
+                                upstreams: !!answer.upstreams,
+                                downstreams: !!answer.downstreams,
+                                getCurrentPrefixesList: () => {
+                                    return this.retrieve();
+                                }
+                            };
+
+                            return generatePrefixes(inputParameters);
+
                         });
                 } else {
                     throw new Error("Nothing to monitor.");
                 }
+            })
+            .then(this.save)
+            .then(() => {
+                console.log("Done!");
+            })
+            .catch(error => {
+                console.log(error);
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+                process.exit();
             });
+    };
 
+    _reGeneratePrefixList = () => {
+        this.logger.log({
+            level: 'info',
+            message: "Updating prefix list"
+        });
 
+        this.setReGeneratePrefixList();
+
+        return this.retrieve()
+            .then(oldPrefixList => {
+                const inputParameters = oldPrefixList.options.generate;
+
+                if (!inputParameters) {
+                    throw new Error("The prefix list cannot be refreshed because it was not generated automatically.");
+                }
+
+                inputParameters.httpProxy = this.config.httpProxy || null;
+                inputParameters.logger = (message) => {
+                    // Nothing, ignore logs in this case (too many otherwise)
+                };
+
+                return generatePrefixes(inputParameters)
+                    .then(newPrefixList => {
+
+                        newPrefixList.options.monitorASns = oldPrefixList.options.monitorASns;
+
+                        if (Object.keys(newPrefixList).length <= (Object.keys(oldPrefixList).length / 100) * this.prefixListDiffFailThreshold) {
+                            throw new Error("Prefix list generation failed.");
+                        }
+
+                        const newPrefixesNotMergeable = [];
+                        const uniquePrefixes = [...new Set(Object.keys(oldPrefixList).concat(Object.keys(newPrefixList)))]
+                            .filter(prefix => ipUtils.isValidPrefix(prefix));
+                        const asns = [...new Set(Object
+                            .values(oldPrefixList)
+                            .map(i => i.asn)
+                            .concat(Object.keys((oldPrefixList.options || {}).monitorASns || {})))];
+
+                        for (let prefix of uniquePrefixes) {
+                            const oldPrefix = oldPrefixList[prefix];
+                            const newPrefix = newPrefixList[prefix];
+
+                            // Apply old description to the prefix
+                            if (newPrefix && oldPrefix) {
+                                newPrefixList[prefix] = oldPrefix;
+                            }
+
+                            // The prefix didn't exist
+                            if (newPrefix && !oldPrefix) {
+                                // The prefix is not RPKI valid
+                                if (!newPrefix.valid) {
+                                    // The prefix is not announced by a monitored ASn
+                                    if (!newPrefix.asn.some(p => asns.includes(p))) {
+                                        newPrefixesNotMergeable.push(prefix);
+                                        delete newPrefixList[prefix];
+                                    }
+                                }
+                            }
+                        }
+
+                        if (newPrefixesNotMergeable.length) {
+                            this.logger.log({
+                                level: 'info',
+                                message: `The rules about ${newPrefixesNotMergeable.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
+                            });
+                        }
+
+                        return newPrefixList;
+                    });
+            })
+            .then(this.save)
+            .then(() => {
+                this.logger.log({
+                    level: 'info',
+                    message: `Prefix list updated.`
+                });
+            })
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+    };
+
+    setReGeneratePrefixList = () => {
+        if (this.config.generatePrefixListEveryDays >= 1) {
+            const refreshTimer = Math.ceil(this.config.generatePrefixListEveryDays) * 24 * 3600 * 1000;
+            if (this.regeneratePrefixListTimer) {
+                clearTimeout(this.regeneratePrefixListTimer);
+            }
+            this.regeneratePrefixListTimer = setTimeout(this._reGeneratePrefixList, refreshTimer);
+        }
     };
 
 }

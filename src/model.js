@@ -7,6 +7,10 @@ export class Path {
         return this.value[this.value.length - 1];
     };
 
+    length () {
+        return this.value.length;
+    };
+
     toString () {
         return JSON.stringify(this.toJSON());
     };
@@ -17,7 +21,27 @@ export class Path {
 
     toJSON () {
         return this.getValues();
-    }
+    };
+
+    getNeighbors (asn) {
+        const path = this.value;
+        const length = path.length - 1
+        for (let n=0; n < length; n++) {
+            const current = path[n] || null;
+            if (current.getId() === asn.getId()) {
+                const left = path[n - 1] || null;
+                const right = path[n + 1] || null;
+
+                return [left, current, right];
+            }
+        }
+
+        return [null, null, null];
+    };
+
+    includes (asn) {
+        return this.value.some(i => i.includes(asn));
+    };
 }
 
 
@@ -32,24 +56,22 @@ export class AS {
         if (["string", "number"].includes(typeof(numbers))) {
             this.numbers = [ numbers ];
         } else if (numbers instanceof Array && numbers.length){
-            this.ASset = true;
-            if (numbers.length === 1) {
-                this.numbers = [ numbers[0] ];
-            } else {
-                this.numbers = numbers;
+            if (numbers.length > 1) {
+                this.ASset = true;
             }
+            this.numbers = numbers;
         }
 
         if (this.isValid()) {
             this.numbers = this.numbers.map(i => parseInt(i));
-        }
 
-        const key = this.numbers.join("-");
-        if (!!AS._instances[key]) {
-            return AS._instances[key];
-        }
+            const key = this.numbers.join("-");
+            if (!!AS._instances[key]) {
+                return AS._instances[key];
+            }
 
-        AS._instances[key] = this;
+            AS._instances[key] = this;
+        }
     }
 
     getId () {
@@ -58,7 +80,8 @@ export class AS {
 
     isValid () {
         if (this._valid === null) {
-            this._valid = this.numbers.length > 0 &&
+            this._valid = this.numbers &&
+                this.numbers.length > 0 &&
                 this.numbers
                     .every(asn => {
 
@@ -105,5 +128,5 @@ export class AS {
 
     toJSON () {
         return this.numbers;
-    }
+    };
 }

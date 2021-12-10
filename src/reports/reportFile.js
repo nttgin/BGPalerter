@@ -39,7 +39,7 @@ export default class ReportFile extends Report {
         super(channels, params, env);
 
         this.persistAlerts = params.persistAlertData;
-        this.alertsDirectory = params.alertDataDirectory;
+        this.alertsDirectory = env.config.volume + params.alertDataDirectory;
         if (this.persistAlerts && !this.alertsDirectory) {
             this.persistAlerts = false;
             this.logger.log({

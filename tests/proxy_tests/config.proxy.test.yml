@@ -1,0 +1,54 @@
+environment: test
+
+connectors:
+  - file: connectorRIS
+    name: ris
+    params:
+      carefulSubscription: true
+      url: ws://ris-live.ripe.net/v1/ws/
+      perMessageDeflate: true
+      subscription:
+        moreSpecific: true
+        type: UPDATE
+        host:
+        socketOptions:
+          includeRaw: false
+
+monitors:
+
+
+reports:
+
+httpProxy: http://localhost:8001
+
+
+# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# This is an array (use new lines and dashes!)
+monitoredPrefixesFiles:
+  - tests/prefixes.test.yml
+
+
+checkForUpdatesAtBoot: true
+
+processMonitors:
+  - file: uptimeApi
+    params:
+      useStatusCodes: true
+      host: null
+      port: 8012
+
+
+logging:
+  directory: logs
+  logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
+
+notificationIntervalSeconds: 1800
+alertOnlyOnce: false
+fadeOffSeconds: 10
+checkFadeOffGroupsSeconds: 2
+pidFile: bgpalerter.pid
+multiProcess: false
+maxMessagesPerSecond: 6000

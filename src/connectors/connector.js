@@ -31,6 +31,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+import axiosEnrich from "../utils/axiosEnrich";
+
 export default class Connector {
 
     constructor(name, params, env){
@@ -44,6 +47,11 @@ export default class Connector {
         this.connectCallback = null;
         this.errorCallback = null;
         this.disconnectCallback = null;
+
+
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
     }
 
     connect = () =>
@@ -60,6 +68,7 @@ export default class Connector {
     };
 
     _disconnect = (message) => {
+        this.connected = false;
         if (this.disconnectCallback)
             this.disconnectCallback(message);
     };
@@ -70,6 +79,7 @@ export default class Connector {
     };
 
     _connect = (message) => {
+        this.connected = true;
         if (this.connectCallback)
             this.connectCallback(message);
     };
@@ -94,4 +104,7 @@ export default class Connector {
         this.disconnectCallback = callback;
     };
 
+    disconnect = () => {
+        throw new Error('The method disconnect MUST be implemented');
+    };
 }

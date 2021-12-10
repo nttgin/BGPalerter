@@ -36,41 +36,19 @@ import emailTemplates from "./email_templates/emailTemplates";
 
 export default class ReportEmail extends Report {
 
-    constructor(channels,params, env) {
+    constructor(channels, params, env) {
         super(channels, params, env);
         this.emailTemplates = new emailTemplates(this.logger);
-
         this.templates = {};
         this.emailBacklog = [];
 
-        if (!this.params.notifiedEmails || !Object.keys(this.params.notifiedEmails).length) {
+        if (!this.getUserGroup("default")) {
+            this.enabled = false;
             this.logger.log({
                 level: 'error',
-                message: "Email reporting is not enabled: no group is defined"
+                message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
             });
-
         } else {
-
-            if (!this.params.notifiedEmails["default"] || !this.params.notifiedEmails["default"].length) {
-                this.logger.log({
-                    level: 'error',
-                    message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
-                });
-            }
-
-            if (this.params.smtp.host !== null) {
-                this.logger.log({
-                    level: 'info',
-                    message: `SMTP Host ${this.params.smtp.host} PORT: ${this.params.smtp.port}`
-                });
-            }
-
-            if (this.params.smtp.auth !== null) {
-                this.logger.log({
-                    level: 'info',
-                    message: `User: ${this.params.smtp.auth.user}`
-                });
-            }
 
             this.transporter = nodemailer.createTransport(this.params.smtp);
 
@@ -97,6 +75,14 @@ export default class ReportEmail extends Report {
                 }
             }
 
+            if (Object.keys(this.templates).length === 0) {
+                this.enabled = false;
+                this.logger.log({
+                    level: 'error',
+                    message: "Email templates cannot be associated to channels."
+                });
+            }
+
             setInterval(() => {
                 const nextEmail = this.emailBacklog.pop();
                 if (nextEmail) {
@@ -104,13 +90,20 @@ export default class ReportEmail extends Report {
                 }
             }, 3000);
         }
-    }
+    };
+
+
+    getUserGroup = (group) => {
+        const groups = this.params.notifiedEmails || this.params.userGroups;
+
+        return groups[group] || groups["default"];
+    };
 
     getEmails = (content) => {
         const users = content.data
             .map(item => {
-                if (item.matchedRule && item.matchedRule.group){
-                    return item.matchedRule.group;
+                if (item.matchedRule){
+                    return item.matchedRule.group || "default";
                 } else {
                     return false;
                 }
@@ -118,13 +111,9 @@ export default class ReportEmail extends Report {
             .filter(item => !!item);
 
         try {
-            const emails = [...new Set(users)]
-                .map(user => {
-                    return this.params.notifiedEmails[user];
-                })
+            return [...new Set(users)]
+                .map(user => this.getUserGroup(user))
                 .filter(item => !!item);
-
-            return (emails.length) ? emails : [this.params.notifiedEmails["default"]];
         } catch (error) {
             this.logger.log({
                 level: 'error',
@@ -136,28 +125,26 @@ export default class ReportEmail extends Report {
     };
 
     getEmailText = (channel, content) => {
-        return this.parseTemplate(this.templates[channel], this.getContext(channel, content));
+        const context = this.getContext(channel, content);
+        const paths = JSON.parse(`[${context.paths}]`);
+        context.paths = paths.length ? paths.join("\n") : "Disabled"
+        return this.parseTemplate(this.templates[channel], context);
     };
 
     _sendEmail = (email) => {
-        if (this.transporter) {
-            this.transporter
-                .sendMail(email)
-                .catch(error => {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                })
-        }
+        this.transporter
+            .sendMail(email)
+            .catch(error => {
+                this.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
     };
 
     report = (channel, content) => {
 
-        if (Object.keys(this.templates).length > 0 &&
-            this.params.notifiedEmails &&
-            this.params.notifiedEmails["default"] &&
-            this.params.notifiedEmails["default"].length) {
+        if (this.enabled) {
             const emailGroups = this.getEmails(content);
 
             for (let emails of emailGroups) {
@@ -173,7 +160,6 @@ export default class ReportEmail extends Report {
                     });
                 }
             }
-
         }
     }
 }

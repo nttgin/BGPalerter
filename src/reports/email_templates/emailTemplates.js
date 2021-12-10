@@ -69,7 +69,18 @@ Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
 See in BGPlay:        ${bgplay}';
 
-const templatePath = '${summary}';
+const templatePath = '${summary}\n\
+\n\
+\n\
+DETAILS:\n\
+------------------------------------------------------\n\
+Event type:           ${type}\n\
+When event started:   ${earliest} UTC\n\
+Last event:           ${latest} UTC\n\
+\n\
+\n\
+Top ${pathNumber} triggering AS paths:\n\
+${paths}';
 
 const templateSoftwareUpdate = '${summary}';
 
@@ -89,8 +100,26 @@ See in BGPlay:        ${bgplay}';
 
 const templateMisconfiguration = '${summary}\n\
 \n\
+\n\
+DETAILS:\n\
+------------------------------------------------------\n\
+Event type:           ${type}\n\
+When event started:   ${earliest} UTC\n\
+Last event:           ${latest} UTC\n\
+\n\
+\n\
 Top ${pathNumber} most used AS paths:\n\
 ${paths}';
+
+
+const templateRPKI = '${summary}\n\
+\n\
+\n\
+DETAILS:\n\
+------------------------------------------------------\n\
+Event type:           ${type}\n\
+When event started:   ${earliest} UTC\n\
+Last event:           ${latest} UTC';
 
 const defaultTemplate = '${summary}';
 
@@ -122,6 +151,10 @@ export default class emailTemplates {
             {
                 channel: 'misconfiguration',
                 content: templateMisconfiguration
+            },
+            {
+                channel: 'rpki',
+                content: templateRPKI
             }
         ];
 

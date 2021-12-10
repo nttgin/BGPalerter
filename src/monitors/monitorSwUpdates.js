@@ -34,12 +34,12 @@ import Monitor from "./monitor";
 
 export default class MonitorSwUpdates extends Monitor {
 
-    constructor(name, channel, params, env){
-        super(name, channel, params, env);
+    constructor(name, channel, params, env, input){
+        super(name, channel, params, env, input);
     };
 
     updateMonitoredResources = () => {
-        // throw new Error('The method updateMonitoredResources must be implemented in ' + this.name);
+        // nothing
     };
 
     filter = (message) => {

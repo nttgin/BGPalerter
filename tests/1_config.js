@@ -30,36 +30,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var readLastLines = require('read-last-lines');
-var moment = require('moment');
-var model = require('../src/model');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+const readLastLines = require('read-last-lines');
+const moment = require('moment');
+const fs = require('fs');
 chai.use(chaiSubset);
-var expect = chai.expect;
-var AS = model.AS;
+const expect = chai.expect;
+const volume = "volumetests/";
 
-var asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
-describe("Composition", function() {
-    describe("Software updates check", function () {
-        it("new version detected", function (done) {
+// Prepare test environment
+if (!fs.existsSync(volume)) {
+    fs.mkdirSync(volume);
+}
+fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
+fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
+fs.copyFileSync("tests/groups.test.yml", volume + "groups.test.yml");
 
-            var worker = require("../index");
-            var pubSub = worker.pubSub;
-
-            pubSub.subscribe("software-update", function (type, message) {
-                expect(type).to.equal("software-update");
-                done();
-            });
-        }).timeout(asyncTimeout);
-    });
+describe("Core functions", function() {
 
     describe("Configuration loader", function () {
-        var worker = require("../index");
-        var config = worker.config;
+        const worker = require("../index");
+        const config = worker.config;
 
         it("config structure", function () {
             expect(config).to.have
@@ -79,17 +74,29 @@ describe("Composition", function() {
                     "maxMessagesPerSecond",
                     "fadeOffSeconds",
                     "checkFadeOffGroupsSeconds",
-                    "checkForUpdates",
-                    "checkForUpdatesInterval"
+                    "volume",
+                    "groupsFile",
+                    "persistStatus",
+                    "rpki",
+                    "rest"
                 ]);
+
             expect(config.connectors[0]).to.have
                 .property('class')
+        });
+
+        it("volume setting", function () {
+            expect(config.volume).to.equals(volume);
+        });
+
+        it("check for updates setting", function () {
+            expect(config.checkForUpdatesAtBoot).to.equals(true);
         });
 
         it("loading connectors", function () {
             expect(config.connectors[0]).to
                 .containSubset({
-                    "params": {"testType": "withdrawal"},
+                    "params": { "testType": "withdrawal" },
                     "name": "tes"
                 });
             expect(config.connectors[0]).to.have
@@ -98,7 +105,7 @@ describe("Composition", function() {
 
         it("loading monitors", function () {
 
-            expect(config.monitors.length).to.equal(6);
+            expect(config.monitors.length).to.equal(8);
 
             expect(config.monitors[0]).to
                 .containSubset({
@@ -145,6 +152,22 @@ describe("Composition", function() {
                     }
                 });
 
+            expect(config.monitors[5]).to
+                .containSubset({
+                    "channel": "rpki",
+                    "name": "rpki-monitor",
+                    "params": {
+                        "thresholdMinPeers": 1,
+                        "checkUncovered": true
+                    }
+                });
+
+            expect(config.monitors[6]).to
+                .containSubset({
+                    "channel": "rpki",
+                    "name": "rpki-monitor"
+                });
+
             expect(config.monitors[config.monitors.length - 1]).to
                 .containSubset({
                     "channel": "software-update",
@@ -172,19 +195,51 @@ describe("Composition", function() {
                 .property('class')
         });
 
+        it("rpki config", function () {
+            expect(config.rpki).to
+                .containSubset({
+                    "vrpProvider": "ntt",
+                    "preCacheROAs": true,
+                    "refreshVrpListMinutes": 15,
+                    "markDataAsStaleAfterMinutes": 120
+                });
+        });
+
+    });
+
+    describe("Software updates check", function () {
+        it("new version detected", function (done) {
+
+            const worker = require("../index");
+            const pubSub = worker.pubSub;
+
+            pubSub.subscribe("software-update", function (message, type) {
+                expect(type).to.equal("software-update");
+                done();
+            });
+        }).timeout(40000);
     });
 
     describe("Input loader", function () {
-        var worker = require("../index");
-        var input = worker.input;
+        const worker = require("../index");
+        const input = worker.input;
 
         it("loading prefixes", function () {
 
-            expect(input.prefixes.length).to.equal(14);
+            expect(input.prefixes.length).to.equal(15);
 
             expect(JSON.parse(JSON.stringify(input))).to
                 .containSubset({
                     "prefixes": [
+                        {
+                            "asn": [1234],
+                            "description": "rpki valid not monitored AS",
+                            "ignoreMorespecifics": false,
+                            "prefix": "193.0.0.0/21",
+                            "group": "default",
+                            "excludeMonitors" : [],
+                            "includeMonitors": []
+                        },
                         {
                             "asn": [15562],
                             "description": "description 1",
@@ -298,14 +353,14 @@ describe("Composition", function() {
                     ]
                 });
 
-            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 65000 ]);
+            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 13335, 65000 ]);
         });
     });
 
     describe("Logging", function () {
-        var worker = require("../index");
-        var config = worker.config;
-        var logger = worker.logger;
+        const worker = require("../index");
+        const config = worker.config;
+        const logger = worker.logger;
 
         it("errors logging on the right file", function (done) {
             const message = "Test message";
@@ -315,7 +370,7 @@ describe("Composition", function() {
                     message: message
                 });
 
-            const file = config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
@@ -336,7 +391,7 @@ describe("Composition", function() {
                     message: message
                 });
 
-            const file = config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {

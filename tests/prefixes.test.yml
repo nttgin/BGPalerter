@@ -1,3 +1,8 @@
+193.0.0.0/21:
+  description: rpki valid not monitored AS
+  asn: 1234
+  ignoreMorespecifics: false
+
 165.254.225.0/24:
   description: description 1
   asn: 15562
@@ -45,6 +50,7 @@
   excludeMonitors:
     - basic-hijack-detection
     - withdrawal-detection
+    - rpki-monitor
 
 170.254.205.0/24:
   description: include exclude test
@@ -70,9 +76,12 @@
   ignoreMorespecifics: false
   ignore: false
   path:
-    match: ".*2914$"
-    maxLength: 3
-    matchDescription: test description
+    - match: ".*2915$"
+      maxLength: 4
+      matchDescription: test description1
+    - match: ".*2914$"
+      maxLength: 3
+      matchDescription: test description2
 
 99.5.4.3/22:
   description: path matching test regex and minLength
@@ -101,4 +110,6 @@ options:
     2914:
       group: default
     3333:
+      group: default
+    13335:
       group: default

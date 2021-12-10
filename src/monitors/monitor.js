@@ -31,27 +31,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+import axiosEnrich from "../utils/axiosEnrich";
+
 export default class Monitor {
 
-    constructor(name, channel, params, env) {
+    constructor(name, channel, params, env, input) {
         this.config = env.config;
         this.pubSub = env.pubSub;
         this.logger = env.logger;
-        this.input = env.input;
+        this.rpki = env.rpki;
+        this.input = input;
+        this.storage = env.storage;
         this.params = params || {};
         this.maxDataSamples = this.params.maxDataSamples || 1000;
         this.name = name;
         this.channel = channel;
         this.monitored = [];
 
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
+
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
         this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>
         this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples
-        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g. thresholdMinPeers not yet reached)
+        this.fadeOff = {}; // Dictionary containing the last alert unix timestamp of each group  <id, int> which contains alerts that have been triggered but are not ready yet to be sent (e.g., thresholdMinPeers not yet reached)
 
+        this._retrieveStatus();
         this.internalConfig = {
             notificationInterval: (this.config.notificationIntervalSeconds || 14400) * 1000,
-            checkFadeOffGroups: this.config.checkFadeOffGroupsSeconds || 30 * 1000,
+            checkFadeOffGroups: (this.config.checkFadeOffGroupsSeconds || 30) * 1000,
             fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };
 
@@ -81,28 +91,30 @@ export default class Monitor {
 
     _squash = (id) => {
 
-        const alerts = this.alerts[id];
-        const message = this.squashAlerts(alerts);
+        const alerts = this.alerts[id] || [];
+        if (alerts && alerts.length) {
+            const message = this.squashAlerts(alerts);
 
-        if (message) {
-            const firstAlert = alerts[0];
-            let earliest = Infinity;
-            let latest = -Infinity;
+            if (message) {
+                const firstAlert = alerts[0];
+                let earliest = Infinity;
+                let latest = -Infinity;
 
-            for (let alert of alerts) {
-                earliest = Math.min(alert.timestamp, earliest);
-                latest = Math.max(alert.timestamp, latest);
-            }
+                for (let alert of alerts) {
+                    earliest = Math.min(alert.timestamp, earliest);
+                    latest = Math.max(alert.timestamp, latest);
+                }
 
-            return {
-                id,
-                truncated: this.truncated[id] || false,
-                origin: this.name,
-                earliest,
-                latest,
-                affected: firstAlert.affected,
-                message,
-                data: alerts
+                return {
+                    id,
+                    truncated: this.truncated[id] || false,
+                    origin: this.name,
+                    earliest,
+                    latest,
+                    affected: firstAlert.affected,
+                    message,
+                    data: alerts
+                }
             }
         }
     };
@@ -124,8 +136,10 @@ export default class Monitor {
             this.alerts[id].push(context);
 
             // Check if for each alert group the maxDataSamples parameter is respected
-            if (!this.truncated[id] && this.alerts[id].length > this.maxDataSamples) {
-                this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+            if (this.alerts[id].length > this.maxDataSamples) {
+                if (!this.truncated[id]) {
+                    this.truncated[id] = this.alerts[id][0].timestamp; // Mark as truncated
+                }
                 this.alerts[id] = this.alerts[id].slice(-this.maxDataSamples); // Truncate
             }
 
@@ -149,6 +163,52 @@ export default class Monitor {
                 if (now > (this.sent[id] + this.internalConfig.notificationInterval)) {
                     delete this.sent[id];
                 }
+            }
+        }
+    };
+
+    _retrieveStatus = () => {
+        if (this.config.persistStatus && this.storage) {
+            this.storage
+                .get(`status-${this.name}`)
+                .then(({ sent={}, truncated={}, fadeOff={} }) => {
+                    this.sent = sent;
+                    this.truncated = truncated;
+                    this.fadeOff = fadeOff;
+                })
+                .catch(error => {
+                    this.logger.log({
+                        level: 'error',
+                        message: error
+                    });
+                });
+        }
+    };
+
+    _persistStatus = () => {
+        if (this._persistStatusTimer){
+            clearTimeout(this._persistStatusTimer);
+        }
+        this._persistStatusTimer = setTimeout(this._persistStatusHelper, 5000);
+    };
+
+    _persistStatusHelper = () => {
+        if (this.config.persistStatus && this.storage) {
+            const status = {
+                sent: this.sent,
+                truncated: this.truncated,
+                fadeOff: this.fadeOff
+            };
+
+            if (Object.values(status).some(i => Object.keys(i).length > 0)) { // If there is anything in the cache
+                this.storage
+                    .set(`status-${this.name}`, status)
+                    .catch(error => {
+                        this.logger.log({
+                            level: 'error',
+                            message: error
+                        });
+                    });
             }
         }
     };
@@ -180,20 +240,48 @@ export default class Monitor {
     _publishOnChannel = (alert) => {
 
         this.pubSub.publish(this.channel, alert);
+        this._persistStatus();
 
         return alert;
     };
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
+    getMonitoredAsMatch = (originAS) => {
+        const monitored = this.input.getMonitoredASns();
+
+        for (let m of monitored) {
+            if (originAS.includes(m.asn)) {
+                return m;
+            }
+        }
+
+        return null;
+    };
+
+    _included = (matched) => {
+        if (matched.includeMonitors.length > 0) {
+            return matched.includeMonitors.includes(this.name);
+        } else {
+            return !matched.excludeMonitors.includes(this.name);
+        }
+    };
+
+    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics, verbose=false) => {
         const matched = this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
 
         if (matched) {
-            if (matched.includeMonitors.length > 0 && !matched.includeMonitors.includes(this.name)) {
-                return null;
-            }
+            const included = this._included(matched);
 
-            return (matched.excludeMonitors.includes(this.name)) ? null : matched;
+            if (verbose) {
+                return {
+                    matched,
+                    included
+                };
+            } else if (included) {
+                return matched;
+            }
         }
+
+        return null;
     };
 
 }

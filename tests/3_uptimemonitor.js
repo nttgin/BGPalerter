@@ -30,47 +30,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var chai = require("chai");
-var chaiSubset = require('chai-subset');
-var axios = require('axios');
-var model = require('../src/model');
+const chai = require("chai");
+const chaiSubset = require('chai-subset');
+const axios = require('axios');
 chai.use(chaiSubset);
-var expect = chai.expect;
-var AS = model.AS;
-
-var asyncTimeout = 20000;
+const expect = chai.expect;
+const volume = "volumetests/";
+const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
-global.EXTERNAL_CONFIG_FILE = "tests/config.test.yml";
+global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 describe("Uptime Monitor", function() {
 
-    var worker = require("../index");
-    var config = worker.config;
+    const worker = require("../index");
+    const config = worker.config;
 
     it("uptime config", function () {
         expect(config.processMonitors[0]).to
             .containSubset({
                 params: {
-                    useStatusCodes: true,
-                    host: null,
-                    port: 8011
+                    useStatusCodes: true
                 }
             });
     });
 
     it("API format and header", function (done) {
 
-        const port = config.processMonitors[0].params.port;
-
         axios({
             method: 'get',
             responseType: 'json',
-            url: `http://localhost:${port}/status`
+            url: `http://localhost:8011/status`
         })
             .then(data => {
                 expect(data.status).to.equal(200);
                 expect(data.data.warning).to.equal(false);
                 done();
+            })
+            .catch(error => {
+                console.log(error);
             });
 
     }).timeout(asyncTimeout);

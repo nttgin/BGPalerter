@@ -1,0 +1,51 @@
+environment: test
+
+connectors:
+  - file: connectorTest
+    name: tes
+    params:
+      testType: withdrawal
+
+monitors:
+  - file: monitorROAS
+    channel: rpki
+    name: rpki-monitor
+    params:
+      enableDiffAlerts: true
+      enableExpirationAlerts: true
+      enableExpirationCheckTA: true
+      enableDeletedCheckTA: true
+      roaExpirationAlertHours: 2
+      checkOnlyASns: false
+      toleranceDeletedRoasTA: 20
+      toleranceExpiredRoasTA: 20
+
+
+# The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
+# This is an array (use new lines and dashes!)
+monitoredPrefixesFiles:
+  - tests/prefixes.test.yml
+
+logging:
+  directory: logs
+  logRotatePattern: YYYY-MM-DD # Whenever the pattern changes, a new file is created and the old one rotated
+  maxRetainedFiles: 10
+  maxFileSizeMB: 15
+  compressOnRotation: true
+
+checkForUpdatesAtBoot: false
+persistStatus: false
+
+rpki:
+  preCacheROAs: true
+  refreshVrpListMinutes: 15
+  vrpFile: tests/rpki_tests/roas.json
+
+
+notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
+alertOnlyOnce: false
+fadeOffSeconds: 10
+checkFadeOffGroupsSeconds: 2
+pidFile: bgpalerter.pid
+multiProcess: false
+maxMessagesPerSecond: 6000

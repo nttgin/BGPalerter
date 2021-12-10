@@ -31,7 +31,6 @@
  */
 
 import Uptime from "./uptime";
-import axios from "axios";
 import env from "../env";
 
 export default class UptimeHealthcheck extends Uptime {
@@ -57,11 +56,11 @@ export default class UptimeHealthcheck extends Uptime {
                 query.data = status;
             }
 
-            axios(query)
+            this.axios(query)
                 .catch(error => {
                     env.logger.log({
                         level: 'error',
-                        message: error
+                        message: `UptimeHealthcheck cannot send heartbeat: ${error.message}`
                     });
                 });
         }

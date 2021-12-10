@@ -30,11 +30,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import axios from "axios";
+import env from "../env";
+import axiosEnrich from "../utils/axiosEnrich";
+
 export default class Uptime {
 
     constructor(connectors, params){
         this.connectors = connectors;
         this.params = params;
+
+        this.axios = axiosEnrich(axios,
+            (!this.params.noProxy && env.agent) ? env.agent : null,
+            `${env.clientId}/${env.version}`);
     };
 
 
@@ -42,7 +50,7 @@ export default class Uptime {
         const connectors = this.connectors
             .getConnectors()
             .filter(connector => {
-                return connector.constructor.name != "ConnectorSwUpdates";
+                return connector.constructor.name !== "ConnectorSwUpdates";
             })
             .map(connector => {
                 return {
@@ -52,9 +60,14 @@ export default class Uptime {
             });
 
         const disconnected = connectors.some(connector => !connector.connected);
+        const rpki = env.rpki.getStatus();
+
+        const warning = disconnected || !rpki.data || rpki.stale;
+
         return {
-            warning: disconnected,
+            warning,
             connectors,
+            rpki
         };
 
     };

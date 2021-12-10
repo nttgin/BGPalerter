@@ -1,1 +1,12 @@
 ${summary}
+
+
+DETAILS:
+------------------------------------------------------
+Event type:           ${type}
+When event started:   ${earliest} UTC
+Last event:           ${latest} UTC
+
+
+Top ${pathNumber} triggering AS paths:
+${paths}
