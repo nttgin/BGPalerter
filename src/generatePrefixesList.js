@@ -11,6 +11,14 @@ const clientId = "ntt-bgpalerter";
 const rpki = new RpkiValidator({clientId});
 import axiosEnrich from "./utils/axiosEnrich";
 
+import https from 'https';
+
+const httpsAgentOptions = {
+    keepAlive: (process.env.KEEP_ALIVE || 'true') === 'true',
+    maxSockets: parseInt(process.env.MAX_SOCKETS || '40', 10)
+}
+console.log(`Using HTTPS Agent Options: ${JSON.stringify(httpsAgentOptions)}`);
+axios.defaults.httpsAgent = new https.Agent(httpsAgentOptions);
 
 module.exports = function generatePrefixes(inputParameters) {
     let {
