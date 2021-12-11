@@ -78,10 +78,10 @@ if (config.volume && config.volume.length) {
     if (!fs.existsSync(config.volume)) {
         fs.mkdirSync(config.volume);
     }
-}
+} else {
+    console.log("Impossible to load config.yml");
+    throw new Error("Impossible to load config.yml");
 
-if (!config.configVersion || config.configVersion < Config.configVersion) {
-    console.log("Your config.yml file is old. It works, but it may not support all the new features. Update your config file or generate a new one (e.g., rename the file into config.yml.bak, run BGPalerter and proceed with the auto configuration, apply to the new config.yml the personalizations you did in config.yml.bak.");
 }
 
 const errorTransport = new FileLogger({

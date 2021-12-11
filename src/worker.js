@@ -90,7 +90,7 @@ export default class Worker {
         if (this.config.uptimeMonitor) {
             this.logger.log({
                 level: 'error',
-                message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/main/docs/process-monitors.md"
+                message: "The uptime monitor configuration changed."
             });
         }
 
