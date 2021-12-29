@@ -36,15 +36,15 @@ The availability of a new release is notified.
 ### Release number
 The release number is composed of 3 digis `x.x.x`:
 
-* The first number identifies a breaking release. The first number is incremented only when the breaking change cannot be addressed with a deprecation warning.
-* The second number identifies a major release. The second number is incremented if new functionalities are introduced.
-* The third number identifies a minor release. The third number is incremented when there are changes which don't introduce any new functionality but improve the available ones.
+* The first number identifies a major release. The first number is incremented only when there are breaking changes which cannot be addressed with deprecation warnings and sensible defaults.
+* The second number identifies a minor release. The second number is incremented if new functionalities are introduced.
+* The third number identifies a patch. The third number is incremented when there are changes which don't introduce any new functionality but improve/repair the available ones.
 
 ### Patching
-In the event a serious bug (e.g., affecting one of the core functionalities) is discovered in a released version, we will not follow the timing described above and release as soon as possible a minor release.
-Minor releases are anyway tested and deployed for the monitoring of our network.
+In the event a serious bug (e.g., affecting one of the core functionalities) is discovered in a released version, we will not follow the timing described above and release as soon as possible a patch.
+Patches are anyway tested and deployed for the monitoring of our network.
 
-A minor release can also be released as a part of the normal release cycle in case there are no new features to justify a major release. 
+A patch can also be released as a part of the normal release cycle in case there are improvements which don't justify a new minor release. 
 
 ### Dependencies
 We use [Dependabot](https://dependabot.com/) to automatically check for newer version of the dependencies used by BGPalerter.

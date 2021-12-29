@@ -39,6 +39,7 @@ import url from 'url';
 import RpkiUtils from './utils/rpkiUtils';
 import ConfigYml from './config/configYml';
 import Config from "./config/config";
+import { v4 as uuidv4 } from 'uuid';
 
 const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
 const vector = {
@@ -192,5 +193,6 @@ vector.config = config;
 vector.logger = wlogger;
 vector.pubSub = new PubSub();
 vector.rpki = new RpkiUtils(vector);
+vector.instanceId = uuidv4();
 
 module.exports = vector;
