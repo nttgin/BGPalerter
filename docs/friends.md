@@ -32,3 +32,4 @@ Please, let me know so I can add your company name here.
 * TelcoSwitch Limited (AS45033)
 * Ziron Limited (AS49344)
 * Elite Limited (AS29611)
+* Axera S.P.A. (AS34758)
