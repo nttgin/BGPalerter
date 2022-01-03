@@ -35,3 +35,4 @@ Please, let me know so I can add your company name here.
 * Scaleway (AS12876)
 * NTS workspace (AS15576)
 * Axera S.P.A. (AS34758)
+* GoDaddy (AS26496, AS20773)
