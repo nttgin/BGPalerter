@@ -105,8 +105,8 @@ jobs:
         tar -xzf kafka_2.13-3.0.0.tgz
         nohup ./kafka_2.13-3.0.0/bin/zookeeper-server-start.sh ./kafka_2.13-3.0.0/config/zookeeper.properties &
         nohup ./kafka_2.13-3.0.0/bin/kafka-server-start.sh ./kafka_2.13-3.0.0/config/server.properties &
-        nohup ./kafka_2.13-3.0.0/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 &
-        sleep 20 && npm run test-kafka
+        nohup ./kafka_2.13-3.0.0/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
+        sleep 30 && npm run test-kafka
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v2

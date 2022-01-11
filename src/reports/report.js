@@ -123,7 +123,6 @@ export default class Report {
                     context.neworigin = content.data[0].matchedMessage.originAS;
                     context.newprefix = content.data[0].matchedMessage.prefix;
                     context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-
                     break;
 
                 case "visibility":
