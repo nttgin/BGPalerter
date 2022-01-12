@@ -34,9 +34,9 @@ A release appears in the [release tab](https://github.com/nttgin/BGPalerter/rele
 The availability of a new release is notified.
 
 ### Release number
-The release number is composed of 3 digis `x.x.x`:
+The release number is composed of 3 digits `x.x.x`:
 
-* The first number identifies a major release. The first number is incremented only when there are breaking changes which cannot be addressed with deprecation warnings and sensible defaults.
+* The first number identifies a major release. This number is incremented only when there are breaking changes which cannot be addressed with deprecation warnings and sensible defaults.
 * The second number identifies a minor release. The second number is incremented if new functionalities are introduced.
 * The third number identifies a patch. The third number is incremented when there are changes which don't introduce any new functionality but improve/repair the available ones.
 
