@@ -35,21 +35,17 @@ import { AS, Path } from "../model";
 import brembo, { parse } from "brembo";
 import ipUtils from "ip-sub";
 
+const { Kafka } = require('kafkajs');
+const fs = require('fs');
+const {  CompressionTypes, CompressionCodecs } = require('kafkajs')
+const SnappyCodec = require('kafkajs-snappy')
 export default class ConnectorKAF extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
         this.consumer = null;
         this.subscription = null;
-        this.agent = env.agent;
-        this.subscribed = {};
 
-        this.url = brembo.build(this.params.url, {
-            path: [],
-            params: {
-                client: env.clientId
-            }
-        });
     };
 
     _openConnect = (resolve) => {
@@ -66,44 +62,74 @@ export default class ConnectorKAF extends Connector {
         this._message(JSON.parse(message));
     };
 
-    _appendListeners = (resolve, reject) => {
-        this.consumer.on('message', (message) => {
-            this._message(message);
-            //console.log(message);
-        });
-        this.consumer.on('error', (error) => {
-            console.log("There was an error, disconnecting from broker")
-            if (this.connected) {
-                this._disconnect("RIPE RIS disconnected");
-            } else {
-                this._disconnect("It was not possible to establish a connection with RIPE RIS");
-                reject();
-            }
-            console.error(error);
-            this._error
-        });
-        this.consumer.on('connect', () => {
+    async consumerRunner(resolve, reject) {
+        const run = async () => {
+            const topic = this.params.topic;
+            await this.consumer.connect();
             this._openConnect(resolve);
-        });
-    };
+            await this.consumer.subscribe({ topic, fromBeginning: false });
+            await this.consumer.run({
+                eachMessage: async ({ message }) => {
+                this._message(message);
+                },
+            })
+        }
+        
+        run().catch(e => console.error(`[example/consumer] ${e.message}`, e));
+
+        const errorTypes = ['unhandledRejection', 'uncaughtException']
+        const signalTraps = ['SIGTERM', 'SIGINT', 'SIGUSR2']
+
+        errorTypes.map(type => {
+            process.on(type, async e => {
+                try {
+                    console.log(`process.on ${type}`)
+                    console.error(e)
+                    await this.consumer.disconnect()
+                    process.exit(0)
+                } catch (_) {
+                    process.exit(1)
+                }
+            })
+        })
+
+        signalTraps.map(type => {
+            process.once(type, async () => {
+                try {
+                    await this.consumer.disconnect()
+                } finally {
+                    process.kill(process.pid, type)
+                }
+            })
+        })
+    }
 
     connect = () =>
         new Promise((resolve, reject) => {
             try {
-                var kafka = require('kafka-node');
-                var consumerOptions = {
-                    kafkaHost: this.params.broker,
-                    groupId: this.params.groupId,
-                    sessionTimeout: 15000,
-                    protocol: ['roundrobin'],
-                    fromOffset: 'latest'
-                }
-                //console.log(consumerOptions);
-                var topic = [this.params.topic];
+                CompressionCodecs[CompressionTypes.Snappy] = SnappyCodec;
 
-                var consumerGroup = new kafka.ConsumerGroup(Object.assign({ id: 'BGPAlerter' }, consumerOptions), topic);
-                this.consumer = consumerGroup;
-                this._appendListeners(resolve, reject);
+                //kafka vars
+                const kafkaClientId = this.params.clientId;
+                const kafkaBrokers = [this.params.broker]
+                //const kafkaTopic = this.params.topic;
+                const kafkaGroupId = this.params.groupId;
+
+                const kafka = new Kafka({
+
+                    clientId: kafkaClientId,
+                    brokers: kafkaBrokers
+                    // ssl: {
+                    //   rejectUnauthorized: false,
+                    //   ca: [fs.readFileSync('./keys/ca.crt', 'utf-8')],
+                    //   key: fs.readFileSync('./keys/private.pem', 'utf-8'),
+                    //   cert: fs.readFileSync('./keys/public.pem', 'utf-8'),
+                    //   honorCipherOrder: true
+                    // }
+                  })
+
+                  this.consumer = kafka.consumer({ groupId: kafkaGroupId });
+                  this.consumerRunner(resolve, reject);
 
 
             } catch(error) {
@@ -119,77 +145,8 @@ export default class ConnectorKAF extends Connector {
         }
     };
 
-    _subscribeToAll = (input) => {
-        //this.ws.send(JSON.stringify({
-        //    type: "ris_subscribe",
-        //    data: this.params.subscription
-        //}));
-    };
-
-    _optimizedPathMatch = (regex) => {
-
-        if (regex) {
-            regex = (regex.slice(0,2) === ".*") ? regex.slice(2) : regex;
-            regex = (regex.slice(-2) === ".*") ? regex.slice(0,-2) : regex;
-            const regexTests = [
-                "^[\\^]*\\d+[\\$]*$",
-                "^[\\^]*[\\d+,]+\\d+[\\$]*$",
-                "^[\\^]*\\[[\\d+,]+\\d+\\][\\$]*$"
-            ];
-
-            for (let r of regexTests) {
-                if (new RegExp(r).test(regex)) {
-                    return regex;
-                }
-            }
-        }
-
-        return null;
-    };
-
-    _subscribeToPrefixes = (input) => {
-        const monitoredPrefixes = input.getMonitoredLessSpecifics();
-        const params = JSON.parse(JSON.stringify(this.params.subscription));
-
-        if (monitoredPrefixes
-            .filter(
-                i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))
-            ).length === 2) {
-
-            delete params.prefix;
-
-            if (!this.subscribed["everything"]) {
-                console.log("Monitoring everything");
-                this.subscribed["everything"] = true;
-            }
-
-        } else {
-            for (let p of monitoredPrefixes) {
-
-                if (!this.subscribed[p.prefix]) {
-                    console.log("Monitoring", p.prefix);
-                    this.subscribed[p.prefix] = true;
-                }
-
-                params.prefix = p.prefix;
-            }
-        }
-    };
-
-    _subscribeToASns = (input) => {
-        const monitoredASns = input.getMonitoredASns().map(i => i.asn);
-        for (let asn of monitoredASns){
-            const asnString = asn.getValue();
-            if (!this.subscribed[asnString]) {
-                console.log(`Monitoring AS${asnString}`);
-                this.subscribed[asnString] = true;
-            }
-        }
-    };
-
     _onInputChange = (input) => {
         this.connect()
-            .then(() => this.subscribe(input))
             .then(() => {
                 this.logger.log({
                     level: 'info',
@@ -218,32 +175,17 @@ export default class ConnectorKAF extends Connector {
     };
 
     subscribe = (input) =>
+    //This is not used with kafka but is required by the connector class
         new Promise((resolve, reject) => {
-            this.subscription = input;
-            try {
-                if (this.params.carefulSubscription) {
-                    this._subscribeToPrefixes(input);
-                    this._subscribeToASns(input);
-                } else {
-                    this._subscribeToAll(input);
-                }
-
-                this.onInputChange(input);
-
-                resolve(true);
-            } catch(error) {
-                console.log(error);
-                this._error(error);
-                resolve(false);
-            }
+            resolve(true);
         });
 
     static transform = (message) => {
         try {
             //Pull out the prefixes 
-            let announcements = `${message.value}`.split("\n\n")[1].split("\n");
+            //let announcements = `${message.value.toString()}`.split("\n\n")[1].split("\n");
             
-            //let announcements = `${message.value}`.split("\n");
+            let announcements = `${message.value}`.split("\n"); //Used for testing with test producer
 
             let headers = [ "Action","Sequence","Hash","Router Hash",
                             "Router IP","Base Attr Hash","Peer Hash",
