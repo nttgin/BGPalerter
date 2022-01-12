@@ -57,9 +57,13 @@ export default class ConnectorRIS extends Connector {
             }
         });
 
-        if (this.environment !== "research") { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
+        if (this._shouldCanaryMonitoringStart()) { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
             this._startCanaryInterval = setInterval(this._startCanary, 60000);
         }
+    };
+
+    _shouldCanaryMonitoringStart = () => {
+        return this.environment !== "research" && !this.params.disableCanary;
     };
 
     _openConnect = (resolve, data) => {
@@ -72,7 +76,7 @@ export default class ConnectorRIS extends Connector {
 
     _messageToJson = (message) => {
         const messageObj = JSON.parse(message);
-        if (this.environment !== "research") {
+        if (this._shouldCanaryMonitoringStart()) {
             this._checkCanary();
         }
         this._message(messageObj);
