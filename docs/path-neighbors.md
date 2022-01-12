@@ -1,6 +1,6 @@
 # Upstream and downstream AS monitoring
 
-The component `monitorPathNeighbors` allows to monitor for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
+The component `monitorPathNeighbors` allows monitoring for unexpected neighbor ASes in AS paths. The list of neighbors can be specified in `prefixes.yml` inside the `monitorASns` sections.
 
 > For example, imagine AS100 has two upstreams, AS99 and AS98, and one downstream, AS101. You can express the following rule in 'prefixes.yml'
 > 
@@ -45,7 +45,6 @@ If you delete only one of the upstreams and downstreams lists, the monitoring wi
 
 Example of alert:
 > A new upstream of AS100 has been detected: AS30
-> 
 
 
 If you provide empty lists, the monitoring will be performed and you will receive an alert for every upstream/downstream.

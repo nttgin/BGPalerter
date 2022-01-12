@@ -36,6 +36,29 @@ import { AS, Path } from "../model";
 import brembo from "brembo";
 import ipUtils from "ip-sub";
 
+const beacons = {
+    v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
+        "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
+        "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
+        "93.175.153.0/24"],
+    v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
+        "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
+        "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
+        "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
+        "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
+};
+
+const selectedBeacons = [
+    ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 3),
+    ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 3)
+];
+
+let filteredBeacons = selectedBeacons;
+
+const acceptPrefix = (prefix, possibleRIS) => {
+    return ipUtils.isValidPrefix(prefix) && (!possibleRIS || !filteredBeacons.some(p => ipUtils.isEqualPrefix(p, prefix)));
+};
+
 export default class ConnectorRIS extends Connector {
 
     constructor(name, params, env) {
@@ -76,7 +99,12 @@ export default class ConnectorRIS extends Connector {
 
     _messageToJsonCanary = (message) => {
         this._checkCanary();
-        this._message(JSON.parse(message));
+        message = JSON.parse(message);
+        const path = (message.data || {}).path;
+        if (path && path.length && path[path.length - 1] == 12654) { // Otherwise, don't alter the data
+            message.data.possibleRIS = true;
+        }
+        this._message(message);
     };
 
     _messageToJson = (message) => {
@@ -181,6 +209,8 @@ export default class ConnectorRIS extends Connector {
                 this.subscribed["everything"] = true;
             }
 
+            filteredBeacons = []; // No beacons to filter
+
             return this.ws.send(JSON.stringify({
                 type: "ris_subscribe",
                 data: params
@@ -195,6 +225,10 @@ export default class ConnectorRIS extends Connector {
                 }
 
                 params.prefix = p.prefix;
+
+                filteredBeacons = filteredBeacons.filter(prefix => {
+                    return !ipUtils.isEqualPrefix(p.prefix, prefix) && !ipUtils.isSubnet(p.prefix, prefix);
+                });
 
                 return this.ws.send(JSON.stringify({
                     type: "ris_subscribe",
@@ -229,24 +263,8 @@ export default class ConnectorRIS extends Connector {
 
     _startCanary = () => {
         if (this.connected) {
-            const beacons = {
-                v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
-                    "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24",
-                    "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24",
-                    "93.175.153.0/24"],
-                v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48",
-                    "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48",
-                    "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48",
-                    "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48",
-                    "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
-            };
 
-            const selected = [
-                ...beacons.v4.sort(() => .5 - Math.random()).slice(0, 3),
-                ...beacons.v6.sort(() => .5 - Math.random()).slice(0, 3)
-            ];
-
-            Promise.all(selected
+            Promise.all(selectedBeacons
                 .map(prefix => {
                     this.canaryBeacons[prefix] = true;
                     return this.ws.send(JSON.stringify({
@@ -356,7 +374,8 @@ export default class ConnectorRIS extends Connector {
                 const components = [];
                 const announcements = message["announcements"] || [];
                 const aggregator = message["aggregator"] || null;
-                const withdrawals = (message["withdrawals"] || []).filter(prefix => ipUtils.isValidPrefix(prefix));
+                const possibleRIS = message["possibleRIS"] || false;
+                const withdrawals = (message["withdrawals"] || []).filter(prefix => acceptPrefix(prefix, possibleRIS));
                 const peer = message["peer"];
                 const communities = message["community"] || [];
                 const timestamp = message["timestamp"] * 1000;
@@ -376,7 +395,7 @@ export default class ConnectorRIS extends Connector {
 
                         if (ipUtils.isValidIP(nextHop)) {
                             const prefixes = (announcement["prefixes"] || [])
-                                .filter(prefix => ipUtils.isValidPrefix(prefix));
+                                .filter(prefix => acceptPrefix(prefix, possibleRIS));
 
                             for (let prefix of prefixes) {
                                 components.push({
