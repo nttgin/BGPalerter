@@ -74,16 +74,21 @@ export default class ConnectorRIS extends Connector {
         }
     };
 
+    _messageToJsonCanary = (message) => {
+        this._checkCanary();
+        this._message(JSON.parse(message));
+    };
+
     _messageToJson = (message) => {
-        const messageObj = JSON.parse(message);
-        if (this._shouldCanaryMonitoringStart()) {
-            this._checkCanary();
-        }
-        this._message(messageObj);
+        this._message(JSON.parse(message));
     };
 
     _appendListeners = (resolve, reject) => {
-        this.ws.on('message', this._messageToJson);
+        if (this._shouldCanaryMonitoringStart()) {
+            this.ws.on('message', this._messageToJsonCanary);
+        } else {
+            this.ws.on('message', this._messageToJson);
+        }
         this.ws.on('close', (error) => {
 
             if (this.connected) {
