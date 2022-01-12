@@ -1,0 +1,5 @@
+#!/usr/bin/dh-exec
+config.yml.example => etc/bgpalerter/config.yml
+prefixes.yml.example => etc/bgpalerter/prefixes.yml
+# required until sysuser support is added to debhelper-compat (expected in 14)
+debian/node-bgpalerter.sysusers => usr/lib/sysusers.d/node-bgpalerter.conf
