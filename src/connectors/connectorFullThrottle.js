@@ -45,9 +45,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["175.254.205.0/25", "170.254.205.0/25", "2001:db8:123::/48"],
-                        next_hop: "124.0.0.3"
+                        next_hop: "198.51.100.3"
                     }],
-                    peer: "124.0.0.3",
+                    peer: "198.51.100.3",
                     path: [1, 2, 3, 65000]
                 },
                 type: "ris_message"
@@ -56,9 +56,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["165.254.255.0/25"],
-                        next_hop: "124.0.0.2"
+                        next_hop: "198.51.100.2"
                     }],
-                    peer: "124.0.0.2",
+                    peer: "198.51.100.2",
                     path: [1, 2, 3, [4, 15562]]
                 },
                 type: "ris_message"
@@ -67,9 +67,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["2a00:5884:ffff::/48"],
-                        next_hop: "124.0.0.3"
+                        next_hop: "198.51.100.3"
                     }],
-                    peer: "124.0.0.3",
+                    peer: "198.51.100.3",
                     path: [1, 2, 3, 208585]
                 },
                 type: "ris_message"
@@ -78,9 +78,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["2a00:5884::/32"],
-                        next_hop: "124.0.0.3"
+                        next_hop: "198.51.100.3"
                     }],
-                    peer: "124.0.0.3",
+                    peer: "198.51.100.3",
                     path: [1, 2, 3, [204092, 45]]
                 },
                 type: "ris_message"
@@ -89,9 +89,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["2a00:5884::/32"],
-                        next_hop: "124.0.0.3"
+                        next_hop: "198.51.100.3"
                     }],
-                    peer: "124.0.0.3",
+                    peer: "198.51.100.3",
                     path: [1, 2, 3, [15563]]
                 },
                 type: "ris_message"
@@ -100,9 +100,9 @@ export default class ConnectorFullThrottle extends Connector{
                 data: {
                     announcements: [{
                         prefixes: ["2a00:5884::/32"],
-                        next_hop: "124.0.0.3"
+                        next_hop: "198.51.100.3"
                     }],
-                    peer: "124.0.0.3",
+                    peer: "198.51.100.3",
                     path: [1, 2, 3, 204092]
                 },
                 type: "ris_message"

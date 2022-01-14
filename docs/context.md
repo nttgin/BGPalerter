@@ -21,6 +21,6 @@ Such tags are reported in the table below.
 | bgplay | The link to BGPlay on RIPEstat |
 
 
-Usage example: `The alert involves ${prefix} in ${earliest}` will be translated in something like `The alert involves 1.2.3.4/24 in 2020-04-14 04:02:13`.
+Usage example: `The alert involves ${prefix} in ${earliest}` will be translated in something like `The alert involves 192.0.2.4/24 in 2020-04-14 04:02:13`.
 
 > The same approach must be used to populate the templates available in config.yml. If you are writing a template for an API call, convert the JSON to string (e.g., '{"text": "${summary}"}').

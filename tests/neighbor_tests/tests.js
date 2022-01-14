@@ -78,10 +78,10 @@ describe("Alerting", function () {
                     "matchedMessage": {
                         "type": "announcement",
                         "prefix": "99.5.4.3/22",
-                        "peer": "124.0.0.3",
+                        "peer": "198.51.100.3",
                         "path": [98, 99, 30, 101, 104],
                         "originAS": [104],
-                        "nextHop": "124.0.0.3",
+                        "nextHop": "198.51.100.3",
                         "aggregator": null,
                         "timestamp": null,
                         "communities": []
@@ -108,10 +108,10 @@ describe("Alerting", function () {
                     "matchedMessage": {
                         "type": "announcement",
                         "prefix": "99.5.4.3/22",
-                        "peer": "124.0.0.3",
+                        "peer": "198.51.100.3",
                         "path": [98, 99, 80, 100],
                         "originAS": [100],
-                        "nextHop": "124.0.0.3",
+                        "nextHop": "198.51.100.3",
                         "aggregator": null,
                         "communities": []
                     },
@@ -137,10 +137,10 @@ describe("Alerting", function () {
                     "matchedMessage": {
                         "type": "announcement",
                         "prefix": "9.5.4.3/22",
-                        "peer": "124.0.0.3",
+                        "peer": "198.51.100.3",
                         "path": [98, 99, 100, 101, 106],
                         "originAS": [106],
-                        "nextHop": "124.0.0.3",
+                        "nextHop": "198.51.100.3",
                         "aggregator": null,
                         "communities": []
                     },

@@ -325,8 +325,8 @@ This monitor is particularly useful when:
 
 Examples of alerts:
 > The route 103.21.244.0/24 announced by AS13335 is not RPKI valid  
-> The route 1.2.3.4/24 announced by AS1234 is not covered by a ROA  
-> The route 1.2.3.4/24 announced by AS1234 is no longer covered by a ROA  
+> The route 192.0.2.4/24 announced by AS1234 is not covered by a ROA  
+> The route 192.0.2.4/24 announced by AS1234 is no longer covered by a ROA  
 
 You need to configure your RPKI data source as described [here](rpki.md).
 
@@ -352,7 +352,7 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 > Example: 
 > The prefixes list of BGPalerter has the following entries:
 > ```yaml
-> 1.2.3.4/24:
+> 192.0.2.4/24:
 >    asn: 1234
 >    description: an example
 >    ignoreMorespecifics: false
@@ -364,17 +364,17 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 >      group: noc2
 > ```
 > If in config.yml monitorROAS is enabled, you will receive alerts every time:
->  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed (based on the prefix `1.2.3.4/24` matching rule).
+>  * A ROA that is, or was, involving 192.0.2.4/24 is added/edited/removed (based on the prefix `192.0.2.4/24` matching rule).
 >  * A ROA that is, or was, involving AS2914 is added/edited/removed (based on the `monitorASns` section).
 
 **Important 1:** for a complete monitoring, configure also the `monitorASns` section. Setting only prefix matching rules is not sufficient: prefix matching rules are based on the longest prefix match, less specific ROAs impacting the prefix will NOT be matched. On the other side, setting only the `monitorASns` section is instead perfectly fine for ROA monitoring purposes.
 
-**Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyASns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
+**Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyASns` params is set to true (see parameters below). In the example above, a ROA change impacting `192.0.2.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
 
 **Important 3:** alerts about the generic health status of TAs are generated according to the provided VRP file. This types of alerts are not necessarily related to the monitored resources and they are send to the `default` user group.
 
 Example of alerts:
-> ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>; added <5.5.3.4/24, 1234, 25, apnic>
+> ROAs change detected: removed <192.0.2.4/24, 1234, 25, apnic>; added <203.0.113.4/24, 1234, 25, apnic>
 > 
 > Possible TA malfunction: 24% of the ROAs disappeared from APNIC
 
@@ -391,7 +391,7 @@ ROAs are affected by a series of expiration times:
 The field `expire` must be the closest expiration time of all of the above.
 
 Example of alerts:
-> The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
+> The following ROAs will expire in less than 2 hours: <192.0.2.4/24, 1234, 25, apnic>; <203.0.113.4/24, 1234, 25, apnic>
 > 
 > Possible TA malfunction: 24% of the ROAs are expiring in APNIC
 

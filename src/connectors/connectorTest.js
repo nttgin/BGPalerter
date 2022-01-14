@@ -58,28 +58,28 @@ export default class ConnectorTest extends Connector {
             {
                 data: {
                     withdrawals: ["165.24.225.0/24"],
-                    peer: "124.0.0.1"
+                    peer: "198.51.100.1"
                 },
                 type: "ris_message"
             },
             {
                 data: {
                     withdrawals: ["165.24.225.0/24"],
-                    peer: "124.0.0.2"
+                    peer: "198.51.100.2"
                 },
                 type: "ris_message"
             },
             {
                 data: {
                     withdrawals: ["165.24.225.0/24"],
-                    peer: "124.0.0.3"
+                    peer: "198.51.100.3"
                 },
                 type: "ris_message"
             },
             {
                 data: {
                     withdrawals: ["165.24.225.0/24"],
-                    peer: "124.0.0.4"
+                    peer: "198.51.100.4"
                 },
                 type: "ris_message"
             }
@@ -112,9 +112,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{ // RPKI valid announcement, no alert should be triggered (issue #358)
                                 prefixes: ["193.0.0.0/21"],
-                                next_hop: "1.2.3.4"
+                                next_hop: "192.0.2.4"
                             }],
-                            peer: "1.2.3.5",
+                            peer: "192.0.2.5",
                             path: [1, 2, 3, 3333]
                         },
                         type: "ris_message"
@@ -123,9 +123,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 4321]
                         },
                         type: "ris_message"
@@ -134,9 +134,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["165.254.255.0/25"],
-                                next_hop: "124.0.0.2"
+                                next_hop: "198.51.100.2"
                             }],
-                            peer: "124.0.0.2",
+                            peer: "198.51.100.2",
                             path: [1, 2, 3, [4, 15562]]
                         },
                         type: "ris_message"
@@ -145,9 +145,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884:ffff::/48"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 208585]
                         },
                         type: "ris_message"
@@ -156,9 +156,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884::/32"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, [204092, 45]]
                         },
                         type: "ris_message"
@@ -167,9 +167,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884::/32"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, [15563]]
                         },
                         type: "ris_message"
@@ -178,9 +178,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884::/32"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 204092]
                         },
                         type: "ris_message"
@@ -194,9 +194,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["165.254.255.0/25"],
-                                next_hop: "124.0.0.2"
+                                next_hop: "198.51.100.2"
                             }],
-                            peer: "124.0.0.2",
+                            peer: "198.51.100.2",
                             path: [1, 2, 3, 15562]
                         },
                         type: "ris_message"
@@ -205,9 +205,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884::/32"],
-                                next_hop: "124.0.0.2"
+                                next_hop: "198.51.100.2"
                             }],
-                            peer: "124.0.0.2",
+                            peer: "198.51.100.2",
                             path: [1, 2, 3, [45]]
                         },
                         type: "ris_message"
@@ -216,9 +216,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a00:5884:ffff::/48"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 204092]
                         },
                         type: "ris_message"
@@ -227,9 +227,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a0e:f40::/32"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 204092]
                         },
                         type: "ris_message"
@@ -238,9 +238,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a0e:240::/32"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 1345]
                         },
                         type: "ris_message"
@@ -249,9 +249,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 1234]
                         },
                         type: "ris_message"
@@ -264,35 +264,35 @@ export default class ConnectorTest extends Connector {
                     {
                         data: {
                             withdrawals: ["165.254.225.0/24"],
-                            peer: "124.0.0.2"
+                            peer: "198.51.100.2"
                         },
                         type: "ris_message"
                     },
                     {
                         data: {
                             withdrawals: ["2a00:5884::/32"],
-                            peer: "124.0.0.2"
+                            peer: "198.51.100.2"
                         },
                         type: "ris_message"
                     },
                     {
                         data: {
                             withdrawals: ["2a00:5884:ffff::/48"],
-                            peer: "124.0.0.2"
+                            peer: "198.51.100.2"
                         },
                         type: "ris_message"
                     },
                     {
                         data: {
                             withdrawals: ["2a0e:f40::/32"],
-                            peer: "124.0.0.2"
+                            peer: "198.51.100.2"
                         },
                         type: "ris_message"
                     },
                     {
                         data: {
                             withdrawals: ["2001:db8:123::/48"],
-                            peer: "124.0.0.2"
+                            peer: "198.51.100.2"
                         },
                         type: "ris_message"
                     }
@@ -305,9 +305,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["94.5.4.3/22", "98.5.4.3/22", "99.5.4.3/22"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -321,9 +321,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2.2.2.3/22"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.4",
+                            peer: "198.51.100.4",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -332,9 +332,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.10",
+                            peer: "198.51.100.10",
                             path: [1, 2, 3, 4321, 65000]
                         },
                         type: "ris_message"
@@ -343,9 +343,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.9",
+                            peer: "198.51.100.9",
                             path: [1, 2, 3, 4321, 65000]
                         },
                         type: "ris_message"
@@ -354,9 +354,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2001:db8:123::/48", "2001:db8:123::/49"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 4321, 65000]
                         },
                         type: "ris_message"
@@ -365,9 +365,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2.2.2.5/22", "2001:db9:123::/49"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -376,9 +376,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2.2.2.3/22", "2001:db9:123::/49"],
-                                next_hop: "124.0.0.5"
+                                next_hop: "198.51.100.5"
                             }],
-                            peer: "124.0.0.6",
+                            peer: "198.51.100.6",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -387,9 +387,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["2a0e:240::/32"],
-                                next_hop: "124.0.0.5"
+                                next_hop: "198.51.100.5"
                             }],
-                            peer: "124.0.0.6",
+                            peer: "198.51.100.6",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -403,9 +403,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["82.112.100.0/24"], // Valid
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.4",
+                            peer: "198.51.100.4",
                             path: [1, 2, 3, 4321, 2914]
                         },
                         type: "ris_message"
@@ -414,9 +414,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["8.8.8.8/22"], // Not covered
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.4",
+                            peer: "198.51.100.4",
                             path: [1, 2, 3, 4321, 5060, 2914]
                         },
                         type: "ris_message"
@@ -425,9 +425,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["103.21.244.0/24"], // Invalid
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.4",
+                            peer: "198.51.100.4",
                             path: [1, 2, 3, 4321, 13335]
                         },
                         type: "ris_message"
@@ -436,9 +436,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["175.254.205.0/25", "170.254.205.0/25"],
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 4321]
                         },
                         type: "ris_message"
@@ -452,9 +452,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["9.5.4.3/22"], // Path not ok but prefix not monitored
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 100, 101, 106]
                         },
                         type: "ris_message"
@@ -463,9 +463,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["99.5.4.3/22"], // Monitored but path ok
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 100, 101, 104]
                         },
                         type: "ris_message"
@@ -474,9 +474,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["99.5.4.3/22"], // Monitored, path with wrong downstream
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 100, 101, 106]
                         },
                         type: "ris_message"
@@ -485,9 +485,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["99.5.4.3/22"], // Monitored, path with wrong upstream
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 30, 101, 104]
                         },
                         type: "ris_message"
@@ -496,9 +496,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["99.5.4.3/22"], // Monitored, path with empty downstream ok
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 80]
                         },
                         type: "ris_message"
@@ -507,9 +507,9 @@ export default class ConnectorTest extends Connector {
                         data: {
                             announcements: [{
                                 prefixes: ["99.5.4.3/22"], // Monitored, path with empty downstream not ok
-                                next_hop: "124.0.0.3"
+                                next_hop: "198.51.100.3"
                             }],
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [98, 99, 80, 100]
                         },
                         type: "ris_message"

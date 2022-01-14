@@ -128,10 +128,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: "announcement",
                             prefix: "165.254.255.0/25",
-                            peer: "124.0.0.2",
+                            peer: "198.51.100.2",
                             path: [1, 2, 3, [4, 15562]],
                             originAS: [4],
-                            nextHop: "124.0.0.2"
+                            nextHop: "198.51.100.2"
                         }
                     }
                 ]
@@ -154,10 +154,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: "announcement",
                             prefix: "2a00:5884:ffff::/48",
-                            peer: "124.0.0.3",
+                            peer: "198.51.100.3",
                             path: [1, 2, 3, 208585],
                             originAS: [208585],
-                            nextHop: "124.0.0.3"
+                            nextHop: "198.51.100.3"
                         }
                     }
                 ]
@@ -180,10 +180,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: "announcement",
                             prefix: "2a00:5884::/32",
-                            peer:"124.0.0.3",
+                            peer:"198.51.100.3",
                             path:[1,2,3,15563],
                             originAS: [15563],
-                            nextHop:"124.0.0.3"
+                            nextHop:"198.51.100.3"
                         }
                     }
                 ]
@@ -244,10 +244,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: 'announcement',
                             prefix: '175.254.205.0/25',
-                            peer: '124.0.0.3',
+                            peer: '198.51.100.3',
                             path: [ 1, 2, 3, 1234 ],
                             originAS: [1234],
-                            nextHop: '124.0.0.3'
+                            nextHop: '198.51.100.3'
                         }
                     }
                 ]
@@ -272,10 +272,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: 'announcement',
                             prefix: '170.254.205.0/25',
-                            peer: '124.0.0.3',
+                            peer: '198.51.100.3',
                             path: [ 1, 2, 3, 1234 ],
                             originAS: [1234],
-                            nextHop: '124.0.0.3'
+                            nextHop: '198.51.100.3'
                         }
                     }
                 ]
@@ -299,10 +299,10 @@ describe("Alerting", function () {
                             matchedMessage: {
                                 type: 'announcement',
                                 prefix: '165.254.255.0/25',
-                                peer: '124.0.0.2',
+                                peer: '198.51.100.2',
                                 path: [ 1, 2, 3, 15562 ],
                                 originAS: [15562],
-                                nextHop: '124.0.0.2'
+                                nextHop: '198.51.100.2'
                             }
                         }
                     ]
@@ -325,10 +325,10 @@ describe("Alerting", function () {
                         matchedMessage: {
                             type: 'announcement',
                             prefix: '2a00:5884:ffff::/48',
-                            peer: '124.0.0.3',
+                            peer: '198.51.100.3',
                             path: [ 1, 2, 3, 204092 ],
                             originAS: [204092],
-                            nextHop: '124.0.0.3'
+                            nextHop: '198.51.100.3'
                         }
                     }
                 ]
@@ -407,10 +407,10 @@ describe("Alerting", function () {
                             }, "matchedMessage": {
                                 "type": "announcement",
                                 "prefix": "98.5.4.3/22",
-                                "peer": "124.0.0.3",
+                                "peer": "198.51.100.3",
                                 "path": [1, 2, 3, 4321, 5060, 2914],
                                 "originAS": [2914],
-                                "nextHop": "124.0.0.3",
+                                "nextHop": "198.51.100.3",
                                 "aggregator": null
                             },
                             "extra": {
@@ -447,10 +447,10 @@ describe("Alerting", function () {
                         "matchedMessage": {
                             "type": "announcement",
                             "prefix": "99.5.4.3/22",
-                            "peer": "124.0.0.3",
+                            "peer": "198.51.100.3",
                             "path": [1, 2, 3, 4321, 5060, 2914],
                             "originAS": [2914],
-                            "nextHop": "124.0.0.3",
+                            "nextHop": "198.51.100.3",
                             "aggregator": null
                         },
                         "extra": {

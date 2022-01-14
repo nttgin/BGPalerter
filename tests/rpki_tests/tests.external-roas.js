@@ -89,7 +89,7 @@ describe("RPKI monitoring external", function() {
                 truncated: false,
                 origin: 'rpki-monitor',
                 affected: 2914,
-                message: 'The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>',
+                message: 'The following ROAs will expire in less than 2 hours: <192.0.2.0/24, 2914, 24, ripe>',
 
             },
             "47807c7558dbe001b4aad9f3a87eb427": {
