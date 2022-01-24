@@ -376,7 +376,7 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 Example of alerts:
 > ROAs change detected: removed <1.2.3.4/24, 1234, 25, apnic>; added <5.5.3.4/24, 1234, 25, apnic>
 > 
-> Possible TA malfunction: 24% of the ROAs disappeared from APNIC
+> Possible TA malfunction or incomplete VRP file: 24% of the ROAs disappeared from APNIC
 
 **This monitor also alerts about ROAs expiration.**
 
@@ -393,7 +393,7 @@ The field `expire` must be the closest expiration time of all of the above.
 Example of alerts:
 > The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
 > 
-> Possible TA malfunction: 24% of the ROAs are expiring in APNIC
+> Possible TA malfunction or incomplete VRP file: 24% of the ROAs are expiring in APNIC
 
 
 Parameters for this monitor module:
