@@ -64,11 +64,11 @@ export default class WebSocket {
     };
 
     _connect = () => {
-        const connectionId = uuidv4();
+        this.connectionId = uuidv4();
         const url = brembo.build(this.host.split("?")[0], {
             params: {
                 ...brembo.parse(this.host).params,
-                connection: connectionId
+                connection: this.connectionId
             }
         });
 
@@ -85,12 +85,12 @@ export default class WebSocket {
         });
         this.ws.on('pong', this._pingReceived);
         this.ws.on('error', message => {
-            this._publishError(message, {connection: connectionId});
+            this._publishError(message);
         });
         this.ws.on('open', () => {
             this.alive = true;
             this.setOpenTimeout(false);
-            this.pubsub.publish("open", { connection: connectionId });
+            this.pubsub.publish("open", { connection: this.connectionId });
         });
 
         this._startPing();
@@ -120,8 +120,8 @@ export default class WebSocket {
         this.connectionDelay = this.reconnectSeconds;
     };
 
-    _publishError = (message, extra={}) => {
-        this.pubsub.publish("error", { type: "error", message, ...extra });
+    _publishError = (message) => {
+        this.pubsub.publish("error", { type: "error", message, connection: this.connectionId });
     };
 
     setOpenTimeout = (setting) => {
