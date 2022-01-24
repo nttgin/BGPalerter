@@ -61,11 +61,11 @@ describe("RPKI monitoring external", function() {
                 truncated: false,
                 origin: 'rpki-monitor',
                 affected: 'ripe',
-                message: 'Possible TA malfunction: 60.00% of the ROAs disappeared from ripe',
+                message: 'Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe',
                 data: [
                     {
                         affected: 'ripe',
-                        matchedMessage: 'Possible TA malfunction: 60.00% of the ROAs disappeared from ripe'
+                        matchedMessage: 'Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe'
                     }
                 ]
             },
@@ -74,11 +74,11 @@ describe("RPKI monitoring external", function() {
                 truncated: false,
                 origin: 'rpki-monitor',
                 affected: 'ripe',
-                message: 'Possible TA malfunction: 50.00% of the ROAs are expiring in ripe',
+                message: 'Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe',
                 data: [
                     {
                         affected: 'ripe',
-                        matchedMessage: 'Possible TA malfunction: 50.00% of the ROAs are expiring in ripe',
+                        matchedMessage: 'Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe',
                         extra: {}
                     }
                 ]
