@@ -58,19 +58,19 @@ export default class Report {
 
     getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {
         const bgplayTimeOffset = 5 * 60; // 5 minutes
-        return brembo.build("https://stat.ripe.net/", {
-            path: ["widget", "bgplay"],
+        return brembo.build("https://bgplay.massimocandela.com/", {
+            path: [],
             params: {
-                "w.resource": prefix,
-                "w.ignoreReannouncements": true,
-                "w.starttime": moment(start).utc().unix() - bgplayTimeOffset,
-                "w.endtime": moment(end).utc().unix(),
-                "w.rrcs": rrcs.join(","),
-                "w.instant": null,
-                "w.type": "bgp",
+                "resource": prefix,
+                "ignoreReannouncements": true,
+                "starttime": moment(start).utc().unix() - bgplayTimeOffset,
+                "endtime": moment(end).utc().unix(),
+                "rrcs": rrcs.join(","),
+                "instant": null,
+                "type": "bgp",
 
             }
-        }).replace("?", "#");
+        });
     };
 
     getContext = (channel, content) => {
