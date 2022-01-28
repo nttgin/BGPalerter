@@ -101,7 +101,7 @@ jobs:
       run: |
         sudo apt-get -y install tar
         sudo apt-get -y install wget
-        wget -O kafka.tgz https://dlcdn.apache.org/kafka/3.1.0/kafka-3.1.0-src.tgz
+        wget -O kafka.tgz https://dlcdn.apache.org/kafka/3.1.0/kafka_2.13-3.1.0.tgz
         mkdir kafka && tar -xzf kafka.tgz -C kafka --strip-components=1
         nohup ./kafka/bin/zookeeper-server-start.sh ./kafka/config/zookeeper.properties &
         nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
