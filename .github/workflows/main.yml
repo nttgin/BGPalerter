@@ -101,11 +101,11 @@ jobs:
       run: |
         sudo apt-get -y install tar
         sudo apt-get -y install wget
-        wget https://dlcdn.apache.org/kafka/3.0.0/kafka_2.13-3.0.0.tgz
-        tar -xzf kafka_2.13-3.0.0.tgz
-        nohup ./kafka_2.13-3.0.0/bin/zookeeper-server-start.sh ./kafka_2.13-3.0.0/config/zookeeper.properties &
-        nohup ./kafka_2.13-3.0.0/bin/kafka-server-start.sh ./kafka_2.13-3.0.0/config/server.properties &
-        nohup ./kafka_2.13-3.0.0/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
+        wget -O kafka.tgz https://dlcdn.apache.org/kafka/3.1.0/kafka-3.1.0-src.tgz
+        tar -xzf kafka.tgz
+        nohup ./kafka/bin/zookeeper-server-start.sh ./kafka/config/zookeeper.properties &
+        nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
+        nohup ./kafka/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
         sleep 30 && npm run test-kafka
 
     - name: Upload Artifact
