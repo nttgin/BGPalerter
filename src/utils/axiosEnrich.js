@@ -25,7 +25,6 @@ export default function(axios, httpsAgent, userAgent) {
         axios.defaults.httpsAgent = httpsAgent;
     }
 
-    // Set User Agent
     if (userAgent) {
         axios.defaults.headers.common = {
             "User-Agent": userAgent

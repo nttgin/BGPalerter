@@ -35,6 +35,7 @@ import moment from "moment";
 import brembo from "brembo";
 import axios from "axios";
 import axiosEnrich from "../utils/axiosEnrich";
+import RpkiValidator from "rpki-validator";
 
 export default class Report {
     constructor(channels, params, env) {
@@ -69,6 +70,15 @@ export default class Report {
                 "instant": null,
                 "type": "bgp",
 
+            }
+        });
+    };
+
+    getRpkiLink = (prefix, asn) => {
+        return brembo.build("https://rpki.massimocandela.com/", {
+            path: ["#", prefix, asn],
+            params: {
+                "sources": RpkiValidator.providers.join(",")
             }
         });
     };
@@ -160,6 +170,17 @@ export default class Report {
                     context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
                     context.description = matched.description || "";
+                    context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
+                    context.rpkiLink = this.getRpkiLink(context.prefix, context.asn);
+                    context.slackUrl = `[<${context.rpkiLink}|See>]`;
+                    context.markDownUrl = `[[see](${context.rpkiLink})]`;
+                    break;
+
+                case "roa":
+                    matched = content.data[0].matchedRule;
+                    context.asn = (matched.asn || "").toString();
+                    context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
+                    context.description = matched.description || "";
                     break;
 
                 default:
@@ -171,7 +192,7 @@ export default class Report {
 
             return context;
 
-        } catch (error) { // This MUST never happen. But if it happens we need do send a basic alert anyway and don't crash
+        } catch (error) { // This MUST never happen. But if it happens we need to send a basic alert anyway and don't crash
             this.logger.log({
                 level: 'error',
                 message: `It was not possible to generate a context: ${error}`
