@@ -125,12 +125,12 @@ export default class RpkiUtils {
 
                         if (this.rpki) {
                             this.rpki.destroy();
+                        } else {
+                            this.rpki = new rpki({
+                                connector: "external",
+                                clientId: this.clientId
+                            });
                         }
-
-                        this.rpki = new rpki({
-                            connector: "external",
-                            clientId: this.clientId
-                        });
 
                         this.rpki.setVRPs(vrps);
                         this._preCache();
