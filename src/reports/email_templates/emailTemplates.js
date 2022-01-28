@@ -121,7 +121,7 @@ When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 See:                  ${rpkiLink}';
 
-const templateRoas = '${summary}\n\
+const templateRoa = '${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -168,7 +168,7 @@ export default class emailTemplates {
             },
             {
                 channel: 'roa',
-                content: templateRoas
+                content: templateRoa
             }
         ];
 

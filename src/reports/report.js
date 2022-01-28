@@ -75,8 +75,10 @@ export default class Report {
     };
 
     getRpkiLink = (prefix, asn) => {
+        asn = asn && asn.getValue() || [];
+        asn = (Array.isArray(asn)) ? [] : [asn];
         return brembo.build("https://rpki.massimocandela.com/", {
-            path: ["#", prefix, asn],
+            path: ["#", prefix].concat(asn),
             params: {
                 "sources": RpkiValidator.providers.join(",")
             }
@@ -91,6 +93,10 @@ export default class Report {
                 latest: moment(content.latest).utc().format("YYYY-MM-DD HH:mm:ss"),
                 channel,
                 type: content.origin,
+                bgplay: "",
+                rpkiLink: "",
+                slackUrl: "",
+                markDownUrl: ""
             };
 
             let matched = null;
@@ -170,10 +176,12 @@ export default class Report {
                     context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
                     context.description = matched.description || "";
+                    context.neworigin = content.data[0].matchedMessage.originAS;
+                    context.newprefix = content.data[0].matchedMessage.prefix;
                     context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
-                    context.rpkiLink = this.getRpkiLink(context.prefix, context.asn);
-                    context.slackUrl = `[<${context.rpkiLink}|See>]`;
-                    context.markDownUrl = `[[see](${context.rpkiLink})]`;
+                    context.rpkiLink = this.getRpkiLink(context.newprefix, context.neworigin);
+                    context.slackUrl = ` [<${context.rpkiLink}|see>]`;
+                    context.markDownUrl = ` [[see](${context.rpkiLink})]`;
                     break;
 
                 case "roa":

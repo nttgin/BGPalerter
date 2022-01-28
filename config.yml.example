@@ -56,7 +56,7 @@ monitors:
       checkDisappearing: false
 
   - file: monitorROAS
-    channel: rpki
+    channel: roa
     name: rpki-diff
     params:
       enableDiffAlerts: true
@@ -83,6 +83,7 @@ reports:
       - path
       - misconfiguration
       - rpki
+      - roa
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
@@ -95,6 +96,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      showPaths: 5 # Amount of AS_PATHs to report in the alert
 #      senderEmail: bgpalerter@xxxx
@@ -127,6 +129,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      colors:
@@ -135,6 +138,7 @@ reports:
 #        visibility: '#fad648'
 #        path: '#42cbf5'
 #        rpki: '#d892f0'
+#        roa: '#d892f0'
 #      hooks:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
 #        noc: _YOUR_SLACK_WEBHOOK_URL_
@@ -147,6 +151,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      host: localhost
 #      port: 9092
@@ -162,6 +167,7 @@ reports:
 #      - asn-monitor
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      host: 127.0.0.1
 #      port: 514
@@ -181,6 +187,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      severity:
 #        hijack: critical
@@ -204,6 +211,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      hooks:
 #        default: _YOUR_WEBEX_WEBHOOK_URL_
@@ -217,6 +225,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: '{"text": "${summary}"}'
@@ -235,6 +244,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      showPaths: 0 # Amount of AS_PATHs to report in the alert
 #      botUrl: https://api.telegram.org/bot<_BOT_ID_>/sendMessage
@@ -250,6 +260,7 @@ reports:
 #      - path
 #      - misconfiguration
 #      - rpki
+#      - roa
 #    params:
 #      maxAlertsAmount: 25
 
