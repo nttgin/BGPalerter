@@ -111,7 +111,6 @@ Last event:           ${latest} UTC\n\
 Top ${pathNumber} most used AS paths:\n\
 ${paths}';
 
-
 const templateRPKI = '${summary}\n\
 \n\
 \n\
@@ -119,7 +118,18 @@ DETAILS:\n\
 ------------------------------------------------------\n\
 Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
+Last event:           ${latest} UTC\n\
+See:                  ${rpkiLink}';
+
+const templateRoa = '${summary}\n\
+\n\
+\n\
+DETAILS:\n\
+------------------------------------------------------\n\
+Event type:           ${type}\n\
+When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC';
+
 
 const defaultTemplate = '${summary}';
 
@@ -155,6 +165,10 @@ export default class emailTemplates {
             {
                 channel: 'rpki',
                 content: templateRPKI
+            },
+            {
+                channel: 'roa',
+                content: templateRoa
             }
         ];
 

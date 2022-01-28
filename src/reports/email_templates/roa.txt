@@ -5,4 +5,3 @@ DETAILS:
 Event type:           ${type}
 When event started:   ${earliest} UTC
 Last event:           ${latest} UTC
-See more:             ${rpkiLink}

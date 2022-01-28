@@ -164,8 +164,8 @@ describe("Core functions", function() {
 
             expect(config.monitors[6]).to
                 .containSubset({
-                    "channel": "rpki",
-                    "name": "rpki-monitor"
+                    "channel": "roa",
+                    "name": "roa-diff"
                 });
 
             expect(config.monitors[config.monitors.length - 1]).to
@@ -186,7 +186,11 @@ describe("Core functions", function() {
                     "channels": [
                         "hijack",
                         "newprefix",
-                        "visibility"
+                        "visibility",
+                        "rpki",
+                        "roa",
+                        "misconfiguration",
+                        "path"
                     ],
                     "params": {}
                 });

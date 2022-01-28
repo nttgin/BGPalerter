@@ -35,6 +35,7 @@ import moment from "moment";
 import brembo from "brembo";
 import axios from "axios";
 import axiosEnrich from "../utils/axiosEnrich";
+import RpkiValidator from "rpki-validator";
 
 export default class Report {
     constructor(channels, params, env) {
@@ -58,19 +59,30 @@ export default class Report {
 
     getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {
         const bgplayTimeOffset = 5 * 60; // 5 minutes
-        return brembo.build("https://stat.ripe.net/", {
-            path: ["widget", "bgplay"],
+        return brembo.build("https://bgplay.massimocandela.com/", {
+            path: [],
             params: {
-                "w.resource": prefix,
-                "w.ignoreReannouncements": true,
-                "w.starttime": moment(start).utc().unix() - bgplayTimeOffset,
-                "w.endtime": moment(end).utc().unix(),
-                "w.rrcs": rrcs.join(","),
-                "w.instant": null,
-                "w.type": "bgp",
+                "resource": prefix,
+                "ignoreReannouncements": true,
+                "starttime": moment(start).utc().unix() - bgplayTimeOffset,
+                "endtime": moment(end).utc().unix(),
+                "rrcs": rrcs.join(","),
+                "instant": null,
+                "type": "bgp",
 
             }
-        }).replace("?", "#");
+        });
+    };
+
+    getRpkiLink = (prefix, asn) => {
+        asn = asn && asn.getValue() || [];
+        asn = (Array.isArray(asn)) ? [] : [asn];
+        return brembo.build("https://rpki.massimocandela.com/", {
+            path: ["#", prefix].concat(asn),
+            params: {
+                "sources": RpkiValidator.providers.join(",")
+            }
+        });
     };
 
     getContext = (channel, content) => {
@@ -81,6 +93,10 @@ export default class Report {
                 latest: moment(content.latest).utc().format("YYYY-MM-DD HH:mm:ss"),
                 channel,
                 type: content.origin,
+                bgplay: "",
+                rpkiLink: "",
+                slackUrl: "",
+                markDownUrl: ""
             };
 
             let matched = null;
@@ -160,6 +176,19 @@ export default class Report {
                     context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
                     context.description = matched.description || "";
+                    context.neworigin = content.data[0].matchedMessage.originAS;
+                    context.newprefix = content.data[0].matchedMessage.prefix;
+                    context.bgplay = this.getBGPlayLink(matched.prefix, content.earliest, content.latest);
+                    context.rpkiLink = this.getRpkiLink(context.newprefix, context.neworigin);
+                    context.slackUrl = ` [<${context.rpkiLink}|see>]`;
+                    context.markDownUrl = ` [[see](${context.rpkiLink})]`;
+                    break;
+
+                case "roa":
+                    matched = content.data[0].matchedRule;
+                    context.asn = (matched.asn || "").toString();
+                    context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
+                    context.description = matched.description || "";
                     break;
 
                 default:
@@ -171,7 +200,7 @@ export default class Report {
 
             return context;
 
-        } catch (error) { // This MUST never happen. But if it happens we need do send a basic alert anyway and don't crash
+        } catch (error) { // This MUST never happen. But if it happens we need to send a basic alert anyway and don't crash
             this.logger.log({
                 level: 'error',
                 message: `It was not possible to generate a context: ${error}`

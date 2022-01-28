@@ -8,9 +8,7 @@ import { AS } from "./model";
 
 const apiTimeout = 120000;
 const clientId = "ntt-bgpalerter";
-const rpki = new RpkiValidator({clientId});
 import axiosEnrich from "./utils/axiosEnrich";
-
 
 module.exports = function generatePrefixes(inputParameters) {
     let {
@@ -31,12 +29,13 @@ module.exports = function generatePrefixes(inputParameters) {
         downstreams
     } = inputParameters;
 
+    const rpki = new RpkiValidator({clientId});
+
     exclude = exclude || [];
     logger = logger || console.log;
     group = group || "noc";
 
     const generateList = {};
-    const allOrigins = {};
     let someNotValidatedPrefixes = false;
 
     let proxy;
@@ -206,13 +205,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 let origins = [parseInt(asn)];
 
                 if (asns && asns.length) {
-                    const origin = (asns && asns.length) ? asns : [asn];
-
-                    for (let o of origin) {
-                        allOrigins[o] = true;
-                    }
-
-                    origins = origin.map(i => parseInt(i));
+                    origins = asns.map(i => parseInt(i));
                 } else {
                     logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }
@@ -347,7 +340,17 @@ module.exports = function generatePrefixes(inputParameters) {
                     logger(`Cannot download more specific prefixes ${e}`);
                 })
         })
-        .then(() => rpki.preCache())
+        .then(() => {
+            return rpki.getAvailableConnectors()
+                .then((connectors) => {
+                    rpki.setConnector(connectors[0]);
+
+                    if (Object.keys(generateList).length > 2000) {
+                        return rpki.preCache();
+                    }
+                })
+                .catch(() => rpki.preCache());
+        })
         .then(() => { // Check
             return Promise
                 .all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
@@ -381,7 +384,7 @@ module.exports = function generatePrefixes(inputParameters) {
             return batchPromises(1, asnList, getNeighbors)
                 .then(asnNeighbors => {
                     generateMonitoredAsObject(createASesRules, asnNeighbors);
-                })
+                });
             // Otherwise nothing
         })
         .then(() => {

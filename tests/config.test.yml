@@ -45,8 +45,8 @@ monitors:
       checkUncovered: true
 
   - file: monitorROAS
-    channel: rpki
-    name: rpki-monitor
+    channel: roa
+    name: roa-diff
 
 reports:
   - file: reportFile
@@ -57,6 +57,7 @@ reports:
       - path
       - misconfiguration
       - rpki
+      - roa
     params:
       persistAlertData: false
       alertDataDirectory: alertdata/
@@ -69,6 +70,7 @@ reports:
       - path
       - misconfiguration
       - rpki
+      - roa
     params:
       maxAlertsAmount: 100
 

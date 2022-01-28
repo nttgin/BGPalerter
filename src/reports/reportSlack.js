@@ -44,7 +44,8 @@ export default class ReportSlack extends ReportHTTP {
                     {
                         color: color,
                         title: "${channel}",
-                        text: "${summary}"
+                        type: "mrkdwn",
+                        text: "${summary}${slackUrl}"
                     }
                 ]
             });

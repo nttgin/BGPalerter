@@ -74,8 +74,8 @@ export default class reportTelegram extends ReportHTTP {
     getTemplate = (group, channel, content) => {
         return JSON.stringify({
             "chat_id": this.chatIds[group] || this.chatIds["default"],
-            "text": "${summary}",
-            "parse_mode": 'HTML',
+            "text": "${summary}${markDownUrl}",
+            "parse_mode": 'markdown',
             "disable_web_page_preview": true
         });
     };
