@@ -36,7 +36,6 @@ module.exports = function generatePrefixes(inputParameters) {
     group = group || "noc";
 
     const generateList = {};
-    const allOrigins = {};
     let someNotValidatedPrefixes = false;
 
     let proxy;
@@ -206,13 +205,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 let origins = [parseInt(asn)];
 
                 if (asns && asns.length) {
-                    const origin = (asns && asns.length) ? asns : [asn];
-
-                    for (let o of origin) {
-                        allOrigins[o] = true;
-                    }
-
-                    origins = origin.map(i => parseInt(i));
+                    origins = asns.map(i => parseInt(i));
                 } else {
                     logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }

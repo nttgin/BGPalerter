@@ -124,7 +124,7 @@ export default class RpkiUtils {
                     if (vrps.length > 0) {
 
                         if (this.rpki) {
-                            this.rpki.destroy();
+                            this.rpki.empty();
                         } else {
                             this.rpki = new rpki({
                                 connector: "external",
