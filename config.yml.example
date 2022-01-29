@@ -351,8 +351,8 @@ monitoredPrefixesFiles:
 # Global RPKI settings shared across all monitors requiring RPKI data
 # More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md
 #
-# 29/06/2021: rpkiclient has been set as default vrpProvider in this example since is the only one supporting
-# ROAs expiration data. See what expiration data enables you to do: https://github.com/nttgin/BGPalerter/releases/tag/v1.28.1
+# To enable ROA expiration alerts, you need VRPs including expiration timestamps.
+# "rpkiclient" is the default vrpProvider since is the only one supporting ROAs expiration data.
 
 rpki:
   vrpProvider: rpkiclient

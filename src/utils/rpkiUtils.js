@@ -1,4 +1,4 @@
-import rpki from "rpki-validator";
+import RpkiValidator from "rpki-validator";
 import fs from "fs";
 import md5 from "md5";
 import axiosEnrich from "./axiosEnrich";
@@ -12,10 +12,8 @@ export default class RpkiUtils {
         this.clientId = env.clientId || "";
         this.logger = env.logger;
         this.userAgent = `${this.clientId}/${env.version}`;
-
         const defaultMarkDataAsStaleAfterMinutes = 60;
-
-        const providers = ["rpkiclient", "ntt", "ripe", "cloudflare", "external", "api"]; // First provider is the default one
+        const providers = RpkiValidator.providers;
 
         if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
@@ -86,7 +84,7 @@ export default class RpkiUtils {
             if (this.params.url) {
                 rpkiValidatorOptions.url = this.params.url;
             }
-            this.rpki = new rpki(rpkiValidatorOptions);
+            this.rpki = new RpkiValidator(rpkiValidatorOptions);
 
             if (!!this.params.preCacheROAs) {
                 this._preCache();
@@ -126,7 +124,7 @@ export default class RpkiUtils {
                         if (this.rpki) {
                             this.rpki.empty();
                         } else {
-                            this.rpki = new rpki({
+                            this.rpki = new RpkiValidator({
                                 connector: "external",
                                 clientId: this.clientId
                             });
