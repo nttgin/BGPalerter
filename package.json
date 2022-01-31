@@ -55,7 +55,6 @@
     "mocha": "^9.2.0",
     "pkg": "^5.5.2",
     "read-last-lines": "^1.8.0",
-    "simple-get": "^4.0.1",
     "syslogd": "^1.1.2"
   },
   "dependencies": {
