@@ -390,6 +390,8 @@ ROAs are affected by a series of expiration times:
 
 The field `expire` must be the closest expiration time of all of the above.
 
+**This means that you can receive an alert about an expiring ROA, where the expiration is not due to the ROA itself but due to some other expiring component of the validation chain.**
+
 Example of alerts:
 > The following ROAs will expire in less than 2 hours: <1.2.3.4/24, 1234, 25, apnic>; <5.5.3.4/24, 1234, 25, apnic>
 > 
