@@ -79,10 +79,6 @@ export default class ConnectorRIS extends Connector {
                 instance: this.instanceId
             }
         });
-
-        if (this._shouldCanaryMonitoringStart()) { // The canary feature may impact performance if you are planning to get all the possible updates of RIS
-            this._startCanaryInterval = setInterval(this._startCanary, 60000);
-        }
     };
 
     _shouldCanaryMonitoringStart = () => {
@@ -283,7 +279,6 @@ export default class ConnectorRIS extends Connector {
                 }))
                 .then(() => {
                     this._checkCanary();
-                    clearInterval(this._startCanaryInterval);
                 })
                 .catch(() => {
                     this.logger.log({
@@ -355,6 +350,12 @@ export default class ConnectorRIS extends Connector {
         return (this.params.carefulSubscription
             ? Promise.all([this._subscribeToPrefixes(input), this._subscribeToASns(input)])
             : this._subscribeToAll(input))
+            .then(() => {
+                    if (this._shouldCanaryMonitoringStart()) {
+                        this._startCanary();
+                    }
+                }
+            )
             .then(() => {
                 this.onInputChange(input);
 
