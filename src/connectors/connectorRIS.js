@@ -279,6 +279,10 @@ export default class ConnectorRIS extends Connector {
                 }))
                 .then(() => {
                     this._checkCanary();
+                    this.logger.log({
+                        level: 'info',
+                        message: "Subscribed to beacons"
+                    });
                 })
                 .catch(() => {
                     this.logger.log({
@@ -293,7 +297,7 @@ export default class ConnectorRIS extends Connector {
         clearTimeout(this._timerCheckCanary);
         if (!this.connected) {
             this.logger.log({
-                level: 'error',
+                level: 'info',
                 message: "RIS connected again, the streaming session is working properly"
             });
         }
@@ -351,6 +355,10 @@ export default class ConnectorRIS extends Connector {
             ? Promise.all([this._subscribeToPrefixes(input), this._subscribeToASns(input)])
             : this._subscribeToAll(input))
             .then(() => {
+                    this.logger.log({
+                        level: 'info',
+                        message: "Subscribed to monitored resources"
+                    });
                     if (this._shouldCanaryMonitoringStart()) {
                         this._startCanary();
                     }
