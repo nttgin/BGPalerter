@@ -146,11 +146,11 @@ find -type f -name 'bgpalerter-linux-x64-*' -mtime +60 -delete
 find /home/bgpalerter/logs/ -type f -name "upgrade.log" -size +5M -delete
 ```
 
-Configure a cron job to run, in this case, weekly.
+Configure a cron job to run, in this case, weekly as root.
 
 `crontab -e`
 
 The contents of this file should be as follows:
 ```
-0 0 * * 0 /home/bgpalerter/bgpalerter/upgrade.sh
+0 0 * * 0 /home/bgpalerter/upgrade.sh
 ```
