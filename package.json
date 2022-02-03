@@ -44,8 +44,8 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.16.8",
-    "@babel/core": "^7.16.12",
+    "@babel/cli": "^7.17.0",
+    "@babel/core": "^7.17.0",
     "@babel/node": "^7.16.8",
     "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
@@ -58,7 +58,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^6.17.3",
+    "@sentry/node": "^6.17.4",
     "axios": "^0.25.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.6",
@@ -75,7 +75,7 @@
     "nodemailer": "^6.7.2",
     "path": "^0.12.7",
     "restify": "^8.6.0",
-    "rpki-validator": "^2.8.2",
+    "rpki-validator": "^2.8.4",
     "semver": "^7.3.5",
     "syslog-client": "^1.1.1",
     "uuid": "^8.3.2",
