@@ -36,3 +36,4 @@ Please, let me know so I can add your company name here.
 * NTS workspace (AS15576)
 * Axera S.P.A. (AS34758)
 * GoDaddy (AS26496, AS20773)
+* SWITCH (AS559)
