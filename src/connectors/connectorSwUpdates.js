@@ -56,7 +56,7 @@ export default class ConnectorSwUpdates extends Connector{
                         type: "software-update",
                         currentVersion: this.version,
                         newVersion: data.data.version,
-                        repo: "https://github.com/nttgin/BGPalerter"
+                        repo: "https://github.com/nttgin/BGPalerter/releases"
                     });
                 }
             })
