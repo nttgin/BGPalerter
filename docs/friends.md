@@ -37,3 +37,4 @@ Please, let me know so I can add your company name here.
 * Axera S.P.A. (AS34758)
 * GoDaddy (AS26496, AS20773)
 * SWITCH (AS559)
+* Artfiles GmbH (AS8893)
