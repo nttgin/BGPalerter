@@ -103,6 +103,7 @@ export default class MonitorROAS extends Monitor {
 
     _verifyExpiration = () => {
         const roas = this.rpki.getVrps();
+        const metadata = this.rpki.getMetadata();
         const expiringRoas = roas
             .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < this.roaExpirationAlertHours * 3600));
 
@@ -118,16 +119,16 @@ export default class MonitorROAS extends Monitor {
             let alerts = [];
             if (relevantVrps.length) {
                 if (!this.checkOnlyASns) {
-                    alerts = this._checkExpirationPrefixes(relevantVrps);
+                    alerts = this._checkExpirationPrefixes(relevantVrps, metadata);
                 }
                 for (let asn of asnsIn) {
-                    this._checkExpirationAs(relevantVrps, asn, alerts);
+                    this._checkExpirationAs(relevantVrps, asn, alerts, metadata);
                 }
             }
         }
     };
 
-    _checkExpirationPrefixes = (vrps) => {
+    _checkExpirationPrefixes = (vrps, metadata) => {
         let alerts = [];
 
         for (let prefix of [...new Set(vrps.map(i => i.prefix))]) {
@@ -143,14 +144,14 @@ export default class MonitorROAS extends Monitor {
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {});
+                    {rpkiMetadata: metadata});
             }
         }
 
         return alerts;
     };
 
-    _checkExpirationAs = (vrps, asn, sent) => {
+    _checkExpirationAs = (vrps, asn, sent, metadata) => {
         try {
             let alerts = [];
             const impactedASes = [...new Set(vrps.map(i => i.asn))];
@@ -166,7 +167,7 @@ export default class MonitorROAS extends Monitor {
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {});
+                        {rpkiMetadata: metadata});
                 }
             }
 
