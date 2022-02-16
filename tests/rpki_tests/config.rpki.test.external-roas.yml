@@ -8,8 +8,8 @@ connectors:
 
 monitors:
   - file: monitorROAS
-    channel: rpki
-    name: rpki-monitor
+    channel: roa
+    name: roa-monitor
     params:
       enableDiffAlerts: true
       enableExpirationAlerts: true

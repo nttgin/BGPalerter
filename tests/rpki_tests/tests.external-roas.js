@@ -59,7 +59,7 @@ describe("RPKI monitoring external", function() {
             "disappeared-ripe": {
                 id: 'disappeared-ripe',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: 'ripe',
                 message: 'Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe',
                 data: [
@@ -72,7 +72,7 @@ describe("RPKI monitoring external", function() {
             "expiring-ripe": {
                 id: 'expiring-ripe',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: 'ripe',
                 message: 'Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe',
                 data: [
@@ -87,7 +87,7 @@ describe("RPKI monitoring external", function() {
             "28c7aa78b6286e0e3c6583797f7df47c": {
                 id: '28c7aa78b6286e0e3c6583797f7df47c',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: 2914,
                 message: 'The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>',
 
@@ -95,28 +95,28 @@ describe("RPKI monitoring external", function() {
             "47807c7558dbe001b4aad9f3a87eb427": {
                 id: '47807c7558dbe001b4aad9f3a87eb427',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: '94.5.4.3/22',
                 message: 'ROAs change detected: removed <94.5.4.3/22, 2914, 22, ripe>'
             },
             "de3bd9a6cdeeb05e1c2c7c04f7220485" : {
                 id: 'de3bd9a6cdeeb05e1c2c7c04f7220485',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: '2001:db8:123::/48',
                 message: 'ROAs change detected: removed <2001:db8:123::/48, 65000, 48, ripe>'
             },
             "129aafe3c8402fb045b71e810a73d425": {
                 id: '129aafe3c8402fb045b71e810a73d425',
                 truncated: false,
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: 2914,
                 message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>'
             }
         };
 
         let rpkiTestCompletedExternal = false;
-        pubSub.subscribe("rpki", function (message, type) {
+        pubSub.subscribe("roa", function (message, type) {
 
             try {
                 if (!rpkiTestCompletedExternal) {
