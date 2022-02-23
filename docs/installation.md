@@ -76,6 +76,21 @@ docker run -i --name bgpalerter \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
+You can also use docker-compose for that:
+
+```
+version: "3.8"
+
+services:
+  bgpalerter:
+    image: nttgin/bgpalerter:latest
+    command: run serve -- --d /opt/bgpalerter/volume/
+    container_name: bgpalerter
+    volumes:
+      - "$(pwd)/volume:/opt/bgpalerter/volume"
+    restart: always
+```
+
 With this command, a new directory `./volume` will be created in the current position.
 Such directory will contain all the persistent data that BGPalerter will generate, including configuration and alert logs.  
 You can specify another directory by changing the directory before the colon in the -v flag (e.g., `-v _LOCATION_YOU_WANT_/volume:/opt/bgpalerter/volume`).
@@ -96,6 +111,23 @@ docker run -i --name bgpalerter \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
+With docker-compose:
+
+```
+version: "3.8"
+
+services:
+  bgpalerter:
+    image: nttgin/bgpalerter:latest
+    command: run serve -- --d /opt/bgpalerter/volume/
+    container_name: bgpalerter
+    ports:
+      - '8011:8011'
+    volumes:
+      - "$(pwd)/volume:/opt/bgpalerter/volume"
+    restart: always
+```
+
 The `uptimeApi` module has to be enabled in `volume/config.yml` as described [here](process-monitors.md).
 Now you can monitor `http://127.0.0.1:8011/status` (e.g., in Nagios) to check the status of the BGPalerter monitoring.
 Such API may return a negative result when there is a misconfiguration or when BGPalerter failed to connect to the data repository.
@@ -114,6 +146,28 @@ docker run -i --name bgpalerter \
   --restart unless-stopped \
   -p 8011:8011 \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
+```
+
+With docker-compose:
+
+```
+version: "3.8"
+
+services:
+  bgpalerter:
+    image: nttgin/bgpalerter:latest
+    command: run serve -- --d /opt/bgpalerter/volume/
+    container_name: bgpalerter
+    ports:
+      - '8011:8011'
+    volumes:
+      - "$(pwd)/volume:/opt/bgpalerter/volume"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:8011/status || exit 1"]
+      interval: 60s
+      timeout: 2s
+      retries: 15
 ```
 
 > This option does NOT replace [proper monitoring](process-monitors.md).
