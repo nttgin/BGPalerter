@@ -37,3 +37,6 @@ Please, let me know so I can add your company name here.
 * Axera S.P.A. (AS34758)
 * GoDaddy (AS26496, AS20773)
 * Freie Netze München e.V. (AS212567)
+* SWITCH (AS559)
+* Artfiles GmbH (AS8893)
+* CENGN (AS395262)

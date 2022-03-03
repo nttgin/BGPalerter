@@ -5,7 +5,7 @@ Some fast commands are below. The complete documentation (including other platfo
 ## With apt (e.g., debian)
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 sudo apt install nodejs
 ```
 
@@ -14,12 +14,12 @@ sudo apt install nodejs
 
 ```bash
 brew update
-brew install node@12
+brew install node@14
 ```
 
 ## With yum (e.g., centos)
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_12.x | sudo bash -
+curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
 sudo yum install nodejs
 ```
