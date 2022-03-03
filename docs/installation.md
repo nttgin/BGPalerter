@@ -76,7 +76,7 @@ docker run -i --name bgpalerter \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
-You can also use docker-compose for that:
+Alternatively, you can [use docker-compose](https://github.com/docker/compose). Create a file named docker-compose.yml with the following content:
 
 ```
 version: "3.8"
@@ -90,6 +90,7 @@ services:
       - "$(pwd)/volume:/opt/bgpalerter/volume"
     restart: always
 ```
+After that you have to invoke `sudo docker-compose up -d` and the container should start up. You might want to have a look at the logs by using `sudo docker-compose logs`.
 
 With this command, a new directory `./volume` will be created in the current position.
 Such directory will contain all the persistent data that BGPalerter will generate, including configuration and alert logs.  
@@ -111,7 +112,7 @@ docker run -i --name bgpalerter \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
-With docker-compose:
+Alternatively, you can [use docker-compose](https://github.com/docker/compose). Create a file named docker-compose.yml with the following content:
 
 ```
 version: "3.8"
@@ -127,6 +128,8 @@ services:
       - "$(pwd)/volume:/opt/bgpalerter/volume"
     restart: always
 ```
+
+After that you have to invoke `sudo docker-compose up -d` and the container should start up. You might want to have a look at the logs by using `sudo docker-compose logs`.
 
 The `uptimeApi` module has to be enabled in `volume/config.yml` as described [here](process-monitors.md).
 Now you can monitor `http://127.0.0.1:8011/status` (e.g., in Nagios) to check the status of the BGPalerter monitoring.
@@ -148,7 +151,7 @@ docker run -i --name bgpalerter \
   nttgin/bgpalerter:latest run serve -- --d /opt/bgpalerter/volume/
 ```
 
-With docker-compose:
+Alternatively, you can [use docker-compose](https://github.com/docker/compose). Create a file named docker-compose.yml with the following content:
 
 ```
 version: "3.8"
@@ -169,6 +172,8 @@ services:
       timeout: 2s
       retries: 15
 ```
+
+After that you have to invoke `sudo docker-compose up -d` and the container should start up. You might want to have a look at the logs by using `sudo docker-compose logs`.
 
 > This option does NOT replace [proper monitoring](process-monitors.md).
 Just restarting the container will not assure you that the monitoring is working properly or that it will work again. You should always investigate failures and fix possible misconfiguration.
