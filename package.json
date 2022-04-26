@@ -59,7 +59,7 @@
   },
   "dependencies": {
     "@sentry/node": "^6.19.4",
-    "axios": "^0.26.1",
+    "axios": "^0.27.0",
     "batch-promises": "^0.0.3",
     "brembo": "^2.0.6",
     "deepmerge": "^4.2.2",
