@@ -36,3 +36,5 @@ Please, let me know so I can add your company name here.
 * NTS workspace (AS15576)
 * Axera S.P.A. (AS34758)
 * GoDaddy (AS26496, AS20773)
+* Stuttgart-IX (AS41139, AS212522)
+* Globalways GmbH (AS48918)
