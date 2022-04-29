@@ -287,6 +287,10 @@ export default class RpkiUtils {
         return this.rpki.toArray();
     };
 
+    getMetadata = () => {
+        return this.rpki.getMetadata();
+    };
+
     getStatus = () => {
         return this.status;
     };

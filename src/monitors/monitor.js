@@ -101,8 +101,8 @@ export default class Monitor {
                 let latest = -Infinity;
 
                 for (let alert of alerts) {
-                    earliest = Math.min(alert.timestamp, earliest);
-                    latest = Math.max(alert.timestamp, latest);
+                    earliest = Math.min(alert.matchedMessage?.timestamp ?? alert.timestamp, earliest);
+                    latest = Math.max(alert.matchedMessage?.timestamp ?? alert.timestamp, latest);
                 }
 
                 return {

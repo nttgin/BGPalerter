@@ -92,6 +92,8 @@ export default class InputYml extends Input {
         new Promise((resolve, reject) => {
             const uniquePrefixes = {};
             const uniqueAsns = {};
+            let newPrefixList = [];
+            let newAsList = [];
 
             for (let prefixesFile of this.config.monitoredPrefixesFiles) {
 
@@ -143,7 +145,7 @@ export default class InputYml extends Input {
                                         return item;
                                     });
 
-                                this.asns = this.asns.concat(newAsnSet);
+                                newAsList = newAsList.concat(newAsnSet);
                             }
                         }
 
@@ -168,15 +170,18 @@ export default class InputYml extends Input {
                             })
                             .filter(i => i !== null);
 
-                        this.prefixes = this.prefixes.concat(monitoredPrefixes);
+                        newPrefixList = newPrefixList.concat(monitoredPrefixes);
                     }
 
                 }
             }
 
-            this.prefixes.sort((a, b) => {
+            newPrefixList.sort((a, b) => {
                 return ipUtils.sortByPrefixLength(b.prefix, a.prefix);
             });
+
+            this.asns = newAsList;
+            this.prefixes = newPrefixList;
 
             resolve(true);
         });

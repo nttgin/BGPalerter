@@ -8,12 +8,12 @@ connectors:
 
 monitors:
   - file: monitorRPKI
-    channel: rpki
-    name: rpki-monitor
+    channel: roa
+    name: roa-monitor
     params:
       checkDisappearing: true
       thresholdMinPeers: 1
-      checkUncovered: true
+      checkUncovered: false
       cacheValidPrefixesSeconds: 3600
 
 

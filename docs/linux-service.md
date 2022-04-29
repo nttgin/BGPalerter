@@ -4,24 +4,39 @@ If you are interested in running this application as a service on a Linux server
 ### Create directory for the application to reside
 Create a user for BGPalerter
 
-```bash
+```shell
 adduser bgpalerter
-sudo su bgpalerter
 ```
 
-If this is a new installation, download the BGPalerter binary in the home of the newly created user and execute it:
+**If this is a new installation:**
 
-```
-cd /home/bgpalerter
-wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
-chmod +x bgpalerter-linux-x64
-./bgpalerter-linux-x64
-```
-The auto-configuration will start at the end of which all the needed files will be created.
+* download the BGPalerter binary in the home of the newly created user:
 
-If this is an existing install simply move the files of your existing install into this directory `mv -t /home/bgpalerter bgpalerter-linux-x64 bgpalerter.pid config.yml prefixes.yml`
+    ```shell
+    sudo su bgpalerter
+    
+    cd /home/bgpalerter
+    
+    wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
+    
+    chmod +x bgpalerter-linux-x64
+    ```
 
-The application will also create `logs` and `src` subdirectories here if needed. 
+* execute it and proceed with the auto-configuration, at the end of which all the needed files will be created:
+
+    ```shell
+    ./bgpalerter-linux-x64
+    ```
+
+**If this is an existing installation:**
+
+* simply move the files of your existing installation into this directory and assign the correct permissions
+
+    ```shell
+    mv /your/old/bgpalerter /home/bgpalerter
+    chown -R bgpalerter:bgpalerter /home/bgpalerter
+    chmod -x /home/bgpalerter/bgpalerter-linux-x64
+    ```
 
 ### Create systemd service file
 Next you need to create the systemd service file.
@@ -38,6 +53,7 @@ After=network.target
 [Service]
 Type=simple
 Restart=on-failure
+RestartSec=30s
 User=bgpalerter
 WorkingDirectory=/home/bgpalerter
 ExecStart=/home/bgpalerter/bgpalerter-linux-x64
@@ -60,97 +76,100 @@ Enable BGPalerter to start at boot and then start the service.
 
 
 ### Automatic Updates
-Enable automatic updates.
+You can enable automatic updates by following the instructions below.
 
-`cd /home/bgpalerter`
+Enter as bgpalerter user in its home directory:
 
-`vi upgrade.sh`
-
-The file needs to be executable
-```
-chmod +x upgrade.sh
-chown bgpalerter:bgpalerter /home/bgpalerter/upgrade.sh
+```shell
+sudo su bgpalerter
+cd /home/bgpalerter
 ```
 
-The contents of this file should be as follows:
 
-```
+Create a file `upgrade.sh` with the following content:
+
+```shell
 #!/usr/bin/env bash
 
-#If log file does not exist, create it
-if [ ! -f /home/bgpalerter/logs/upgrade.log ]; then
-  touch /home/bgpalerter/logs/upgrade.log
-  chown bgpalerter:bgpalerter /home/bgpalerter/logs/upgrade.log
+# Change the directories if needed
+DIR=/home/bgpalerter
+LOGS=$DIR/logs
+
+# If log file does not exist, create it
+if [ ! -f $LOGS/upgrade.log ]; then
+  touch $LOGS/upgrade.log
+  chown bgpalerter:bgpalerter $LOGS/upgrade.log
 fi
 
-#Log everything if executing manually
-exec 1> /home/bgpalerter/logs/upgrade.log 2>&1
-set -vex
-PS4='+\t '
+# Delete log file if larger than 5MB
+find $LOGS -type f -name "upgrade.log" -size +5M -delete
 
-#Download the latest version and save it to a temp file
-wget -O bgpalerter-linux-x64.tmp https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
+exec 1> $LOGS/upgrade.log 2>&1
 
-#Set permissions and ownership to execute the file and capture the version
+cd $DIR
+
+# Download the latest version and save it to a temp file
+wget --no-verbose -O bgpalerter-linux-x64.tmp https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64
+
+# Set permissions to execute the file
 chmod +x bgpalerter-linux-x64.tmp
-chown -R bgpalerter:bgpalerter /home/bgpalerter/
 
-#Set variables to compare versions
+# Set variables to compare versions
 if [ -f bgpalerter-linux-x64 ]; then
-  #If a file exists already
+  # If a file exists already
   v1=$(./bgpalerter-linux-x64 -v)
   v2=$(./bgpalerter-linux-x64.tmp -v)
-
+  
 else
-  #If the file does not exist - For testing purposes
   v1=$"0"
   v2=$(./bgpalerter-linux-x64.tmp -v)
 fi
 
-#If the versions are not the same
+# If there is no old version
 if [ "$v1" == "0" ];then
-  #Rename the temp file
-  mv bgpalerter-linux-x64.tmp bgpalerter-linux-x64
+  #Remove the file
+  rm bgpalerter-linux-x64.tmp
 
-  #Restart the service
-  systemctl restart bgpalerter
+  echo "This script upgrades BGPalerter; however, $DIR/bgpalerter-linux-x64 cannot be found. Please, install it first https://github.com/nttgin/BGPalerter/blob/main/docs/linux-service.md"
+  exit 1
 
-  #Pause for one second for service to fully start
-  sleep 1
-
+# The versions are different
 elif [ "$v1" != "$v2" ];then
-  #Rename the old binary and append the version
-  mv bgpalerter-linux-x64 "bgpalerter-linux-x64-$v1"
+  # Remove the old version
+  rm bgpalerter-linux-x64
 
-  #Rename the temp file
+  # Rename the temp file
   mv bgpalerter-linux-x64.tmp bgpalerter-linux-x64
 
-  #Restart the service
-  systemctl restart bgpalerter
-  
-  #Pause for one second for service to fully start
-  sleep 1
+  # Kill the process 
+  # We use kill because "systemctl restart bgpalerter" works only 
+  # if you run this script as root. Systemctl will restart the process.
+  kill -9 $(cat $DIR/bgpalerter.pid) || true
+
+  echo "A new version of BGPalerter has been installed"
 
 else
-  #If the versions are the same - delete the temp file
+  # If the versions are the same, delete the temp file
   rm bgpalerter-linux-x64.tmp
+  echo "BGPalerter is up to date"
 fi
-
-#Log service status
-systemctl status bgpalerter -l
-
-#Delete renamed binaries older than 60 days
-find -type f -name 'bgpalerter-linux-x64-*' -mtime +60 -delete
-
-#Delete log file if larger than 5MB
-find /home/bgpalerter/logs/ -type f -name "upgrade.log" -size +5M -delete
 ```
 
-Configure a cron job to run, in this case, weekly.
+The `upgrade.sh` file needs to be executable
 
-`crontab -e`
-
-The contents of this file should be as follows:
+```shell
+chmod +x upgrade.sh
 ```
-0 0 * * 0 /home/bgpalerter/bgpalerter/upgrade.sh
+
+Now we need to configure a cron job to periodically execute `upgrade.sh`.
+
+As the `bgpalerter` user, do
+
+```shell
+crontab -e
+```
+
+and append the following line to perform the check weekly
+```
+0 0 * * 0 /home/bgpalerter/upgrade.sh
 ```

@@ -51,7 +51,7 @@ describe("RPKI monitoring external", function() {
 
             "a82_112_100_0_24-2914-null": {
                 id: 'a82_112_100_0_24-2914-null',
-                origin: 'rpki-monitor',
+                origin: 'roa-monitor',
                 affected: '82.112.100.0/24',
                 message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA'
             }
@@ -61,7 +61,7 @@ describe("RPKI monitoring external", function() {
         let rpkiTestCompletedExternal = false;
         let started = false;
 
-        pubSub.subscribe("rpki", function (message, type) {
+        pubSub.subscribe("roa", function (message, type) {
             try {
                 if (started && !rpkiTestCompletedExternal) {
                     message = JSON.parse(JSON.stringify(message));
