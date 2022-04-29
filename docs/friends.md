@@ -41,3 +41,5 @@ Please, let me know so I can add your company name here.
 * CENGN (AS395262)
 * Freie Netze München e.V. (AS212567)
 * TDC NET (AS3292)
+* Stuttgart-IX (AS41139, AS212522)
+* Globalways GmbH (AS48918)
