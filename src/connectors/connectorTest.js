@@ -545,7 +545,7 @@ export default class ConnectorTest extends Connector {
                 const withdrawals = message["withdrawals"] || [];
                 const peer = message["peer"];
                 const communities = message["community"] || [];
-                const timestamp = message["timestamp"] * 1000;
+                const timestamp = new Date().getTime();
                 let path, originAS;
 
                 if (message["path"] && message["path"].length) {

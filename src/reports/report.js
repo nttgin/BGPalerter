@@ -107,7 +107,7 @@ export default class Report {
 
             if (this.params.showPaths > 0) {
                 content.data
-                    .filter(i => i?.matchedMessage?.path?.length > 1)
+                    .filter(i => i?.matchedMessage?.path?.length() > 1)
                     .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(channel === "path" ? 0 : 1)))
                     .forEach(path => {
                         if (!pathsCount[path]) {
