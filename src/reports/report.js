@@ -96,7 +96,9 @@ export default class Report {
                 bgplay: "",
                 rpkiLink: "",
                 slackUrl: "",
-                markDownUrl: ""
+                markDownUrl: "",
+                pathNumber: 0,
+                paths: ""
             };
 
             let matched = null;
@@ -105,7 +107,7 @@ export default class Report {
 
             if (this.params.showPaths > 0) {
                 content.data
-                    .filter(i => !!i.matchedMessage && !!i.matchedMessage.path)
+                    .filter(i => i?.matchedMessage?.path?.length > 1)
                     .map(i => JSON.stringify(i.matchedMessage.path.getValues().slice(channel === "path" ? 0 : 1)))
                     .forEach(path => {
                         if (!pathsCount[path]) {
@@ -113,7 +115,6 @@ export default class Report {
                         }
                         pathsCount[path]++;
                     });
-
 
                 sortedPathIndex = Object.keys(pathsCount)
                     .map(key => [key, pathsCount[key]]);
@@ -124,9 +125,6 @@ export default class Report {
                     .slice(0, this.params.showPaths)
                     .map(i => i[0])
                     .join(",");
-            } else {
-                context.pathNumber = 0;
-                context.paths = "";
             }
 
             switch(channel){
