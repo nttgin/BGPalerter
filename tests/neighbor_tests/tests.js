@@ -83,7 +83,6 @@ describe("Alerting", function () {
                         "originAS": [104],
                         "nextHop": "124.0.0.3",
                         "aggregator": null,
-                        "timestamp": null,
                         "communities": []
                     },
                     "extra": {"side": "upstream", "neighbor": 30}
