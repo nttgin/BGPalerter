@@ -54,6 +54,10 @@ export default class ReportWebex extends Report {
     };
 
     _sendWebexMessage = (url, message, content) => {
+        this.logger.log({
+            level: 'info',
+            message: `[reportWebex] sending report to: ${url}`
+        });
 
         this.axios({
             url,

@@ -88,6 +88,11 @@ export default class ReportSyslog extends Report {
             .then(() => {
                 const message = this._getMessage(channel, content);
 
+                this.logger.log({
+                    level: 'info',
+                    message: `[reportSyslog] sending report to: ${this.options.syslogHostname}`
+                });
+
                 this.client.log(message, {}, error => {
                     if (error) {
                         this.logger.log({

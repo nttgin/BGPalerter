@@ -74,8 +74,13 @@ export default class ReportHTTP extends Report {
             }
             const blob = this.parseTemplate(this.getTemplate(group, channel, content), context);
 
+            this.logger.log({
+                level: 'info',
+                message: `[${this.name}] sending report to: ${url}`
+            });
+
             this.axios({
-                url: url,
+                url,
                 method: "POST",
                 headers: this.headers,
                 data: (this.params.isTemplateJSON) ? JSON.parse(blob) : blob

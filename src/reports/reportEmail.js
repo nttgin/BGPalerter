@@ -140,9 +140,15 @@ export default class ReportEmail extends Report {
                 const text = this.getEmailText(channel, content);
 
                 if (text) {
+                    const to = emails.join(', ');
+                    this.logger.log({
+                        level: 'info',
+                        message: `[reportEmail] sending report to: ${to}`
+                    });
+
                     this.emailBacklog.push({
                         from: this.params.senderEmail,
-                        to: emails.join(', '),
+                        to,
                         subject: 'BGP alert: ' + channel,
                         text: text
                     });
