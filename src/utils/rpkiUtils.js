@@ -305,4 +305,39 @@ export default class RpkiUtils {
             this.oldDigest = digest;
         }
     };
+
+    getExpiringElements = (index, vrp, expires) => {
+        function getExpiringParent (index, item, expires) {
+            const parents =  index.getParent(item) ?? [];
+            const expiring = parents.filter(i => i.valid_until === expires);
+
+            if (expiring.length) {
+                return expiring;
+            } else {
+                return parents.map(item => getExpiringParent(index, item, expires)).flat();
+            }
+        }
+
+        function getExpiringRoas (index, {prefix, asn, maxLength}, expires){
+            const roas = index.getVRP({prefix, asn, maxLength}) ?? [];
+            const expiring = roas.filter(roa => roa.valid_until === expires);
+
+            if (expiring?.length) {
+                return expiring;
+            } else {
+                return roas.map(item => getExpiringParent(index, item, expires)).flat();
+            }
+        }
+
+        return getExpiringRoas(index, vrp, expires).flat();
+    }
+
+    _getVrpIndex = () => {
+        if (this.rpki?.getAdvancedStats) {
+            return this.rpki.getAdvancedStats();
+        } else {
+            return Promise.resolve(null);
+        }
+    };
+
 }

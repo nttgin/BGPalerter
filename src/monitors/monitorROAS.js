@@ -31,10 +31,18 @@ export default class MonitorROAS extends Monitor {
         };
 
         if (this.enableDiffAlerts || this.enableDeletedCheckTA) {
-            setInterval(this._diffVrps, 30000);
+            setInterval(this._diffVrps, 30 * 1000);
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
-            setInterval(this._verifyExpiration, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
+            // setInterval(() => {
+                this.rpki._getVrpIndex()
+                    .then(index => {
+                        this._verifyExpiration(index, this.roaExpirationAlertHours);
+                    })
+                    .catch((e) => {
+                        this._verifyExpiration(null, 2, false);
+                    });
+            // }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };
 
@@ -80,7 +88,7 @@ export default class MonitorROAS extends Monitor {
         this.timesDeletedTAs = sizes;
     };
 
-    _checkExpirationTAs = (vrps, expiringVrps) => {
+    _checkExpirationTAs = (vrps, expiringVrps, index) => {
         const sizes =  this._calculateSizes(vrps);
         const expiringSizes =  this._calculateSizes(expiringVrps);
 
@@ -90,25 +98,26 @@ export default class MonitorROAS extends Monitor {
             const percentage = (100 / max) * min;
 
             if (percentage > this.toleranceExpiredRoasTA) {
+                const extra = this._getExpiringItems(vrps, index);
                 const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
                 this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                     ta,
                     { group: "default" },
                     message,
-                    {});
+                    extra);
             }
         }
     };
 
-    _verifyExpiration = () => {
+    _verifyExpiration = (index, roaExpirationAlertHours) => {
         const roas = this.rpki.getVrps();
         const metadata = this.rpki.getMetadata();
         const expiringRoas = roas
-            .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < this.roaExpirationAlertHours * 3600));
+            .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
 
         if (this.enableExpirationCheckTA) {
-            this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
+            this._checkExpirationTAs(roas, expiringRoas, index); // Check for TA malfunctions
         }
 
         if (this.enableExpirationAlerts) {
@@ -119,16 +128,45 @@ export default class MonitorROAS extends Monitor {
             let alerts = [];
             if (relevantVrps.length) {
                 if (!this.checkOnlyASns) {
-                    alerts = this._checkExpirationPrefixes(relevantVrps, metadata);
+                    alerts = this._checkExpirationPrefixes(relevantVrps, metadata, index, roaExpirationAlertHours);
                 }
                 for (let asn of asnsIn) {
-                    this._checkExpirationAs(relevantVrps, asn, alerts, metadata);
+                    this._checkExpirationAs(relevantVrps, asn, alerts, metadata, index, roaExpirationAlertHours);
                 }
             }
         }
     };
 
-    _checkExpirationPrefixes = (vrps, metadata) => {
+    _getExpiringItems = (vrps, index) => {
+
+        if (index) {
+            const uniqItems = {};
+            for (let vrp of vrps) {
+                const roas = index.getVRP(vrp);
+                const expires = vrp?.expires;
+
+                if (expires) {
+                    for (let roa of roas) {
+                        const expiring = this.rpki.getExpiringElements(index, vrp, expires);
+                        for (let item of expiring) {
+                            uniqItems[item.id] = item;
+                        }
+                    }
+                }
+            }
+
+            const items = Object.values(uniqItems);
+
+            return {
+                type: items.every(i => i.type === "roa") ? "roa" : "chain",
+                expiring: items.map(i => i.file)
+            };
+        } else {
+            return {};
+        }
+    }
+
+    _checkExpirationPrefixes = (vrps, metadata, index, roaExpirationAlertHours) => {
         let alerts = [];
 
         for (let prefix of [...new Set(vrps.map(i => i.prefix))]) {
@@ -136,22 +174,30 @@ export default class MonitorROAS extends Monitor {
             const roas = vrps.filter(i => i.prefix === prefix); // Get only the ROAs for this prefix
             const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
             if (matchedRule) {
+                const extra = this._getExpiringItems(roas, index);
                 const alertsStrings = [...new Set(roas.map(this._roaToString))];
-                const message = `The following ROAs will expire in less than ${this.roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
+                let message = "";
+
+                if (extra && extra.type === "chain") {
+                    message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
+                    message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
+                } else {
+                    message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
+                }
                 alerts = alerts.concat(alertsStrings);
 
                 this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {rpkiMetadata: metadata});
+                    {...extra, rpkiMetadata: metadata});
             }
         }
 
         return alerts;
     };
 
-    _checkExpirationAs = (vrps, asn, sent, metadata) => {
+    _checkExpirationAs = (vrps, asn, sent, metadata, index, roaExpirationAlertHours) => {
         try {
             let alerts = [];
             const impactedASes = [...new Set(vrps.map(i => i.asn))];
@@ -160,14 +206,23 @@ export default class MonitorROAS extends Monitor {
             for (let matchedRule of matchedRules.filter(i => !!i)) { // An alert for each AS involved (they may have different user group)
                 const alertsStrings = [...new Set(vrps.map(this._roaToString))].filter(i => !sent.includes(i));
                 if (alertsStrings.length) {
-                    const message = `The following ROAs will expire in less than ${this.roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
+                    const extra = this._getExpiringItems(vrps, index);
+                    let message = "";
+
+                    if (extra && extra.type === "chain") {
+                        message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
+                        message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
+                    } else {
+                        message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
+                    }
+
                     alerts = alerts.concat(alertsStrings);
 
                     this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {rpkiMetadata: metadata});
+                        {...extra, rpkiMetadata: metadata});
                 }
             }
 
