@@ -75,7 +75,7 @@
     "nodemailer": "^6.7.5",
     "path": "^0.12.7",
     "restify": "^8.6.1",
-    "rpki-validator": "^2.10.4",
+    "rpki-validator": "^2.10.5",
     "semver": "^7.3.7",
     "syslog-client": "^1.1.1",
     "uuid": "^8.3.2",

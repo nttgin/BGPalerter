@@ -1,6 +1,6 @@
 import Monitor from "./monitor";
 import md5 from "md5";
-import { getPrefixes, getRelevant, diff } from "../utils/rpkiDiffingTool";
+import { getRelevant, diff } from "../utils/rpkiDiffingTool";
 import {AS} from "../model";
 import moment from "moment";
 
@@ -34,15 +34,16 @@ export default class MonitorROAS extends Monitor {
             setInterval(this._diffVrps, 30 * 1000);
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
-            // setInterval(() => {
+            setInterval(() => {
                 this.rpki._getVrpIndex()
                     .then(index => {
                         this._verifyExpiration(index, this.roaExpirationAlertHours);
                     })
                     .catch((e) => {
+                        console.log(e);
                         this._verifyExpiration(null, 2, false);
                     });
-            // }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
+            }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };
 
@@ -98,7 +99,9 @@ export default class MonitorROAS extends Monitor {
             const percentage = (100 / max) * min;
 
             if (percentage > this.toleranceExpiredRoasTA) {
-                const extra = this._getExpiringItems(vrps, index);
+                const currentTaVrps = vrps.filter(i => i.ta === ta);
+                const extra = this._getExpiringItems(currentTaVrps, index);
+
                 const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
                 this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
@@ -111,7 +114,7 @@ export default class MonitorROAS extends Monitor {
     };
 
     _verifyExpiration = (index, roaExpirationAlertHours) => {
-        const roas = this.rpki.getVrps();
+        const roas = this.rpki.getVRPs();
         const metadata = this.rpki.getMetadata();
         const expiringRoas = roas
             .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
@@ -141,16 +144,12 @@ export default class MonitorROAS extends Monitor {
 
         if (index) {
             const uniqItems = {};
-            for (let vrp of vrps) {
-                const roas = index.getVRP(vrp);
-                const expires = vrp?.expires;
+            for (let vrp of vrps.slice(0, 20)) {
+                if (vrp && vrp?.expires) {
+                    const expiring = this.rpki.getExpiringElements(index, vrp, vrp?.expires);
 
-                if (expires) {
-                    for (let roa of roas) {
-                        const expiring = this.rpki.getExpiringElements(index, vrp, expires);
-                        for (let item of expiring) {
-                            uniqItems[item.id] = item;
-                        }
+                    for (let item of expiring) {
+                        uniqItems[item.id] = item;
                     }
                 }
             }
@@ -236,7 +235,7 @@ export default class MonitorROAS extends Monitor {
     };
 
     _diffVrps = () => {
-        const newVrps = this.rpki.getVrps(); // Get all the vrps as retrieved from the rpki validator
+        const newVrps = this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
 
         if (this.enableDeletedCheckTA) {
             this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas

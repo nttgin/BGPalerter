@@ -283,7 +283,7 @@ export default class RpkiUtils {
             });
     };
 
-    getVrps = () => {
+    getVRPs = () => {
         return this.rpki.toArray();
     };
 
@@ -297,7 +297,7 @@ export default class RpkiUtils {
 
     _markAsStale = () => {
         if (!!this.params.preCacheROAs) {
-            const digest = md5(JSON.stringify(this.getVrps()));
+            const digest = md5(JSON.stringify(this.getVRPs()));
             if (this.oldDigest) {
                 this.status.stale = this.oldDigest === digest;
             }
@@ -307,29 +307,47 @@ export default class RpkiUtils {
     };
 
     getExpiringElements = (index, vrp, expires) => {
-        function getExpiringParent (index, item, expires) {
-            const parents =  index.getParent(item) ?? [];
-            const expiring = parents.filter(i => i.valid_until === expires);
+        let stop = 100;
 
-            if (expiring.length) {
-                return expiring;
+        function makeUnique (arr) {
+            const uniq = {};
+
+            for (let item of arr) {
+                uniq[item.id] = item;
+            }
+
+            return Object.values(uniq);
+        }
+
+        function getExpiringParent (index, items, expires) {
+            stop--;
+            if (items.length && stop > 0) {
+                items = makeUnique(items);
+                const parents = (makeUnique(index.getParents(items)) ?? []);
+                const expiring = parents.filter(i => i.valid_until === expires);
+
+                if (expiring?.length) {
+                    return expiring;
+                } else {
+                    return getExpiringParent(index, parents, expires);
+                }
             } else {
-                return parents.map(item => getExpiringParent(index, item, expires)).flat();
+                return [];
             }
         }
 
         function getExpiringRoas (index, {prefix, asn, maxLength}, expires){
-            const roas = index.getVRP({prefix, asn, maxLength}) ?? [];
+            const roas = index.getVRPs({prefix, asn, maxLength}) ?? [];
             const expiring = roas.filter(roa => roa.valid_until === expires);
 
             if (expiring?.length) {
                 return expiring;
             } else {
-                return roas.map(item => getExpiringParent(index, item, expires)).flat();
+                return getExpiringParent(index, roas, expires);
             }
         }
 
-        return getExpiringRoas(index, vrp, expires).flat();
+        return makeUnique(getExpiringRoas(index, vrp, expires).flat());
     }
 
     _getVrpIndex = () => {
