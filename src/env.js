@@ -134,7 +134,7 @@ config.monitors.push({
 config.monitors = config.monitors
     .map(item => {
         return {
-            class: require("./monitors/" + item.file).default,
+            class: require(item.external ? item.file : "./monitors/" + item.file).default,
             channel: item.channel,
             name: item.name,
             params: item.params
@@ -146,7 +146,7 @@ config.reports = (config.reports || [])
 
         return {
             file: item.file,
-            class: require("./reports/" + item.file).default,
+            class: require(item.external ? item.file : "./reports/" + item.file).default,
             channels: item.channels,
             params: item.params
         };
@@ -176,7 +176,7 @@ config.connectors = config.connectors
         }
 
         return {
-            class: require("./connectors/" + item.file).default,
+            class: require(item.external ? item.file : "./connectors/" + item.file).default,
             params: item.params,
             name: item.name
         };

@@ -3,6 +3,7 @@ import md5 from "md5";
 import { getRelevant, diff } from "../utils/rpkiDiffingTool";
 import {AS} from "../model";
 import moment from "moment";
+import ipUtils from "ip-sub";
 
 export default class MonitorROAS extends Monitor {
 
@@ -170,7 +171,7 @@ export default class MonitorROAS extends Monitor {
 
         for (let prefix of [...new Set(vrps.map(i => i.prefix))]) {
 
-            const roas = vrps.filter(i => i.prefix === prefix); // Get only the ROAs for this prefix
+            const roas = vrps.filter(i => ipUtils.isEqualPrefix(i.prefix, prefix)); // Get only the ROAs for this prefix
             const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
             if (matchedRule) {
                 const extra = this._getExpiringItems(roas, index);
@@ -268,7 +269,7 @@ export default class MonitorROAS extends Monitor {
             if (roaDiff && roaDiff.length) { // Differences found
                 for (let prefix of [...new Set(roaDiff.map(i => i.prefix))]) {
 
-                    const roas = roaDiff.filter(i => i.prefix === prefix); // Get only the ROAs for this prefix
+                    const roas = roaDiff.filter(i => ipUtils.isEqualPrefix(i.prefix, prefix)); // Get only the ROAs for this prefix
                     const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
                     if (matchedRule) {
                         const alertsStrings = [...new Set(roas.map(this._roaToString))];
@@ -279,7 +280,7 @@ export default class MonitorROAS extends Monitor {
                             matchedRule.prefix,
                             matchedRule,
                             message,
-                            {});
+                            {diff: alertsStrings});
                     }
                 }
             }
