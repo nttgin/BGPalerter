@@ -314,7 +314,7 @@ export default class MonitorROAS extends Monitor {
                             matchedRule.asn.getId(),
                             matchedRule,
                             message,
-                            {});
+                            {diff: alertsStrings});
                     }
                 }
             }
