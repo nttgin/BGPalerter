@@ -1,7 +1,7 @@
 {
   "name": "bgpalerter",
   "version": "1.29.0",
-  "description": "Software to monitor streams of BGP data. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, and more.",
+  "description": "BGP and RPKI monitoring tool. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, ROA misconfiguration, and more.",
   "author": {
     "name": "Massimo Candela",
     "url": "https://massimocandela.com"
