@@ -15,12 +15,10 @@ If this list is not up to date, please contact NTT or one of the authors.
     Alan Haynes, Harbin Clinic 
     Florian Domain, Criteo
     Louis Poinsignon, Cloudflare
+    See complete list at https://github.com/nttgin/BGPalerter/graphs/contributors
 
-
-A special THANK YOU goes to:
-
-    Job Snijders <job@ntt.net> for pushing for this project to happen.
-
-    The RIPE RIS project for the amazing real-time streaming service.
+Special thanks to:
+    Job Snijders <job@openbsd.org> for OpenBSD rpki-client (https://www.rpki-client.org/)
+    RIPE NCC for the RIS live service (https://ris-live.ripe.net/).
 
 
