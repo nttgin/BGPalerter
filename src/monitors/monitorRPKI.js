@@ -123,20 +123,20 @@ export default class MonitorRPKI extends Monitor {
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null, roaDisappeared: true });
+                        { covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
                 } else if (this.params.checkUncovered) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null });
+                        { covering: null, valid: null, subType: "rpki-unknown" });
                 }
             } else if (result.valid === false) {
                 this.publishAlert(key,
                     prefix,
                     matchedRule,
                     message,
-                    { covering: result.covering, valid: false });
+                    { covering: result.covering, valid: false, subType: "rpki-invalid" });
 
             } else if (result.valid) {
 

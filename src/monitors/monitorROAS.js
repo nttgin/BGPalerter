@@ -83,7 +83,7 @@ export default class MonitorROAS extends Monitor {
                             group: "default"
                         },
                         message,
-                        {});
+                        {subType: "ta-malfunction"});
                 }
             }
         }
@@ -102,12 +102,13 @@ export default class MonitorROAS extends Monitor {
             if (percentage > this.toleranceExpiredRoasTA) {
                 const currentTaVrps = vrps.filter(i => i.ta === ta);
                 const extra = this._getExpiringItems(currentTaVrps, index);
+                extra.subType = "ta-expire";
 
                 const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
                 this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                     ta,
-                    { group: "default" },
+                    {group: "default"},
                     message,
                     extra);
             }
@@ -190,7 +191,7 @@ export default class MonitorROAS extends Monitor {
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {...extra, rpkiMetadata: metadata});
+                    {...extra, rpkiMetadata: metadata, subType: "roa-expire"});
             }
         }
 
@@ -222,7 +223,7 @@ export default class MonitorROAS extends Monitor {
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {...extra, rpkiMetadata: metadata});
+                        {...extra, rpkiMetadata: metadata, subType: "roa-expire"});
                 }
             }
 
@@ -273,14 +274,17 @@ export default class MonitorROAS extends Monitor {
                     const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
                     if (matchedRule) {
                         const alertsStrings = [...new Set(roas.map(this._roaToString))];
-                        const message = `ROAs change detected: ${alertsStrings.join("; ")}`;
+                        const message = alertsStrings.length <= 10 ?
+                            `ROAs change detected: ${alertsStrings.join("; ")}` :
+                            `ROAs change detected: ${alertsStrings.slice(0, 10).join("; ")} and more...`;
+
                         alerts = alerts.concat(alertsStrings);
 
                         this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.prefix,
                             matchedRule,
                             message,
-                            {diff: alertsStrings});
+                            {diff: alertsStrings, subType: "roa-diff"});
                     }
                 }
             }
@@ -307,14 +311,16 @@ export default class MonitorROAS extends Monitor {
                 for (let matchedRule of matchedRules.filter(i => !!i)) { // An alert for each AS involved (they may have different user group)
                     const alertsStrings = [...new Set(roaDiff.map(this._roaToString))].filter(i => !sent.includes(i));
                     if (alertsStrings.length) {
-                        const message = `ROAs change detected: ${alertsStrings.join("; ")}`;
+                        const message = alertsStrings.length <= 10 ?
+                            `ROAs change detected: ${alertsStrings.join("; ")}` :
+                            `ROAs change detected: ${alertsStrings.slice(0, 10).join("; ")} and more...`;
                         alerts = alerts.concat(alertsStrings);
 
                         this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.asn.getId(),
                             matchedRule,
                             message,
-                            {diff: alertsStrings});
+                            {diff: alertsStrings, subType: "roa-diff"});
                     }
                 }
             }
