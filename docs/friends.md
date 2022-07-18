@@ -44,3 +44,4 @@ Please, let me know so I can add your company name here.
 * Stuttgart-IX (AS41139, AS212522)
 * Globalways GmbH (AS48918)
 * TOP-IX (AS41364, AS209631)
+* MontanaSky Networks (AS18897)
