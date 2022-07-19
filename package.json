@@ -48,7 +48,7 @@
     "@babel/core": "^7.18.6",
     "@babel/node": "^7.18.6",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
-    "@babel/plugin-proposal-object-rest-spread": "^7.18.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.18.9",
     "@babel/preset-env": "^7.18.6",
     "chai": "^4.3.6",
     "chai-subset": "^1.6.0",
