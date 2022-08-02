@@ -57,13 +57,13 @@ module.exports = function generatePrefixes(inputParameters) {
         throw new Error("You can specify an AS number or a list of prefixes, not both.");
     }
 
-    if (asnList && asnList.length) {
+    if (asnList && Array.isArray(asnList) && asnList.length) {
         asnList = asnList.map(i => i.replace("AS", ""));
         if (asnList.some(i => !new AS([i]).isValid())) {
             throw new Error("One of the AS number is not valid");
         }
     }
-    if (monitoredASes && monitoredASes.length) {
+    if (monitoredASes && Array.isArray(monitoredASes) && monitoredASes.length) {
         monitoredASes = monitoredASes.map(i => i.replace("AS", ""));
         if (monitoredASes.some(i => !new AS([i]).isValid())) {
             throw new Error("One of the AS number is not valid");
@@ -182,6 +182,7 @@ module.exports = function generatePrefixes(inputParameters) {
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
                             logger(`Detected more specific ${i.prefix}`);
+
                             return {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
@@ -202,22 +203,23 @@ module.exports = function generatePrefixes(inputParameters) {
         getMultipleOrigins(prefix)
             .then(asns => {
 
-                let origins = [parseInt(asn)];
+                let origins = asn ? [parseInt(asn)] : [];
 
-                if (asns && asns.length) {
+                if (asns && Array.isArray(asns) && asns.length) {
                     origins = asns.map(i => parseInt(i));
                 } else {
                     logger("RIPEstat is having issues in returning the origin ASes of some prefixes. The prefix.yml configuration may be incomplete.");
                 }
 
-                generateList[prefix] = generateList[prefix] || {
-                    description: description || "No description provided",
-                    asn: origins,
-                    ignoreMorespecifics: ignoreMorespecifics,
-                    ignore: excludeDelegated,
-                    group: group
-                };
-
+                if (origins.length) {
+                    generateList[prefix] = generateList[prefix] || {
+                        description: description || "No description provided",
+                        asn: origins,
+                        ignoreMorespecifics: ignoreMorespecifics,
+                        ignore: excludeDelegated,
+                        group: group
+                    };
+                }
             });
 
     const getAnnouncedPrefixes = (asn) => {
@@ -267,7 +269,6 @@ module.exports = function generatePrefixes(inputParameters) {
             })
             .then(list => list.filter(i => !exclude.includes(i.prefix)))
             .then(list => {
-
                 return batchPromises(40, list, i => {
                     return generateRule(i.prefix, asn, false, null, false);
                 })
@@ -329,7 +330,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 return getAnnouncedMoreSpecifics(prefix)
                     .then(items => {
                         return batchPromises(1, items, item => {
-                            return generateRule(item.prefix, item.asn, true, item.description, excludeDelegated)
+                            return generateRule(item.prefix, item.asn, true, item.description, excludeDelegated);
                         });
                     })
                     .catch((e) => {
@@ -381,13 +382,16 @@ module.exports = function generatePrefixes(inputParameters) {
                 createASesRules = monitoredASes;
             }
 
-            return batchPromises(1, asnList, getNeighbors)
-                .then(asnNeighbors => {
-                    generateMonitoredAsObject(createASesRules, asnNeighbors);
-                });
+            if (asnList && Array.isArray(asnList) && asnList.length) {
+                return batchPromises(1, asnList, getNeighbors)
+                    .then(asnNeighbors => {
+                        generateMonitoredAsObject(createASesRules, asnNeighbors);
+                    });
+            }
             // Otherwise nothing
         })
         .then(() => {
+
             if (someNotValidatedPrefixes) {
                 logger("WARNING: the generated configuration is a snapshot of what is currently announced. Some of the prefixes don't have ROA objects associated. Please, verify the config file by hand!");
             }
@@ -395,14 +399,20 @@ module.exports = function generatePrefixes(inputParameters) {
         .then(() => {
             generateList.options = generateList.options || {};
             generateList.options.generate = {
-                asnList,
                 exclude,
                 excludeDelegated,
-                prefixes,
                 monitoredASes,
                 historical,
                 group
             };
+
+            if (asnList) {
+                generateList.options.generate.asnList = asnList;
+            }
+
+            if (prefixes) {
+                generateList.options.generate.prefixes = prefixes;
+            }
 
             return (append)
                 ? getCurrentPrefixesList()
