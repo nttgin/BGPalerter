@@ -58,7 +58,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.8.1",
+    "@sentry/node": "^7.9.0",
     "axios": "^0.27.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.1.0",
