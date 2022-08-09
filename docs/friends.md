@@ -11,7 +11,7 @@ Please, let me know so I can add your company name here.
 * MTLNOG
 * EBOX (AS1403)
 * Cloudflare (AS13335)
-* Vocus (AS4826 & AS9443)
+* Vocus (AS4826, AS9443)
 * HEAnet (AS1213)
 * Tech Futures (AS394256)
 * Fastly (AS54113)
@@ -22,7 +22,7 @@ Please, let me know so I can add your company name here.
 * WiscNet (AS2381)
 * Artfiles GmbH (AS8893)
 * Namex IXP (AS24796)
-* Zero Attack Vector LLC (AS212996 & AS398549)
+* Zero Attack Vector LLC (AS212996, AS398549)
 * Accuris Technologies Ltd. (AS212934)
 * Brennercom S.p.A. (AS20811)
 * Solcon Internetdiensten B.V. (AS12414)
