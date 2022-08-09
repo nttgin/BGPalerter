@@ -1,0 +1,33 @@
+#!/usr/bin/make -f
+export DH_VERBOSE = 1
+%:
+	dh $@ --with nodejs
+
+override_dh_auto_build:
+	babeljs index.js -d "${CURDIR}/build"
+	babeljs src -d "${CURDIR}/build/src"
+	cp package.json "${CURDIR}/build/"
+	cd "${CURDIR}/build" && npm pack
+
+override_dh_auto_test:
+	/bin/true
+
+override_dh_auto_install:
+	npm install --prefix "${CURDIR}/debian/node-bgpalerter/usr" -g ${CURDIR}/build/bgpalerter-*.tgz
+	find "${CURDIR}/debian/node-bgpalerter/usr" \
+		\( -name .npmignore -o -name .eslintrc -o -name .eslintrc.js -o -name \*.md -o -name LICENSE \
+		-o -name LICENSE-jsbn -o -name package.json -o -name .gitmodules -o -name .gitattributes \) \
+		-type f -delete
+	find "${CURDIR}/debian/node-bgpalerter/usr/lib/node_modules/bgpalerter/node_modules" \
+		\( -name examples -name .bin -o -name bin \) -type d -exec rm -rf {} +
+
+override_dh_link:
+	# We dont want to link the vendored packages
+	/bin/true
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod +x "${CURDIR}/debian/node-bgpalerter/usr/lib/node_modules/bgpalerter/index.js"
+
+override_dh_auto_clean:
+	rm -rf "${CURDIR}/build"

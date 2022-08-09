@@ -25,3 +25,4 @@ index.js
 .hound.yml
 .eslintrc.json
 .babelrc
+debian/
