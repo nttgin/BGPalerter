@@ -1,0 +1,33 @@
+Source: node-bgpalerter
+Section: javascript
+Priority: optional
+Maintainer: John Bond <jbond@wikimedia.org>
+Testsuite: autopkgtest-pkg-nodejs
+Build-Depends:
+ debhelper-compat (= 13)
+ , pkg-js-tools
+ , dh-exec
+ , nodejs (>= 6)
+ , node-babel7
+ , npm
+Standards-Version: 4.6.0
+Homepage: https://github.com/nttgin/BGPalerter#readme
+
+Package: node-bgpalerter
+Architecture: all
+Depends:
+ ${misc:Depends}
+ , nodejs (>= 6)
+Description: Self-configuring BGP monitoring tool, which allows you to monitor in real-time if:
+    any of your prefixes loses visibility;
+    any of your prefixes is hijacked;
+    your AS is announcing RPKI invalid prefixes (e.g., not matching prefix length);
+    your AS is announcing prefixes not covered by ROAs;
+    any of your ROAs is expiring;
+    ROAs covering your prefixes are no longer reachable;
+    RPKI Trust Anchors malfunctions;
+    a ROA involving any of your prefixes or ASes was deleted/added/edited;
+    your AS is announcing a new prefix that was never announced before;
+    an unexpected upstream (left-side) AS appears in an AS path;
+    an unexpected downstream (right-side) AS appears in an AS path;
+    one of the AS paths used to reach your prefix matches a specific condition defined by you.

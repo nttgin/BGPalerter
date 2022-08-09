@@ -1,0 +1,5 @@
+version=4
+opts=\
+dversionmangle=auto,\
+filenamemangle=s/.*\/v?([\d\.-]+)\.tar\.gz/node-bgpalerter-$1.tar.gz/ \
+ https://github.com/nttgin/BGPalerter/releases .*/archive.*/v?([\d\.]+).tar.gz
