@@ -568,15 +568,19 @@ describe("Alerting", function () {
 
     it("pull API alerting", function (done) {
 
-        axios({
-            url: "http://localhost:8011/alerts/8e402e65f393ba4812df5da0db7605e9",
-            responseType: "json",
-            method: "GET"
-        })
-            .then(a => {
-                expect(a.data.data[0].hash).to.equal("8e402e65f393ba4812df5da0db7605e9");
-                done();
+        setTimeout(() => {
+            axios({
+                url: "http://localhost:8011/alerts/8e402e65f393ba4812df5da0db7605e9",
+                responseType: "json",
+                method: "GET"
             })
+                .then(a => {
+                    expect(a.data.data[0].hash).to.equal("8e402e65f393ba4812df5da0db7605e9");
+                    done();
+                });
+        }, 10000);
+
+
     }).timeout(asyncTimeout);
 });
 

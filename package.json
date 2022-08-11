@@ -15,7 +15,7 @@
   },
   "scripts": {
     "babel": "./node_modules/.bin/babel",
-    "test": "npm run test-core && npm run test-generate && npm run test-reports && npm run test-rpki && npm run test-neighbor",
+    "test": "rm -rf .cache/ && npm run test-core && npm run test-generate && npm run test-reports && npm run test-rpki && npm run test-neighbor",
     "test-core": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/*.js --require @babel/register && rm -rf volumetests/",
     "test-reports": "./node_modules/.bin/mocha --exit tests/reports_tests/testReportSyslog.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/reports_tests/testsReportHttp.js --require @babel/register",
     "test-proxy": "./node_modules/.bin/mocha --exit tests/proxy_tests/*.js --require @babel/register",
@@ -24,7 +24,7 @@
     "test-neighbor": "./node_modules/.bin/mocha --exit tests/neighbor_tests/*.js --require @babel/register",
     "test-npm": "./node_modules/.bin/mocha --exit tests/npm_tests/*.js --require @babel/register",
     "test-dump": "rm -rf volumetests/ && ./node_modules/.bin/mocha --exit tests/dump_tests/*.js --require @babel/register",
-    "test-rpki": "./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.api.js --require @babel/register",
+    "test-rpki": "rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.default.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-missing-roas.js --require @babel/register && rm -f -R .cache/ && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.external-roas.js --require @babel/register && ./node_modules/.bin/mocha --exit tests/rpki_tests/tests.api.js --require @babel/register",
     "build": "./build.sh",
     "compile": "rm -rf dist/ && ./node_modules/.bin/babel index.js -d dist && ./node_modules/.bin/babel src -d dist/src  && cp package.json dist/package.json && cp package-lock.json dist/package-lock.json && cp README.md dist/README.md && cp AUTHORS dist/AUTHORS && cp .npm* dist/",
     "serve": "babel-node index.js",

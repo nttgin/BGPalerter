@@ -38,7 +38,7 @@ const asyncTimeout = 200000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
-global.EXTERNAL_ROA_EXPIRATION_TEST = 5000;
+global.EXTERNAL_ROA_EXPIRATION_TEST = 10000;
 
 // ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
@@ -117,7 +117,6 @@ describe("RPKI monitoring external", function() {
 
         let rpkiTestCompletedExternal = false;
         pubSub.subscribe("roa", function (message, type) {
-
             try {
                 if (!rpkiTestCompletedExternal) {
                     message = JSON.parse(JSON.stringify(message));
