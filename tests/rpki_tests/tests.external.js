@@ -46,9 +46,6 @@ const pubSub = worker.pubSub;
 
 describe("RPKI monitoring external", function() {
 
-    //Test rpki watch file reloading
-    fs.copyFileSync("tests/rpki_tests/vrp.correct.json", "tests/rpki_tests/vrp.json");
-
     it("external connector", function (done) {
 
         const expectedData = {
@@ -96,6 +93,9 @@ describe("RPKI monitoring external", function() {
                 done(error);
             }
         });
+
+        //Test rpki watch file reloading
+        fs.copyFileSync("tests/rpki_tests/vrp.correct.json", "tests/rpki_tests/vrp.json");
 
         setTimeout(() => { // Wait that the watcher realizes the file changed
             pubSub.publish("test-type", "rpki");

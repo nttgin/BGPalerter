@@ -34,19 +34,14 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const fs = require('fs');
 const expect = chai.expect;
-const asyncTimeout = 200000;
+const asyncTimeout = 270000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
-global.EXTERNAL_ROA_EXPIRATION_TEST = 10000;
+global.EXTERNAL_ROA_EXPIRATION_TEST = 90000;
 
 // ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
-
-setTimeout(() => {
-    // ROAs after
-    fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
-}, 30000);
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
@@ -142,6 +137,12 @@ describe("RPKI monitoring external", function() {
                 done(error);
             }
         });
+
+        setTimeout(() => {
+            // ROAs after
+            fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
+        }, global.EXTERNAL_ROA_EXPIRATION_TEST + 10000);
+
 
     }).timeout(asyncTimeout);
 });

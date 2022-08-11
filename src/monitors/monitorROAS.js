@@ -36,7 +36,7 @@ export default class MonitorROAS extends Monitor {
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
 
-            (global.EXTERNAL_ROA_EXPIRATION_TEST ? setTimeout : setInterval)(() => {
+            setInterval(() => {
                 this.rpki._getVrpIndex()
                     .then(index => {
                         this._verifyExpiration(index, this.roaExpirationAlertHours); // Verify expiration with enrichment
