@@ -35,14 +35,19 @@ export default class MonitorROAS extends Monitor {
             setInterval(this._diffVrps, 30 * 1000);
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
-            setInterval(() => {
+
+            (global.EXTERNAL_ROA_EXPIRATION_TEST ? setTimeout : setInterval)(() => {
                 this.rpki._getVrpIndex()
                     .then(index => {
-                        this._verifyExpiration(index, this.roaExpirationAlertHours);
+                        this._verifyExpiration(index, this.roaExpirationAlertHours); // Verify expiration with enrichment
                     })
-                    .catch((e) => {
-                        console.log(e);
-                        this._verifyExpiration(null, 2, false);
+                    .catch((error) => {
+                        this.logger.log({
+                            level: 'error',
+                            message: error
+                        });
+
+                        this._verifyExpiration(null, this.roaExpirationAlertHours); // Verify expiration without enrichment
                     });
             }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
@@ -66,24 +71,28 @@ export default class MonitorROAS extends Monitor {
 
     _checkDeletedRoasTAs = (vrps) => {
         const sizes =  this._calculateSizes(vrps);
+        const metadata = this.rpki.getMetadata();
 
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
-                const min = Math.min(this.timesDeletedTAs[ta], sizes[ta]);
-                const max = Math.max(this.timesDeletedTAs[ta], sizes[ta]);
-                const diff = max - min;
-                const percentage = 100 / max * diff;
+                const oldSize = this.timesDeletedTAs[ta];
+                const newSize = sizes[ta];
 
-                if (percentage > this.toleranceDeletedRoasTA) {
-                    const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
+                if (oldSize > newSize) {
+                    const min = Math.min(newSize, oldSize);
+                    const max = Math.max(newSize, oldSize);
+                    const diff = max - min;
+                    const percentage = 100 / max * diff;
 
-                    this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-                        ta,
-                        {
-                            group: "default"
-                        },
-                        message,
-                        {subType: "ta-malfunction"});
+                    if (percentage > this.toleranceDeletedRoasTA) {
+                        const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
+
+                        this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                            ta,
+                            {group: "default"},
+                            message,
+                            {rpkiMetadata: metadata, subType: "ta-malfunction", vrpCountBefore: oldSize, vrpCountAfter: newSize, disappearedPercentage: percentage, ta});
+                    }
                 }
             }
         }
@@ -110,7 +119,7 @@ export default class MonitorROAS extends Monitor {
                     ta,
                     {group: "default"},
                     message,
-                    extra);
+                    {...extra, subType: "ta-expire", expiredPercentage: percentage, ta, vrpCount: sizes[ta], expiringVrps: expiringSizes[ta]});
             }
         }
     };
@@ -191,7 +200,7 @@ export default class MonitorROAS extends Monitor {
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {...extra, rpkiMetadata: metadata, subType: "roa-expire"});
+                    {...extra, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
             }
         }
 
@@ -223,7 +232,7 @@ export default class MonitorROAS extends Monitor {
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {...extra, rpkiMetadata: metadata, subType: "roa-expire"});
+                        {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
                 }
             }
 

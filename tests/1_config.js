@@ -38,6 +38,7 @@ const fs = require('fs');
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
+const asyncTimeout = 120000;
 
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
@@ -385,7 +386,7 @@ describe("Core functions", function() {
                     done();
                 });
 
-        });
+        }).timeout(20000);
 
         it("reports logging on the right file", function (done) {
             const message = "Test message";
@@ -403,7 +404,7 @@ describe("Core functions", function() {
                     expect(lineMessage).to.equal(message);
                     done();
                 });
-        });
+        }).timeout(20000);
 
         it("write pid file", function (done) {
             const file = config.pidFile;
