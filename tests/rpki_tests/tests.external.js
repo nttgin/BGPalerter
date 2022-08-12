@@ -44,7 +44,7 @@ fs.copyFileSync("tests/rpki_tests/vrp.wrong.json", "tests/rpki_tests/vrp.json");
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external", function() {
+describe("RPKI monitoring external 1", function() {
 
     it("external connector", function (done) {
 

@@ -15,6 +15,7 @@ monitors:
       enableExpirationAlerts: true
       enableExpirationCheckTA: true
       enableDeletedCheckTA: true
+      enableAdvancedRpkiStats: false
       roaExpirationAlertHours: 2
       checkOnlyASns: false
       toleranceDeletedRoasTA: 20
