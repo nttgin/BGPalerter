@@ -89,6 +89,7 @@ export default class Config {
                         enableExpirationAlerts: true,
                         enableExpirationCheckTA: true,
                         enableDeletedCheckTA: true,
+                        enableAdvancedRpkiStats: true,
                         roaExpirationAlertHours: 2,
                         checkOnlyASns: true,
                         toleranceDeletedRoasTA: 20,

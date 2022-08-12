@@ -34,11 +34,11 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const fs = require('fs');
 const expect = chai.expect;
-const asyncTimeout = 200000;
+const asyncTimeout = 100000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external-roas.yml";
-global.EXTERNAL_ROA_EXPIRATION_TEST = 10000;
+global.EXTERNAL_ROA_EXPIRATION_TEST = 30000;
 
 // ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
@@ -51,7 +51,7 @@ setTimeout(() => {
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external", function() {
+describe("RPKI monitoring external 3", function() {
 
     it("ROA diff and expiration - external connector", function (done) {
 

@@ -17,6 +17,7 @@ export default class MonitorROAS extends Monitor {
         this.enableExpirationAlerts = params.enableExpirationAlerts != null ? params.enableExpirationAlerts : true;
         this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
         this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
+        this.enableAdvancedRpkiStats = params.enableAdvancedRpkiStats ?? true;
 
         // Default parameters
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
@@ -36,19 +37,22 @@ export default class MonitorROAS extends Monitor {
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
 
-            (global.EXTERNAL_ROA_EXPIRATION_TEST ? setTimeout : setInterval)(() => {
-                this.rpki._getVrpIndex()
-                    .then(index => {
-                        this._verifyExpiration(index, this.roaExpirationAlertHours); // Verify expiration with enrichment
-                    })
-                    .catch((error) => {
-                        this.logger.log({
-                            level: 'error',
-                            message: error
+            setInterval(() => {
+                if (this.enableAdvancedRpkiStats) {
+                    this.rpki._getVrpIndex()
+                        .then(index => {
+                            this._verifyExpiration(index, this.roaExpirationAlertHours); // Verify expiration with enrichment
+                        })
+                        .catch((error) => {
+                            this.logger.log({
+                                level: 'error',
+                                message: error
+                            });
+                            this._verifyExpiration(null, this.roaExpirationAlertHours); // Verify expiration without enrichment
                         });
-
-                        this._verifyExpiration(null, this.roaExpirationAlertHours); // Verify expiration without enrichment
-                    });
+                } else {
+                    this._verifyExpiration(null, this.roaExpirationAlertHours); // Verify expiration without enrichment
+                }
             }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };

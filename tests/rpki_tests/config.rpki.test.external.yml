@@ -14,7 +14,7 @@ monitors:
       checkDisappearing: true
       thresholdMinPeers: 1
       checkUncovered: false
-      cacheValidPrefixesSeconds: 3600
+      cacheValidPrefixesSeconds: 0
 
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example

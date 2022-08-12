@@ -406,6 +406,7 @@ Parameters for this monitor module:
 |enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.|
 |enableExpirationCheckTA| Enables alerts about TA malfunctions detected when too many ROAs expire in the same TA. Default true.|
 |enableDeletedCheckTA| Enables alerts about TA malfunctions detected when too many ROAs are deleted in the same TA. Default true.|
+|enableAdvancedRpkiStats| Enables RPKI data enrichment on TA malfunction alerts and expiring ROAs alerts. It increases memory usage. Default true.|
 |roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means. |
 |checkOnlyASns| If set to true (default), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above).  If you are monitoring the origin AS of your prefixes, leave this option to true to avoid noise.|
 |toleranceExpiredRoasTA|The percentage of expiring ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
