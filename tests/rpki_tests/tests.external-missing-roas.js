@@ -34,7 +34,7 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 const fs = require('fs');
 const expect = chai.expect;
-const asyncTimeout = 200000;
+const asyncTimeout = 120000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/rpki_tests/config.rpki.test.external.yml";
@@ -42,6 +42,9 @@ fs.copyFileSync("tests/rpki_tests/vrp.missing.json", "tests/rpki_tests/vrp.json"
 
 const worker = require("../../index");
 const pubSub = worker.pubSub;
+
+
+pubSub.publish("test-type", "rpki");
 
 describe("RPKI monitoring external", function() {
 
@@ -59,16 +62,14 @@ describe("RPKI monitoring external", function() {
         };
 
         let rpkiTestCompletedExternal = false;
-        let started = false;
 
         pubSub.subscribe("roa", function (message, type) {
             try {
-                if (started && !rpkiTestCompletedExternal) {
-                    message = JSON.parse(JSON.stringify(message));
-                    const id = message.id;
 
-                    expect(Object.keys(expectedData).includes(id)).to.equal(true);
-                    expect(expectedData[id] != null).to.equal(true);
+                message = JSON.parse(JSON.stringify(message));
+                const id = message.id;
+
+                if (!rpkiTestCompletedExternal && Object.keys(expectedData).includes(id)) {
                     expect(message).to.containSubset(expectedData[id]);
 
                     expect(message).to.contain
@@ -77,25 +78,14 @@ describe("RPKI monitoring external", function() {
                             "earliest"
                         ]);
 
-                    delete expectedData[id];
-                    if (Object.keys(expectedData).length === 0) {
-                        setTimeout(() => {
-                            rpkiTestCompletedExternal = true;
-                            fs.unlinkSync("tests/rpki_tests/vrp.json");
-                            done();
-                        }, 5000);
-                    }
+                    rpkiTestCompletedExternal = true;
+                    done();
                 }
             } catch (error) {
                 rpkiTestCompletedExternal = true;
                 done(error);
             }
         });
-
-        setTimeout(() => { // Wait that the watcher realizes the file changed
-            pubSub.publish("test-type", "rpki");
-            started = true;
-        }, 20000);
 
     }).timeout(asyncTimeout);
 });
