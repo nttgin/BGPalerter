@@ -46,7 +46,7 @@ fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external 3", function() {
+describe("RPKI monitoring external", function() {
 
     it("ROA diff and expiration - external connector", function (done) {
 

@@ -46,7 +46,7 @@ const pubSub = worker.pubSub;
 
 pubSub.publish("test-type", "rpki");
 
-describe("RPKI monitoring external 2", function() {
+describe("RPKI monitoring external", function() {
 
     it("missing roas", function (done) {
 
