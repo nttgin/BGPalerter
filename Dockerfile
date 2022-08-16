@@ -1,5 +1,5 @@
 # -- trivial container for BGPalerter
-FROM node:14-alpine as build
+FROM node:14.20.0-alpine as build
 
 WORKDIR /opt/bgpalerter
 COPY . .
@@ -7,7 +7,7 @@ COPY . .
 # Makes the final image respect /etc/timezone configuration
 RUN apk add --no-cache tzdata
 
-RUN npm ci
+RUN npm ci --no-audit --prefer-offline
 
 ENTRYPOINT ["npm"]
 CMD ["run", "serve"]
