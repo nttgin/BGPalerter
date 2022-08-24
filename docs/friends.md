@@ -49,3 +49,4 @@ Please, let me know so I can add your company name here.
 * Wikimedia Foundation (AS14907)
 * SIDN (AS1140)
 * Bluebird Network (AS62943)
+* GalaxyGate (AS397031)
