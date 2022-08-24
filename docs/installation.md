@@ -1,5 +1,8 @@
 # Installation
 
+## Requirements
+BGPalerter requires a machine with *minimum* 2GB RAM. However, I strongly recommend 4GB.
+
 ## Running BGPalerter from binaries - Quick Setup
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)

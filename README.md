@@ -1,3 +1,4 @@
+
 [![Build Status](https://github.com/nttgin/BGPalerter/workflows/Main/badge.svg)](https://github.com/nttgin/BGPalerter/actions?query=workflow%3AMain)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
@@ -44,6 +45,7 @@ Read the documentation below for more options.
 ## Documentation
 
 - [Installation](docs/installation.md)
+    - [Requirements](docs/installation.md#requirements)
     - [Run from binary](docs/installation.md#running-bgpalerter-from-binaries)
     - [Run from source code](docs/installation.md#running-bgpalerter-from-the-source-code)
     - [Build Debian Package](docs/installation.md#debian-package)
