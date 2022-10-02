@@ -7,7 +7,7 @@
     "url": "https://massimocandela.com"
   },
   "license": "BSD-3-Clause",
-  "main": "src/worker.js",
+  "main": "dist/src/worker.js",
   "bin": "dist/index.js",
   "repository": {
     "type": "git",
