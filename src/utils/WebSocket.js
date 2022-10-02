@@ -43,12 +43,11 @@ export default class WebSocket {
     _pingCheck = () => {
         const nPings = 6;
         if (this.ws) {
+            this._ping();
             if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
                 this._publishError(`The WebSocket client didn't receive ${nPings} pings. Disconnecting.`)
                 this.disconnect();
                 this.connect();
-            } else {
-                this._ping();
             }
         }
     };
@@ -76,6 +75,7 @@ export default class WebSocket {
         this.setOpenTimeout(true);
 
         this.ws.on('message', (data) => {
+            this._pingReceived();
             this.pubsub.publish("message", data);
         });
         this.ws.on('close', data => {
