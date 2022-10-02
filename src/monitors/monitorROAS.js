@@ -95,7 +95,14 @@ export default class MonitorROAS extends Monitor {
                             ta,
                             {group: "default"},
                             message,
-                            {rpkiMetadata: metadata, subType: "ta-malfunction", vrpCountBefore: oldSize, vrpCountAfter: newSize, disappearedPercentage: percentage, ta});
+                            {
+                                rpkiMetadata: metadata,
+                                subType: "ta-malfunction",
+                                vrpCountBefore: oldSize,
+                                vrpCountAfter: newSize,
+                                disappearedPercentage: percentage,
+                                ta
+                            });
                     }
                 }
             }
@@ -115,15 +122,22 @@ export default class MonitorROAS extends Monitor {
             if (percentage > this.toleranceExpiredRoasTA) {
                 const currentTaVrps = vrps.filter(i => i.ta === ta);
                 const extra = this._getExpiringItems(currentTaVrps, index);
-                extra.subType = "ta-expire";
-
+                const metadata = this.rpki.getMetadata();
                 const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
                 this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                     ta,
                     {group: "default"},
                     message,
-                    {...extra, subType: "ta-expire", expiredPercentage: percentage, ta, vrpCount: sizes[ta], expiringVrps: expiringSizes[ta]});
+                    {
+                        ...extra,
+                        subType: "ta-expire",
+                        rpkiMetadata: metadata,
+                        expiredPercentage: percentage,
+                        ta,
+                        vrpCount: sizes[ta],
+                        expiringVrps: expiringSizes[ta]
+                    });
             }
         }
     };
