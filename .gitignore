@@ -4,7 +4,6 @@ groups.yml
 .idea/
 node_modules/
 bin/
-dist/
 build/
 logs/
 .DS_Store
