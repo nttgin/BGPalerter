@@ -218,7 +218,7 @@ export default class MonitorROAS extends Monitor {
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {...extra, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                    {...extra, vrps: alertsStrings, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
             }
         }
 
@@ -250,7 +250,7 @@ export default class MonitorROAS extends Monitor {
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                        {...extra, vrps: alertsStrings, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
                 }
             }
 
