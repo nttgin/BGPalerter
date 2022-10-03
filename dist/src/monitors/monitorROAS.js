@@ -309,6 +309,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
 
           _this.publishAlert((0, _md["default"])(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
           matchedRule.prefix, matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
+            vrps: alertsStrings,
             roaExpirationHours: roaExpirationAlertHours,
             rpkiMetadata: metadata,
             subType: "roa-expire"
@@ -367,7 +368,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
 
               _this.publishAlert((0, _md["default"])(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
               matchedRule.asn.getId(), matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
-                vrps: vrps,
+                vrps: alertsStrings,
                 roaExpirationHours: roaExpirationAlertHours,
                 rpkiMetadata: metadata,
                 subType: "roa-expire"
