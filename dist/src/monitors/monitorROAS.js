@@ -234,7 +234,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
       if (index) {
         var uniqItems = {};
 
-        var _iterator3 = _createForOfIteratorHelper(vrps.slice(0, 20)),
+        var _iterator3 = _createForOfIteratorHelper(vrps.slice(0, 40)),
             _step3;
 
         try {

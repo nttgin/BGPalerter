@@ -15,6 +15,8 @@ var _axiosEnrich = _interopRequireDefault(require("./axiosEnrich"));
 
 var _axios = _interopRequireDefault(require("axios"));
 
+var _moment = _interopRequireDefault(require("moment"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -340,73 +342,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   });
 
   _defineProperty(this, "getExpiringElements", function (index, vrp, expires) {
-    var stop = 100;
-
-    function makeUnique(arr) {
-      var uniq = {};
-
-      var _iterator4 = _createForOfIteratorHelper(arr),
-          _step4;
-
-      try {
-        for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-          var item = _step4.value;
-          uniq[item.id] = item;
-        }
-      } catch (err) {
-        _iterator4.e(err);
-      } finally {
-        _iterator4.f();
-      }
-
-      return Object.values(uniq);
-    }
-
-    function getExpiringParent(index, items, expires) {
-      stop--;
-
-      if (items.length && stop > 0) {
-        var _makeUnique;
-
-        items = makeUnique(items);
-        var parents = (_makeUnique = makeUnique(index.getParents(items))) !== null && _makeUnique !== void 0 ? _makeUnique : [];
-        var expiring = parents.filter(function (i) {
-          return i.valid_until === expires;
-        });
-
-        if (expiring !== null && expiring !== void 0 && expiring.length) {
-          return expiring;
-        } else {
-          return getExpiringParent(index, parents, expires);
-        }
-      } else {
-        return [];
-      }
-    }
-
-    function getExpiringRoas(index, _ref2, expires) {
-      var _index$getVRPs;
-
-      var prefix = _ref2.prefix,
-          asn = _ref2.asn,
-          maxLength = _ref2.maxLength;
-      var roas = (_index$getVRPs = index.getVRPs({
-        prefix: prefix,
-        asn: asn,
-        maxLength: maxLength
-      })) !== null && _index$getVRPs !== void 0 ? _index$getVRPs : [];
-      var expiring = roas.filter(function (roa) {
-        return roa.valid_until === expires;
-      });
-
-      if (expiring !== null && expiring !== void 0 && expiring.length) {
-        return expiring;
-      } else {
-        return getExpiringParent(index, roas, expires);
-      }
-    }
-
-    return makeUnique(getExpiringRoas(index, vrp, expires).flat());
+    return index.getExpiring(vrp, expires, _moment["default"].utc().unix());
   });
 
   _defineProperty(this, "_getVrpIndex", function () {
