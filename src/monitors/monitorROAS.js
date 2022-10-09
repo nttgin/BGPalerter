@@ -218,7 +218,7 @@ export default class MonitorROAS extends Monitor {
                     matchedRule.prefix,
                     matchedRule,
                     message,
-                    {...extra, vrps: alertsStrings, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                    {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
             }
         }
 
@@ -232,7 +232,8 @@ export default class MonitorROAS extends Monitor {
             const matchedRules = impactedASes.map(asn => this.getMonitoredAsMatch(new AS(asn)));
 
             for (let matchedRule of matchedRules.filter(i => !!i)) { // An alert for each AS involved (they may have different user group)
-                const alertsStrings = [...new Set(vrps.map(this._roaToString))].filter(i => !sent.includes(i));
+                const unsentVrps = vrps.filter(i => !sent.includes(this._roaToString(i)));
+                const alertsStrings = [...new Set(unsentVrps.map(this._roaToString))];
                 if (alertsStrings.length) {
                     const extra = this._getExpiringItems(vrps, index);
                     let message = "";
@@ -250,7 +251,7 @@ export default class MonitorROAS extends Monitor {
                         matchedRule.asn.getId(),
                         matchedRule,
                         message,
-                        {...extra, vrps: alertsStrings, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                        {...extra, vrps: unsentVrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
                 }
             }
 
