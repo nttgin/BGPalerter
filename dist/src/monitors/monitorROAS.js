@@ -250,7 +250,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
               try {
                 for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
                   var item = _step4.value;
-                  uniqItems[item.id] = item;
+                  uniqItems[item.hash_id] = item;
                 }
               } catch (err) {
                 _iterator4.e(err);
