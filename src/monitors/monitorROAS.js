@@ -178,7 +178,7 @@ export default class MonitorROAS extends Monitor {
                     const expiring = this.rpki.getExpiringElements(index, vrp, vrp?.expires);
 
                     for (let item of expiring) {
-                        uniqItems[item.id] = item;
+                        uniqItems[item.hash_id] = item;
                     }
                 }
             }
