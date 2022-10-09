@@ -173,7 +173,7 @@ export default class MonitorROAS extends Monitor {
 
         if (index) {
             const uniqItems = {};
-            for (let vrp of vrps.slice(0, 20)) {
+            for (let vrp of vrps.slice(0, 40)) {
                 if (vrp && vrp?.expires) {
                     const expiring = this.rpki.getExpiringElements(index, vrp, vrp?.expires);
 
