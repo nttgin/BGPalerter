@@ -309,7 +309,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
 
           _this.publishAlert((0, _md["default"])(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
           matchedRule.prefix, matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
-            vrps: alertsStrings,
+            vrps: vrps,
             roaExpirationHours: roaExpirationAlertHours,
             rpkiMetadata: metadata,
             subType: "roa-expire"
@@ -346,11 +346,12 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
         try {
           for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
             var matchedRule = _step5.value;
-
             // An alert for each AS involved (they may have different user group)
-            var alertsStrings = _toConsumableArray(new Set(vrps.map(_this._roaToString))).filter(function (i) {
-              return !sent.includes(i);
+            var unsentVrps = vrps.filter(function (i) {
+              return !sent.includes(_this._roaToString(i));
             });
+
+            var alertsStrings = _toConsumableArray(new Set(unsentVrps.map(_this._roaToString)));
 
             if (alertsStrings.length) {
               var extra = _this._getExpiringItems(vrps, index);
@@ -368,7 +369,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
 
               _this.publishAlert((0, _md["default"])(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
               matchedRule.asn.getId(), matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
-                vrps: alertsStrings,
+                vrps: unsentVrps,
                 roaExpirationHours: roaExpirationAlertHours,
                 rpkiMetadata: metadata,
                 subType: "roa-expire"
