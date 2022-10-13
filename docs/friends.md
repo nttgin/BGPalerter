@@ -48,3 +48,4 @@ Please, let me know so I can add your company name here.
 * FPTCLOUD (AS140766)
 * Wikimedia Foundation (AS14907)
 * SIDN (AS1140)
+* NL-ix (AS34307)
