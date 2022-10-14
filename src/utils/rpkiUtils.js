@@ -3,6 +3,7 @@ import fs from "fs";
 import md5 from "md5";
 import axiosEnrich from "./axiosEnrich";
 import axios from "axios";
+import moment from "moment";
 
 export default class RpkiUtils {
     constructor(env) {
@@ -307,47 +308,7 @@ export default class RpkiUtils {
     };
 
     getExpiringElements = (index, vrp, expires) => {
-        let stop = 100;
-
-        function makeUnique (arr) {
-            const uniq = {};
-
-            for (let item of arr) {
-                uniq[item.id] = item;
-            }
-
-            return Object.values(uniq);
-        }
-
-        function getExpiringParent (index, items, expires) {
-            stop--;
-            if (items.length && stop > 0) {
-                items = makeUnique(items);
-                const parents = (makeUnique(index.getParents(items)) ?? []);
-                const expiring = parents.filter(i => i.valid_until === expires);
-
-                if (expiring?.length) {
-                    return expiring;
-                } else {
-                    return getExpiringParent(index, parents, expires);
-                }
-            } else {
-                return [];
-            }
-        }
-
-        function getExpiringRoas (index, {prefix, asn, maxLength}, expires){
-            const roas = index.getVRPs({prefix, asn, maxLength}) ?? [];
-            const expiring = roas.filter(roa => roa.valid_until === expires);
-
-            if (expiring?.length) {
-                return expiring;
-            } else {
-                return getExpiringParent(index, roas, expires);
-            }
-        }
-
-        return makeUnique(getExpiringRoas(index, vrp, expires).flat());
+        return index.getExpiring(vrp, expires, moment.utc().unix());
     }
 
     _getVrpIndex = () => {

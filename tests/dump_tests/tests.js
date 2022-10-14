@@ -33,7 +33,6 @@
 const chai = require("chai");
 const fs = require("fs");
 const chaiSubset = require('chai-subset');
-const readLastLines = require("read-last-lines");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";

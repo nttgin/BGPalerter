@@ -167,6 +167,8 @@ export default class Report {
 
                 case "misconfiguration":
                     context.asn = content.data[0].matchedRule.asn.toString();
+                    context.prefix = content.data[0].matchedMessage.prefix;
+
                     break;
 
                 case "rpki":
@@ -189,6 +191,14 @@ export default class Report {
                     context.asn = (matched.asn || "").toString();
                     context.prefix = matched.prefix || content.data[0].matchedMessage.prefix;
                     context.description = matched.description || "";
+                    break;
+
+                case "path-neighbor":
+                    context.extra = content.data[0].extra;
+                    matched = content.data[0].matchedRule;
+                    context.prefix = matched.prefix;
+                    context.description = matched.description || "";
+                    context.asn = (matched.asn || "").toString();
                     break;
 
                 default:

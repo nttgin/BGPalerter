@@ -60,6 +60,15 @@ Additionally, you can configure [BGPalerter to run as a Linux Serivce](linux-ser
 
 4. Run `npm run serve` to run the application.
 
+## Debian packages
+
+The git repo contains the neccesary debian scripts to build a debian package for this you
+
+1. Git clone this repo.
+
+2. build the package with your preferred tool e.g. `dpkg-buildpackage -us -uc`
+
+3. Install the package `dpkg  -i ../node-bgpalerter_1.29.0-1_all.deb
 
 ## Running BGPalerter in Docker
 

@@ -43,11 +43,6 @@ global.EXTERNAL_ROA_EXPIRATION_TEST = 30000;
 // ROAs before
 fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json");
 
-setTimeout(() => {
-    // ROAs after
-    fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
-}, 30000);
-
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
@@ -142,6 +137,12 @@ describe("RPKI monitoring external", function() {
                 done(error);
             }
         });
+
+        setTimeout(() => {
+            // ROAs after
+            fs.copyFileSync("tests/rpki_tests/roas.after.json", "tests/rpki_tests/roas.json");
+        }, global.EXTERNAL_ROA_EXPIRATION_TEST + 10000);
+
 
     }).timeout(asyncTimeout);
 });
