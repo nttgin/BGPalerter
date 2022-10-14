@@ -240,7 +240,7 @@ If your username includes the `@`-character replace it with `%40`.
                   "key": "SUP"
               },
               "summary": "BGPAlerter: ${type}: ${prefix}",
-              "description": "Prefix: ${prefix}\nEvent Type: ${type}\nEarliest: ${eraliest}\nLatest: ${latest}\nASN: ${asn}\nBGPlay: ${bgplay}\n",
+              "description": "Prefix: ${prefix}\nEvent Type: ${type}\nEarliest: ${earliest}\nLatest: ${latest}\nASN: ${asn}\nBGPlay: ${bgplay}\n",
               "issuetype": {
                   "id": "10223"
               }
