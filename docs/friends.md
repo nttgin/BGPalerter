@@ -51,3 +51,4 @@ Please, let me know so I can add your company name here.
 * Bluebird Network (AS62943)
 * GalaxyGate (AS397031)
 * The George Washington University (AS11039)
+* NL-ix (AS34307)
