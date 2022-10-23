@@ -33,6 +33,7 @@
 
 import axios from "axios";
 import axiosEnrich from "../utils/axiosEnrich";
+import moment from "moment";
 
 export default class Monitor {
 
@@ -120,7 +121,7 @@ export default class Monitor {
     };
 
     publishAlert = (id, affected, matchedRule, matchedMessage, extra) => {
-        const now = new Date().getTime();
+        const now = moment.utc().unix();
         const context = {
             timestamp: now,
             affected,
