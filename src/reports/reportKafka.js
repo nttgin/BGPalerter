@@ -32,7 +32,6 @@
 
 import Report from "./report";
 import { Kafka, logLevel } from "kafkajs";
-import moment from "moment";
 
 export default class ReportKafka extends Report {
 
@@ -93,7 +92,7 @@ export default class ReportKafka extends Report {
             messages: [ { value: JSON.stringify(message) }],
             key: channel,
             attributes: 1,
-            timestamp: moment.utc().unix()
+            timestamp: Date.now()
         };
     };
 
