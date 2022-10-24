@@ -48,7 +48,7 @@ Read the documentation below for more options.
     - [Requirements](docs/installation.md#requirements)
     - [Run from binary](docs/installation.md#running-bgpalerter-from-binaries)
     - [Run from source code](docs/installation.md#running-bgpalerter-from-the-source-code)
-    - [Build Debian Package](docs/installation.md#debian-package)
+    - [Build Debian Package](docs/installation.md#build-debian-package)
     - [Run in Docker](docs/installation.md#running-bgpalerter-in-docker)
     - [Run as a Linux service](docs/linux-service.md)
     - [Command line options](docs/installation.md#bgpalerter-parameters)
