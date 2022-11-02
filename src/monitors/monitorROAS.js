@@ -18,6 +18,7 @@ export default class MonitorROAS extends Monitor {
         this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
         this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
         this.enableAdvancedRpkiStats = params.enableAdvancedRpkiStats ?? true;
+        this.diffEverySeconds = params.diffEverySeconds ?? 30;
 
         // Default parameters
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
@@ -33,7 +34,7 @@ export default class MonitorROAS extends Monitor {
         };
 
         if (this.enableDiffAlerts || this.enableDeletedCheckTA) {
-            setInterval(this._diffVrps, 30 * 1000);
+            setInterval(this._diffVrps, this.diffEverySeconds * 1000);
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
 
