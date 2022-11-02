@@ -67,7 +67,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
   var _super = _createSuper(MonitorROAS);
 
   function MonitorROAS(name, channel, params, env, input) {
-    var _params$enableAdvance;
+    var _params$enableAdvance, _params$diffEverySeco;
 
     var _this;
 
@@ -575,7 +575,8 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
     _this.enableExpirationAlerts = params.enableExpirationAlerts != null ? params.enableExpirationAlerts : true;
     _this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
     _this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
-    _this.enableAdvancedRpkiStats = (_params$enableAdvance = params.enableAdvancedRpkiStats) !== null && _params$enableAdvance !== void 0 ? _params$enableAdvance : true; // Default parameters
+    _this.enableAdvancedRpkiStats = (_params$enableAdvance = params.enableAdvancedRpkiStats) !== null && _params$enableAdvance !== void 0 ? _params$enableAdvance : true;
+    _this.diffEverySeconds = (_params$diffEverySeco = params.diffEverySeconds) !== null && _params$diffEverySeco !== void 0 ? _params$diffEverySeco : 30; // Default parameters
 
     _this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
     _this.checkOnlyASns = params.checkOnlyASns != null ? params.checkOnlyASns : true;
@@ -589,7 +590,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
     };
 
     if (_this.enableDiffAlerts || _this.enableDeletedCheckTA) {
-      setInterval(_this._diffVrps, 30 * 1000);
+      setInterval(_this._diffVrps, _this.diffEverySeconds * 1000);
     }
 
     if (_this.enableExpirationAlerts || _this.enableExpirationCheckTA) {
