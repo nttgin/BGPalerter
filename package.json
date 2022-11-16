@@ -74,7 +74,7 @@
     "node-cleanup": "^2.1.2",
     "nodemailer": "^6.8.0",
     "path": "^0.12.7",
-    "restify": "^8.6.1",
+    "restify": "^9.0.0",
     "rpki-validator": "^2.10.14",
     "semver": "^7.3.8",
     "syslog-client": "^1.1.1",
