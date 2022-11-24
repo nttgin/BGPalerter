@@ -190,7 +190,7 @@ var Report = /*#__PURE__*/_createClass(function Report(channels, params, env) {
           context.description = matched.description || "";
           break;
 
-        case "path-neighbor":
+        case "path-neighbors":
           context.extra = content.data[0].extra;
           matched = content.data[0].matchedRule;
           context.prefix = matched.prefix;
