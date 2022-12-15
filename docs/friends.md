@@ -52,4 +52,5 @@ Please, let me know so I can add your company name here.
 * GalaxyGate (AS397031)
 * The George Washington University (AS11039)
 * NL-ix (AS34307)
+* LINX (AS5459)
 * Rechenzentrum Haßfurt GmbH (AS44973)

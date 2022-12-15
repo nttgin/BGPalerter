@@ -193,7 +193,7 @@ export default class Report {
                     context.description = matched.description || "";
                     break;
 
-                case "path-neighbor":
+                case "path-neighbors":
                     context.extra = content.data[0].extra;
                     matched = content.data[0].matchedRule;
                     context.prefix = matched.prefix;
