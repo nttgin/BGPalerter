@@ -1,66 +1,41 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-
 var _connector = _interopRequireDefault(require("./connector"));
-
 var _model = require("../model");
-
 var _ipSub = _interopRequireDefault(require("ip-sub"));
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 var ConnectorTest = /*#__PURE__*/function (_Connector) {
   _inherits(ConnectorTest, _Connector);
-
   var _super = _createSuper(ConnectorTest);
-
   function ConnectorTest(name, _params, env) {
     var _this;
-
     _classCallCheck(this, ConnectorTest);
-
     _this = _super.call(this, name, _params, env);
-
     _defineProperty(_assertThisInitialized(_this), "connect", function () {
       _this._connect("Test connector connected");
-
       return Promise.resolve();
     });
-
     _defineProperty(_assertThisInitialized(_this), "_fadeOffTest", function (fade) {
       var updates = [{
         data: {
@@ -87,29 +62,21 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
         },
         type: "ris_message"
       }];
-
       _this._message(updates[0]);
-
       _this._message(updates[1]);
-
       _this._message(updates[2]);
-
       setTimeout(function () {
         _this._message(updates[3]);
       }, (_this.config.fadeOffSeconds + (fade ? -4 : 4)) * 1000); // depending on "fade" it goes in our out of the fading period
     });
-
     _defineProperty(_assertThisInitialized(_this), "subscribe", function (params) {
       var type = params.type || _this.params.testType;
       var updates;
-
       switch (type) {
         case "fade-off":
           return _this._fadeOffTest(false);
-
         case "fade-in":
           return _this._fadeOffTest(true);
-
         case "hijack":
           updates = [{
             data: {
@@ -184,7 +151,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "newprefix":
           updates = [{
             data: {
@@ -248,7 +214,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "visibility":
           updates = [{
             data: {
@@ -282,7 +247,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "path":
           updates = [{
             data: {
@@ -296,7 +260,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "misconfiguration":
           updates = [{
             data: {
@@ -370,7 +333,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "rpki":
           updates = [{
             data: {
@@ -417,7 +379,6 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         case "path-neighbors":
           updates = [{
             data: {
@@ -487,15 +448,12 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
             type: "ris_message"
           }];
           break;
-
         default:
           return;
       }
-
       _this.timer = setInterval(function () {
         updates.forEach(function (update) {
           _this._message(update);
-
           if (type === 'visibility') {
             var peer = update.data.peer.split('.');
             peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
@@ -505,27 +463,20 @@ var ConnectorTest = /*#__PURE__*/function (_Connector) {
       }, 1000);
       return Promise.resolve();
     });
-
     _this.pubSub.subscribe("test-type", function (message, type) {
       clearInterval(_this.timer);
-
       _this.subscribe({
         type: message
       });
     });
-
     _this.subscribe({
       type: _params.testType
     });
-
     return _this;
   }
-
   return _createClass(ConnectorTest);
 }(_connector["default"]);
-
 exports["default"] = ConnectorTest;
-
 _defineProperty(ConnectorTest, "transform", function (message) {
   if (message.type === 'ris_message') {
     try {
@@ -538,7 +489,6 @@ _defineProperty(ConnectorTest, "transform", function (message) {
       var communities = message["community"] || [];
       var timestamp = new Date().getTime();
       var path, originAS;
-
       if (message["path"] && message["path"].length) {
         path = new _model.Path(message["path"].map(function (i) {
           return new _model.AS(i);
@@ -548,24 +498,19 @@ _defineProperty(ConnectorTest, "transform", function (message) {
         path = new _model.Path([]);
         originAS = null;
       }
-
       if (originAS && path.length()) {
         var _iterator = _createForOfIteratorHelper(announcements),
-            _step;
-
+          _step;
         try {
           for (_iterator.s(); !(_step = _iterator.n()).done;) {
             var announcement = _step.value;
             var nextHop = announcement["next_hop"];
-
             if (_ipSub["default"].isValidIP(nextHop)) {
               var prefixes = (announcement["prefixes"] || []).filter(function (prefix) {
                 return _ipSub["default"].isValidPrefix(prefix);
               });
-
               var _iterator2 = _createForOfIteratorHelper(prefixes),
-                  _step2;
-
+                _step2;
               try {
                 for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
                   var prefix = _step2.value;
@@ -594,10 +539,8 @@ _defineProperty(ConnectorTest, "transform", function (message) {
           _iterator.f();
         }
       }
-
       var _iterator3 = _createForOfIteratorHelper(withdrawals),
-          _step3;
-
+        _step3;
       try {
         for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
           var _prefix = _step3.value;
@@ -613,7 +556,6 @@ _defineProperty(ConnectorTest, "transform", function (message) {
       } finally {
         _iterator3.f();
       }
-
       return components;
     } catch (error) {
       throw new Error("Error during transform (".concat(ConnectorTest.name, "): ") + error.message);
