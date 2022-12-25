@@ -32,7 +32,6 @@
 
 import Monitor from "./monitor";
 import ipUtils from "ip-sub";
-import moment from "moment";
 
 export default class MonitorVisibility extends Monitor {
 
