@@ -54,3 +54,5 @@ Please, let me know so I can add your company name here.
 * NL-ix (AS34307)
 * LINX (AS5459)
 * Rechenzentrum Haßfurt GmbH (AS44973)
+* obe.net (AS3399)
+* IT-Total (AS8769)
