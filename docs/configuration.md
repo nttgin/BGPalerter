@@ -89,7 +89,7 @@ Each monitor declaration is composed of:
 | channel | The name of the channel that will be used by the monitor to dispatch messages. If the inserted name doesn't correspond to an already existent channel, a new channel is created.|
 |name| The name associated to the monitor. Multiple monitors with the same implementation can be loaded with different names. This name will be used to annotate messages in order track from where they are coming from.|
 |params| A dictionary of parameters that can be useful for the functioning of the monitor. Different monitors with the same implementation can be initialized with different parameters. |
-|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
+
 
 Each report declaration is composed of:
 
@@ -97,7 +97,6 @@ Each report declaration is composed of:
 |---|---|
 | file | Name of the file containing the report implementation. Report implementations are in the `reports` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the report. It is common to have group declarations among the parameters. Different reports with the same implementation can be initialized with different parameters. |
-|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |channels| A [list](docs/prefixes.md#array) of channels the report module will listen (never write). Different reports with the same implementation can be initialized with a different list of channels to listen.|
 
 
@@ -107,7 +106,6 @@ Each connector is composed of:
 |---|---|
 |file|Name of the file containing the connector implementation. Report implementations are in the `connectors` directory. |
 |params| A dictionary of parameters that can be useful for the functioning of the connector.  E.g. the data source url, password, socket options|
-|params.noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |name| The name that will be used to identify this connector and to annotate logs and messages. | 
 
 
@@ -129,6 +127,7 @@ Parameters for this connector module:
 |---|---|
 |url| WebSocket end-point of RIS, which currently is `ws://ris-live.ripe.net/v1/ws/` |
 |subscription| Dictionary containing the parameters required by RIS. Refer to the [official documentation](https://ris-live.ripe.net/) for details.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
 |perMessageDeflate| Enable gzip compression on the connection. |
 |disableCanary| ConnectorRIS automatically receives BGP announcements about [RIS beacons](https://www.ripe.net/analyse/internet-measurements/routing-information-service-ris/current-ris-routing-beacons). RIS beacons are prefixes periodically announced and withdrawn for research purposes. BGPalerter uses these beacons to detect faulty data streams. By setting this parameter to true, you will disable such a check.|
@@ -167,10 +166,12 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|Parameter| Description                                                                                                                                                                                                                                                       | 
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
 
 
 #### monitorVisibility
@@ -186,7 +187,9 @@ Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorPath
@@ -223,7 +226,9 @@ Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 
@@ -254,7 +259,9 @@ Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 
 #### monitorAS
@@ -290,7 +297,9 @@ Parameters for this monitor module:
 
 |Parameter| Description| 
 |---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
     
     
@@ -336,7 +345,9 @@ Parameters for this monitor module:
 |---|---|
 |checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
 |checkDisappearing| If set to true, the monitor will check also for disappearing ROAs. Important: set this feature to false if you have monitorROAS enabled; monitorROAS provides diffs including disappearing ROAs. |
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert. |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
 |cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g., disappearing ROAs). Default to 7 days. |
 

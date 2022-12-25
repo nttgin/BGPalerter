@@ -50,13 +50,10 @@ export default class MonitorVisibility extends Monitor {
 
     updateMonitoredResources = () => {
         this.monitored = this.input.getMonitoredPrefixes();
-        this.monitoredSimpleArray = this.monitored.map(item => item.prefix);
     };
 
     filter = (message) => {
-        // Based on exact match only
-        return message.type === 'withdrawal'
-            && this.monitoredSimpleArray.includes(message.prefix);
+        return message.type === 'withdrawal';
     };
 
     squashAlerts = (alerts) => {

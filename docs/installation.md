@@ -1,7 +1,8 @@
 # Installation
 
 ## Requirements
-BGPalerter requires a machine with *minimum* 2GB RAM. However, I strongly recommend 4GB.
+BGPalerter requires a machine with *minimum* 2GB RAM and swap enabled. However, I recommend 4GB.
+If you are using small AWS EC2 instances (or similar), remember to activate the swap.
 
 ## Running BGPalerter from binaries - Quick Setup
 

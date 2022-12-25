@@ -5,6 +5,7 @@ import merge from "deepmerge";
 import batchPromises from "batch-promises";
 import RpkiValidator from "rpki-validator";
 import { AS } from "./model";
+import ipUtils from "ip-sub";
 
 const apiTimeout = 120000;
 const clientId = "ntt-bgpalerter";
@@ -267,7 +268,7 @@ module.exports = function generatePrefixes(inputParameters) {
 
                 return list;
             })
-            .then(list => list.filter(i => !exclude.includes(i.prefix)))
+            .then(list => list.filter(i => !exclude.some(excluded => ipUtils.isEqualPrefix(excluded, i.prefix))))
             .then(list => {
                 return batchPromises(40, list, i => {
                     return generateRule(i.prefix, asn, false, null, false);
