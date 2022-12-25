@@ -76,7 +76,7 @@ export default class MonitorVisibility extends Monitor {
 
             if (matchedRule && !matchedRule.ignore && ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 
-                let key = matchedRule.prefix;
+                const key = [parseInt(moment().unix() / 7200).toString(), matchedRule.prefix].join("-");
 
                 this.publishAlert(key,
                     matchedRule.asn.getId(),
