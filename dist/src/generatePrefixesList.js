@@ -7,6 +7,7 @@ var _deepmerge = _interopRequireDefault(require("deepmerge"));
 var _batchPromises = _interopRequireDefault(require("batch-promises"));
 var _rpkiValidator = _interopRequireDefault(require("rpki-validator"));
 var _model = require("./model");
+var _ipSub = _interopRequireDefault(require("ip-sub"));
 var _axiosEnrich = _interopRequireDefault(require("./utils/axiosEnrich"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -265,7 +266,9 @@ module.exports = function generatePrefixes(inputParameters) {
       return list;
     }).then(function (list) {
       return list.filter(function (i) {
-        return !exclude.includes(i.prefix);
+        return !exclude.some(function (excluded) {
+          return _ipSub["default"].isEqualPrefix(excluded, i.prefix);
+        });
       });
     }).then(function (list) {
       return (0, _batchPromises["default"])(40, list, function (i) {

@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 var _monitor = _interopRequireDefault(require("./monitor"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
+var _moment = _interopRequireDefault(require("moment"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -55,7 +56,7 @@ var MonitorVisibility = /*#__PURE__*/function (_Monitor) {
         var messagePrefix = message.prefix;
         var matchedRule = _this.getMoreSpecificMatch(messagePrefix, false);
         if (matchedRule && !matchedRule.ignore && _ipSub["default"]._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
-          var key = matchedRule.prefix;
+          var key = [parseInt((0, _moment["default"])().unix() / 7200).toString(), matchedRule.prefix].join("-");
           _this.publishAlert(key, matchedRule.asn.getId(), matchedRule, message, {});
         }
         resolve(true);
