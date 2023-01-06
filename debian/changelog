@@ -1,3 +1,10 @@
+node-bgpalerter (1.31.1-1) unstable; urgency=medium
+
+    * Don't strip packages.json
+    * inject a shebang top the bin script
+
+ -- John Bond <jbond@wikimedia.org>  Fri, 06 Jan 2023 15:39:06 +0100
+
 node-bgpalerter (1.29.0-1) unstable; urgency=medium
 
   * Initial release
