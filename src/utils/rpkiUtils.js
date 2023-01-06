@@ -14,7 +14,7 @@ export default class RpkiUtils {
         this.logger = env.logger;
         this.userAgent = `${this.clientId}/${env.version}`;
         const defaultMarkDataAsStaleAfterMinutes = 60;
-        const providers = ["api", ...RpkiValidator.providers];
+        const providers = [...RpkiValidator.providers, "api"];
 
         if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
@@ -244,9 +244,11 @@ export default class RpkiUtils {
                 return Promise.all(batch
                     .map(({ prefix, origin }) => {
                         const origins = [].concat.apply([], [origin.getValue()]);
+
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
                             .then(results => {
+                                console.log(results);
                                 if (results.length === 1) { // Only one result = only one origin, just return
                                     return { ...results[0], prefix, origin };
                                 } else { // Multiple origin
