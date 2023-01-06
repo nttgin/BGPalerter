@@ -28,7 +28,7 @@ export default class RpkiUtils {
                 });
             }
         }
-
+		else
         if (this.params.vrpFile) {
             this.params.vrpProvider = "external";
             this.params.refreshVrpListMinutes = null;
