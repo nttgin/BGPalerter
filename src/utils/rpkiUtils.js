@@ -248,7 +248,6 @@ export default class RpkiUtils {
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
                             .then(results => {
-                                console.log(results);
                                 if (results.length === 1) { // Only one result = only one origin, just return
                                     return { ...results[0], prefix, origin };
                                 } else { // Multiple origin
