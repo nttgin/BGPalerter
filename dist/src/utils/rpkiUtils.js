@@ -12,6 +12,10 @@ var _axios = _interopRequireDefault(require("axios"));
 var _moment = _interopRequireDefault(require("moment"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -37,7 +41,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
         rpkiValidatorOptions.url = _this.params.url;
       }
       _this.rpki = new _rpkiValidator["default"](rpkiValidatorOptions);
-      if (!!_this.params.preCacheROAs) {
+      if (_this.params.preCacheROAs) {
         _this._preCache();
       }
     }
@@ -307,7 +311,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   this.logger = env.logger;
   this.userAgent = "".concat(this.clientId, "/").concat(env.version);
   var defaultMarkDataAsStaleAfterMinutes = 60;
-  var providers = _rpkiValidator["default"].providers;
+  var providers = [].concat(_toConsumableArray(_rpkiValidator["default"].providers), ["api"]);
   if (this.params.url || this.params.vrpProvider === "api") {
     this.params.vrpProvider = "api";
     this.params.preCacheROAs = true;
@@ -325,6 +329,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
     this.params.refreshVrpListMinutes = null;
     this.params.preCacheROAs = true;
   } else {
+    var _this$params$preCache;
     if (!this.params.vrpProvider) {
       this.params.vrpProvider = providers[0];
     } else if (!providers.includes(this.params.vrpProvider)) {
@@ -335,7 +340,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
       });
     }
     this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
-    this.params.preCacheROAs = this.params.preCacheROAs !== false;
+    this.params.preCacheROAs = !!((_this$params$preCache = this.params.preCacheROAs) !== null && _this$params$preCache !== void 0 ? _this$params$preCache : true);
   }
   if (this.params.markDataAsStaleAfterMinutes !== undefined) {
     if (this.params.markDataAsStaleAfterMinutes <= this.params.refreshVrpListMinutes) {
