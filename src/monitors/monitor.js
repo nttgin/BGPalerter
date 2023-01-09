@@ -60,7 +60,7 @@ export default class Monitor {
 
         this._retrieveStatus();
         this.internalConfig = {
-            notificationInterval: (this.config.notificationIntervalSeconds || 14400) * 1000,
+            notificationInterval: (this.params.notificationIntervalSeconds || this.config.notificationIntervalSeconds || 14400) * 1000,
             checkFadeOffGroups: (this.config.checkFadeOffGroupsSeconds || 30) * 1000,
             fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };

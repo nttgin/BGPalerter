@@ -30,7 +30,7 @@ Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
-|persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.| 
+|persistAlertData| If set to true, the BGP messages that triggered an alert will be collected in JSON files. The default is false.|
 |alertDataDirectory| If persistAlertData is set to true, this field must contain the directory where the JSON files with the BGP messages will be stored. |
 
 ## reportEmail
@@ -63,6 +63,7 @@ Parameters for this report module:
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 
 ## reportKafka
 
@@ -104,6 +105,7 @@ Parameters for this report module:
 |key| Optional, the Alerta API key to use for authenticated requests. |
 |token| Optional value used when executing HTTP requests to the Alerta API with bearer authentication. |
 |resourceTemplates| A dictionary of string templates for each channels to generate the content of the `resource` field for the alert. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template.|
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |urls| A dictionary containing Alerta API URLs grouped by user group (key: group, value: API URL). |
 |urls.default| The Alerta API URL of the default user group. |
 
@@ -120,6 +122,7 @@ Parameters for this report module:
 |---|---|
 |hooks| A dictionary containing Webex Teams WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 
 ## reportHTTP
 
@@ -132,6 +135,7 @@ Parameters for this report module:
 |hooks| A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
 |hooks.default| The URL of the default user group.| 
 |templates| A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |isTemplateJSON| A boolean defining if the template provided above are JSON or plain string |
 |headers| Additional headers to use in the GET request. For example for authentication.|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
@@ -157,6 +161,7 @@ Parameters for this report module:
 |---|---|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
 |botUrl| The Telegram bot URL. Usually `https://api.telegram.org/bot_BOT_ID_/` where `_BOT_ID_` is your both ID. |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).| 
 |chatIds.default| The chat ID of the default user group.| 
 
@@ -172,3 +177,4 @@ Parameters for this report module:
 |Parameter| Description| 
 |---|---|
 |maxAlertsAmount| The maximum amount of alerts the API will return. By default set to 100. Don't exagerate with the number, the greater this value is the more memory BGPalerter will use. |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |

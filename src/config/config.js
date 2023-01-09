@@ -59,7 +59,8 @@ export default class Config {
                     channel: "visibility",
                     name: "withdrawal-detection",
                     params: {
-                        thresholdMinPeers: 40
+                        thresholdMinPeers: 40,
+                        notificationIntervalSeconds: 3600
                     }
                 },
                 {
