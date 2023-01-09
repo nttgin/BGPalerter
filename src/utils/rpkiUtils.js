@@ -14,7 +14,7 @@ export default class RpkiUtils {
         this.logger = env.logger;
         this.userAgent = `${this.clientId}/${env.version}`;
         const defaultMarkDataAsStaleAfterMinutes = 60;
-        const providers = RpkiValidator.providers;
+        const providers = [...RpkiValidator.providers, "api"];
 
         if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
@@ -44,7 +44,7 @@ export default class RpkiUtils {
                 });
             }
             this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
-            this.params.preCacheROAs = this.params.preCacheROAs !== false;
+            this.params.preCacheROAs = !!(this.params.preCacheROAs ?? true);
         }
 
         if (this.params.markDataAsStaleAfterMinutes !== undefined) {
@@ -87,7 +87,7 @@ export default class RpkiUtils {
             }
             this.rpki = new RpkiValidator(rpkiValidatorOptions);
 
-            if (!!this.params.preCacheROAs) {
+            if (this.params.preCacheROAs) {
                 this._preCache();
             }
         }
@@ -244,6 +244,7 @@ export default class RpkiUtils {
                 return Promise.all(batch
                     .map(({ prefix, origin }) => {
                         const origins = [].concat.apply([], [origin.getValue()]);
+
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
                             .then(results => {
