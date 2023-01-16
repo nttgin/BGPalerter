@@ -58,7 +58,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.29.0",
+    "@sentry/node": "^7.31.0",
     "axios": "=0.27.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.1.0",
@@ -72,10 +72,10 @@
     "md5": "^2.3.0",
     "moment": "^2.29.4",
     "node-cleanup": "^2.1.2",
-    "nodemailer": "^6.8.0",
+    "nodemailer": "^6.9.0",
     "path": "^0.12.7",
     "restify": "^8.6.1",
-    "rpki-validator": "^2.11.0",
+    "rpki-validator": "^2.11.2",
     "semver": "^7.3.8",
     "syslog-client": "^1.1.1",
     "uuid": "^9.0.0",
