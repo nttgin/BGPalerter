@@ -16,7 +16,7 @@ override_dh_auto_install:
 	npm install --prefix "${CURDIR}/debian/node-bgpalerter/usr" -g ${CURDIR}/build/bgpalerter-*.tgz
 	find "${CURDIR}/debian/node-bgpalerter/usr" \
 		\( -name .npmignore -o -name .eslintrc -o -name .eslintrc.js -o -name \*.md -o -name LICENSE \
-		-o -name LICENSE-jsbn -o -name package.json -o -name .gitmodules -o -name .gitattributes \) \
+		-o -name LICENSE-jsbn -o -name .gitmodules -o -name .gitattributes \) \
 		-type f -delete
 	find "${CURDIR}/debian/node-bgpalerter/usr/lib/node_modules/bgpalerter/node_modules" \
 		\( -name examples -name .bin -o -name bin \) -type d -exec rm -rf {} +
@@ -27,6 +27,7 @@ override_dh_link:
 
 override_dh_fixperms:
 	dh_fixperms
+	sed -i '1i #!/usr/bin/node' "${CURDIR}/debian/node-bgpalerter/usr/lib/node_modules/bgpalerter/index.js"
 	chmod +x "${CURDIR}/debian/node-bgpalerter/usr/lib/node_modules/bgpalerter/index.js"
 
 override_dh_auto_clean:
