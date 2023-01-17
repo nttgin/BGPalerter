@@ -308,16 +308,8 @@ export default class RpkiUtils {
         }
     };
 
-    getExpiringElements = (index, vrp, expires) => {
-        return index.getExpiring(vrp, expires, moment.utc().unix());
+    getExpiringElements = (vrp, expires) => {
+        return this.rpki.getExpiringElements(vrp, expires, moment.utc().unix());
     }
-
-    _getVrpIndex = () => {
-        if (this.rpki?.getAdvancedStats) {
-            return this.rpki.getAdvancedStats();
-        } else {
-            return Promise.resolve(null);
-        }
-    };
 
 }
