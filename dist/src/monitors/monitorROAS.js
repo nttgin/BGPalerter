@@ -10,6 +10,7 @@ var _rpkiDiffingTool = require("../utils/rpkiDiffingTool");
 var _model = require("../model");
 var _moment = _interopRequireDefault(require("moment"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
+var _batchPromises = _interopRequireDefault(require("batch-promises"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -95,7 +96,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
       }
       _this.timesDeletedTAs = sizes;
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationTAs", function (vrps, expiringVrps, index) {
+    _defineProperty(_assertThisInitialized(_this), "_checkExpirationTAs", function (vrps, expiringVrps) {
       var sizes = _this._calculateSizes(vrps);
       var expiringSizes = _this._calculateSizes(expiringVrps);
       var _loop = function _loop(ta) {
@@ -106,35 +107,36 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           var currentTaVrps = vrps.filter(function (i) {
             return i.ta === ta;
           });
-          var extra = _this._getExpiringItems(currentTaVrps, index);
-          var metadata = _this.rpki.getMetadata();
-          var message = "Possible TA malfunction or incomplete VRP file: ".concat(percentage.toFixed(2), "% of the ROAs are expiring in ").concat(ta);
-          _this.publishAlert("expiring-".concat(ta),
-          // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-          ta, {
-            group: "default"
-          }, message, _objectSpread(_objectSpread({}, extra), {}, {
-            subType: "ta-expire",
-            rpkiMetadata: metadata,
-            expiredPercentage: percentage,
-            ta: ta,
-            vrpCount: sizes[ta],
-            expiringVrps: expiringSizes[ta]
-          }));
+          _this._getExpiringItems(currentTaVrps).then(function (extra) {
+            var metadata = _this.rpki.getMetadata();
+            var message = "Possible TA malfunction or incomplete VRP file: ".concat(percentage.toFixed(2), "% of the ROAs are expiring in ").concat(ta);
+            _this.publishAlert("expiring-".concat(ta),
+            // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+            ta, {
+              group: "default"
+            }, message, _objectSpread(_objectSpread({}, extra), {}, {
+              subType: "ta-expire",
+              rpkiMetadata: metadata,
+              expiredPercentage: percentage,
+              ta: ta,
+              vrpCount: sizes[ta],
+              expiringVrps: expiringSizes[ta]
+            }));
+          });
         }
       };
       for (var ta in sizes) {
         _loop(ta);
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_verifyExpiration", function (index, roaExpirationAlertHours) {
+    _defineProperty(_assertThisInitialized(_this), "_verifyExpiration", function (roaExpirationAlertHours) {
       var roas = _this.rpki.getVRPs();
       var metadata = _this.rpki.getMetadata();
       var expiringRoas = roas.filter(function (i) {
         return !!i.expires && i.expires - _moment["default"].utc().unix() < roaExpirationAlertHours * 3600;
       });
       if (_this.enableExpirationCheckTA) {
-        _this._checkExpirationTAs(roas, expiringRoas, index); // Check for TA malfunctions
+        _this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
       }
 
       if (_this.enableExpirationAlerts) {
@@ -145,151 +147,149 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           return i.asn.getValue();
         });
         var relevantVrps = (0, _rpkiDiffingTool.getRelevant)(expiringRoas, prefixesIn, asnsIn);
-        var alerts = [];
         if (relevantVrps.length) {
-          if (!_this.checkOnlyASns) {
-            alerts = _this._checkExpirationPrefixes(relevantVrps, metadata, index, roaExpirationAlertHours);
-          }
-          var _iterator2 = _createForOfIteratorHelper(asnsIn),
-            _step2;
-          try {
-            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-              var asn = _step2.value;
-              _this._checkExpirationAs(relevantVrps, asn, alerts, metadata, index, roaExpirationAlertHours);
-            }
-          } catch (err) {
-            _iterator2.e(err);
-          } finally {
-            _iterator2.f();
-          }
+          return (_this.checkOnlyASns ? Promise.resolve([]) : _this._checkExpirationPrefixes(relevantVrps, metadata, roaExpirationAlertHours)).then(function (alerts) {
+            return (0, _batchPromises["default"])(1, asnsIn, function (asn) {
+              return _this._checkExpirationAs(relevantVrps, asn, alerts, metadata, roaExpirationAlertHours);
+            });
+          });
         }
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_getExpiringItems", function (vrps, index) {
-      if (index) {
+    _defineProperty(_assertThisInitialized(_this), "_getExpiringItems", function (vrps) {
+      if (_this.enableAdvancedRpkiStats) {
         var uniqItems = {};
-        var _iterator3 = _createForOfIteratorHelper(vrps.slice(0, 40)),
-          _step3;
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var vrp = _step3.value;
-            if (vrp && vrp !== null && vrp !== void 0 && vrp.expires) {
-              var expiring = _this.rpki.getExpiringElements(index, vrp, vrp === null || vrp === void 0 ? void 0 : vrp.expires);
-              var _iterator4 = _createForOfIteratorHelper(expiring),
-                _step4;
-              try {
-                for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-                  var item = _step4.value;
-                  uniqItems[item.hash_id] = item;
-                }
-              } catch (err) {
-                _iterator4.e(err);
-              } finally {
-                _iterator4.f();
+        var items = vrps.slice(0, 40).filter(function (vrp) {
+          return vrp && (vrp === null || vrp === void 0 ? void 0 : vrp.expires);
+        });
+        return (0, _batchPromises["default"])(1, items, function (vrp) {
+          return _this.rpki.getExpiringElements(vrp, vrp === null || vrp === void 0 ? void 0 : vrp.expires).then(function (expiring) {
+            var _iterator2 = _createForOfIteratorHelper(expiring),
+              _step2;
+            try {
+              for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                var item = _step2.value;
+                uniqItems[item.hash_id] = item;
               }
+            } catch (err) {
+              _iterator2.e(err);
+            } finally {
+              _iterator2.f();
             }
-          }
-        } catch (err) {
-          _iterator3.e(err);
-        } finally {
-          _iterator3.f();
-        }
-        var items = Object.values(uniqItems);
-        return {
-          type: items.every(function (i) {
-            return i.type === "roa";
-          }) ? "roa" : "chain",
-          expiring: items.map(function (i) {
-            return i.file;
-          })
-        };
+          });
+        }).then(function () {
+          var items = Object.values(uniqItems);
+          return {
+            type: items.every(function (i) {
+              return i.type === "roa";
+            }) ? "roa" : "chain",
+            expiring: items.map(function (i) {
+              return i.file;
+            })
+          };
+        })["catch"](function (error) {
+          _this.logger.log({
+            level: 'error',
+            message: error
+          });
+          return {};
+        });
       } else {
-        return {};
+        return Promise.resolve({});
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationPrefixes", function (vrps, metadata, index, roaExpirationAlertHours) {
+    _defineProperty(_assertThisInitialized(_this), "_checkExpirationPrefixes", function (vrps, metadata, roaExpirationAlertHours) {
       var alerts = [];
-      var _loop2 = function _loop2() {
-        var prefix = _arr[_i];
+      return Promise.all(_toConsumableArray(new Set(vrps.map(function (i) {
+        return i.prefix;
+      }))).map(function (prefix) {
         var roas = vrps.filter(function (i) {
           return _ipSub["default"].isEqualPrefix(i.prefix, prefix);
         }); // Get only the ROAs for this prefix
         var matchedRule = _this.getMoreSpecificMatch(prefix, false); // Get the matching rule
         if (matchedRule) {
-          var extra = _this._getExpiringItems(roas, index);
-          var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
-          var message = "";
-          if (extra && extra.type === "chain") {
-            message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
-            message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
-          } else {
-            message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
-          }
-          alerts = alerts.concat(alertsStrings);
-          _this.publishAlert((0, _md["default"])(message),
-          // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-          matchedRule.prefix, matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
-            vrps: vrps,
-            roaExpirationHours: roaExpirationAlertHours,
-            rpkiMetadata: metadata,
-            subType: "roa-expire"
-          }));
-        }
-      };
-      for (var _i = 0, _arr = _toConsumableArray(new Set(vrps.map(function (i) {
-          return i.prefix;
-        }))); _i < _arr.length; _i++) {
-        _loop2();
-      }
-      return alerts;
-    });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationAs", function (vrps, asn, sent, metadata, index, roaExpirationAlertHours) {
-      try {
-        var alerts = [];
-        var impactedASes = _toConsumableArray(new Set(vrps.map(function (i) {
-          return i.asn;
-        })));
-        var matchedRules = impactedASes.map(function (asn) {
-          return _this.getMonitoredAsMatch(new _model.AS(asn));
-        });
-        var _iterator5 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
-            return !!i;
-          })),
-          _step5;
-        try {
-          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-            var matchedRule = _step5.value;
-            // An alert for each AS involved (they may have different user group)
-            var unsentVrps = vrps.filter(function (i) {
-              return !sent.includes(_this._roaToString(i));
-            });
-            var alertsStrings = _toConsumableArray(new Set(unsentVrps.map(_this._roaToString)));
-            if (alertsStrings.length) {
-              var extra = _this._getExpiringItems(vrps, index);
-              var message = "";
-              if (extra && extra.type === "chain") {
-                message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
-                message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
-              } else {
-                message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
-              }
-              alerts = alerts.concat(alertsStrings);
-              _this.publishAlert((0, _md["default"])(message),
-              // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-              matchedRule.asn.getId(), matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
-                vrps: unsentVrps,
-                roaExpirationHours: roaExpirationAlertHours,
-                rpkiMetadata: metadata,
-                subType: "roa-expire"
-              }));
+          return _this._getExpiringItems(roas).then(function (extra) {
+            var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
+            var message = "";
+            if (extra && extra.type === "chain") {
+              message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
+              message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
+            } else {
+              message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
             }
-          }
-        } catch (err) {
-          _iterator5.e(err);
-        } finally {
-          _iterator5.f();
+            alerts = alerts.concat(alertsStrings);
+            _this.publishAlert((0, _md["default"])(message),
+            // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+            matchedRule.prefix, matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
+              vrps: vrps,
+              roaExpirationHours: roaExpirationAlertHours,
+              rpkiMetadata: metadata,
+              subType: "roa-expire"
+            }));
+          });
+        } else {
+          return Promise.resolve();
         }
+      })).then(function () {
         return alerts;
+      });
+    });
+    _defineProperty(_assertThisInitialized(_this), "_checkExpirationAs", function (vrps, asn, sent, metadata, roaExpirationAlertHours) {
+      try {
+        var _ret = function () {
+          var alerts = [];
+          var impactedASes = _toConsumableArray(new Set(vrps.map(function (i) {
+            return i.asn;
+          })));
+          var matchedRules = impactedASes.map(function (asn) {
+            return _this.getMonitoredAsMatch(new _model.AS(asn));
+          });
+          var _iterator3 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
+              return !!i;
+            })),
+            _step3;
+          try {
+            var _loop2 = function _loop2() {
+              var matchedRule = _step3.value;
+              // An alert for each AS involved (they may have different user group)
+              var unsentVrps = vrps.filter(function (i) {
+                return !sent.includes(_this._roaToString(i));
+              });
+              var alertsStrings = _toConsumableArray(new Set(unsentVrps.map(_this._roaToString)));
+              if (alertsStrings.length) {
+                _this._getExpiringItems(vrps).then(function (extra) {
+                  var message = "";
+                  if (extra && extra.type === "chain") {
+                    message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
+                    message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
+                  } else {
+                    message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
+                  }
+                  alerts = alerts.concat(alertsStrings);
+                  _this.publishAlert((0, _md["default"])(message),
+                  // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                  matchedRule.asn.getId(), matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
+                    vrps: unsentVrps,
+                    roaExpirationHours: roaExpirationAlertHours,
+                    rpkiMetadata: metadata,
+                    subType: "roa-expire"
+                  }));
+                });
+              }
+            };
+            for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+              _loop2();
+            }
+          } catch (err) {
+            _iterator3.e(err);
+          } finally {
+            _iterator3.f();
+          }
+          return {
+            v: alerts
+          };
+        }();
+        if (_typeof(_ret) === "object") return _ret.v;
       } catch (error) {
         _this.logger.log({
           level: 'error',
@@ -317,17 +317,17 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           if (!_this.checkOnlyASns) {
             alerts = _this._diffVrpsPrefixes(_this._oldVrps, newVrps, prefixesIn);
           }
-          var _iterator6 = _createForOfIteratorHelper(asns),
-            _step6;
+          var _iterator4 = _createForOfIteratorHelper(asns),
+            _step4;
           try {
-            for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-              var asn = _step6.value;
+            for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+              var asn = _step4.value;
               _this._diffVrpsAs(_this._oldVrps, newVrps, asn, alerts);
             }
           } catch (err) {
-            _iterator6.e(err);
+            _iterator4.e(err);
           } finally {
-            _iterator6.f();
+            _iterator4.f();
           }
         }
         if (newVrps.length) {
@@ -341,7 +341,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
         var alerts = [];
         if (roaDiff && roaDiff.length) {
           var _loop3 = function _loop3() {
-            var prefix = _arr2[_i2];
+            var prefix = _arr[_i];
             var roas = roaDiff.filter(function (i) {
               return _ipSub["default"].isEqualPrefix(i.prefix, prefix);
             }); // Get only the ROAs for this prefix
@@ -359,9 +359,9 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
             }
           };
           // Differences found
-          for (var _i2 = 0, _arr2 = _toConsumableArray(new Set(roaDiff.map(function (i) {
+          for (var _i = 0, _arr = _toConsumableArray(new Set(roaDiff.map(function (i) {
               return i.prefix;
-            }))); _i2 < _arr2.length; _i2++) {
+            }))); _i < _arr.length; _i++) {
             _loop3();
           }
         }
@@ -386,13 +386,13 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           var matchedRules = impactedASes.map(function (asn) {
             return _this.getMonitoredAsMatch(new _model.AS(asn));
           });
-          var _iterator7 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
+          var _iterator5 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
               return !!i;
             })),
-            _step7;
+            _step5;
           try {
-            for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
-              var matchedRule = _step7.value;
+            for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+              var matchedRule = _step5.value;
               // An alert for each AS involved (they may have different user group)
               var alertsStrings = _toConsumableArray(new Set(roaDiff.map(_this._roaToString))).filter(function (i) {
                 return !sent.includes(i);
@@ -409,9 +409,9 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
               }
             }
           } catch (err) {
-            _iterator7.e(err);
+            _iterator5.e(err);
           } finally {
-            _iterator7.f();
+            _iterator5.f();
           }
         }
         return alerts;
@@ -471,19 +471,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
     }
     if (_this.enableExpirationAlerts || _this.enableExpirationCheckTA) {
       setInterval(function () {
-        if (_this.enableAdvancedRpkiStats) {
-          _this.rpki._getVrpIndex().then(function (index) {
-            _this._verifyExpiration(index, _this.roaExpirationAlertHours); // Verify expiration with enrichment
-          })["catch"](function (error) {
-            _this.logger.log({
-              level: 'error',
-              message: error
-            });
-            _this._verifyExpiration(null, _this.roaExpirationAlertHours); // Verify expiration without enrichment
-          });
-        } else {
-          _this._verifyExpiration(null, _this.roaExpirationAlertHours); // Verify expiration without enrichment
-        }
+        _this._verifyExpiration(_this.roaExpirationAlertHours);
       }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
     }
     return _this;

@@ -293,16 +293,8 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
       _this.oldDigest = digest;
     }
   });
-  _defineProperty(this, "getExpiringElements", function (index, vrp, expires) {
-    return index.getExpiring(vrp, expires, _moment["default"].utc().unix());
-  });
-  _defineProperty(this, "_getVrpIndex", function () {
-    var _this$rpki;
-    if ((_this$rpki = _this.rpki) !== null && _this$rpki !== void 0 && _this$rpki.getAdvancedStats) {
-      return _this.rpki.getAdvancedStats();
-    } else {
-      return Promise.resolve(null);
-    }
+  _defineProperty(this, "getExpiringElements", function (vrp, expires) {
+    return _this.rpki.getExpiringElements(vrp, expires, _moment["default"].utc().unix());
   });
   this.config = env.config;
   this.agent = env.agent;
