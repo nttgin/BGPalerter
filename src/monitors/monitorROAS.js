@@ -173,11 +173,14 @@ export default class MonitorROAS extends Monitor {
             })
                 .then(() => {
                     const items = Object.values(uniqItems);
-
-                    return {
-                        type: !!items.length && items.every(i => i.type === "roa") ? "roa" : "chain",
-                        expiring: items.map(i => i.file)
-                    };
+                    if (items.length > 0) {
+                        return {
+                            type: items.every(i => i.type === "roa") ? "roa" : "chain",
+                            expiring: items.map(i => i.file)
+                        };
+                    } else {
+                        return {};
+                    }
                 })
                 .catch(error => {
 
