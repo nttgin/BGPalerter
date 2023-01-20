@@ -179,14 +179,18 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           });
         }).then(function () {
           var items = Object.values(uniqItems);
-          return {
-            type: !!items.length && items.every(function (i) {
-              return i.type === "roa";
-            }) ? "roa" : "chain",
-            expiring: items.map(function (i) {
-              return i.file;
-            })
-          };
+          if (items.length > 0) {
+            return {
+              type: items.every(function (i) {
+                return i.type === "roa";
+              }) ? "roa" : "chain",
+              expiring: items.map(function (i) {
+                return i.file;
+              })
+            };
+          } else {
+            return {};
+          }
         })["catch"](function (error) {
           _this.logger.log({
             level: 'error',
