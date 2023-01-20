@@ -251,7 +251,7 @@ export default class RpkiUtils {
                                 if (results.length === 1) { // Only one result = only one origin, just return
                                     return { ...results[0], prefix, origin };
                                 } else { // Multiple origin
-                                    if (results.every(result => result && result.valid)) { // All valid
+                                    if (!!results.length && results.every(result => result && result.valid)) { // All valid
                                         return {
                                             valid: true,
                                             covering: [].concat.apply([], results.map(i => i.covering)),

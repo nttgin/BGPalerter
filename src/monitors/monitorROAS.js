@@ -175,7 +175,7 @@ export default class MonitorROAS extends Monitor {
                     const items = Object.values(uniqItems);
 
                     return {
-                        type: items.every(i => i.type === "roa") ? "roa" : "chain",
+                        type: !!items.length && items.every(i => i.type === "roa") ? "roa" : "chain",
                         expiring: items.map(i => i.file)
                     };
                 })
