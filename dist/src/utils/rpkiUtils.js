@@ -230,7 +230,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
             });
           } else {
             // Multiple origin
-            if (results.every(function (result) {
+            if (!!results.length && results.every(function (result) {
               return result && result.valid;
             })) {
               // All valid

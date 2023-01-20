@@ -180,7 +180,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
         }).then(function () {
           var items = Object.values(uniqItems);
           return {
-            type: items.every(function (i) {
+            type: !!items.length && items.every(function (i) {
               return i.type === "roa";
             }) ? "roa" : "chain",
             expiring: items.map(function (i) {
