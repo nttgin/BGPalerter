@@ -234,7 +234,7 @@ reports:
      - misconfiguration
      - rpki
     params:
-    templates:
+      templates:
       default: '{
         "fields": {
           "project": {
