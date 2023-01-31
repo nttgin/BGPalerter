@@ -3,7 +3,7 @@
 BGPalerter can send alerts by means of POST requests to a provided URL.
 This can be done by configuring the module reportHTTP. Read [here](configuration.md#reporthttp) to understand how.
 
-For configuring reportHTTP, essentially you need to specify two things: 
+For configuring reportHTTP, essentially you need to specify two things:
 * The URL
 * A template of the POST request.
 
@@ -70,22 +70,23 @@ Thanks to [@fstolba](https://github.com/nttgin/BGPalerter/issues/81).
 Pushover is an app that makes it easy to get real-time notifications on your Android, iPhone, iPad, and Desktop.
 
 ```yaml
-- file: reportHTTP
-   channels:
-     - hijack
-     - newprefix
-     - visibility
-     - path
-     - misconfiguration
-     - rpki
-   params:
-     templates:
-       default: '{"message": "${channel}: ${summary}", "title": "BGPalerter", "priority": "1", "token": "_YOUR_API_TOKEN_HERE_", "user": "_YOUR_USER_KEY_HERE_"}'
-     headers:
-     isTemplateJSON: true
-     showPaths: 0
-     hooks:
-       default: https://api.pushover.net/1/messages.json
+reports:
+  - file: reportHTTP
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      templates:
+        default: '{"message": "${channel}: ${summary}", "title": "BGPalerter", "priority": "1", "token": "_YOUR_API_TOKEN_HERE_", "user": "_YOUR_USER_KEY_HERE_"}'
+      headers:
+      isTemplateJSON: true
+      showPaths: 0
+      hooks:
+        default: https://api.pushover.net/1/messages.json
 ```
 
 Thanks to [Hugo Salgado](https://twitter.com/huguei/status/1278771420525408258).
@@ -188,43 +189,44 @@ reports:
 [RocketChat](https://rocket.chat/) is an open source messaging platform.
 
 ```yaml
-- file: reportHTTP
-   channels:
-     - hijack
-     - newprefix
-     - visibility
-     - path
-     - misconfiguration
-     - rpki
-   params:
-     templates:
-       default: '{"username": "BGPalerter", "channel": "_CHANNEL_NAME_", "text": "${channel}: ${summary}"}'
-     headers:
-     isTemplateJSON: true
-     showPaths: 0
-     hooks:
-       default: https://_RC_URL/hooks/_YOUR_KEY_
+reports:
+  - file: reportHTTP
+    channels:
+      - hijack
+      - newprefix
+      - visibility
+      - path
+      - misconfiguration
+      - rpki
+    params:
+      templates:
+        default: '{"username": "BGPalerter", "channel": "_CHANNEL_NAME_", "text": "${channel}: ${summary}"}'
+      headers:
+      isTemplateJSON: true
+      showPaths: 0
+      hooks:
+        default: https://_RC_URL/hooks/_YOUR_KEY_
 ```
 
 > Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
 
 Thanks to [cadirol](https://github.com/nttgin/BGPalerter/pull/704).
 
+
 ## Jira
 
-Jira is a project management tool by Atlassian.
+[Jira](https://www.atlassian.com/software/jira) is a project management tool developed by Atlassian.
 
-You need to set the project key and the issuetype ID according to your environment.
-To obtain the issuetype ID:
-```bash
-curl 'https://user:token@domain.atlassian.net/rest/api/latest/issue/SUP-123' | jq .fields.issuetype.id
-```
-
-If your username includes the `@`-character replace it with `%40`.
+To make this integration work, you need:
+* A project id ([how to get one](https://confluence.atlassian.com/jirakb/how-to-get-project-id-from-the-jira-user-interface-827341414.html))
+* An issue type ([how to get one](https://confluence.atlassian.com/jirakb/finding-the-id-for-issue-types-646186508.html))
+* A valid token ([how to create one](https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/))
+* A V2 REST API endpoint (e.g., https://_ACCOUNT_NAME_.atlassian.net/rest/api/2/issue/)
 
 ```yaml
-- file: reportHTTP
-   channels:
+reports:
+  - file: reportHTTP
+    channels:
      - hijack
      - newprefix
      - visibility
@@ -232,23 +234,24 @@ If your username includes the `@`-character replace it with `%40`.
      - misconfiguration
      - rpki
     params:
-      templates:
-        default: '{
-            "fields": {
-              "project":
-              {
-                  "key": "SUP"
-              },
-              "summary": "BGPAlerter: ${type}: ${prefix}",
-              "description": "Prefix: ${prefix}\nEvent Type: ${type}\nEarliest: ${earliest}\nLatest: ${latest}\nASN: ${asn}\nBGPlay: ${bgplay}\n",
-              "issuetype": {
-                  "id": "10223"
-              }
+    templates:
+      default: '{
+        "fields": {
+          "project": {
+              "id": "_YOUR_PROJECT_ID_"
+          }, 
+          "summary": "BGPalerter - event: ${type}",
+          "description":  "${summary} \nEarliest: ${earliest} \nLatest: ${latest}",
+          "issuetype": {
+              "id": "_YOUR_ISSUETYPE_ID_"
           }
-        }'
+        }
+      }'
       isTemplateJSON: true
       headers:
-      showPaths: 0 # Amount of AS_PATHs to report in the alert
+        'Content-Type': 'application/json'
+        'Authorization': 'Basic BASE64(_USER_EMAIL_:_TOKEN_)'
+      showPaths: 0
       hooks:
-        default: 'https://user%domain.com:<token>@company.atlassian.net/rest/api/2/issue'
+       default: _API_URL_
 ```
