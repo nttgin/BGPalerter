@@ -209,3 +209,46 @@ reports:
 > Configure the "_CHANNEL_NAME_" in the template. Start with @ for user or # for channel. Eg: @john or #general
 
 Thanks to [cadirol](https://github.com/nttgin/BGPalerter/pull/704).
+
+## Jira
+
+Jira is a project management tool by Atlassian.
+
+You need to set the project key and the issuetype ID according to your environment.
+To obtain the issuetype ID:
+```bash
+curl 'https://user:token@domain.atlassian.net/rest/api/latest/issue/SUP-123' | jq .fields.issuetype.id
+```
+
+If your username includes the `@`-character replace it with `%40`.
+
+```yaml
+- file: reportHTTP
+   channels:
+     - hijack
+     - newprefix
+     - visibility
+     - path
+     - misconfiguration
+     - rpki
+    params:
+      templates:
+        default: '{
+            "fields": {
+              "project":
+              {
+                  "key": "SUP"
+              },
+              "summary": "BGPAlerter: ${type}: ${prefix}",
+              "description": "Prefix: ${prefix}\nEvent Type: ${type}\nEarliest: ${earliest}\nLatest: ${latest}\nASN: ${asn}\nBGPlay: ${bgplay}\n",
+              "issuetype": {
+                  "id": "10223"
+              }
+          }
+        }'
+      isTemplateJSON: true
+      headers:
+      showPaths: 0 # Amount of AS_PATHs to report in the alert
+      hooks:
+        default: 'https://user%domain.com:<token>@company.atlassian.net/rest/api/2/issue'
+```
