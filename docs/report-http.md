@@ -255,3 +255,5 @@ reports:
       hooks:
        default: _API_URL_
 ```
+
+Thanks [@momorientes](https://github.com/nttgin/BGPalerter/pull/923) and [@PacketVis](https://github.com/nttgin/BGPalerter/pull/1026).
