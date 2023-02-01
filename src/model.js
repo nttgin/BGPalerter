@@ -123,7 +123,9 @@ export class AS {
     };
 
     toString() {
-        return this.numbers.map(i => "AS" + i).join(", and ");
+        const list = this.numbers.map(i => "AS" + i);
+
+        return (list.length === 1 ? list : list.slice(0, list.length - 1).map(i => [i, ", "]).concat(["and ", list[list.length - 1]]).flat()).join("");
     };
 
     toJSON () {
