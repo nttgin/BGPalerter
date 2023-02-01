@@ -159,9 +159,12 @@ var AS = /*#__PURE__*/function () {
   }, {
     key: "toString",
     value: function toString() {
-      return this.numbers.map(function (i) {
+      var list = this.numbers.map(function (i) {
         return "AS" + i;
-      }).join(", and ");
+      });
+      return (list.length === 1 ? list : list.slice(0, list.length - 1).map(function (i) {
+        return [i, ", "];
+      }).concat(["and ", list[list.length - 1]]).flat()).join("");
     }
   }, {
     key: "toJSON",
