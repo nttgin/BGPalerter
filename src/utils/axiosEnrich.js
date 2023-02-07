@@ -31,6 +31,11 @@ export default function(axios, httpsAgent, userAgent) {
         };
     }
 
+    axios.defaults.headers.common = {
+        ...axios.defaults.headers.common,
+        'Accept-Encoding': 'gzip'
+    };
+
     // Retry
     axios.interceptors.response.use(
         response => response,
