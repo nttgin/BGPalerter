@@ -94,7 +94,7 @@
       "./bin/config.yml"
     ],
     "targets": [
-      "node14"
+      "node18"
     ]
   },
   "optionalDependencies": {

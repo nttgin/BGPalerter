@@ -15,7 +15,7 @@ jobs:
     - name: Set up Javascript/Node
       uses: actions/setup-node@v3
       with:
-        node-version: '14'
+        node-version: '18'
 
     - name: Check out code
       uses: actions/checkout@v3
@@ -51,7 +51,7 @@ jobs:
     - name: Set up Javascript/Node
       uses: actions/setup-node@v3
       with:
-        node-version: '14'
+        node-version: '18'
 
     - name: Check out code
       uses: actions/checkout@v3
