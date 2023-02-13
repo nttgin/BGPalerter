@@ -1,7 +1,7 @@
 # Send alerts with POST requests
 
 BGPalerter can send alerts by means of POST requests to a provided URL.
-This can be done by configuring the module reportHTTP. Read [here](configuration.md#reporthttp) to understand how.
+This can be done by configuring the module reportHTTP. Read [here](reports.md#reportHTTP) to understand how.
 
 For configuring reportHTTP, essentially you need to specify two things:
 * The URL
