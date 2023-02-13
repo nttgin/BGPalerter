@@ -130,15 +130,16 @@ This report module sends alerts on a generic HTTP end-point.
 
 Parameters for this report module:
 
-|Parameter| Description| 
-|---|---|
-|hooks| A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
-|hooks.default| The URL of the default user group.| 
-|templates| A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|isTemplateJSON| A boolean defining if the template provided above are JSON or plain string |
-|headers| Additional headers to use in the GET request. For example for authentication.|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
+| Parameter      | Description| 
+|----------------|---|
+| hooks          | A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
+| hooks.default  | The URL of the default user group.| 
+| templates      | A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
+| noProxy        | If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+| isTemplateJSON | A boolean defining if the template provided above are JSON or plain string |
+| headers        | Additional headers to use in the GET request. For example for authentication.|
+| showPaths      | Amount of AS_PATHs to report in the alert (0 to disable). | 
+| method         | One of `post`, `put`, `patch`, `delete`. Default to `post`. |
 
 [See here some examples of how to adapt reportHTTP to some common applications.](report-http.md)
 

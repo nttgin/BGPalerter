@@ -228,7 +228,7 @@ describe("Alerting", function () {
                 id: '1234-175.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test)',
+                message: 'A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.',
                 data: [
                     {
                         extra: {},
@@ -256,7 +256,7 @@ describe("Alerting", function () {
                 id: '1234-170.254.205.0/25',
                 origin: 'prefix-detection',
                 affected: 1234,
-                message: 'Possible change of configuration. A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test)',
+                message: 'A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.',
                 data: [
                     {
                         extra: {},
@@ -285,7 +285,7 @@ describe("Alerting", function () {
                     id: '15562-165.254.255.0/25',
                     origin: 'prefix-detection',
                     affected: 15562,
-                    message: 'Possible change of configuration. A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2)',
+                    message: 'A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2). Maybe you need to update your BGPalerter prefix list.',
                     data: [
                         {
                             extra: {},
@@ -311,7 +311,7 @@ describe("Alerting", function () {
                 id: '204092-2a00:5884:ffff::/48',
                 origin: 'prefix-detection',
                 affected: "204092-45",
-                message: 'Possible change of configuration. A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test)',
+                message: 'A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test). Maybe you need to update your BGPalerter prefix list.',
                 data: [
                     {
                         extra: {},
