@@ -39,11 +39,20 @@ export default class ReportHTTP extends Report {
 
         this.name = "reportHTTP" || this.params.name;
         this.enabled = true;
+        this.method = (this.params?.method ?? "post").toLowerCase();
+
+        if (!["post", "put", "patch", "delete"].includes(this.method)) {
+            this.logger.log({
+                level: 'error',
+                message: `${this.name} is not enabled: the configured HTTP method is not valid`
+            });
+            this.enabled = false;
+        }
 
         if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} reporting is not enabled: no default group defined`
+                message: `${this.name} is not enabled: no default group defined`
             });
             this.enabled = false;
         }
@@ -81,7 +90,7 @@ export default class ReportHTTP extends Report {
 
             this.axios({
                 url,
-                method: "POST",
+                method: this.method,
                 headers: this.headers,
                 data: (this.params.isTemplateJSON) ? JSON.parse(blob) : blob
             })

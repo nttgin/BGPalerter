@@ -42,7 +42,7 @@ export default class ReportAlerta extends Report {
         if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: "Alerta reporting is not enabled: no default group defined"
+                message: "Alerta is not enabled: no default group defined"
             });
             this.enabled = false;
         }

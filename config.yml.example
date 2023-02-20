@@ -229,6 +229,7 @@ reports:
 #      - rpki
 #      - roa
 #    params:
+#      method: post
 #      templates: # See here how to write a template https://github.com/nttgin/BGPalerter/blob/main/docs/context.md
 #        default: '{"text": "${summary}"}'
 #      headers:
