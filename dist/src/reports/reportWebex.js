@@ -85,7 +85,7 @@ var ReportWebex = /*#__PURE__*/function (_Report) {
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
         level: 'error',
-        message: "Webex reporting is not enabled: no default group defined"
+        message: "Webex is not enabled: no default group defined"
       });
       _this.enabled = false;
     }

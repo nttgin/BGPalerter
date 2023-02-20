@@ -99,7 +99,7 @@ var ReportAlerta = /*#__PURE__*/function (_Report) {
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
         level: 'error',
-        message: "Alerta reporting is not enabled: no default group defined"
+        message: "Alerta is not enabled: no default group defined"
       });
       _this.enabled = false;
     }

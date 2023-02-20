@@ -31,6 +31,7 @@ var ReportHTTP = /*#__PURE__*/function (_Report) {
   _inherits(ReportHTTP, _Report);
   var _super = _createSuper(ReportHTTP);
   function ReportHTTP(channels, params, env) {
+    var _this$params$method, _this$params;
     var _this;
     _classCallCheck(this, ReportHTTP);
     _this = _super.call(this, channels, params, env);
@@ -55,7 +56,7 @@ var ReportHTTP = /*#__PURE__*/function (_Report) {
         });
         _this.axios({
           url: url,
-          method: "POST",
+          method: _this.method,
           headers: _this.headers,
           data: _this.params.isTemplateJSON ? JSON.parse(blob) : blob
         })["catch"](function (error) {
@@ -90,10 +91,18 @@ var ReportHTTP = /*#__PURE__*/function (_Report) {
     });
     _this.name = "reportHTTP" || _this.params.name;
     _this.enabled = true;
+    _this.method = ((_this$params$method = (_this$params = _this.params) === null || _this$params === void 0 ? void 0 : _this$params.method) !== null && _this$params$method !== void 0 ? _this$params$method : "post").toLowerCase();
+    if (!["post", "put", "patch", "delete"].includes(_this.method)) {
+      _this.logger.log({
+        level: 'error',
+        message: "".concat(_this.name, " is not enabled: the configured HTTP method is not valid")
+      });
+      _this.enabled = false;
+    }
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
         level: 'error',
-        message: "".concat(_this.name, " reporting is not enabled: no default group defined")
+        message: "".concat(_this.name, " is not enabled: no default group defined")
       });
       _this.enabled = false;
     }

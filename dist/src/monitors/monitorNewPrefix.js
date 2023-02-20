@@ -47,7 +47,7 @@ var MonitorNewPrefix = /*#__PURE__*/function (_Monitor) {
       if (peers >= _this.thresholdMinPeers) {
         var message = alerts[0].matchedMessage;
         var matchedRule = alerts[0].matchedRule;
-        return "Possible change of configuration. A new prefix ".concat(message.prefix, " is announced by ").concat(message.originAS, ". It is a more specific of ").concat(matchedRule.prefix, " (").concat(matchedRule.description, ")");
+        return "A new prefix ".concat(message.prefix, " is announced by ").concat(message.originAS, ". It is a more specific of ").concat(matchedRule.prefix, " (").concat(matchedRule.description, "). Maybe you need to update your BGPalerter prefix list.");
       }
       return false;
     });

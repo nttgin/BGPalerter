@@ -52,14 +52,14 @@ var reportTelegram = /*#__PURE__*/function (_ReportHTTP) {
     if (!params.botUrl) {
       _this.logger.log({
         level: 'error',
-        message: "".concat(_this.name, " reporting is not enabled: no botUrl provided")
+        message: "".concat(_this.name, " is not enabled: no botUrl provided")
       });
       _this.enabled = false;
     }
     if (!params.chatIds || !params.chatIds["default"]) {
       _this.logger.log({
         level: 'error',
-        message: "".concat(_this.name, " reporting is not enabled: no default chat id provided")
+        message: "".concat(_this.name, " is not enabled: no default chat id provided")
       });
       _this.enabled = false;
     }
