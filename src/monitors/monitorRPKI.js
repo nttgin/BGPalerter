@@ -124,7 +124,7 @@ export default class MonitorRPKI extends Monitor {
                         matchedRule,
                         message,
                         { covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
-                } else if (this.params.checkUncovered) {
+                } else if (this.params.checkUncovered && !this.rpki.getStatus().stale) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,

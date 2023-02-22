@@ -66,6 +66,7 @@ export default class RpkiUtils {
         this._loadRpkiValidator();
 
         if (this.params.markDataAsStaleAfterMinutes > 0) {
+            this._markAsStale();
             setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
         }
 
@@ -174,7 +175,6 @@ export default class RpkiUtils {
                 .preCache(this.params.refreshVrpListMinutes)
                 .then(data => {
                     this.status.data = true;
-                    this.status.stale = false;
 
                     return data;
                 })
@@ -189,7 +189,6 @@ export default class RpkiUtils {
                 })
         } else {
             this.status.data = true;
-            this.status.stale = false;
             return Promise.resolve();
         }
     };
