@@ -43,6 +43,11 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
     var _this;
     _classCallCheck(this, MonitorROAS);
     _this = _super.call(this, name, channel, params, env, input);
+    _defineProperty(_assertThisInitialized(_this), "_skipIfStaleVrps", function (callback) {
+      if (!_this.rpki.getStatus().stale) {
+        callback();
+      }
+    });
     _defineProperty(_assertThisInitialized(_this), "_calculateSizes", function (vrps) {
       var times = {};
       for (var ta in _this.seenTAs) {
@@ -471,11 +476,15 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
       prefixes: []
     };
     if (_this.enableDiffAlerts || _this.enableDeletedCheckTA) {
-      setInterval(_this._diffVrps, _this.diffEverySeconds * 1000);
+      setInterval(function () {
+        _this._skipIfStaleVrps(_this._diffVrps);
+      }, _this.diffEverySeconds * 1000);
     }
     if (_this.enableExpirationAlerts || _this.enableExpirationCheckTA) {
       setInterval(function () {
-        _this._verifyExpiration(_this.roaExpirationAlertHours);
+        _this._skipIfStaleVrps(function () {
+          return _this._verifyExpiration(_this.roaExpirationAlertHours);
+        });
       }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
     }
     return _this;

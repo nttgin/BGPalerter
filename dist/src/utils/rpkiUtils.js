@@ -115,7 +115,6 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
     if (!!_this.params.preCacheROAs) {
       return _this.rpki.preCache(_this.params.refreshVrpListMinutes).then(function (data) {
         _this.status.data = true;
-        _this.status.stale = false;
         return data;
       })["catch"](function () {
         if (!_this._cannotDownloadErrorOnce) {
@@ -128,7 +127,6 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
       });
     } else {
       _this.status.data = true;
-      _this.status.stale = false;
       return Promise.resolve();
     }
   });
@@ -350,6 +348,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   };
   this._loadRpkiValidator();
   if (this.params.markDataAsStaleAfterMinutes > 0) {
+    this._markAsStale();
     setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
   }
   this.queue = [];

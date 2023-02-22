@@ -78,7 +78,7 @@ var MonitorRPKI = /*#__PURE__*/function (_Monitor) {
               roaDisappeared: true,
               subType: "rpki-disappear"
             });
-          } else if (_this.params.checkUncovered) {
+          } else if (_this.params.checkUncovered && !_this.rpki.getStatus().stale) {
             _this.publishAlert(key, prefix, matchedRule, message, {
               covering: null,
               valid: null,
