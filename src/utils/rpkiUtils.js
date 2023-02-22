@@ -300,7 +300,23 @@ export default class RpkiUtils {
         if (!!this.params.preCacheROAs) {
             const digest = md5(JSON.stringify(this.getVRPs()));
             if (this.oldDigest) {
-                this.status.stale = this.oldDigest === digest;
+                const stale = this.oldDigest === digest;
+
+                if (this.status.stale !== stale) {
+                    if (stale) {
+                        this.logger.log({
+                            level: 'error',
+                            message: "The VRP file is stale"
+                        });
+                    } else {
+                        this.logger.log({
+                            level: 'info',
+                            message: "The VRP file is back to normal"
+                        });
+                    }
+                }
+
+                this.status.stale = stale;
             }
 
             this.oldDigest = digest;
