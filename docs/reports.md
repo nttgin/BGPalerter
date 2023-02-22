@@ -20,6 +20,7 @@ This will generate fake alerts. [Read more here](installation.md#bgpalerter-para
 - [reportHTTP](reports.md#reportHTTP)
 - [reportTelegram](reports.md#reportTelegram)
 - [reportPullAPI](reports.md#reportPullAPI)
+- [reportMatrix](reports.md#reportMatrix)
 
 ## reportFile
 
@@ -172,10 +173,26 @@ This report module creates a REST API reachable at `http://host:port/alerts/`. T
 
 The REST API uses the generic `rest` configuration in `config.yml`. Read [here](configuration.md) or see `config.yml.example` for more information.
 
-
 Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
 |maxAlertsAmount| The maximum amount of alerts the API will return. By default set to 100. Don't exagerate with the number, the greater this value is the more memory BGPalerter will use. |
 |noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+
+## reportMatrix
+
+This report module sends alerts directly to a specific Matrix room.
+To send alert to Matrix you need an access token and a room ID.
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
+|homeserverUrl:| URL of your Matrix homeserver (for example: `https://matrix.org` |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+|roomIds| A dictionary containing chat IDs grouped by user group (key: group, value: room ID).| 
+|roomIds.default| The room ID of the default room.| 
+
+
