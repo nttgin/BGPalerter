@@ -35,15 +35,23 @@ export default class MonitorROAS extends Monitor {
         };
 
         if (this.enableDiffAlerts || this.enableDeletedCheckTA) {
-            setInterval(this._diffVrps, this.diffEverySeconds * 1000);
+            setInterval(() => {
+                this._skipIfStaleVrps(this._diffVrps);
+            }, this.diffEverySeconds * 1000);
         }
         if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
 
             setInterval(() => {
-                this._verifyExpiration(this.roaExpirationAlertHours);
+                this._skipIfStaleVrps(() => this._verifyExpiration(this.roaExpirationAlertHours));
             }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
         }
     };
+
+    _skipIfStaleVrps = (callback) => {
+        if (!this.rpki.getStatus().stale) {
+            callback();
+        }
+    }
 
     _calculateSizes = (vrps) => {
         const times = {};
