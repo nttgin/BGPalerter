@@ -286,7 +286,21 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
     if (!!_this.params.preCacheROAs) {
       var digest = (0, _md["default"])(JSON.stringify(_this.getVRPs()));
       if (_this.oldDigest) {
-        _this.status.stale = _this.oldDigest === digest;
+        var stale = _this.oldDigest === digest;
+        if (_this.status.stale !== stale) {
+          if (stale) {
+            _this.logger.log({
+              level: 'error',
+              message: "The VRP file is stale"
+            });
+          } else {
+            _this.logger.log({
+              level: 'info',
+              message: "The VRP file is back to normal"
+            });
+          }
+        }
+        _this.status.stale = stale;
       }
       _this.oldDigest = digest;
     }
