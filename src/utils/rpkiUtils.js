@@ -212,7 +212,7 @@ export default class RpkiUtils {
                     origin: message.originAS
                 };
             }))
-            .then(results => {
+            .then((results=[]) => {
                 for (let result of results) {
                     const key = result.origin.getId() + "-" + result.prefix;
                     for (let { message, matchedRule, callback } of batch[key]) {
@@ -246,7 +246,7 @@ export default class RpkiUtils {
 
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
-                            .then(results => {
+                            .then((results=[]) => {
                                 if (results.length === 1) { // Only one result = only one origin, just return
                                     return { ...results[0], prefix, origin };
                                 } else { // Multiple origin

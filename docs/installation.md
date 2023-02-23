@@ -1,7 +1,7 @@
 # Installation
 
 ## Requirements
-BGPalerter requires a machine with *minimum* 2GB RAM and swap enabled. However, I recommend 4GB.
+BGPalerter requires a machine with 4GB of RAM and swap enabled.
 If you are using small AWS EC2 instances (or similar), remember to activate the swap.
 
 ## Running BGPalerter from binaries - Quick Setup
@@ -15,7 +15,7 @@ The first time you run it, the auto-configuration will start.
 
 #### Linux
 
-1. Download the binary:  `wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64`
+1. Download the binary: `wget https://github.com/nttgin/BGPalerter/releases/latest/download/bgpalerter-linux-x64`
 
 2. Download [`config.yml.example`](https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example) as `config.yml` (in the same directory of the binary)
 
