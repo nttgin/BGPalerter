@@ -267,6 +267,24 @@ reports:
 #    params:
 #      maxAlertsAmount: 25
 
+#  - file: reportMatrix
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#      - roa
+#    params:
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      homeserverUrl: https://matrix.org
+#      accessToken: _ACCESS_TOKEN_ 
+#      roomIds:
+#        default: "_ROOM_ID_"
+#        noc: "_ROOM_ID_"
+
+
 ############################
 # Notification settings:
 # - notificationIntervalSeconds
