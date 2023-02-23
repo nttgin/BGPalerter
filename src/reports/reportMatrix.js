@@ -31,12 +31,13 @@
  */
 
 import ReportHTTP from "./reportHTTP";
+import { v4 as uuidv4 } from 'uuid';
 
 export default class reportMatrix extends ReportHTTP {
 
     constructor(channels, params, env) {
         const hooks = {};
-        const transactionId = Math.random().toString(36).substring(2, 15);
+        const transactionId = uuidv4();
 
         for (let userGroup in params.roomIds) {
             hooks[userGroup] = params.homeserverUrl + "/_matrix/client/v3/rooms/" + encodeURIComponent(params.roomIds[userGroup]) + "/send/m.room.message/" + transactionId;
