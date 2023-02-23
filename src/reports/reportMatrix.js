@@ -32,18 +32,17 @@
 
 import ReportHTTP from "./reportHTTP";
 import { v4 as uuidv4 } from 'uuid';
+import brembo from "brembo";
 
 export default class reportMatrix extends ReportHTTP {
-
     constructor(channels, params, env) {
         const hooks = {};
-        const transactionId = uuidv4();
 
-        for (let userGroup in params.roomIds) {
-            hooks[userGroup] = params.homeserverUrl + "/_matrix/client/v3/rooms/" + encodeURIComponent(params.roomIds[userGroup]) + "/send/m.room.message/" + transactionId;
+        for (let userGroup in params?.roomIds ?? []) {
+            hooks[userGroup] = brembo.build(params?.homeserverUrl, {
+                path: ["_matrix", "client", "v3", "rooms", encodeURIComponent(params?.roomIds[userGroup]), "send", "m.room.message"]
+            });
         }
-        hooks["default"] = params.homeserverUrl + "/_matrix/client/v3/rooms/" + encodeURIComponent(params.roomIds["default"]) + "/send/m.room.message/" + transactionId;
-
 
         const matrixParams = {
             headers: {
@@ -76,6 +75,15 @@ export default class reportMatrix extends ReportHTTP {
             });
             this.enabled = false;
         }
+    };
+
+    getUserGroup = (group) => {
+
+        const transactionId = uuidv4();
+        const groups = this.params.hooks || this.params.userGroups || {};
+        const baseUrl = groups[group] || groups["default"];
+
+        return brembo.build(baseUrl, {path: [transactionId]})
     };
 
     getTemplate = (group, channel, content) => {
