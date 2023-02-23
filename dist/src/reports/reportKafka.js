@@ -45,7 +45,7 @@ var ReportKafka = /*#__PURE__*/function (_Report) {
         _this.client = new _kafkajs.Kafka({
           logLevel: _kafkajs.logLevel.ERROR,
           clientId: _this.clientId,
-          brokers: [].concat.apply([], [_this.host])
+          brokers: [_this.host].flat()
         });
         _this.producer = _this.client.producer();
         _this.connecting = _this.producer.connect().then(function () {

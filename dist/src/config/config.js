@@ -141,9 +141,10 @@ var Config = /*#__PURE__*/_createClass(function Config(params) {
       compressOnRotation: false
     },
     rpki: {
-      vrpProvider: "ntt",
+      vrpProvider: "rpkiclient",
       preCacheROAs: true,
-      refreshVrpListMinutes: 15
+      refreshVrpListMinutes: 15,
+      markDataAsStaleAfterMinutes: 120
     },
     rest: {
       host: "localhost",

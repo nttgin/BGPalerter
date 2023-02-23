@@ -216,7 +216,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
       return Promise.all(batch.map(function (_ref) {
         var prefix = _ref.prefix,
           origin = _ref.origin;
-        var origins = [].concat.apply([], [origin.getValue()]);
+        var origins = [origin.getValue()].flat();
         return Promise.all(origins.map(function (asn) {
           return _this.rpki.validate(prefix, asn, true);
         })) // Validate each origin
@@ -236,9 +236,9 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
               // All valid
               return {
                 valid: true,
-                covering: [].concat.apply([], results.map(function (i) {
+                covering: results.map(function (i) {
                   return i.covering;
-                })),
+                }).flat(),
                 prefix: prefix,
                 origin: origin
               };
@@ -248,9 +248,9 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
               // At least one not valid
               return {
                 valid: false,
-                covering: [].concat.apply([], results.map(function (i) {
+                covering: results.map(function (i) {
                   return i.covering;
-                })),
+                }).flat(),
                 prefix: prefix,
                 origin: origin
               };
@@ -258,9 +258,9 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
               // return not covered
               return {
                 valid: null,
-                covering: [].concat.apply([], results.map(function (i) {
+                covering: results.map(function (i) {
                   return i.covering;
-                })),
+                }).flat(),
                 prefix: prefix,
                 origin: origin
               };
@@ -316,7 +316,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   this.clientId = env.clientId || "";
   this.logger = env.logger;
   this.userAgent = "".concat(this.clientId, "/").concat(env.version);
-  var defaultMarkDataAsStaleAfterMinutes = 60;
+  var defaultMarkDataAsStaleAfterMinutes = 120;
   var providers = [].concat(_toConsumableArray(_rpkiValidator["default"].providers), ["api"]);
   if (this.params.url || this.params.vrpProvider === "api") {
     this.params.vrpProvider = "api";
@@ -345,7 +345,7 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
         message: "The specified vrpProvider is not valid. Using default vrpProvider."
       });
     }
-    this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
+    this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 1);
     this.params.preCacheROAs = !!((_this$params$preCache = this.params.preCacheROAs) !== null && _this$params$preCache !== void 0 ? _this$params$preCache : true);
   }
   if (this.params.markDataAsStaleAfterMinutes !== undefined) {

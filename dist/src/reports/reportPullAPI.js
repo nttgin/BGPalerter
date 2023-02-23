@@ -98,7 +98,7 @@ var ReportPullAPI = /*#__PURE__*/function (_Report) {
     });
     _this.name = "reportPullAPI" || _this.params.name;
     _this.enabled = true;
-    _this.maxAlertsAmount = _this.params.maxAlertsAmount || 100;
+    _this.maxAlertsAmount = Math.min(_this.params.maxAlertsAmount || 25, 100);
     _this.lastQuery = null;
     var restDefault = env.config.rest || {
       port: params.port,
