@@ -200,4 +200,4 @@ Parameters for this report module:
 |roomIds| A dictionary containing chat IDs grouped by user group (key: group, value: room ID). |
 |roomIds.default| The room ID of the default room.| 
 
-
+Thanks to [@nickbouwhuis](https://github.com/nttgin/BGPalerter/pull/1043).
