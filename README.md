@@ -26,8 +26,8 @@ It can deliver alerts on files, email, kafka, slack, and more.
 > BGPalerter connects to public BGP data repos (not managed by NTT), and the entire monitoring is done directly in the application (there are no NTT servers involved). 
  
 ## TL;DR (1 minute setup)
-> This section is useful if you don't care about the source code but you just want to run the monitor.
-Instead, if you want to run the source code (which is completely open) or develop, please read directly the documentation.
+> This section is useful if you don't care about the source code, but you just want to start monitoring.
+Instead, if you want to run the source code or develop, skip to the documentation below.
 
 1. Download the binary [here](https://github.com/nttgin/BGPalerter/releases) (be sure to select the one for your OS)
 
@@ -36,11 +36,11 @@ The first time you run it, the auto-configuration will start.
 
 
 If something happens (e.g., a hijack) you will see the alerts in `logs/reports.log`.
-In `config.yml` you can find other reporting mechanisms (e.g., email, Slack, Kafka) in addition to logging on files. 
-Please uncomment the related section and configure according to your needs. 
+In `config.yml` you can find other reporting mechanisms (e.g., email, Slack, Kafka) in addition to logging on files. Uncomment the related section and configure according to your needs. 
 
-If the installation doesn't go smoothly, read [here](docs/installation.md).  
-Read the documentation below for more options.
+If the installation doesn't go smoothly, read [here](docs/installation.md). Read the documentation below for more options.  
+
+> If you are looking for a BGP and RPKI monitoring service based on BGPalerter, try [PacketVis](https://packetvis.com)
 
 ## Documentation
 
@@ -74,11 +74,12 @@ Read the documentation below for more options.
         - [Syslog](docs/reports.md#reportsyslog)
         - [Alerta dashboard](docs/reports.md#reportalerta)
         - [Webex](docs/reports.md#reportwebex)
-        - [HTTP URL (push)](docs/reports.md#reporthttp)
         - [Telegram](docs/reports.md#reporttelegram)
         - [Mattermost](docs/reports.md#mattermost)
         - [Pushover](docs/report-http.md#pushover)
         - [Microsoft Teams](docs/report-http.md#ms-teams)
+        - [Matrix](docs/reports.md#reportmatrix)
+        - [HTTP URL (push)](docs/reports.md#reporthttp)
         - [REST API (pull)](docs/reports.md#reportpullapi)
     - [Test report configuration](docs/installation.md#bgpalerter-parameters)
     - [Process/Uptime monitoring](docs/process-monitors.md)

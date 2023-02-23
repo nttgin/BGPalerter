@@ -41,7 +41,7 @@ export default class ReportPullAPI extends Report {
 
         this.name = "reportPullAPI" || this.params.name;
         this.enabled = true;
-        this.maxAlertsAmount = this.params.maxAlertsAmount || 100;
+        this.maxAlertsAmount = Math.min(this.params.maxAlertsAmount || 25, 100);
         this.lastQuery = null;
 
         let restDefault = env.config.rest || { port: params.port, host: params.host };

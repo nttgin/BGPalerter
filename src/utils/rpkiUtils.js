@@ -13,7 +13,7 @@ export default class RpkiUtils {
         this.clientId = env.clientId || "";
         this.logger = env.logger;
         this.userAgent = `${this.clientId}/${env.version}`;
-        const defaultMarkDataAsStaleAfterMinutes = 60;
+        const defaultMarkDataAsStaleAfterMinutes = 120;
         const providers = [...RpkiValidator.providers, "api"];
 
         if (this.params.url || this.params.vrpProvider === "api") {
@@ -43,7 +43,7 @@ export default class RpkiUtils {
                     message: "The specified vrpProvider is not valid. Using default vrpProvider."
                 });
             }
-            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 5);
+            this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 1);
             this.params.preCacheROAs = !!(this.params.preCacheROAs ?? true);
         }
 
@@ -242,7 +242,7 @@ export default class RpkiUtils {
             .then(() => {
                 return Promise.all(batch
                     .map(({ prefix, origin }) => {
-                        const origins = [].concat.apply([], [origin.getValue()]);
+                        const origins = [origin.getValue()].flat();
 
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
@@ -253,21 +253,21 @@ export default class RpkiUtils {
                                     if (!!results.length && results.every(result => result && result.valid)) { // All valid
                                         return {
                                             valid: true,
-                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            covering: results.map(i => i.covering).flat(),
                                             prefix,
                                             origin
                                         };
                                     } else if (results.some(result => result && !result.valid)) { // At least one not valid
                                         return {
                                             valid: false,
-                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            covering: results.map(i => i.covering).flat(),
                                             prefix,
                                             origin
                                         };
                                     } else { // return not covered
                                         return {
                                             valid: null,
-                                            covering: [].concat.apply([], results.map(i => i.covering)),
+                                            covering: results.map(i => i.covering).flat(),
                                             prefix,
                                             origin
                                         };

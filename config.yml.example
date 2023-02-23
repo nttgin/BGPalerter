@@ -281,8 +281,9 @@ reports:
 #      homeserverUrl: https://matrix.org
 #      accessToken: _ACCESS_TOKEN_ 
 #      roomIds:
-#        default: "_ROOM_ID_"
-#        noc: "_ROOM_ID_"
+#        default: _ROOM_ID_
+#        noc: _ROOM_ID_
+
 
 
 ############################

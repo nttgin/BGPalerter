@@ -325,7 +325,7 @@ module.exports = function generatePrefixes(inputParameters) {
     };
 
     return getBaseRules(prefixes)
-        .then(items => [].concat.apply([], items))
+        .then(items => items.flat())
         .then(prefixes => {
             return batchPromises(1, prefixes, prefix => {
                 return getAnnouncedMoreSpecifics(prefix)

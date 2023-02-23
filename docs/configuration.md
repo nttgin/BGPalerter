@@ -185,12 +185,12 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|Parameter| Description                                                                                                                                                                                                                                                        | 
+|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                                |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition. Useful if you are monitoring a beacon.                                                                                                 |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                  |
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
 
 #### monitorPath
 
@@ -224,12 +224,12 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|Parameter| Description                                                                                                                                                                                                                                                       | 
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                               |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                       |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                 | 
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
 
 
 
@@ -257,12 +257,12 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|Parameter| Description                                                                                                                                                                                                                                                       | 
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                               |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                       |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                 | 
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
 
 #### monitorAS
 
@@ -287,7 +287,7 @@ This is useful if you want to be alerted in case your AS starts announcing somet
 > 
 > If AS58302 starts announcing 45.230.23.0/24 an alert will be triggered. This happens because such prefix is not already monitored (it's not a sub prefix of 50.82.0.0/20).
 
-You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` of the [auto configuration](prefixes.md#generate).
+You can generate the options block in the prefixes list automatically. Refer to the options `-s` and `-m` of the [auto-configuration](prefixes.md#generate).
 
 
 Example of alert:
@@ -295,12 +295,12 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
+|Parameter| Description                                                                                                                                                                                                                                                       | 
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                               |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                       |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                 | 
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
     
     
 #### monitorRPKI
@@ -341,15 +341,15 @@ You need to configure your RPKI data source as described [here](rpki.md).
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|checkUncovered| If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes. |
-|checkDisappearing| If set to true, the monitor will check also for disappearing ROAs. Important: set this feature to false if you have monitorROAS enabled; monitorROAS provides diffs including disappearing ROAs. |
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.|
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.|
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. | 
-|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`.|
-|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g., disappearing ROAs). Default to 7 days. |
+|Parameter| Description                                                                                                                                                                                                                                                       | 
+|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|checkUncovered|If set to true, the monitor will alert also for prefixes not covered by ROAs in addition of RPKI invalid prefixes.                                                                                                                                                 |
+|checkDisappearing| If set to true, the monitor will check also for disappearing ROAs. Important: set this feature to false if you have monitorROAS enabled; monitorROAS provides diffs including disappearing ROAs.                                                                  |
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                               |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                       |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                 | 
+|maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
+|cacheValidPrefixesSeconds| Amount of seconds ROAs get cached in order to identify RPKI repository malfunctions (e.g., disappearing ROAs). Default to 7 days.                                                                                                                                 |
 
 
 #### monitorROAS
@@ -378,9 +378,9 @@ Note, while BGPalerter will perform the check near real time, many RIRs have del
 >  * A ROA that is, or was, involving 1.2.3.4/24 is added/edited/removed (based on the prefix `1.2.3.4/24` matching rule).
 >  * A ROA that is, or was, involving AS2914 is added/edited/removed (based on the `monitorASns` section).
 
-**Important 1:** for a complete monitoring, configure also the `monitorASns` section. Setting only prefix matching rules is not sufficient: prefix matching rules are based on the longest prefix match, less specific ROAs impacting the prefix will NOT be matched. On the other side, setting only the `monitorASns` section is instead perfectly fine for ROA monitoring purposes.
+**Important 1:** for a complete monitoring, configure also the `monitorASns` section. Setting only prefix matching rules is not sufficient: prefix matching rules are based on the longest prefix match, less specific ROAs impacting the prefix will NOT be matched. On the other hand, setting only the `monitorASns` section is instead perfectly fine for ROA monitoring purposes.
 
-**Important 2:** prefix matching rules have always priorities on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyASns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`; whatever other ROA change impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
+**Important 2:** prefix matching rules have always priority on `monitorASns` rules. If an alert matches both a prefix rule and an AS rule, it will be sent only to the prefix rule, except if the `checkOnlyASns` params is set to true (see parameters below). In the example above, a ROA change impacting `1.2.3.4/24` is only sent to the user group `noc1` and not to `noc2`. Other ROA changes impacting a prefix not in the list (no prefix matching rule) will be sent to `noc2` instead.
 
 **Important 3:** alerts about the generic health status of TAs are generated according to the provided VRP file. This types of alerts are not necessarily related to the monitored resources and they are send to the `default` user group.
 
@@ -411,17 +411,17 @@ Example of alerts:
 
 Parameters for this monitor module:
 
-|Parameter| Description| 
-|---|---|
-|enableDiffAlerts| Enables alerts showing edits impacting ROAs for the monitored resources. Default true|
-|enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.|
-|enableExpirationCheckTA| Enables alerts about TA malfunctions detected when too many ROAs expire in the same TA. Default true.|
-|enableDeletedCheckTA| Enables alerts about TA malfunctions detected when too many ROAs are deleted in the same TA. Default true.|
-|enableAdvancedRpkiStats| Enables RPKI data enrichment on TA malfunction alerts and expiring ROAs alerts. It increases memory usage. Default true.|
-|roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means. |
-|checkOnlyASns| If set to true (default), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above).  If you are monitoring the origin AS of your prefixes, leave this option to true to avoid noise.|
-|toleranceExpiredRoasTA|The percentage of expiring ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
-|toleranceDeletedRoasTA|The percentage of deleted ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.|
+|Parameter| Description                                                                                                                                                                                                                                                                                                                           | 
+|---|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|enableDiffAlerts| Enables alerts showing edits impacting ROAs for the monitored resources. Default true                                                                                                                                                                                                                                                 |
+|enableExpirationAlerts| Enables alerts about expiring ROAs. Default true.                                                                                                                                                                                                                                                                                     |
+|enableExpirationCheckTA| Enables alerts about TA malfunctions detected when too many ROAs expire in the same TA. Default true.                                                                                                                                                                                                                                 |
+|enableDeletedCheckTA| Enables alerts about TA malfunctions detected when too many ROAs are deleted in the same TA. Default true.                                                                                                                                                                                                                            |
+|enableAdvancedRpkiStats| Enables RPKI data enrichment on TA malfunction alerts and expiring ROAs alerts. It increases memory usage. Default true.                                                                                                                                                                                                              |
+|roaExpirationAlertHours| If a ROA is expiring in less than this amount of hours, an alert will be triggered. The default is 2 hours. I strongly suggest to keep this value, ROAs are almost expiring every day, read above what this expiration time means.                                                                                                    |
+|checkOnlyASns| If set to true (default), ROAs diff alerts will be generated based only on the ASns contained in the `monitorASns` of `prefixes.yml`. This means that no ROA diffs will be matched against prefix matching rules (see example above).  If you are monitoring the origin AS of your prefixes, leave this option to true to avoid noise. |
+|toleranceExpiredRoasTA| The percentage of expiring ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.                                                                                                                                                                                                                        |
+|toleranceDeletedRoasTA| The percentage of deleted ROAs in a single TA tolerated before triggering a TA malfunction alert. Default 20.                                                                                                                                                                                                                         |
 
 #### monitorPathNeighbors
 
