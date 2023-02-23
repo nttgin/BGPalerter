@@ -185,14 +185,19 @@ Parameters for this report module:
 This report module sends alerts directly to a specific Matrix room.
 To send alert to Matrix you need an access token and a room ID.
 
+You can find your access token in the Element client by going to All Settings > Help & About > Advanced. Read more about access tokens [here](https://spec.matrix.org/v1.6/client-server-api/#using-access-tokens).
+
+You can find the room ID in the Element client by going to Room info > Room Settings > Advanced. Read more about Room ID [here](https://spec.matrix.org/latest/#room-structure).
+
 Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
-|homeserverUrl:| URL of your Matrix homeserver (for example: `https://matrix.org` |
+|homeserverUrl| URL of your Matrix homeserver (for example: `https://matrix.org`. |
 |noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|roomIds| A dictionary containing chat IDs grouped by user group (key: group, value: room ID).| 
+|accessToken| The access token for authentication yourself to the Matrix API. |
+|roomIds| A dictionary containing chat IDs grouped by user group (key: group, value: room ID). |
 |roomIds.default| The room ID of the default room.| 
 
 
