@@ -125,9 +125,10 @@ export default class Config {
                 compressOnRotation: false,
             },
             rpki: {
-                vrpProvider: "ntt",
+                vrpProvider: "rpkiclient",
                 preCacheROAs: true,
-                refreshVrpListMinutes: 15
+                refreshVrpListMinutes: 15,
+                markDataAsStaleAfterMinutes: 120
             },
             rest: {
                 host: "localhost",

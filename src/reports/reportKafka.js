@@ -65,7 +65,7 @@ export default class ReportKafka extends Report {
             this.client = new Kafka({
                 logLevel: logLevel.ERROR,
                 clientId: this.clientId,
-                brokers: [].concat.apply([], [this.host])
+                brokers: [this.host].flat()
             });
 
             this.producer = this.client.producer();
