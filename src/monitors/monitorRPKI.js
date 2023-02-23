@@ -105,7 +105,7 @@ export default class MonitorRPKI extends Monitor {
     _validate = (result, message, matchedRule) => {
         const prefix = result.prefix;
         const origin = result.origin.getValue();
-        if (result) {
+        if (result && !this.rpki.getStatus().stale) {
 
             const cacheKey = "a" + [prefix, origin]
                 .join("-")
@@ -124,7 +124,7 @@ export default class MonitorRPKI extends Monitor {
                         matchedRule,
                         message,
                         { covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
-                } else if (this.params.checkUncovered && !this.rpki.getStatus().stale) {
+                } else if (this.params.checkUncovered) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,
