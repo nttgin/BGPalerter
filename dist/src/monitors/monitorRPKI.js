@@ -65,7 +65,7 @@ var MonitorRPKI = /*#__PURE__*/function (_Monitor) {
     _defineProperty(_assertThisInitialized(_this), "_validate", function (result, message, matchedRule) {
       var prefix = result.prefix;
       var origin = result.origin.getValue();
-      if (result) {
+      if (result && !_this.rpki.getStatus().stale) {
         var cacheKey = "a" + [prefix, origin].join("-").replace(/\./g, "_").replace(/\:/g, "_").replace(/\//g, "_");
         var key = "".concat(cacheKey, "-").concat(result.valid);
         if (result.valid === null) {
@@ -78,7 +78,7 @@ var MonitorRPKI = /*#__PURE__*/function (_Monitor) {
               roaDisappeared: true,
               subType: "rpki-disappear"
             });
-          } else if (_this.params.checkUncovered && !_this.rpki.getStatus().stale) {
+          } else if (_this.params.checkUncovered) {
             _this.publishAlert(key, prefix, matchedRule, message, {
               covering: null,
               valid: null,

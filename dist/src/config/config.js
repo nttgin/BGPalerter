@@ -110,7 +110,7 @@ var Config = /*#__PURE__*/_createClass(function Config(params) {
         enableExpirationAlerts: true,
         enableExpirationCheckTA: true,
         enableDeletedCheckTA: true,
-        enableAdvancedRpkiStats: true,
+        enableAdvancedRpkiStats: false,
         roaExpirationAlertHours: 2,
         checkOnlyASns: true,
         toleranceDeletedRoasTA: 20,

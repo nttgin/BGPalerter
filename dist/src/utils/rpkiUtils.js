@@ -160,7 +160,8 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
         prefix: message.prefix,
         origin: message.originAS
       };
-    })).then(function (results) {
+    })).then(function () {
+      var results = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
       var _iterator2 = _createForOfIteratorHelper(results),
         _step2;
       try {
@@ -219,7 +220,8 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
         return Promise.all(origins.map(function (asn) {
           return _this.rpki.validate(prefix, asn, true);
         })) // Validate each origin
-        .then(function (results) {
+        .then(function () {
+          var results = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
           if (results.length === 1) {
             // Only one result = only one origin, just return
             return _objectSpread(_objectSpread({}, results[0]), {}, {
