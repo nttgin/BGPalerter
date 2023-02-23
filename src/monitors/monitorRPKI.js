@@ -105,7 +105,7 @@ export default class MonitorRPKI extends Monitor {
     _validate = (result, message, matchedRule) => {
         const prefix = result.prefix;
         const origin = result.origin.getValue();
-        if (result) {
+        if (result && !this.rpki.getStatus().stale) {
 
             const cacheKey = "a" + [prefix, origin]
                 .join("-")

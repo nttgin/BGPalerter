@@ -1,11 +1,11 @@
-# Send alerts with POST requests
+# Send alerts with HTTP requests
 
-BGPalerter can send alerts by means of POST requests to a provided URL.
-This can be done by configuring the module reportHTTP. Read [here](configuration.md#reporthttp) to understand how.
+BGPalerter can send alerts by means of HTTP requests to a provided URL.
+This can be done by configuring the module reportHTTP. Read [here](reports.md#reportHTTP) to understand how.
 
 For configuring reportHTTP, essentially you need to specify two things:
 * The URL
-* A template of the POST request.
+* A template of the request.
 
 If you are using [user groups](usergroups.md), you can specify a URL for every user group. This can be done inside `hooks`, a dictionary containing API URLs grouped by user group (key: group, value: URL).
 The default user group is mandatory.  

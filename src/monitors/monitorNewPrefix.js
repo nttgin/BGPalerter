@@ -56,7 +56,7 @@ export default class MonitorNewPrefix extends Monitor {
             const message = alerts[0].matchedMessage;
             const matchedRule = alerts[0].matchedRule;
 
-            return `Possible change of configuration. A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description})`;
+            return `A new prefix ${message.prefix} is announced by ${message.originAS}. It is a more specific of ${matchedRule.prefix} (${matchedRule.description}). Maybe you need to update your BGPalerter prefix list.`;
         }
 
         return false;

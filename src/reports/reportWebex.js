@@ -41,7 +41,7 @@ export default class ReportWebex extends Report {
         if (!this.getUserGroup("default")) {
             this.logger.log({
                 level: 'error',
-                message: `Webex reporting is not enabled: no default group defined`
+                message: `Webex is not enabled: no default group defined`
             });
             this.enabled = false;
         }

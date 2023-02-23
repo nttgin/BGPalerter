@@ -20,6 +20,7 @@ This will generate fake alerts. [Read more here](installation.md#bgpalerter-para
 - [reportHTTP](reports.md#reportHTTP)
 - [reportTelegram](reports.md#reportTelegram)
 - [reportPullAPI](reports.md#reportPullAPI)
+- [reportMatrix](reports.md#reportMatrix)
 
 ## reportFile
 
@@ -130,15 +131,16 @@ This report module sends alerts on a generic HTTP end-point.
 
 Parameters for this report module:
 
-|Parameter| Description| 
-|---|---|
-|hooks| A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
-|hooks.default| The URL of the default user group.| 
-|templates| A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
-|isTemplateJSON| A boolean defining if the template provided above are JSON or plain string |
-|headers| Additional headers to use in the GET request. For example for authentication.|
-|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
+| Parameter      | Description| 
+|----------------|---|
+| hooks          | A dictionary containing API URLs grouped by user group (key: group, value: URL).| 
+| hooks.default  | The URL of the default user group.| 
+| templates      | A dictionary containing string templates for each channels. If a channel doesn't have a template defined, the `default` template will be used (see `config.yml.example` for more details). Read [here](context.md) how to write a template. |
+| noProxy        | If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+| isTemplateJSON | A boolean defining if the template provided above are JSON or plain string |
+| headers        | Additional headers to use in the GET request. For example for authentication.|
+| showPaths      | Amount of AS_PATHs to report in the alert (0 to disable). | 
+| method         | One of `post`, `put`, `patch`, `delete`. Default to `post`. |
 
 [See here some examples of how to adapt reportHTTP to some common applications.](report-http.md)
 
@@ -171,10 +173,31 @@ This report module creates a REST API reachable at `http://host:port/alerts/`. T
 
 The REST API uses the generic `rest` configuration in `config.yml`. Read [here](configuration.md) or see `config.yml.example` for more information.
 
-
 Parameters for this report module:
 
 |Parameter| Description| 
 |---|---|
 |maxAlertsAmount| The maximum amount of alerts the API will return. By default set to 100. Don't exagerate with the number, the greater this value is the more memory BGPalerter will use. |
 |noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+
+## reportMatrix
+
+This report module sends alerts directly to a specific Matrix room.
+To send alert to Matrix you need an access token and a room ID.
+
+You can find your access token in the Element client by going to All Settings > Help & About > Advanced. Read more about access tokens [here](https://spec.matrix.org/v1.6/client-server-api/#using-access-tokens).
+
+You can find the room ID in the Element client by going to Room info > Room Settings > Advanced. Read more about Room ID [here](https://spec.matrix.org/latest/#room-structure).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
+|homeserverUrl| URL of your Matrix homeserver (for example: `https://matrix.org`. |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
+|accessToken| The access token for authentication yourself to the Matrix API. |
+|roomIds| A dictionary containing chat IDs grouped by user group (key: group, value: room ID). |
+|roomIds.default| The room ID of the default room.| 
+
+Thanks to [@nickbouwhuis](https://github.com/nttgin/BGPalerter/pull/1043).

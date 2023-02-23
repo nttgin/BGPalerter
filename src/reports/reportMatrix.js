@@ -31,52 +31,66 @@
  */
 
 import ReportHTTP from "./reportHTTP";
+import { v4 as uuidv4 } from 'uuid';
+import brembo from "brembo";
 
-export default class reportTelegram extends ReportHTTP {
-
+export default class reportMatrix extends ReportHTTP {
     constructor(channels, params, env) {
         const hooks = {};
 
-        for (let userGroup in params.chatIds) {
-            hooks[userGroup] = params.botUrl;
+        for (let userGroup in params?.roomIds ?? []) {
+            hooks[userGroup] = brembo.build(params?.homeserverUrl, {
+                path: ["_matrix", "client", "v3", "rooms", encodeURIComponent(params?.roomIds[userGroup]), "send", "m.room.message"]
+            });
         }
-        hooks["default"] = params.botUrl;
 
-        const telegramParams = {
-            headers: {},
+        const matrixParams = {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + params.accessToken
+            },
             isTemplateJSON: true,
             showPaths: params.showPaths,
             hooks: hooks,
-            name: "reportTelegram",
+            name: "reportMatrix",
+            method: "put",
             templates: {}
         };
 
-        super(channels, telegramParams, env);
-        this.chatIds = params.chatIds;
+        super(channels, matrixParams, env);
+        this.roomIds = params.roomIds;
 
-        if (!params.botUrl) {
+        if (!params.homeserverUrl || !params.accessToken) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} is not enabled: no botUrl provided`
+                message: `${this.name} reporting is not enabled: homeserverUrl and accessToken are required`
             });
             this.enabled = false;
         }
 
-        if (!params.chatIds || !params.chatIds["default"]) {
+        if (!params.roomIds || !params.roomIds["default"]) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} is not enabled: no default chat id provided`
+                message: `${this.name} reporting is not enabled: no default room id provided`
             });
             this.enabled = false;
         }
+    };
+
+    getUserGroup = (group) => {
+
+        const transactionId = uuidv4();
+        const groups = this.params.hooks || this.params.userGroups || {};
+        const baseUrl = groups[group] || groups["default"];
+
+        return brembo.build(baseUrl, {path: [transactionId]})
     };
 
     getTemplate = (group, channel, content) => {
         return JSON.stringify({
-            "chat_id": this.chatIds[group] || this.chatIds["default"],
-            "text": "${summary}${markDownUrl}",
-            "parse_mode": 'markdown',
-            "disable_web_page_preview": true
+            "msgtype": "m.text",
+            "body": "${summary}${markDownUrl}",
         });
     };
 }
+
