@@ -32,11 +32,11 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   _classCallCheck(this, RpkiUtils);
   _defineProperty(this, "_loadRpkiValidatorFromVrpProvider", function () {
     if (!_this.rpki) {
-      var _this$config$advanced;
+      var _this$params$advanced;
       var rpkiValidatorOptions = {
         connector: _this.params.vrpProvider,
         clientId: _this.clientId,
-        advancedStatsRefreshRateMinutes: (_this$config$advanced = _this.config.advancedStatsRefreshRateMinutes) !== null && _this$config$advanced !== void 0 ? _this$config$advanced : 120,
+        advancedStatsRefreshRateMinutes: (_this$params$advanced = _this.params.advancedStatsRefreshRateMinutes) !== null && _this$params$advanced !== void 0 ? _this$params$advanced : 120,
         axios: (0, _axiosEnrich["default"])(_axios["default"], !_this.params.noProxy && _this.agent ? _this.agent : null, _this.userAgent)
       };
       if (_this.params.url) {
