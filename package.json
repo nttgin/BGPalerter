@@ -75,7 +75,7 @@
     "nodemailer": "^6.9.1",
     "path": "^0.12.7",
     "restify": "github:massimocandela/node-restify",
-    "rpki-validator": "^2.12.2",
+    "rpki-validator": "^2.12.4",
     "semver": "^7.3.8",
     "syslog-client": "^1.1.1",
     "uuid": "^9.0.0",

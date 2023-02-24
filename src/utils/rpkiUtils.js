@@ -80,6 +80,7 @@ export default class RpkiUtils {
             const rpkiValidatorOptions = {
                 connector: this.params.vrpProvider,
                 clientId: this.clientId,
+                advancedStatsRefreshRateMinutes: this.config.advancedStatsRefreshRateMinutes ?? 120,
                 axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
             };
 
