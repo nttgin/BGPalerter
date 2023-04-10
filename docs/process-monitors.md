@@ -11,8 +11,6 @@ processMonitors:
     params:
       useStatusCodes: true
   - file: prefixes
-    params:
-      useStatusCodes: true
   - file: uptimeHealthcheck
     params:
       url: url_to_poll
@@ -137,8 +135,7 @@ The prefixes module enables an API to retrieve the current list of prefixes bein
 
 By default the API is reachable at `http://localhost:8011/prefixes`.
 
-The following is an example of the API output.
-
+Output looks like this:
 ```
 ["1.1.1.1/22","4.4.4.4/24"]
 ```
@@ -148,22 +145,4 @@ In `config.yml` you can enabled `prefixes` with:
 ```yaml
 processMonitors:
   - file: prefixes
-    params:
-      useStatusCodes: true
 ```
-
-The REST API uses the generic `rest` configuration in `config.yml`. Read [here](configuration.md) or see `config.yml.example` for more information.
-The REST configuration is by default:
-```yaml
-rest:
-  host: localhost
-  port: 8011
-```
-
-The API, in addition to the JSON answer, can use HTTP status codes for an easier integration with Nagios and similar.
-
-Parameters for this module are:
-
-|Parameter| Description| 
-|---|---|
-|useStatusCodes| A boolean that if set to true enables HTTP status codes in the response. Nothing changes in the JSON output provided by the API. |

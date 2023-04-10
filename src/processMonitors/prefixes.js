@@ -55,10 +55,6 @@ export default class PrefixApi extends Uptime {
 
     respond = (_, res, next) => {
         res.contentType = 'json';
-        const response = this.getCurrentStatus();
-        if (this.params.useStatusCodes && response.warning) {
-            res.status(500);
-        }
         let prefixes = Object.values(this.connectors.connectors)
             .map(c => c?.subscribed && Object.keys(c.subscribed))
             .flat()

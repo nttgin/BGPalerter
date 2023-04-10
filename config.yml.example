@@ -332,8 +332,6 @@ generatePrefixListEveryDays: 0
 #      useStatusCodes: true
 #
 #  - file: prefixes
-#    params:
-#      useStatusCodes: true
 #
 #  - file: uptimeHealthcheck
 #    params:
