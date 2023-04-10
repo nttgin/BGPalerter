@@ -331,6 +331,10 @@ generatePrefixListEveryDays: 0
 #    params:
 #      useStatusCodes: true
 #
+#  - file: prefixes
+#    params:
+#      useStatusCodes: true
+#
 #  - file: uptimeHealthcheck
 #    params:
 #      url: url_to_poll
