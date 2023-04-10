@@ -41,9 +41,17 @@ export default class UptimeApi extends Uptime {
         this.server = null;
         this.connectors = connectors;
         let restDefault = env.config.rest || { port: params.port, host: params.host };
+
         const rest = new RestApi(restDefault);
 
-        rest.addUrl('/status', this.respond)
+        rest.addUrl('/status', this.status)
+            .catch(error => {
+                env.logger.log({
+                    level: 'error',
+                    message: error
+                });
+            });
+        rest.addUrl('/prefixes', this.prefixes)
             .catch(error => {
                 env.logger.log({
                     level: 'error',
@@ -52,7 +60,7 @@ export default class UptimeApi extends Uptime {
             });
     };
 
-    respond = (req, res, next) => {
+    status = (req, res, next) => {
         res.contentType = 'json';
         const response = this.getCurrentStatus();
         if (this.params.useStatusCodes && response.warning) {
@@ -62,6 +70,18 @@ export default class UptimeApi extends Uptime {
         next();
     };
 
+    prefixes = (_, res, next) => {
+        res.contentType = 'json';
+        const response = this.getCurrentStatus();
+        if (this.params.useStatusCodes && response.warning) {
+            res.status(500);
+        }
+        let _prefixes = Object.values(this.connectors.connectors)
+            .map(c => c?.subscribed && Object.keys(c.subscribed))
+            .flat();
+        res.send(_prefixes.filter(i => i != null));
+        next();
+    };
 }
 
 
