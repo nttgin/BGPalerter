@@ -41,7 +41,6 @@ export default class UptimeApi extends Uptime {
         this.server = null;
         this.connectors = connectors;
         let restDefault = env.config.rest || { port: params.port, host: params.host };
-
         const rest = new RestApi(restDefault);
 
         rest.addUrl('/status', this.respond)
@@ -62,6 +61,7 @@ export default class UptimeApi extends Uptime {
         res.send(response);
         next();
     };
+
 }
 
 
