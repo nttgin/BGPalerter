@@ -1,5 +1,6 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -10,7 +11,6 @@ var _model = require("../model");
 var _brembo = _interopRequireDefault(require("brembo"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
@@ -30,7 +30,37 @@ function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread n
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; } /*
+                                                                                                                                                                                     * 	BSD 3-Clause License
+                                                                                                                                                                                     *
+                                                                                                                                                                                     * Copyright (c) 2019, NTT Ltd.
+                                                                                                                                                                                     * All rights reserved.
+                                                                                                                                                                                     *
+                                                                                                                                                                                     * Redistribution and use in source and binary forms, with or without
+                                                                                                                                                                                     * modification, are permitted provided that the following conditions are met:
+                                                                                                                                                                                     *
+                                                                                                                                                                                     *  Redistributions of source code must retain the above copyright notice, this
+                                                                                                                                                                                     *   list of conditions and the following disclaimer.
+                                                                                                                                                                                     *
+                                                                                                                                                                                     *  Redistributions in binary form must reproduce the above copyright notice,
+                                                                                                                                                                                     *   this list of conditions and the following disclaimer in the documentation
+                                                                                                                                                                                     *   and/or other materials provided with the distribution.
+                                                                                                                                                                                     *
+                                                                                                                                                                                     *  Neither the name of the copyright holder nor the names of its
+                                                                                                                                                                                     *   contributors may be used to endorse or promote products derived from
+                                                                                                                                                                                     *   this software without specific prior written permission.
+                                                                                                                                                                                     *
+                                                                                                                                                                                     * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+                                                                                                                                                                                     * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+                                                                                                                                                                                     * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+                                                                                                                                                                                     * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+                                                                                                                                                                                     * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+                                                                                                                                                                                     * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+                                                                                                                                                                                     * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+                                                                                                                                                                                     * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+                                                                                                                                                                                     * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+                                                                                                                                                                                     * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+                                                                                                                                                                                     */
 var beacons = {
   v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24", "84.205.70.0/24", "84.205.71.0/24", "84.205.74.0/24", "84.205.75.0/24", "84.205.76.0/24", "84.205.77.0/24", "84.205.78.0/24", "84.205.79.0/24", "84.205.73.0/24", "84.205.82.0/24", "93.175.149.0/24", "93.175.151.0/24", "93.175.153.0/24"],
   v6: ["2001:7FB:FE00::/48", "2001:7FB:FE01::/48", "2001:7FB:FE03::/48", "2001:7FB:FE04::/48", "2001:7FB:FE05::/48", "2001:7FB:FE06::/48", "2001:7FB:FE07::/48", "2001:7FB:FE0A::/48", "2001:7FB:FE0B::/48", "2001:7FB:FE0C::/48", "2001:7FB:FE0D::/48", "2001:7FB:FE0E::/48", "2001:7FB:FE0F::/48", "2001:7FB:FE10::/48", "2001:7FB:FE12::/48", "2001:7FB:FE13::/48", "2001:7FB:FE14::/48", "2001:7FB:FE15::/48", "2001:7FB:FE16::/48", "2001:7FB:FE17::/48", "2001:7FB:FE18::/48"]
@@ -321,91 +351,86 @@ exports["default"] = ConnectorRIS;
 _defineProperty(ConnectorRIS, "transform", function (message) {
   if (message.type === 'ris_message') {
     try {
-      var _ret = function () {
-        message = message.data;
-        var components = [];
-        var announcements = message["announcements"] || [];
-        var aggregator = message["aggregator"] || null;
-        var possibleRIS = message["possibleRIS"] || false;
-        var withdrawals = (message["withdrawals"] || []).filter(function (prefix) {
-          return acceptPrefix(prefix, possibleRIS);
-        });
-        var peer = message["peer"];
-        var communities = message["community"] || [];
-        var timestamp = message["timestamp"] * 1000;
-        var path, originAS;
-        if (message["path"] && message["path"].length) {
-          path = new _model.Path(message["path"].map(function (i) {
-            return new _model.AS(i);
-          }));
-          originAS = path.getLast();
-        } else {
-          path = new _model.Path([]);
-          originAS = null;
-        }
-        if (originAS && path.length()) {
-          var _iterator = _createForOfIteratorHelper(announcements),
-            _step;
-          try {
-            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-              var announcement = _step.value;
-              var nextHop = announcement["next_hop"];
-              if (_ipSub["default"].isValidIP(nextHop)) {
-                var prefixes = (announcement["prefixes"] || []).filter(function (prefix) {
-                  return acceptPrefix(prefix, possibleRIS);
-                });
-                var _iterator2 = _createForOfIteratorHelper(prefixes),
-                  _step2;
-                try {
-                  for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                    var prefix = _step2.value;
-                    components.push({
-                      type: "announcement",
-                      prefix: prefix,
-                      peer: peer,
-                      path: path,
-                      originAS: originAS,
-                      nextHop: nextHop,
-                      aggregator: aggregator,
-                      timestamp: timestamp,
-                      communities: communities
-                    });
-                  }
-                } catch (err) {
-                  _iterator2.e(err);
-                } finally {
-                  _iterator2.f();
+      message = message.data;
+      var components = [];
+      var announcements = message["announcements"] || [];
+      var aggregator = message["aggregator"] || null;
+      var possibleRIS = message["possibleRIS"] || false;
+      var withdrawals = (message["withdrawals"] || []).filter(function (prefix) {
+        return acceptPrefix(prefix, possibleRIS);
+      });
+      var peer = message["peer"];
+      var communities = message["community"] || [];
+      var timestamp = message["timestamp"] * 1000;
+      var path, originAS;
+      if (message["path"] && message["path"].length) {
+        path = new _model.Path(message["path"].map(function (i) {
+          return new _model.AS(i);
+        }));
+        originAS = path.getLast();
+      } else {
+        path = new _model.Path([]);
+        originAS = null;
+      }
+      if (originAS && path.length()) {
+        var _iterator = _createForOfIteratorHelper(announcements),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var announcement = _step.value;
+            var nextHop = announcement["next_hop"];
+            if (_ipSub["default"].isValidIP(nextHop)) {
+              var prefixes = (announcement["prefixes"] || []).filter(function (prefix) {
+                return acceptPrefix(prefix, possibleRIS);
+              });
+              var _iterator2 = _createForOfIteratorHelper(prefixes),
+                _step2;
+              try {
+                for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                  var prefix = _step2.value;
+                  components.push({
+                    type: "announcement",
+                    prefix: prefix,
+                    peer: peer,
+                    path: path,
+                    originAS: originAS,
+                    nextHop: nextHop,
+                    aggregator: aggregator,
+                    timestamp: timestamp,
+                    communities: communities
+                  });
                 }
+              } catch (err) {
+                _iterator2.e(err);
+              } finally {
+                _iterator2.f();
               }
             }
-          } catch (err) {
-            _iterator.e(err);
-          } finally {
-            _iterator.f();
-          }
-        }
-        var _iterator3 = _createForOfIteratorHelper(withdrawals),
-          _step3;
-        try {
-          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-            var _prefix = _step3.value;
-            components.push({
-              type: "withdrawal",
-              prefix: _prefix,
-              peer: peer,
-              timestamp: timestamp
-            });
           }
         } catch (err) {
-          _iterator3.e(err);
+          _iterator.e(err);
         } finally {
-          _iterator3.f();
+          _iterator.f();
         }
-        return {
-          v: components
-        };
-      }();
-      if (_typeof(_ret) === "object") return _ret.v;
+      }
+      var _iterator3 = _createForOfIteratorHelper(withdrawals),
+        _step3;
+      try {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+          var _prefix = _step3.value;
+          components.push({
+            type: "withdrawal",
+            prefix: _prefix,
+            peer: peer,
+            timestamp: timestamp
+          });
+        }
+      } catch (err) {
+        _iterator3.e(err);
+      } finally {
+        _iterator3.f();
+      }
+      return components;
     } catch (error) {
       throw new Error("Error during transform (".concat(ConnectorRIS.name, "): ") + error.message);
     }
