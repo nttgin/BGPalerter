@@ -51,8 +51,8 @@ describe("RPKI monitoring external", function() {
     it("ROA diff and expiration - external connector", function (done) {
 
         const expectedData = {
-            "disappeared-ripe": {
-                id: 'disappeared-ripe',
+            "disappeared-ripe-60.00": {
+                id: 'disappeared-ripe-60.00',
                 truncated: false,
                 origin: 'roa-monitor',
                 affected: 'ripe',
