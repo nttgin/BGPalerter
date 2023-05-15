@@ -87,7 +87,7 @@ export default class MonitorROAS extends Monitor {
                     if (percentage > this.toleranceDeletedRoasTA) {
                         const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
 
-                        this.publishAlert(`disappeared-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(`disappeared-${ta}-${percentage}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             ta,
                             {group: "default"},
                             message,
