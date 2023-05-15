@@ -87,7 +87,7 @@ export default class MonitorROAS extends Monitor {
                     if (percentage > this.toleranceDeletedRoasTA) {
                         const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
 
-                        this.publishAlert(`disappeared-${ta}-${percentage}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(`disappeared-${ta}-${parseInt(percentage)}`,
                             ta,
                             {group: "default"},
                             message,
@@ -122,7 +122,7 @@ export default class MonitorROAS extends Monitor {
                         const metadata = this.rpki.getMetadata();
                         const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs are expiring in ${ta}`;
 
-                        this.publishAlert(`expiring-${ta}`, // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(`expiring-${ta}-${parseInt(percentage)}`,
                             ta,
                             {group: "default"},
                             message,
