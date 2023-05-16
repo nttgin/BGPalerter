@@ -83,7 +83,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
             var percentage = 100 / max * _diff;
             if (percentage > _this.toleranceDeletedRoasTA) {
               var message = "Possible TA malfunction or incomplete VRP file: ".concat(percentage.toFixed(2), "% of the ROAs disappeared from ").concat(ta);
-              _this.publishAlert("disappeared-".concat(ta, "-").concat(parseInt(percentage)), ta, {
+              _this.publishAlert("disappeared-".concat(ta), ta, {
                 group: "default"
               }, message, {
                 rpkiMetadata: metadata,
@@ -113,7 +113,7 @@ var MonitorROAS = /*#__PURE__*/function (_Monitor) {
           _this._getExpiringItems(currentTaVrps).then(function (extra) {
             var metadata = _this.rpki.getMetadata();
             var message = "Possible TA malfunction or incomplete VRP file: ".concat(percentage.toFixed(2), "% of the ROAs are expiring in ").concat(ta);
-            _this.publishAlert("expiring-".concat(ta, "-").concat(parseInt(percentage)), ta, {
+            _this.publishAlert("expiring-".concat(ta), ta, {
               group: "default"
             }, message, _objectSpread(_objectSpread({}, extra), {}, {
               subType: "ta-expire",
