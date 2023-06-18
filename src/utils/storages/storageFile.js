@@ -8,7 +8,7 @@ export default class StorageFile extends Storage{
         this.enabled = true;
         try {
             if (!fs.existsSync(this.directory)) {
-                fs.mkdirSync(this.directory);
+                fs.mkdirSync(this.directory, { recursive: true });
             }
         } catch(error) {
             this.enabled = false;
