@@ -42,10 +42,10 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume);
+    fs.mkdirSync(volume, { recursive: true });
 } else {
     fs.rmdirSync(volume, { recursive: true });
-    fs.mkdirSync(volume);
+    fs.mkdirSync(volume, { recursive: true });
 }
 fs.copyFileSync("tests/neighbor_tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/neighbor_tests/prefixes.test.yml", volume + "prefixes.test.yml");

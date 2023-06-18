@@ -76,7 +76,7 @@ if (config.volume && config.volume.length) {
     }
 
     if (!fs.existsSync(config.volume)) {
-        fs.mkdirSync(config.volume);
+        fs.mkdirSync(config.volume, { recursive: true });
     }
 }
 

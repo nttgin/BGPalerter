@@ -60,7 +60,7 @@ export default class ReportFile extends Report {
             const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
 
             if (!fs.existsSync(this.alertsDirectory)) {
-                fs.mkdirSync(this.alertsDirectory);
+                fs.mkdirSync(this.alertsDirectory, { recursive: true });
             }
 
             fs.writeFileSync(filename, JSON.stringify(message));
