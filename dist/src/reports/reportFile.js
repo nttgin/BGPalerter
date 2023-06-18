@@ -68,7 +68,9 @@ var ReportFile = /*#__PURE__*/function (_Report) {
         _this.latestTimestamps = _this.latestTimestamps.slice(-_this.timestampsBacklogSize);
         var filename = "".concat(_this.alertsDirectory, "/alert-").concat(timestamp, "-").concat(count, ".json");
         if (!_fs["default"].existsSync(_this.alertsDirectory)) {
-          _fs["default"].mkdirSync(_this.alertsDirectory);
+          _fs["default"].mkdirSync(_this.alertsDirectory, {
+            recursive: true
+          });
         }
         _fs["default"].writeFileSync(filename, JSON.stringify(message));
       } catch (error) {

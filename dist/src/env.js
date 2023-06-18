@@ -77,7 +77,9 @@ if (config.volume && config.volume.length) {
     config.volume += "/";
   }
   if (!_fs["default"].existsSync(config.volume)) {
-    _fs["default"].mkdirSync(config.volume);
+    _fs["default"].mkdirSync(config.volume, {
+      recursive: true
+    });
   }
 }
 if (!config.configVersion || config.configVersion < _config["default"].configVersion) {

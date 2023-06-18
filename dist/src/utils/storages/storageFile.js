@@ -65,7 +65,9 @@ var StorageFile = /*#__PURE__*/function (_Storage) {
     _this.enabled = true;
     try {
       if (!_fs["default"].existsSync(_this.directory)) {
-        _fs["default"].mkdirSync(_this.directory);
+        _fs["default"].mkdirSync(_this.directory, {
+          recursive: true
+        });
       }
     } catch (error) {
       _this.enabled = false;
