@@ -84,11 +84,21 @@ if (!config.configVersion || config.configVersion < Config.configVersion) {
     console.log("Your config.yml file is old. It works, but it may not support all the new features. Update your config file or generate a new one (e.g., rename the file into config.yml.bak, run BGPalerter and proceed with the auto configuration, apply to the new config.yml the personalizations you did in config.yml.bak.");
 }
 
+const loggingDirectory = config.volume + config.logging.directory;
+
+try {
+    if (!fs.existsSync(loggingDirectory)) {
+        fs.mkdirSync(loggingDirectory, { recursive: true });
+    }
+} catch(error) {
+    console.log(error);
+}
+
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'error-%DATE%.log',
     symLink: 'error.log',
-    directory: config.volume + config.logging.directory,
+    directory: loggingDirectory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
@@ -101,7 +111,7 @@ const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
     filename: 'reports-%DATE%.log',
     symLink: 'reports.log',
-    directory: config.volume + config.logging.directory,
+    directory: loggingDirectory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
     compressOnRotation: config.logging.compressOnRotation,
