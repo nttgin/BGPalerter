@@ -58,7 +58,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.43.0",
+    "@sentry/node": "^7.57.0",
     "axios": "=0.27.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.1.0",
@@ -75,8 +75,8 @@
     "nodemailer": "^6.9.3",
     "path": "^0.12.7",
     "restify": "github:massimocandela/node-restify",
-    "rpki-validator": "^2.12.8",
-    "semver": "^7.5.1",
+    "rpki-validator": "^2.12.9",
+    "semver": "^7.5.3",
     "syslog-client": "^1.1.1",
     "uuid": "^9.0.0",
     "ws": "^8.13.0",
