@@ -40,7 +40,7 @@ const asyncTimeout = 20000;
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume);
+    fs.mkdirSync(volume, { recursive: true });
 }
 fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");

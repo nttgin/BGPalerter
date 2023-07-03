@@ -58,4 +58,5 @@ Please, let me know so I can add your company name here.
 * IT-Total (AS8769)
 * Speakup (AS49627)
 * Nick Bouwhuis (AS202585)
+* IX.br (AS26162, AS263044, AS20121)
 * Cyberfusion (AS204983)

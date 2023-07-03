@@ -76,7 +76,8 @@ module.exports = function generatePrefixes(inputParameters) {
             path: ["data", "asn-neighbours", "data.json"],
             params: {
                 client: clientId,
-                resource: asn
+                resource: asn,
+                lod: 0
             }
         });
 
