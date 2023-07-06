@@ -230,7 +230,9 @@ export default class RpkiUtils {
     };
 
     addToValidationQueue = (message, matchedRule, callback) => {
-        this.queue.push({ message, matchedRule, callback });
+        if (message.originAS && message.prefix) {
+            this.queue.push({message, matchedRule, callback});
+        }
     };
 
     validate = (prefix, origin) => {
