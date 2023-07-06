@@ -71,6 +71,8 @@ export class AS {
             }
 
             AS._instances[key] = this;
+        } else {
+            throw new Error("Not valid AS number");
         }
     }
 
