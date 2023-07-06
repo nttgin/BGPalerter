@@ -199,11 +199,13 @@ var RpkiUtils = /*#__PURE__*/_createClass(function RpkiUtils(env) {
     });
   });
   _defineProperty(this, "addToValidationQueue", function (message, matchedRule, callback) {
-    _this.queue.push({
-      message: message,
-      matchedRule: matchedRule,
-      callback: callback
-    });
+    if (message.originAS && message.prefix) {
+      _this.queue.push({
+        message: message,
+        matchedRule: matchedRule,
+        callback: callback
+      });
+    }
   });
   _defineProperty(this, "validate", function (prefix, origin) {
     return _this.validateBatch([{

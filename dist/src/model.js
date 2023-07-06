@@ -99,6 +99,8 @@ var AS = /*#__PURE__*/function () {
         return AS._instances[key];
       }
       AS._instances[key] = this;
+    } else {
+      throw new Error("Not valid AS number");
     }
   }
   _createClass(AS, [{
