@@ -44,13 +44,13 @@
     "measurements"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.22.10",
-    "@babel/core": "^7.22.11",
-    "@babel/node": "^7.22.10",
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.0",
+    "@babel/node": "^7.22.19",
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
-    "@babel/preset-env": "^7.22.14",
-    "chai": "^4.3.8",
+    "@babel/preset-env": "^7.22.20",
+    "chai": "^4.3.9",
     "chai-subset": "^1.6.0",
     "mocha": "^10.2.0",
     "pkg": "^5.8.1",
@@ -58,7 +58,7 @@
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.66.0",
+    "@sentry/node": "^7.72.0",
     "axios": "=0.27.2",
     "batch-promises": "^0.0.3",
     "brembo": "^2.1.0",
@@ -72,14 +72,14 @@
     "md5": "^2.3.0",
     "moment": "^2.29.4",
     "node-cleanup": "^2.1.2",
-    "nodemailer": "^6.9.4",
+    "nodemailer": "^6.9.5",
     "path": "^0.12.7",
     "restify": "github:massimocandela/node-restify",
     "rpki-validator": "^2.13.1",
     "semver": "^7.5.4",
     "syslog-client": "^1.1.1",
-    "uuid": "^9.0.0",
-    "ws": "^8.13.0",
+    "uuid": "^9.0.1",
+    "ws": "^8.14.2",
     "yargs": "^17.7.2"
   },
   "pkg": {
