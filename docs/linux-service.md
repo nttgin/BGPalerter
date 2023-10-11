@@ -104,7 +104,7 @@ fi
 # Delete log file if larger than 5MB
 find $LOGS -type f -name "upgrade.log" -size +5M -delete
 
-exec 1> $LOGS/upgrade.log 2>&1
+exec 1>> $LOGS/upgrade.log 2>&1
 
 cd $DIR
 
