@@ -37,6 +37,7 @@ export default class MonitorAS extends Monitor {
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
+        this.skipPrefixMatch = !!params?.skipPrefixMatch;
         this.updateMonitoredResources();
     };
 
@@ -84,7 +85,8 @@ export default class MonitorAS extends Monitor {
             if (matchedRule) {
 
                 const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
-                if (!matchedPrefixRule) {
+
+                if (this.skipPrefixMatch || !matchedPrefixRule) {
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
                         matchedRule,
