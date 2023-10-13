@@ -18,7 +18,7 @@ jobs:
         node-version: 18.14.0
 
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 
@@ -54,7 +54,7 @@ jobs:
         node-version: 18.14.0
 
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 
@@ -98,7 +98,7 @@ jobs:
       run: |
         sudo apt-get -y install tar
         sudo apt-get -y install wget
-        wget -O kafka.tgz https://downloads.apache.org/kafka/3.5.0/kafka_2.12-3.5.0.tgz
+        wget -O kafka.tgz https://archive.apache.org/dist/kafka/3.5.0/kafka_2.12-3.5.0.tgz
         mkdir kafka && tar -xzf kafka.tgz -C kafka --strip-components=1
         nohup ./kafka/bin/zookeeper-server-start.sh ./kafka/config/zookeeper.properties &
         nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
