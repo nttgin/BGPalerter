@@ -10,13 +10,13 @@ var _input = _interopRequireDefault(require("./input"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
 var _model = require("../model");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
@@ -63,7 +63,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
                                                                                                                                                                                                                                                                                                                                                                                                * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                                                                                                                                                                                                                                                                                                                                                                                                * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                                                                                                                                                                                                                                                                                                                                */
-var InputYml = /*#__PURE__*/function (_Input) {
+var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
   _inherits(InputYml, _Input);
   var _super = _createSuper(InputYml);
   function InputYml(env) {
@@ -111,78 +111,79 @@ var InputYml = /*#__PURE__*/function (_Input) {
           _step;
         try {
           var _loop = function _loop() {
-            var prefixesFile = _step.value;
-            var file = _this.config.volume + prefixesFile;
-            var monitoredPrefixesFile = {};
-            var fileContent;
-            if (_fs["default"].existsSync(file)) {
-              fileContent = _fs["default"].readFileSync(file, 'utf8');
-              try {
-                monitoredPrefixesFile = _jsYaml["default"].load(fileContent) || {};
-                _this._watchPrefixFile(file);
-              } catch (error) {
-                reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
-                return {
-                  v: void 0
-                };
-              }
-              if (Object.keys(monitoredPrefixesFile).length === 0) {
-                reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/main/docs/prefixes.md"));
-                return {
-                  v: void 0
-                };
-              }
-              if (_this.validate(monitoredPrefixesFile)) {
-                if (monitoredPrefixesFile.options) {
-                  _this.options = Object.assign(_this.options, monitoredPrefixesFile.options);
-                  if (monitoredPrefixesFile.options.monitorASns) {
-                    var newAsnSet = Object.keys(monitoredPrefixesFile.options.monitorASns).map(function (asn) {
-                      if (uniqueAsns[asn]) {
-                        reject(new Error("Duplicate entry for monitored AS " + asn));
-                        return;
-                      }
-                      uniqueAsns[asn] = true;
-                      var item = Object.assign({
-                        asn: new _model.AS(asn),
-                        group: 'default'
-                      }, monitoredPrefixesFile.options.monitorASns[asn]);
-                      if (item.upstreams && item.upstreams.length) {
-                        item.upstreams = new _model.AS(item.upstreams);
-                      }
-                      if (item.downstreams && item.downstreams.length) {
-                        item.downstreams = new _model.AS(item.downstreams);
-                      }
-                      return item;
-                    });
-                    newAsList = newAsList.concat(newAsnSet);
-                  }
+              var prefixesFile = _step.value;
+              var file = _this.config.volume + prefixesFile;
+              var monitoredPrefixesFile = {};
+              var fileContent;
+              if (_fs["default"].existsSync(file)) {
+                fileContent = _fs["default"].readFileSync(file, 'utf8');
+                try {
+                  monitoredPrefixesFile = _jsYaml["default"].load(fileContent) || {};
+                  _this._watchPrefixFile(file);
+                } catch (error) {
+                  reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
+                  return {
+                    v: void 0
+                  };
                 }
-                var monitoredPrefixes = Object.keys(monitoredPrefixesFile).filter(function (i) {
-                  return i !== "options";
-                }).map(function (i) {
-                  if (uniquePrefixes[i]) {
-                    reject(new Error("Duplicate entry for " + i));
-                    return;
+                if (Object.keys(monitoredPrefixesFile).length === 0) {
+                  reject(new Error("No prefixes to monitor in " + prefixesFile + ". Please read https://github.com/nttgin/BGPalerter/blob/main/docs/prefixes.md"));
+                  return {
+                    v: void 0
+                  };
+                }
+                if (_this.validate(monitoredPrefixesFile)) {
+                  if (monitoredPrefixesFile.options) {
+                    _this.options = Object.assign(_this.options, monitoredPrefixesFile.options);
+                    if (monitoredPrefixesFile.options.monitorASns) {
+                      var newAsnSet = Object.keys(monitoredPrefixesFile.options.monitorASns).map(function (asn) {
+                        if (uniqueAsns[asn]) {
+                          reject(new Error("Duplicate entry for monitored AS " + asn));
+                          return;
+                        }
+                        uniqueAsns[asn] = true;
+                        var item = Object.assign({
+                          asn: new _model.AS(asn),
+                          group: 'default'
+                        }, monitoredPrefixesFile.options.monitorASns[asn]);
+                        if (item.upstreams && item.upstreams.length) {
+                          item.upstreams = new _model.AS(item.upstreams);
+                        }
+                        if (item.downstreams && item.downstreams.length) {
+                          item.downstreams = new _model.AS(item.downstreams);
+                        }
+                        return item;
+                      });
+                      newAsList = newAsList.concat(newAsnSet);
+                    }
                   }
-                  uniquePrefixes[i] = true;
-                  monitoredPrefixesFile[i].asn = new _model.AS(monitoredPrefixesFile[i].asn);
-                  return Object.assign({
-                    prefix: i,
-                    group: 'default',
-                    ignore: false,
-                    excludeMonitors: [],
-                    includeMonitors: []
-                  }, monitoredPrefixesFile[i]);
-                }).filter(function (i) {
-                  return i !== null;
-                });
-                newPrefixList = newPrefixList.concat(monitoredPrefixes);
+                  var monitoredPrefixes = Object.keys(monitoredPrefixesFile).filter(function (i) {
+                    return i !== "options";
+                  }).map(function (i) {
+                    if (uniquePrefixes[i]) {
+                      reject(new Error("Duplicate entry for " + i));
+                      return;
+                    }
+                    uniquePrefixes[i] = true;
+                    monitoredPrefixesFile[i].asn = new _model.AS(monitoredPrefixesFile[i].asn);
+                    return Object.assign({
+                      prefix: i,
+                      group: 'default',
+                      ignore: false,
+                      excludeMonitors: [],
+                      includeMonitors: []
+                    }, monitoredPrefixesFile[i]);
+                  }).filter(function (i) {
+                    return i !== null;
+                  });
+                  newPrefixList = newPrefixList.concat(monitoredPrefixes);
+                }
               }
-            }
-          };
+            },
+            _ret;
           for (_iterator.s(); !(_step = _iterator.n()).done;) {
-            var _ret = _loop();
-            if (_typeof(_ret) === "object") return _ret.v;
+            _ret = _loop();
+            if (_ret) return _ret.v;
           }
         } catch (err) {
           _iterator.e(err);
@@ -376,4 +377,3 @@ var InputYml = /*#__PURE__*/function (_Input) {
   }
   return _createClass(InputYml);
 }(_input["default"]);
-exports["default"] = InputYml;

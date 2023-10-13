@@ -8,7 +8,7 @@ var _ipSub = _interopRequireDefault(require("ip-sub"));
 var _inquirer = _interopRequireDefault(require("inquirer"));
 var _generatePrefixesList = _interopRequireDefault(require("../generatePrefixesList"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -52,7 +52,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
                                                                                                                                                                                                                                                                                                                                                                                                * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                                                                                                                                                                                                                                                                                                                                                                                                * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                                                                                                                                                                                                                                                                                                                                */
-var Input = /*#__PURE__*/_createClass(function Input(env) {
+var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   var _this = this;
   _classCallCheck(this, Input);
   _defineProperty(this, "_isAlreadyContained", function (prefix, lessSpecifics) {
@@ -375,4 +375,3 @@ var Input = /*#__PURE__*/_createClass(function Input(env) {
     });
   }, 200);
 });
-exports["default"] = Input;

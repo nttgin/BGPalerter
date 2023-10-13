@@ -1,6 +1,6 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -10,6 +10,7 @@ var _connector = _interopRequireDefault(require("./connector"));
 var _model = require("../model");
 var _brembo = _interopRequireDefault(require("brembo"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
+var _class;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -76,7 +77,7 @@ var acceptPrefix = function acceptPrefix(prefix, possibleRIS) {
     return _ipSub["default"].isEqualPrefix(p, prefix);
   }));
 };
-var ConnectorRIS = /*#__PURE__*/function (_Connector) {
+var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
   _inherits(ConnectorRIS, _Connector);
   var _super = _createSuper(ConnectorRIS);
   function ConnectorRIS(name, _params, env) {
@@ -347,7 +348,7 @@ var ConnectorRIS = /*#__PURE__*/function (_Connector) {
   }
   return _createClass(ConnectorRIS);
 }(_connector["default"]);
-exports["default"] = ConnectorRIS;
+_class = ConnectorRIS;
 _defineProperty(ConnectorRIS, "transform", function (message) {
   if (message.type === 'ris_message') {
     try {
@@ -432,7 +433,7 @@ _defineProperty(ConnectorRIS, "transform", function (message) {
       }
       return components;
     } catch (error) {
-      throw new Error("Error during transform (".concat(ConnectorRIS.name, "): ") + error.message);
+      throw new Error("Error during transform (".concat(_class.name, "): ") + error.message);
     }
   } else if (message.type === 'ris_error') {
     throw new Error("Error from RIS: " + message.data.message);

@@ -10,7 +10,7 @@ var _axios = _interopRequireDefault(require("axios"));
 var _axiosEnrich = _interopRequireDefault(require("../utils/axiosEnrich"));
 var _rpkiValidator = _interopRequireDefault(require("rpki-validator"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -54,7 +54,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
                                                                                                                                                                                                                                                                                                                                                                                                * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                                                                                                                                                                                                                                                                                                                                                                                                * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                                                                                                                                                                                                                                                                                                                                */
-var Report = /*#__PURE__*/_createClass(function Report(channels, params, env) {
+var Report = exports["default"] = /*#__PURE__*/_createClass(function Report(channels, params, env) {
   var _this = this;
   _classCallCheck(this, Report);
   _defineProperty(this, "getBGPlayLink", function (prefix, start, end) {
@@ -104,8 +104,8 @@ var Report = /*#__PURE__*/_createClass(function Report(channels, params, env) {
       var sortedPathIndex;
       if (_this.params.showPaths > 0) {
         content.data.filter(function (i) {
-          var _i$matchedMessage, _i$matchedMessage$pat;
-          return (i === null || i === void 0 ? void 0 : (_i$matchedMessage = i.matchedMessage) === null || _i$matchedMessage === void 0 ? void 0 : (_i$matchedMessage$pat = _i$matchedMessage.path) === null || _i$matchedMessage$pat === void 0 ? void 0 : _i$matchedMessage$pat.length()) > 1;
+          var _i$matchedMessage;
+          return (i === null || i === void 0 || (_i$matchedMessage = i.matchedMessage) === null || _i$matchedMessage === void 0 || (_i$matchedMessage = _i$matchedMessage.path) === null || _i$matchedMessage === void 0 ? void 0 : _i$matchedMessage.length()) > 1;
         }).map(function (i) {
           return JSON.stringify(i.matchedMessage.path.getValues().slice(channel === "path" ? 0 : 1));
         }).forEach(function (path) {
@@ -245,4 +245,3 @@ var Report = /*#__PURE__*/_createClass(function Report(channels, params, env) {
   }
   this.axios = (0, _axiosEnrich["default"])(_axios["default"], !this.params.noProxy && env.agent ? env.agent : null, "".concat(env.clientId, "/").concat(env.version));
 });
-exports["default"] = Report;

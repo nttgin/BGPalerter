@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 var _monitor = _interopRequireDefault(require("./monitor"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -57,7 +57,7 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
                                                                                                                                                                                                                                                                                                                                                                                                * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                                                                                                                                                                                                                                                                                                                                                                                                * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                                                                                                                                                                                                                                                                                                                                */
-var MonitorAS = /*#__PURE__*/function (_Monitor) {
+var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
   _inherits(MonitorAS, _Monitor);
   var _super = _createSuper(MonitorAS);
   function MonitorAS(name, channel, params, env, input) {
@@ -111,7 +111,7 @@ var MonitorAS = /*#__PURE__*/function (_Monitor) {
         var matchedRule = _this.getMonitoredAsMatch(messageOrigin);
         if (matchedRule) {
           var matchedPrefixRule = _this.getMoreSpecificMatch(messagePrefix, true);
-          if (!matchedPrefixRule) {
+          if (_this.skipPrefixMatch || !matchedPrefixRule) {
             _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedRule, message, {});
           }
         }
@@ -119,9 +119,9 @@ var MonitorAS = /*#__PURE__*/function (_Monitor) {
       });
     });
     _this.thresholdMinPeers = params && params.thresholdMinPeers != null ? params.thresholdMinPeers : 3;
+    _this.skipPrefixMatch = !!(params !== null && params !== void 0 && params.skipPrefixMatch);
     _this.updateMonitoredResources();
     return _this;
   }
   return _createClass(MonitorAS);
 }(_monitor["default"]);
-exports["default"] = MonitorAS;

@@ -1,6 +1,6 @@
 "use strict";
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -52,7 +52,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
                                                                                                                                                                                                                       * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
                                                                                                                                                                                                                       * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                                                                                                                                                                                                                       */
-var ReportSlack = /*#__PURE__*/function (_ReportHTTP) {
+var ReportSlack = exports["default"] = /*#__PURE__*/function (_ReportHTTP) {
   _inherits(ReportSlack, _ReportHTTP);
   var _super = _createSuper(ReportSlack);
   function ReportSlack(channels, params, env) {
@@ -95,4 +95,3 @@ var ReportSlack = /*#__PURE__*/function (_ReportHTTP) {
   }
   return _createClass(ReportSlack);
 }(_reportHTTP["default"]);
-exports["default"] = ReportSlack;
