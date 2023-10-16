@@ -111,7 +111,16 @@ var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         var matchedRule = _this.getMonitoredAsMatch(messageOrigin);
         if (matchedRule) {
           var matchedPrefixRule = _this.getMoreSpecificMatch(messagePrefix, true);
-          if (_this.skipPrefixMatch || !matchedPrefixRule) {
+          if (matchedPrefixRule) {
+            var _flat, _flat2;
+            var matchedRuleGroup = (_flat = [matchedRule.group].flat()) !== null && _flat !== void 0 ? _flat : ["default"];
+            var matchedPrefixRuleGroup = (_flat2 = [matchedPrefixRule.group].flat()) !== null && _flat2 !== void 0 ? _flat2 : ["default"];
+            if (_this.skipPrefixMatchOnDifferentGroups && matchedRuleGroup.some(function (g) {
+              return !matchedPrefixRuleGroup.includes(g);
+            })) {
+              _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedRule, message, {});
+            }
+          } else {
             _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedRule, message, {});
           }
         }
@@ -119,7 +128,7 @@ var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       });
     });
     _this.thresholdMinPeers = params && params.thresholdMinPeers != null ? params.thresholdMinPeers : 3;
-    _this.skipPrefixMatch = !!(params !== null && params !== void 0 && params.skipPrefixMatch);
+    _this.skipPrefixMatchOnDifferentGroups = !!(params !== null && params !== void 0 && params.skipPrefixMatchOnDifferentGroups);
     _this.updateMonitoredResources();
     return _this;
   }
