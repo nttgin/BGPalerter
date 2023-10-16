@@ -68,7 +68,7 @@ export default class Config {
                     channel: "misconfiguration",
                     name: "asn-monitor",
                     params: {
-                        skipPrefixMatch: false,
+                        skipPrefixMatchOnDifferentGroups: false,
                         thresholdMinPeers: 3
                     }
                 },
