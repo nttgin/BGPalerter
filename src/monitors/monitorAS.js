@@ -86,11 +86,19 @@ export default class MonitorAS extends Monitor {
 
                 const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
 
-                const groupsUnion = [...new Set([...matchedRule.group, ...matchedPrefixRule.group])];
-                const differentGroups = this.skipPrefixMatchOnDifferentGroups
-                    && (groupsUnion.length !== matchedRule.group.length || groupsUnion.length !== matchedPrefixRule.group);
+                if (matchedPrefixRule) {
+                    const matchedRuleGroup = [matchedRule.group].flat() ?? ["default"];
+                    const matchedPrefixRuleGroup = [matchedPrefixRule.group].flat() ?? ["default"];
 
-                if (differentGroups || !matchedPrefixRule) {
+                    if (this.skipPrefixMatchOnDifferentGroups && matchedRuleGroup.some(g => !matchedPrefixRuleGroup.includes(g))) {
+                        this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
+                            messageOrigin.getId(),
+                            matchedRule,
+                            message,
+                            {});
+                    }
+
+                } else {
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
                         matchedRule,
