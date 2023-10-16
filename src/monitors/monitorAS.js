@@ -37,7 +37,7 @@ export default class MonitorAS extends Monitor {
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
-        this.skipPrefixMatch = !!params?.skipPrefixMatch;
+        this.skipPrefixMatchOnDifferentGroups = !!params?.skipPrefixMatchOnDifferentGroups;
         this.updateMonitoredResources();
     };
 
@@ -69,7 +69,7 @@ export default class MonitorAS extends Monitor {
         if (prefixesOut.length > 1) {
             return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
         } else if (prefixesOut.length === 1) {
-           return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
+            return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
         }
 
         return false;
@@ -86,7 +86,11 @@ export default class MonitorAS extends Monitor {
 
                 const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
 
-                if (this.skipPrefixMatch || !matchedPrefixRule) {
+                const groupsUnion = [...new Set([...matchedRule.group, ...matchedPrefixRule.group])];
+                const differentGroups = this.skipPrefixMatchOnDifferentGroups
+                    && (groupsUnion.length !== matchedRule.group.length || groupsUnion.length !== matchedPrefixRule.group);
+
+                if (differentGroups || !matchedPrefixRule) {
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
                         matchedRule,
