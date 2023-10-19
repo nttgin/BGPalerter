@@ -74,9 +74,7 @@ export default class InputYml extends Input {
                     this.prefixes = [];
                     this.asns = [];
                     this._loadPrefixes()
-                        .then(() => {
-                            return this._change();
-                        })
+                        .then(() => this._change())
                         .catch(error => {
                             this.logger.log({
                                 level: 'error',
@@ -132,7 +130,7 @@ export default class InputYml extends Input {
                                         uniqueAsns[asn] = true;
                                         const item = Object.assign({
                                             asn: new AS(asn),
-                                            group: 'default'
+                                            group: ['default']
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
 
                                         if (item.upstreams && item.upstreams.length) {
@@ -162,7 +160,7 @@ export default class InputYml extends Input {
 
                                 return Object.assign({
                                     prefix: i,
-                                    group: 'default',
+                                    group: ['default'],
                                     ignore: false,
                                     excludeMonitors: [],
                                     includeMonitors: [],
@@ -351,7 +349,7 @@ export default class InputYml extends Input {
 
             for (let asnRule of this.asns) {
                 monitorASns[asnRule.asn.getValue()] = {
-                    group: asnRule.group,
+                    group: [asnRule.group].flat(),
                     upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
                     downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null,
                 };

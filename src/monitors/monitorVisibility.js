@@ -68,13 +68,12 @@ export default class MonitorVisibility extends Monitor {
         }
     };
 
-    monitor = (message) =>
-        new Promise((resolve, reject) => {
+    monitor = (message) => {
+        const messagePrefix = message.prefix;
+        const matchedRules = this.getMoreSpecificMatches(messagePrefix, false);
 
-            const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
-
-            if (matchedRule && !matchedRule.ignore && ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
+        for (let matchedRule of matchedRules) {
+            if (!matchedRule.ignore && ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 
                 let key = matchedRule.prefix;
 
@@ -84,8 +83,8 @@ export default class MonitorVisibility extends Monitor {
                     message,
                     {});
             }
+        }
 
-            resolve(true);
-        });
-
+        return Promise.resolve(true);
+    }
 }

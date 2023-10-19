@@ -62,9 +62,7 @@ export default class Input {
         // This is to load the prefixes after the application is booted
         setTimeout(() => {
             this.loadPrefixes()
-                .then(() => {
-                    this._change();
-                })
+                .then(() => this._change())
                 .catch(error => {
                     this.logger.log({
                         level: 'error',
@@ -105,7 +103,12 @@ export default class Input {
     };
 
     _change = () => {
+        for (let item of this.asns) {
+            item.group = [item.group].flat();
+        }
+
         for (let item of this.prefixes) {
+            item.group = [item.group].flat();
             this.index.addPrefix(item.prefix, item);
         }
 
@@ -150,15 +153,20 @@ export default class Input {
         throw new Error('The method getMonitoredPrefixes MUST be implemented');
     };
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics=false) => {
-        const matches = this.index.getMatch(prefix, false)
-            .filter(i => {
-                return includeIgnoredMorespecifics || !i.ignoreMorespecifics || ipUtils.isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
-            });
 
-        return matches.length ? matches[0] : null
-    };
+    _filterIgnoreMorespecifics = (prefix, includeIgnoredMorespecifics) => {
 
+        return i => {
+            return includeIgnoredMorespecifics
+                || !i.ignoreMorespecifics
+                || ipUtils._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
+        }
+    }
+
+    getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics=false) => {
+        return this.index.getMatch(prefix, false)
+            .filter(this._filterIgnoreMorespecifics(prefix, includeIgnoredMorespecifics));
+    }
 
     getMonitoredASns = () => {
         throw new Error('The method getMonitoredASns MUST be implemented');

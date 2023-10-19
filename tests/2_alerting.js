@@ -120,7 +120,7 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule: {
                             prefix: "165.254.255.0/24",
-                            group: "groupName",
+                            group: ["groupName"],
                             description: "description 2",
                             asn: [15562],
                             ignoreMorespecifics: false
@@ -146,9 +146,9 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule:{
                             prefix:"2a00:5884::/32",
-                            group:"default",
+                            group: ["default"],
                             description:"alarig fix test",
-                            asn:[204092, 45],
+                            asn: [204092, 45],
                             ignoreMorespecifics:false
                         },
                         matchedMessage: {
@@ -172,18 +172,18 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule:{
                             prefix: "2a00:5884::/32",
-                            group: "default",
+                            group: ["default"],
                             description: "alarig fix test",
-                            asn:[204092, 45],
+                            asn: [204092, 45],
                             ignoreMorespecifics: false
                         },
                         matchedMessage: {
                             type: "announcement",
                             prefix: "2a00:5884::/32",
-                            peer:"124.0.0.3",
-                            path:[1,2,3,15563],
+                            peer: "124.0.0.3",
+                            path: [1,2,3,15563],
                             originAS: [15563],
-                            nextHop:"124.0.0.3"
+                            nextHop: "124.0.0.3"
                         }
                     }
                 ]
@@ -234,7 +234,7 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule: {
                             prefix: '175.254.205.0/24',
-                            group: 'default',
+                            group: ['default'],
                             description: 'include exclude test',
                             asn: [1234],
                             ignoreMorespecifics: false,
@@ -262,7 +262,7 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule: {
                             prefix: '170.254.205.0/24',
-                            group: 'default',
+                            group: ['default'],
                             description: 'include exclude test',
                             asn: [1234],
                             ignoreMorespecifics: false,
@@ -291,7 +291,7 @@ describe("Alerting", function () {
                             extra: {},
                             matchedRule: {
                                 prefix: '165.254.255.0/24',
-                                group: 'groupName',
+                                group: ['groupName'],
                                 description: 'description 2',
                                 asn: [15562],
                                 ignoreMorespecifics: false
@@ -317,7 +317,7 @@ describe("Alerting", function () {
                         extra: {},
                         matchedRule: {
                             prefix: '2a00:5884::/32',
-                            group: 'default',
+                            group: ['default'],
                             description: 'alarig fix test',
                             asn: [ 204092, 45],
                             ignoreMorespecifics: false
@@ -386,7 +386,7 @@ describe("Alerting", function () {
                             "affected": "98.5.4.3/22",
                             "matchedRule": {
                                 "prefix": "98.5.4.3/22",
-                                "group": "default",
+                                "group": ["default"],
                                 "ignore": false,
                                 "excludeMonitors": [],
                                 "includeMonitors": [],
@@ -431,7 +431,7 @@ describe("Alerting", function () {
                         "affected": "99.5.4.3/22",
                         "matchedRule": {
                             "prefix": "99.5.4.3/22",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors": [],
                             "includeMonitors": [],
