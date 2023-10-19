@@ -7,6 +7,7 @@ exports["default"] = void 0;
 var _monitor = _interopRequireDefault(require("./monitor"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -159,15 +160,27 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       try {
         var messageOrigin = message.originAS;
         var prefix = message.prefix;
-        var matchedPrefixRule = _this.getMoreSpecificMatch(prefix, false, true);
-        if (matchedPrefixRule && matchedPrefixRule.matched) {
-          // There is a prefix match
-          if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) {
-            // The prefix match is not excluded in any way
-            _this.validate(message, matchedPrefixRule.matched);
+        var matchedPrefixRules = _this.getMoreSpecificMatches(prefix, false, true);
+        if (matchedPrefixRules.length) {
+          var _iterator = _createForOfIteratorHelper(matchedPrefixRules),
+            _step;
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var matchedPrefixRule = _step.value;
+              if (matchedPrefixRule.matched) {
+                // There is a prefix match
+                if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) {
+                  // The prefix match is not excluded in any way
+                  _this.validate(message, matchedPrefixRule.matched);
+                }
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
           }
         } else {
-          // No prefix match
           var matchedASRule = _this.getMonitoredAsMatch(messageOrigin); // Try AS match
           if (matchedASRule) {
             _this.validate(message, matchedASRule);

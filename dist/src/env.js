@@ -187,7 +187,8 @@ config.connectors = config.connectors.map(function (item, index) {
   };
 });
 if (config.httpProxy) {
-  var HttpsProxyAgent = require("https-proxy-agent");
+  var _require = require("https-proxy-agent"),
+    HttpsProxyAgent = _require.HttpsProxyAgent;
   vector.agent = new HttpsProxyAgent(_url["default"].parse(config.httpProxy));
 }
 vector.storage = new _storageFile["default"]({}, config);

@@ -3,6 +3,7 @@
 var _yargs = _interopRequireDefault(require("yargs"));
 var _fs2 = _interopRequireDefault(require("fs"));
 var _jsYaml = _interopRequireDefault(require("js-yaml"));
+var _os = _interopRequireDefault(require("os"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 /*
  * 	BSD 3-Clause License
@@ -37,7 +38,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "d
  */
 
 var params = _yargs["default"].usage('Usage: $0 <command> [options]').command('$0', 'Run BGPalerter (default)', function () {
-  _yargs["default"].alias('v', 'version').nargs('v', 0).describe('v', 'Show version number').alias('c', 'config').nargs('c', 1).describe('c', 'Config file to load').alias('t', 'test').nargs('t', 0).describe('t', 'Test the configuration with fake BGP updates').alias('d', 'data-volume').nargs('d', 1).describe('d', 'A directory where configuration and data is persisted');
+  _yargs["default"].alias('v', 'version').nargs('v', 0).describe('v', 'Show version number').alias('c', 'config').nargs('c', 1).describe('c', 'Config file to load').alias('t', 'test').nargs('t', 0).describe('t', 'Test the configuration with fake BGP updates').alias('M', 'skip-memory-check').nargs('M', 0).describe('M', 'Skip memory check').alias('d', 'data-volume').nargs('d', 1).describe('d', 'A directory where configuration and data is persisted');
 }).command('generate', 'Generate prefixes to monitor', function () {
   _yargs["default"].alias('v', 'version').nargs('v', 0).describe('v', 'Show version number').alias('o', 'output').nargs('o', 1).describe('o', 'Write to file').alias('a', 'asn').nargs('a', 1).describe('a', 'AS number to monitor').alias('e', 'exclude').nargs('e', 1).describe('e', 'Comma-separated list of prefixes to exclude').alias('p', 'prefixes').nargs('p', 1).describe('p', 'Comma-separated list of prefixes to include').alias('l', 'prefixes-file').nargs('l', 1).describe('l', 'File containing the prefixes to include in the monitoring. One prefix for each line').alias('i', 'ignore-delegated').nargs('i', 0).describe('i', 'Ignore delegated prefixes').alias('s', 'monitor-as').nargs('s', 1).describe('s', 'List of monitored ASes to be added for generic monitoring in options.monitorASns.').alias('m', 'monitor-as-origin').nargs('m', 0).describe('m', 'Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.').alias('x', 'proxy').nargs('x', 1).describe('x', 'HTTP/HTTPS proxy to use').alias('g', 'group').nargs('g', 1).describe('x', 'Define a user group for all the generated rules.').alias('A', 'append').nargs('A', 0).describe('A', 'Append the new configuration to the previous one.').alias('D', 'debug').nargs('D', 0).describe('D', 'Provide verbose output for debugging').alias('H', 'historical').nargs('H', 0).describe('H', 'Use historical visibility data for generating prefix list (prefixes visible in the last week).').alias('u', 'upstreams').nargs('u', 0).describe('u', 'Detect a list of allowed upstream ASes and enable detection of new left-side ASes').alias('n', 'downstreams').nargs('n', 0).describe('n', 'Detect a list of allowed downstream ASes and enable detection of new right-side ASes.').demandOption(['o']);
 }).example('$0 generate -a 2914 -o prefixes.yml', 'Generate prefixes for AS2914').help('h').alias('h', 'help').epilog('Copyright (c) 2019, NTT Ltd').argv;
@@ -101,6 +102,10 @@ switch (params._[0]) {
     break;
   default:
     // Run monitor
+
+    if (!params.M && _os["default"].totalmem() < 4294967296) {
+      throw new Error("You need 4GB or RAM to run BGPalerter");
+    }
     global.DRY_RUN = !!params.t;
     if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: remove -t option for production monitoring.");
     var Worker = require("./src/worker")["default"];

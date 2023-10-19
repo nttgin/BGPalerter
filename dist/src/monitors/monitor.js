@@ -226,28 +226,26 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
     }
     return null;
   });
-  _defineProperty(this, "_included", function (matched) {
-    if (matched.includeMonitors.length > 0) {
-      return matched.includeMonitors.includes(_this.name);
-    } else {
-      return !matched.excludeMonitors.includes(_this.name);
-    }
-  });
-  _defineProperty(this, "getMoreSpecificMatch", function (prefix, includeIgnoredMorespecifics) {
-    var verbose = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    var matched = _this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
-    if (matched) {
-      var included = _this._included(matched);
-      if (verbose) {
-        return {
-          matched: matched,
-          included: included
-        };
-      } else if (included) {
-        return matched;
+  _defineProperty(this, "_filterMatched", function (verbose) {
+    return function (matched) {
+      if (matched) {
+        var included = matched.includeMonitors.length > 0 ? matched.includeMonitors.includes(_this.name) : !matched.excludeMonitors.includes(_this.name);
+        if (verbose) {
+          return {
+            matched: matched,
+            included: included
+          };
+        } else if (included) {
+          return matched;
+        }
       }
-    }
-    return null;
+      return null;
+    };
+  });
+  _defineProperty(this, "getMoreSpecificMatches", function (prefix, includeIgnoredMorespecifics, verbose) {
+    return _this.input.getMoreSpecificMatches(prefix, includeIgnoredMorespecifics).map(_this._filterMatched(verbose)).filter(function (i) {
+      return !!i;
+    });
   });
   this.config = env.config;
   this.pubSub = env.pubSub;

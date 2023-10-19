@@ -144,7 +144,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
                         uniqueAsns[asn] = true;
                         var item = Object.assign({
                           asn: new _model.AS(asn),
-                          group: 'default'
+                          group: ['default']
                         }, monitoredPrefixesFile.options.monitorASns[asn]);
                         if (item.upstreams && item.upstreams.length) {
                           item.upstreams = new _model.AS(item.upstreams);
@@ -168,7 +168,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
                     monitoredPrefixesFile[i].asn = new _model.AS(monitoredPrefixesFile[i].asn);
                     return Object.assign({
                       prefix: i,
-                      group: 'default',
+                      group: ['default'],
                       ignore: false,
                       excludeMonitors: [],
                       includeMonitors: []
@@ -346,7 +346,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
           for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
             var asnRule = _step3.value;
             monitorASns[asnRule.asn.getValue()] = {
-              group: asnRule.group,
+              group: [asnRule.group].flat(),
               upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
               downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null
             };

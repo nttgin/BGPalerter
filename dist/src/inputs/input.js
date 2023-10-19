@@ -7,6 +7,7 @@ exports["default"] = void 0;
 var _ipSub = _interopRequireDefault(require("ip-sub"));
 var _inquirer = _interopRequireDefault(require("inquirer"));
 var _generatePrefixesList = _interopRequireDefault(require("../generatePrefixesList"));
+var _longestPrefixMatch = _interopRequireDefault(require("longest-prefix-match"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -88,17 +89,42 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     _this.callbacks.push(callback);
   });
   _defineProperty(this, "_change", function () {
-    var _iterator2 = _createForOfIteratorHelper(_this.callbacks),
+    var _iterator2 = _createForOfIteratorHelper(_this.asns),
       _step2;
     try {
       for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var call = _step2.value;
-        call();
+        var item = _step2.value;
+        item.group = [item.group].flat();
       }
     } catch (err) {
       _iterator2.e(err);
     } finally {
       _iterator2.f();
+    }
+    var _iterator3 = _createForOfIteratorHelper(_this.prefixes),
+      _step3;
+    try {
+      for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+        var _item = _step3.value;
+        _item.group = [_item.group].flat();
+        _this.index.addPrefix(_item.prefix, _item);
+      }
+    } catch (err) {
+      _iterator3.e(err);
+    } finally {
+      _iterator3.f();
+    }
+    var _iterator4 = _createForOfIteratorHelper(_this.callbacks),
+      _step4;
+    try {
+      for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
+        var call = _step4.value;
+        call();
+      }
+    } catch (err) {
+      _iterator4.e(err);
+    } finally {
+      _iterator4.f();
     }
   });
   _defineProperty(this, "getMonitoredLessSpecifics", function () {
@@ -129,47 +155,14 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   _defineProperty(this, "getMonitoredPrefixes", function () {
     throw new Error('The method getMonitoredPrefixes MUST be implemented');
   });
-  _defineProperty(this, "getMoreSpecificMatch", function (prefix, includeIgnoredMorespecifics) {
-    var key = "".concat(prefix, "-").concat(includeIgnoredMorespecifics);
-    var cached = _this.cache.matched[key];
-    if (cached !== undefined) {
-      return cached;
-    } else {
-      var _iterator3 = _createForOfIteratorHelper(_this.prefixes),
-        _step3;
-      try {
-        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-          var p = _step3.value;
-          if (_ipSub["default"]._isEqualPrefix(p.prefix, prefix)) {
-            _this.cache.matched[key] = p;
-            return p;
-          } else {
-            if (!_this.cache.af[p.prefix]) {
-              _this.cache.af[p.prefix] = _ipSub["default"].getAddressFamily(p.prefix);
-              _this.cache.binaries[p.prefix] = _ipSub["default"].applyNetmask(p.prefix, _this.cache.af[p.prefix]);
-            }
-            var prefixAf = _ipSub["default"].getAddressFamily(prefix);
-            if (prefixAf === _this.cache.af[p.prefix]) {
-              var prefixBinary = _ipSub["default"].applyNetmask(prefix, prefixAf);
-              if (_ipSub["default"].isSubnetBinary(_this.cache.binaries[p.prefix], prefixBinary)) {
-                if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                  _this.cache.matched[key] = p;
-                  return p;
-                } else {
-                  _this.cache.matched[key] = null;
-                  return null;
-                }
-              }
-            }
-          }
-        }
-      } catch (err) {
-        _iterator3.e(err);
-      } finally {
-        _iterator3.f();
-      }
-    }
-    return null;
+  _defineProperty(this, "_filterIgnoreMorespecifics", function (prefix, includeIgnoredMorespecifics) {
+    return function (i) {
+      return includeIgnoredMorespecifics || !i.ignoreMorespecifics || _ipSub["default"]._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
+    };
+  });
+  _defineProperty(this, "getMoreSpecificMatches", function (prefix) {
+    var includeIgnoredMorespecifics = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    return _this.index.getMatch(prefix, false).filter(_this._filterIgnoreMorespecifics(prefix, includeIgnoredMorespecifics));
   });
   _defineProperty(this, "getMonitoredASns", function () {
     throw new Error('The method getMonitoredASns MUST be implemented');
@@ -280,11 +273,11 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
         var asns = _toConsumableArray(new Set(Object.values(oldPrefixList).map(function (i) {
           return i.asn;
         }).concat(Object.keys((oldPrefixList.options || {}).monitorASns || {}))));
-        var _iterator4 = _createForOfIteratorHelper(uniquePrefixes),
-          _step4;
+        var _iterator5 = _createForOfIteratorHelper(uniquePrefixes),
+          _step5;
         try {
-          for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-            var prefix = _step4.value;
+          for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+            var prefix = _step5.value;
             var oldPrefix = oldPrefixList[prefix];
             var newPrefix = newPrefixList[prefix];
 
@@ -308,9 +301,9 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
             }
           }
         } catch (err) {
-          _iterator4.e(err);
+          _iterator5.e(err);
         } finally {
-          _iterator4.f();
+          _iterator5.f();
         }
         if (newPrefixesNotMergeable.length) {
           _this.logger.log({
@@ -353,6 +346,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   this.logger = env.logger;
   this.callbacks = [];
   this.prefixListDiffFailThreshold = 50;
+  this.index = new _longestPrefixMatch["default"]();
 
   // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
   setInterval(function () {
@@ -364,7 +358,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   // This is to load the prefixes after the application is booted
   setTimeout(function () {
     _this.loadPrefixes().then(function () {
-      _this._change();
+      return _this._change();
     })["catch"](function (error) {
       _this.logger.log({
         level: 'error',

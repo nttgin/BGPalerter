@@ -211,8 +211,9 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         var roas = vrps.filter(function (i) {
           return _ipSub["default"].isEqualPrefix(i.prefix, prefix);
         }); // Get only the ROAs for this prefix
-        var matchedRule = _this.getMoreSpecificMatch(prefix, false); // Get the matching rule
-        if (matchedRule) {
+        var matchedRules = _this.getMoreSpecificMatches(prefix, false); // Get the matching rule
+
+        return Promise.all(matchedRules.map(function (matchedRule) {
           return _this._getExpiringItems(roas).then(function (extra) {
             var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
             var message = "";
@@ -232,9 +233,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               subType: "roa-expire"
             }));
           });
-        } else {
-          return Promise.resolve();
-        }
+        }));
       })).then(function () {
         return alerts;
       });
@@ -345,17 +344,26 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             var roas = roaDiff.filter(function (i) {
               return _ipSub["default"].isEqualPrefix(i.prefix, prefix);
             }); // Get only the ROAs for this prefix
-            var matchedRule = _this.getMoreSpecificMatch(prefix, false); // Get the matching rule
-            if (matchedRule) {
-              var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
-              var message = alertsStrings.length <= 10 ? "ROAs change detected: ".concat(alertsStrings.join("; ")) : "ROAs change detected: ".concat(alertsStrings.slice(0, 10).join("; "), " and more...");
-              alerts = alerts.concat(alertsStrings);
-              _this.publishAlert((0, _md["default"])(message),
-              // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-              matchedRule.prefix, matchedRule, message, {
-                diff: alertsStrings,
-                subType: "roa-diff"
-              });
+            var matchedRules = _this.getMoreSpecificMatches(prefix, false); // Get the matching rule
+            var _iterator5 = _createForOfIteratorHelper(matchedRules),
+              _step5;
+            try {
+              for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+                var matchedRule = _step5.value;
+                var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
+                var message = alertsStrings.length <= 10 ? "ROAs change detected: ".concat(alertsStrings.join("; ")) : "ROAs change detected: ".concat(alertsStrings.slice(0, 10).join("; "), " and more...");
+                alerts = alerts.concat(alertsStrings);
+                _this.publishAlert((0, _md["default"])(message),
+                // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                matchedRule.prefix, matchedRule, message, {
+                  diff: alertsStrings,
+                  subType: "roa-diff"
+                });
+              }
+            } catch (err) {
+              _iterator5.e(err);
+            } finally {
+              _iterator5.f();
             }
           };
           // Differences found
@@ -386,13 +394,13 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
           var matchedRules = impactedASes.map(function (asn) {
             return _this.getMonitoredAsMatch(new _model.AS(asn));
           });
-          var _iterator5 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
+          var _iterator6 = _createForOfIteratorHelper(matchedRules.filter(function (i) {
               return !!i;
             })),
-            _step5;
+            _step6;
           try {
-            for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-              var matchedRule = _step5.value;
+            for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+              var matchedRule = _step6.value;
               // An alert for each AS involved (they may have different user group)
               var alertsStrings = _toConsumableArray(new Set(roaDiff.map(_this._roaToString))).filter(function (i) {
                 return !sent.includes(i);
@@ -409,9 +417,9 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               }
             }
           } catch (err) {
-            _iterator5.e(err);
+            _iterator6.e(err);
           } finally {
-            _iterator5.f();
+            _iterator6.f();
           }
         }
         return alerts;

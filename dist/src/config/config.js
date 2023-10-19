@@ -90,7 +90,7 @@ var Config = exports["default"] = /*#__PURE__*/_createClass(function Config(para
       channel: "misconfiguration",
       name: "asn-monitor",
       params: {
-        skipPrefixMatchOnDifferentGroups: false,
+        skipPrefixMatch: false,
         thresholdMinPeers: 3
       }
     }, {

@@ -45,7 +45,8 @@ module.exports = function generatePrefixes(inputParameters) {
   var someNotValidatedPrefixes = false;
   var proxy;
   if (httpProxy) {
-    var HttpsProxyAgent = require("https-proxy-agent");
+    var _require = require("https-proxy-agent"),
+      HttpsProxyAgent = _require.HttpsProxyAgent;
     proxy = new HttpsProxyAgent(_url["default"].parse(httpProxy));
   }
   (0, _axiosEnrich["default"])(_axios["default"], proxy, clientId);
