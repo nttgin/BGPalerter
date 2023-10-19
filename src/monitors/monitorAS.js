@@ -80,32 +80,34 @@ export default class MonitorAS extends Monitor {
 
             const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this.getMonitoredAsMatch(messageOrigin);
+            const matchedASRule = this.getMonitoredAsMatch(messageOrigin);
 
-            if (matchedRule) {
+            if (matchedASRule) {
 
                 const matchedPrefixRules = this.getMoreSpecificMatches(messagePrefix, true, false);
 
                 if (this.skipPrefixMatch) {
-                    this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
-                        messageOrigin.getId(),
-                        matchedRule,
-                        message,
-                        {});
+                    const skipMatches = matchedPrefixRules.map(i => i.group).flat();
+                    const goodMatches = matchedASRule.map(i => i.group).flat();
 
-                    for (let matchedPrefixRule of matchedPrefixRules) {
-                        this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
-                            messageOrigin.getId(),
-                            matchedPrefixRule,
-                            message,
-                            {});
+                    for (let g of goodMatches) {
+                        if (!skipMatches.includes(g)) {
+                            this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
+                                messageOrigin.getId(),
+                                {
+                                    ...matchedASRule,
+                                    group: [g]
+                                },
+                                message,
+                                {});
+                        }
                     }
 
                 } else if (!matchedPrefixRules.length) {
 
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
-                        matchedRule,
+                        matchedASRule,
                         message,
                         {});
                 }
