@@ -62,13 +62,13 @@ export default class MonitorNewPrefix extends Monitor {
         return false;
     };
 
-    monitor = (message) =>
-        new Promise((resolve, reject) => {
+    monitor = (message) => {
 
-            const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
+        const messagePrefix = message.prefix;
+        const matchedRules = this.getMoreSpecificMatches(messagePrefix, false);
 
-            if (matchedRule && !matchedRule.ignore &&
+        for (let matchedRule of matchedRules) {
+            if (!matchedRule.ignore &&
                 matchedRule.asn.includes(message.originAS) &&
                 !ipUtils._isEqualPrefix(matchedRule.prefix, messagePrefix)) {
 
@@ -78,8 +78,9 @@ export default class MonitorNewPrefix extends Monitor {
                     message,
                     {});
             }
+        }
 
-            resolve(true);
-        });
+        return Promise.resolve(true);
+    }
 
 }

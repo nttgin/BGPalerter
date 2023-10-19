@@ -80,15 +80,17 @@ export default class MonitorHijack extends Monitor {
         }
     }
 
-    monitor = (message) =>
-        new Promise((resolve, reject) => {
-            const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
+    monitor = (message) =>{
+        const messagePrefix = message.prefix;
+        const matchedRules = this.getMoreSpecificMatches(messagePrefix, false);
 
-            if (matchedRule && !matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
+        for (let matchedRule of matchedRules) {
+            if (!matchedRule.ignore && !matchedRule.asn.includes(message.originAS)) {
                 this.validate(message, matchedRule);
-                resolve(true);
             }
-        });
+        }
+
+        return Promise.resolve(true);
+    }
 
 }

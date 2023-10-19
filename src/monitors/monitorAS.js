@@ -37,7 +37,7 @@ export default class MonitorAS extends Monitor {
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
-        this.skipPrefixMatchOnDifferentGroups = !!params?.skipPrefixMatchOnDifferentGroups;
+        this.skipPrefixMatch = !!params?.skipPrefixMatch;
         this.updateMonitoredResources();
     };
 
@@ -84,21 +84,25 @@ export default class MonitorAS extends Monitor {
 
             if (matchedRule) {
 
-                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
+                const matchedPrefixRules = this.getMoreSpecificMatches(messagePrefix, true, false);
 
-                if (matchedPrefixRule) {
-                    const matchedRuleGroup = [matchedRule.group].flat() ?? ["default"];
-                    const matchedPrefixRuleGroup = [matchedPrefixRule.group].flat() ?? ["default"];
+                if (this.skipPrefixMatch) {
+                    this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
+                        messageOrigin.getId(),
+                        matchedRule,
+                        message,
+                        {});
 
-                    if (this.skipPrefixMatchOnDifferentGroups && matchedRuleGroup.some(g => !matchedPrefixRuleGroup.includes(g))) {
+                    for (let matchedPrefixRule of matchedPrefixRules) {
                         this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                             messageOrigin.getId(),
-                            matchedRule,
+                            matchedPrefixRule,
                             message,
                             {});
                     }
 
-                } else {
+                } else if (!matchedPrefixRules.length) {
+
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
                         matchedRule,

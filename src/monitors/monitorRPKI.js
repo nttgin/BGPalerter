@@ -183,18 +183,23 @@ export default class MonitorRPKI extends Monitor {
             const messageOrigin = message.originAS;
             const prefix = message.prefix;
 
-            const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false, true);
+            const matchedPrefixRules = this.getMoreSpecificMatches(prefix, false, true);
 
-            if (matchedPrefixRule && matchedPrefixRule.matched) { // There is a prefix match
-                if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) { // The prefix match is not excluded in any way
-                    this.validate(message, matchedPrefixRule.matched);
+            if (matchedPrefixRules.length) {
+                for (let matchedPrefixRule of matchedPrefixRules) {
+                    if (matchedPrefixRule.matched) { // There is a prefix match
+                        if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) { // The prefix match is not excluded in any way
+                            this.validate(message, matchedPrefixRule.matched);
+                        }
+                    }
                 }
-            } else { // No prefix match
+            } else {
                 const matchedASRule = this.getMonitoredAsMatch(messageOrigin); // Try AS match
                 if (matchedASRule) {
                     this.validate(message, matchedASRule);
                 }
             }
+
         } catch (error) {
             this.logger.log({
                 level: 'error',

@@ -210,30 +210,31 @@ export default class MonitorROAS extends Monitor {
         return Promise.all([...new Set(vrps.map(i => i.prefix))]
             .map(prefix => {
                 const roas = vrps.filter(i => ipUtils.isEqualPrefix(i.prefix, prefix)); // Get only the ROAs for this prefix
-                const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
-                if (matchedRule) {
-                    return this._getExpiringItems(roas)
-                        .then(extra => {
-                            const alertsStrings = [...new Set(roas.map(this._roaToString))];
-                            let message = "";
+                const matchedRules = this.getMoreSpecificMatches(prefix, false); // Get the matching rule
 
-                            if (extra && extra.type === "chain") {
-                                message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
-                                message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
-                            } else {
-                                message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
-                            }
-                            alerts = alerts.concat(alertsStrings);
+                return Promise
+                    .all(matchedRules
+                        .map(matchedRule => {
+                            return this._getExpiringItems(roas)
+                                .then(extra => {
+                                    const alertsStrings = [...new Set(roas.map(this._roaToString))];
+                                    let message = "";
 
-                            this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
-                                matchedRule.prefix,
-                                matchedRule,
-                                message,
-                                {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
-                        });
-                } else {
-                    return Promise.resolve();
-                }
+                                    if (extra && extra.type === "chain") {
+                                        message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
+                                        message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
+                                    } else {
+                                        message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
+                                    }
+                                    alerts = alerts.concat(alertsStrings);
+
+                                    this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                                        matchedRule.prefix,
+                                        matchedRule,
+                                        message,
+                                        {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                                })
+                        }))
             }))
             .then(() => alerts);
     };
@@ -314,8 +315,9 @@ export default class MonitorROAS extends Monitor {
                 for (let prefix of [...new Set(roaDiff.map(i => i.prefix))]) {
 
                     const roas = roaDiff.filter(i => ipUtils.isEqualPrefix(i.prefix, prefix)); // Get only the ROAs for this prefix
-                    const matchedRule = this.getMoreSpecificMatch(prefix, false); // Get the matching rule
-                    if (matchedRule) {
+                    const matchedRules = this.getMoreSpecificMatches(prefix, false); // Get the matching rule
+
+                    for (let matchedRule of matchedRules) {
                         const alertsStrings = [...new Set(roas.map(this._roaToString))];
                         const message = alertsStrings.length <= 10 ?
                             `ROAs change detected: ${alertsStrings.join("; ")}` :

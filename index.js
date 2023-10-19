@@ -33,6 +33,7 @@
 import yargs from 'yargs';
 import fs from "fs";
 import yaml from "js-yaml";
+import os from "os";
 
 const params = yargs
     .usage('Usage: $0 <command> [options]')
@@ -50,6 +51,11 @@ const params = yargs
             .alias('t', 'test')
             .nargs('t', 0)
             .describe('t', 'Test the configuration with fake BGP updates')
+
+            .alias('M', 'skip-memory-check')
+            .nargs('M', 0)
+            .describe('M', 'Skip memory check')
+
 
             .alias('d', 'data-volume')
             .nargs('d', 1)
@@ -194,6 +200,11 @@ switch(params._[0]) {
         break;
 
     default: // Run monitor
+
+        if (!params.M && os.totalmem() < 4294967296) {
+            throw new Error("You need 4GB or RAM to run BGPalerter");
+        }
+
         global.DRY_RUN = !!params.t;
         if (global.DRY_RUN) console.log("Testing BGPalerter configuration. WARNING: remove -t option for production monitoring.");
         const Worker = require("./src/worker").default;
