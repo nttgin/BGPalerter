@@ -7,6 +7,8 @@ exports["default"] = void 0;
 var _monitor = _interopRequireDefault(require("./monitor"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -108,17 +110,26 @@ var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       return new Promise(function (resolve, reject) {
         var messageOrigin = message.originAS;
         var messagePrefix = message.prefix;
-        var matchedRule = _this.getMonitoredAsMatch(messageOrigin);
-        if (matchedRule) {
+        var matchedASRule = _this.getMonitoredAsMatch(messageOrigin);
+        if (matchedASRule) {
           var matchedPrefixRules = _this.getMoreSpecificMatches(messagePrefix, true, false);
           if (_this.skipPrefixMatch) {
-            _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedRule, message, {});
-            var _iterator2 = _createForOfIteratorHelper(matchedPrefixRules),
+            var skipMatches = matchedPrefixRules.map(function (i) {
+              return i.group;
+            }).flat();
+            var goodMatches = matchedASRule.map(function (i) {
+              return i.group;
+            }).flat();
+            var _iterator2 = _createForOfIteratorHelper(goodMatches),
               _step2;
             try {
               for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-                var matchedPrefixRule = _step2.value;
-                _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedPrefixRule, message, {});
+                var g = _step2.value;
+                if (!skipMatches.includes(g)) {
+                  _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), _objectSpread(_objectSpread({}, matchedASRule), {}, {
+                    group: [g]
+                  }), message, {});
+                }
               }
             } catch (err) {
               _iterator2.e(err);
@@ -126,7 +137,7 @@ var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               _iterator2.f();
             }
           } else if (!matchedPrefixRules.length) {
-            _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedRule, message, {});
+            _this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix, messageOrigin.getId(), matchedASRule, message, {});
           }
         }
         resolve(true);
