@@ -33,6 +33,7 @@
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
 import generatePrefixes from "../generatePrefixesList";
+import LongestPrefixMatch from "longest-prefix-match";
 
 export default class Input {
 
@@ -49,6 +50,7 @@ export default class Input {
         this.logger = env.logger;
         this.callbacks = [];
         this.prefixListDiffFailThreshold = 50;
+        this.index = new LongestPrefixMatch();
 
         // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
         setInterval(() => {
@@ -103,6 +105,10 @@ export default class Input {
     };
 
     _change = () => {
+        for (let item of this.prefixes) {
+            this.index.addPrefix(item.prefix, item);
+        }
+
         for (let call of this.callbacks) {
             call();
         }
@@ -144,44 +150,15 @@ export default class Input {
         throw new Error('The method getMonitoredPrefixes MUST be implemented');
     };
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
-        const key = `${prefix}-${includeIgnoredMorespecifics}`;
-        const cached = this.cache.matched[key];
+    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics=false) => {
+        const matches = this.index.getMatch(prefix, false)
+            .filter(i => {
+                return includeIgnoredMorespecifics || !i.ignoreMorespecifics || ipUtils.isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
+            });
 
-        if (cached !== undefined) {
-            return cached;
-        } else {
-            for (let p of this.prefixes) {
-                if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
-                    this.cache.matched[key] = p;
-                    return p;
-                } else {
-
-                    if (!this.cache.af[p.prefix]) {
-                        this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
-                        this.cache.binaries[p.prefix] = ipUtils.applyNetmask(p.prefix, this.cache.af[p.prefix]);
-                    }
-                    const prefixAf = ipUtils.getAddressFamily(prefix);
-
-                    if (prefixAf === this.cache.af[p.prefix]) {
-
-                        const prefixBinary = ipUtils.applyNetmask(prefix, prefixAf);
-                        if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
-                            if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                                this.cache.matched[key] = p;
-                                return p;
-                            } else {
-                                this.cache.matched[key] = null;
-                                return null;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
+        return matches.length ? matches[0] : null
     };
+
 
     getMonitoredASns = () => {
         throw new Error('The method getMonitoredASns MUST be implemented');

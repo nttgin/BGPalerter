@@ -208,7 +208,7 @@ describe("Alerting", function () {
                         setTimeout(() => {
                             hijackTestCompleted = true;
                             done();
-                        }, 5000);
+                        }, 10000);
                     }
                 }
             } catch (error) {
