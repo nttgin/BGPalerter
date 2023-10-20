@@ -88,7 +88,7 @@ export default class MonitorAS extends Monitor {
 
                 if (this.skipPrefixMatch) {
                     const skipMatches = matchedPrefixRules.map(i => i.group).flat();
-                    const goodMatches = matchedASRule.map(i => i.group).flat();
+                    const goodMatches = [matchedASRule.group].flat();
 
                     for (let g of goodMatches) {
                         if (!skipMatches.includes(g)) {
