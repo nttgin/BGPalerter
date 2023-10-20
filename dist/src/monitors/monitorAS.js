@@ -117,9 +117,7 @@ var MonitorAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             var skipMatches = matchedPrefixRules.map(function (i) {
               return i.group;
             }).flat();
-            var goodMatches = matchedASRule.map(function (i) {
-              return i.group;
-            }).flat();
+            var goodMatches = [matchedASRule.group].flat();
             var _iterator2 = _createForOfIteratorHelper(goodMatches),
               _step2;
             try {
