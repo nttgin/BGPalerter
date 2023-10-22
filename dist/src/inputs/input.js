@@ -101,6 +101,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     } finally {
       _iterator2.f();
     }
+    _this.index.reset();
     var _iterator3 = _createForOfIteratorHelper(_this.prefixes),
       _step3;
     try {
