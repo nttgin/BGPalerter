@@ -107,6 +107,7 @@ export default class Input {
             item.group = [item.group].flat();
         }
 
+        this.index.reset();
         for (let item of this.prefixes) {
             item.group = [item.group].flat();
             this.index.addPrefix(item.prefix, item);
