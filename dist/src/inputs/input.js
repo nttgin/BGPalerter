@@ -156,14 +156,14 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   _defineProperty(this, "getMonitoredPrefixes", function () {
     throw new Error('The method getMonitoredPrefixes MUST be implemented');
   });
-  _defineProperty(this, "_filterIgnoreMorespecifics", function (prefix, includeIgnoredMorespecifics) {
-    return function (i) {
-      return includeIgnoredMorespecifics || !i.ignoreMorespecifics || _ipSub["default"]._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
-    };
+  _defineProperty(this, "_filterIgnoreMorespecifics", function (i, prefix, includeIgnoredMorespecifics) {
+    return includeIgnoredMorespecifics || !i.ignoreMorespecifics || _ipSub["default"]._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
   });
   _defineProperty(this, "getMoreSpecificMatches", function (prefix) {
     var includeIgnoredMorespecifics = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    return _this.index.getMatch(prefix, false).filter(_this._filterIgnoreMorespecifics(prefix, includeIgnoredMorespecifics));
+    return _this.index.getMatch(prefix, false).filter(function (i) {
+      return _this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics);
+    });
   });
   _defineProperty(this, "getMonitoredASns", function () {
     throw new Error('The method getMonitoredASns MUST be implemented');
