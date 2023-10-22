@@ -155,18 +155,15 @@ export default class Input {
     };
 
 
-    _filterIgnoreMorespecifics = (prefix, includeIgnoredMorespecifics) => {
-
-        return i => {
-            return includeIgnoredMorespecifics
-                || !i.ignoreMorespecifics
-                || ipUtils._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
-        }
+    _filterIgnoreMorespecifics = (i, prefix, includeIgnoredMorespecifics) => {
+        return includeIgnoredMorespecifics
+            || !i.ignoreMorespecifics
+            || ipUtils._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
     }
 
     getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics=false) => {
         return this.index.getMatch(prefix, false)
-            .filter(this._filterIgnoreMorespecifics(prefix, includeIgnoredMorespecifics));
+            .filter(i => this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics));
     }
 
     getMonitoredASns = () => {
