@@ -290,7 +290,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
   });
   _defineProperty(this, "_markAsStale", function () {
     if (!!_this.params.preCacheROAs) {
-      var digest = (0, _md["default"])(JSON.stringify(_this.getVRPs()));
+      var digest = (0, _md["default"])(JSON.stringify(_this.getMetadata())) + "-" + _this.getVRPs().length;
       if (_this.oldDigest) {
         var stale = _this.oldDigest === digest;
         if (_this.status.stale !== stale) {
