@@ -14,6 +14,8 @@ function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableTo
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
@@ -101,14 +103,14 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     } finally {
       _iterator2.f();
     }
-    _this.index.reset();
+    _this.index = new _longestPrefixMatch["default"]();
     var _iterator3 = _createForOfIteratorHelper(_this.prefixes),
       _step3;
     try {
       for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
         var _item = _step3.value;
         _item.group = [_item.group].flat();
-        _this.index.addPrefix(_item.prefix, _item);
+        _this.index.addPrefix(_item.prefix, _objectSpread({}, _item));
       }
     } catch (err) {
       _iterator3.e(err);
@@ -163,6 +165,8 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     var includeIgnoredMorespecifics = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     return _this.index.getMatch(prefix, false).filter(function (i) {
       return _this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics);
+    }).map(function (i) {
+      return _objectSpread({}, i);
     });
   });
   _defineProperty(this, "getMonitoredASns", function () {
@@ -337,24 +341,12 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   });
   this.prefixes = [];
   this.asns = [];
-  this.cache = {
-    af: {},
-    binaries: {},
-    matched: {}
-  };
   this.config = env.config;
   this.storage = env.storage;
   this.logger = env.logger;
   this.callbacks = [];
   this.prefixListDiffFailThreshold = 50;
   this.index = new _longestPrefixMatch["default"]();
-
-  // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
-  setInterval(function () {
-    if (Object.keys(_this.cache.matched).length > 10000) {
-      _this.cache.matched = {};
-    }
-  }, 10000);
 
   // This is to load the prefixes after the application is booted
   setTimeout(function () {
