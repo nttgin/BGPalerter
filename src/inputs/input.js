@@ -40,24 +40,12 @@ export default class Input {
     constructor(env){
         this.prefixes = [];
         this.asns = [];
-        this.cache = {
-            af: {},
-            binaries: {},
-            matched: {}
-        };
         this.config = env.config;
         this.storage = env.storage;
         this.logger = env.logger;
         this.callbacks = [];
         this.prefixListDiffFailThreshold = 50;
         this.index = new LongestPrefixMatch();
-
-        // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
-        setInterval(() => {
-            if (Object.keys(this.cache.matched).length > 10000) {
-                this.cache.matched = {};
-            }
-        }, 10000);
 
         // This is to load the prefixes after the application is booted
         setTimeout(() => {
@@ -107,10 +95,11 @@ export default class Input {
             item.group = [item.group].flat();
         }
 
-        this.index.reset();
+        this.index = new LongestPrefixMatch();
+
         for (let item of this.prefixes) {
             item.group = [item.group].flat();
-            this.index.addPrefix(item.prefix, item);
+            this.index.addPrefix(item.prefix, {...item});
         }
 
         for (let call of this.callbacks) {
@@ -163,7 +152,8 @@ export default class Input {
 
     getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics=false) => {
         return this.index.getMatch(prefix, false)
-            .filter(i => this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics));
+            .filter(i => this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics))
+            .map(i => ({...i}));
     }
 
     getMonitoredASns = () => {
