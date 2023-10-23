@@ -301,7 +301,7 @@ export default class RpkiUtils {
 
     _markAsStale = () => {
         if (!!this.params.preCacheROAs) {
-            const digest = md5(JSON.stringify(this.getVRPs()));
+            const digest = md5(JSON.stringify(this.getMetadata())) + "-" + this.getVRPs().length;
             if (this.oldDigest) {
                 const stale = this.oldDigest === digest;
 
