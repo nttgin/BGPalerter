@@ -6,10 +6,10 @@ Object.defineProperty(exports, "__esModule", {
 exports["default"] = void 0;
 var _rpkiValidator = _interopRequireDefault(require("rpki-validator"));
 var _fs = _interopRequireDefault(require("fs"));
-var _md = _interopRequireDefault(require("md5"));
 var _axiosEnrich = _interopRequireDefault(require("./axiosEnrich"));
 var _axios = _interopRequireDefault(require("axios"));
 var _moment = _interopRequireDefault(require("moment"));
+var _objectFingerprint = _interopRequireDefault(require("object-fingerprint"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
@@ -290,7 +290,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
   });
   _defineProperty(this, "_markAsStale", function () {
     if (!!_this.params.preCacheROAs) {
-      var digest = (0, _md["default"])(JSON.stringify(_this.getMetadata())) + "-" + _this.getVRPs().length;
+      var digest = (0, _objectFingerprint["default"])(_this.getVRPs());
       if (_this.oldDigest) {
         var stale = _this.oldDigest === digest;
         if (_this.status.stale !== stale) {
