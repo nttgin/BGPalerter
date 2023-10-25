@@ -4,6 +4,7 @@ import md5 from "md5";
 import axiosEnrich from "./axiosEnrich";
 import axios from "axios";
 import moment from "moment";
+import fingerprint from "object-fingerprint";
 
 export default class RpkiUtils {
     constructor(env) {
@@ -66,7 +67,7 @@ export default class RpkiUtils {
         this._loadRpkiValidator();
 
         if (this.params.markDataAsStaleAfterMinutes > 0) {
-            this._markAsStale();
+            setInterval(this._markAsStale, 30 * 1000);
             setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
         }
 
@@ -301,7 +302,8 @@ export default class RpkiUtils {
 
     _markAsStale = () => {
         if (!!this.params.preCacheROAs) {
-            const digest = md5(JSON.stringify(this.getMetadata())) + "-" + this.getVRPs().length;
+            const digest = fingerprint(this.getVRPs());
+
             if (this.oldDigest) {
                 const stale = this.oldDigest === digest;
 
