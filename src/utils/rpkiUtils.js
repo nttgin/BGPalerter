@@ -1,6 +1,5 @@
 import RpkiValidator from "rpki-validator";
 import fs from "fs";
-import md5 from "md5";
 import axiosEnrich from "./axiosEnrich";
 import axios from "axios";
 import moment from "moment";
@@ -67,7 +66,7 @@ export default class RpkiUtils {
         this._loadRpkiValidator();
 
         if (this.params.markDataAsStaleAfterMinutes > 0) {
-            setInterval(this._markAsStale, 30 * 1000);
+            this._markAsStale();
             setInterval(this._markAsStale, this.params.markDataAsStaleAfterMinutes * 60 * 1000);
         }
 
