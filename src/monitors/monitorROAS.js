@@ -324,12 +324,17 @@ export default class MonitorROAS extends Monitor {
                             `ROAs change detected: ${alertsStrings.slice(0, 10).join("; ")} and more...`;
 
                         alerts = alerts.concat(alertsStrings);
+                        const metadata = this.rpki.getMetadata();
 
                         this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.prefix,
                             matchedRule,
                             message,
-                            {diff: alertsStrings, subType: "roa-diff"});
+                            {
+                                diff: alertsStrings,
+                                subType: "roa-diff",
+                                rpkiMetadata: metadata,
+                            });
                     }
                 }
             }
