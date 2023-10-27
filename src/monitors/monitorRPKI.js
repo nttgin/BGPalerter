@@ -107,6 +107,8 @@ export default class MonitorRPKI extends Monitor {
         const origin = result.origin.getValue();
         if (result && !this.rpki.getStatus().stale) {
 
+            const rpkiMetadata = this.rpki.getMetadata();
+
             const cacheKey = "a" + [prefix, origin]
                 .join("-")
                 .replace(/\./g, "_")
@@ -123,20 +125,20 @@ export default class MonitorRPKI extends Monitor {
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
+                        { rpkiMetadata, covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
                 } else if (this.params.checkUncovered) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null, subType: "rpki-unknown" });
+                        { rpkiMetadata, covering: null, valid: null, subType: "rpki-unknown" });
                 }
             } else if (result.valid === false) {
                 this.publishAlert(key,
                     prefix,
                     matchedRule,
                     message,
-                    { covering: result.covering, valid: false, subType: "rpki-invalid" });
+                    { rpkiMetadata, covering: result.covering, valid: false, subType: "rpki-invalid" });
 
             } else if (result.valid) {
 
