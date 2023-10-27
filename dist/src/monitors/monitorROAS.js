@@ -353,11 +353,13 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
                 var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
                 var message = alertsStrings.length <= 10 ? "ROAs change detected: ".concat(alertsStrings.join("; ")) : "ROAs change detected: ".concat(alertsStrings.slice(0, 10).join("; "), " and more...");
                 alerts = alerts.concat(alertsStrings);
+                var metadata = _this.rpki.getMetadata();
                 _this.publishAlert((0, _md["default"])(message),
                 // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                 matchedRule.prefix, matchedRule, message, {
                   diff: alertsStrings,
-                  subType: "roa-diff"
+                  subType: "roa-diff",
+                  rpkiMetadata: metadata
                 });
               }
             } catch (err) {

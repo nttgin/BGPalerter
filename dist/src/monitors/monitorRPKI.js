@@ -97,6 +97,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       var prefix = result.prefix;
       var origin = result.origin.getValue();
       if (result && !_this.rpki.getStatus().stale) {
+        var rpkiMetadata = _this.rpki.getMetadata();
         var cacheKey = "a" + [prefix, origin].join("-").replace(/\./g, "_").replace(/\:/g, "_").replace(/\//g, "_");
         var key = "".concat(cacheKey, "-").concat(result.valid);
         if (result.valid === null) {
@@ -104,6 +105,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
           if (cache && cache.rpkiValid && cache.date + _this.cacheValidPrefixesMs >= new Date().getTime()) {
             // valid cache
             _this.publishAlert(key, prefix, matchedRule, message, {
+              rpkiMetadata: rpkiMetadata,
               covering: null,
               valid: null,
               roaDisappeared: true,
@@ -111,6 +113,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
             });
           } else if (_this.params.checkUncovered) {
             _this.publishAlert(key, prefix, matchedRule, message, {
+              rpkiMetadata: rpkiMetadata,
               covering: null,
               valid: null,
               subType: "rpki-unknown"
@@ -118,6 +121,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
           }
         } else if (result.valid === false) {
           _this.publishAlert(key, prefix, matchedRule, message, {
+            rpkiMetadata: rpkiMetadata,
             covering: result.covering,
             valid: false,
             subType: "rpki-invalid"
