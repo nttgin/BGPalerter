@@ -135,6 +135,13 @@ export default class MonitorROAS extends Monitor {
                                 vrpCount: sizes[ta],
                                 expiringVrps: expiringSizes[ta]
                             });
+                    })
+                    .catch(error => {
+
+                        this.logger.log({
+                            level: 'error',
+                            message: error
+                        });
                     });
             }
         }
@@ -187,17 +194,8 @@ export default class MonitorROAS extends Monitor {
                             expiring: items.map(i => i.file)
                         };
                     } else {
-                        return {};
+                        return Promise.reject("Not found yet");
                     }
-                })
-                .catch(error => {
-
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-
-                    return {};
                 });
         } else {
             return Promise.resolve({});
@@ -232,8 +230,21 @@ export default class MonitorROAS extends Monitor {
                                         matchedRule.prefix,
                                         matchedRule,
                                         message,
-                                        {...extra, vrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                                        {
+                                            ...extra,
+                                            vrps,
+                                            roaExpirationHours: roaExpirationAlertHours,
+                                            rpkiMetadata: metadata,
+                                            subType: "roa-expire"
+                                        });
                                 })
+                                .catch(error => {
+
+                                    this.logger.log({
+                                        level: 'error',
+                                        message: error
+                                    });
+                                });
                         }))
             }))
             .then(() => alerts);
@@ -266,7 +277,20 @@ export default class MonitorROAS extends Monitor {
                                 matchedRule.asn.getId(),
                                 matchedRule,
                                 message,
-                                {...extra, vrps: unsentVrps, roaExpirationHours: roaExpirationAlertHours, rpkiMetadata: metadata, subType: "roa-expire"});
+                                {
+                                    ...extra,
+                                    vrps: unsentVrps,
+                                    roaExpirationHours: roaExpirationAlertHours,
+                                    rpkiMetadata: metadata,
+                                    subType: "roa-expire"
+                                });
+                        })
+                        .catch(error => {
+
+                            this.logger.log({
+                                level: 'error',
+                                message: error
+                            });
                         });
                 }
             }
