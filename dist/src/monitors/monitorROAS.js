@@ -123,6 +123,11 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               vrpCount: sizes[ta],
               expiringVrps: expiringSizes[ta]
             }));
+          })["catch"](function (error) {
+            _this.logger.log({
+              level: 'error',
+              message: error
+            });
           });
         }
       };
@@ -190,14 +195,8 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               })
             };
           } else {
-            return {};
+            return Promise.reject("Not found yet");
           }
-        })["catch"](function (error) {
-          _this.logger.log({
-            level: 'error',
-            message: error
-          });
-          return {};
         });
       } else {
         return Promise.resolve({});
@@ -232,6 +231,11 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               rpkiMetadata: metadata,
               subType: "roa-expire"
             }));
+          })["catch"](function (error) {
+            _this.logger.log({
+              level: 'error',
+              message: error
+            });
           });
         }));
       })).then(function () {
@@ -277,6 +281,11 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
                   rpkiMetadata: metadata,
                   subType: "roa-expire"
                 }));
+              })["catch"](function (error) {
+                _this.logger.log({
+                  level: 'error',
+                  message: error
+                });
               });
             }
           };
