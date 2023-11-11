@@ -357,7 +357,7 @@ export default class MonitorROAS extends Monitor {
                             {
                                 diff: alertsStrings,
                                 subType: "roa-diff",
-                                rpkiMetadata: metadata,
+                                rpkiMetadata: metadata
                             });
                     }
                 }
@@ -389,12 +389,17 @@ export default class MonitorROAS extends Monitor {
                             `ROAs change detected: ${alertsStrings.join("; ")}` :
                             `ROAs change detected: ${alertsStrings.slice(0, 10).join("; ")} and more...`;
                         alerts = alerts.concat(alertsStrings);
+                        const metadata = this.rpki.getMetadata();
 
                         this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.asn.getId(),
                             matchedRule,
                             message,
-                            {diff: alertsStrings, subType: "roa-diff"});
+                            {
+                                diff: alertsStrings,
+                                subType: "roa-diff",
+                                rpkiMetadata: metadata
+                            });
                     }
                 }
             }
