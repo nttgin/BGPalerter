@@ -33,36 +33,24 @@
 import ipUtils from "ip-sub";
 import inquirer from "inquirer";
 import generatePrefixes from "../generatePrefixesList";
+import LongestPrefixMatch from "longest-prefix-match";
 
 export default class Input {
 
     constructor(env){
         this.prefixes = [];
         this.asns = [];
-        this.cache = {
-            af: {},
-            binaries: {},
-            matched: {}
-        };
         this.config = env.config;
         this.storage = env.storage;
         this.logger = env.logger;
         this.callbacks = [];
         this.prefixListDiffFailThreshold = 50;
-
-        // This implements a fast basic fixed space cache, other approaches lru-like use too much cpu
-        setInterval(() => {
-            if (Object.keys(this.cache.matched).length > 10000) {
-                this.cache.matched = {};
-            }
-        }, 10000);
+        this.index = new LongestPrefixMatch();
 
         // This is to load the prefixes after the application is booted
         setTimeout(() => {
             this.loadPrefixes()
-                .then(() => {
-                    this._change();
-                })
+                .then(() => this._change())
                 .catch(error => {
                     this.logger.log({
                         level: 'error',
@@ -103,6 +91,17 @@ export default class Input {
     };
 
     _change = () => {
+        for (let item of this.asns) {
+            item.group = [item.group].flat();
+        }
+
+        this.index = new LongestPrefixMatch();
+
+        for (let item of this.prefixes) {
+            item.group = [item.group].flat();
+            this.index.addPrefix(item.prefix, {...item});
+        }
+
         for (let call of this.callbacks) {
             call();
         }
@@ -144,44 +143,18 @@ export default class Input {
         throw new Error('The method getMonitoredPrefixes MUST be implemented');
     };
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics) => {
-        const key = `${prefix}-${includeIgnoredMorespecifics}`;
-        const cached = this.cache.matched[key];
 
-        if (cached !== undefined) {
-            return cached;
-        } else {
-            for (let p of this.prefixes) {
-                if (ipUtils._isEqualPrefix(p.prefix, prefix)) {
-                    this.cache.matched[key] = p;
-                    return p;
-                } else {
+    _filterIgnoreMorespecifics = (i, prefix, includeIgnoredMorespecifics) => {
+        return includeIgnoredMorespecifics
+            || !i.ignoreMorespecifics
+            || ipUtils._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
+    }
 
-                    if (!this.cache.af[p.prefix]) {
-                        this.cache.af[p.prefix] = ipUtils.getAddressFamily(p.prefix);
-                        this.cache.binaries[p.prefix] = ipUtils.applyNetmask(p.prefix, this.cache.af[p.prefix]);
-                    }
-                    const prefixAf = ipUtils.getAddressFamily(prefix);
-
-                    if (prefixAf === this.cache.af[p.prefix]) {
-
-                        const prefixBinary = ipUtils.applyNetmask(prefix, prefixAf);
-                        if (ipUtils.isSubnetBinary(this.cache.binaries[p.prefix], prefixBinary)) {
-                            if (includeIgnoredMorespecifics || !p.ignoreMorespecifics) {
-                                this.cache.matched[key] = p;
-                                return p;
-                            } else {
-                                this.cache.matched[key] = null;
-                                return null;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return null;
-    };
+    getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics=false) => {
+        return this.index.getMatch(prefix, false)
+            .filter(i => this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics))
+            .map(i => ({...i}));
+    }
 
     getMonitoredASns = () => {
         throw new Error('The method getMonitoredASns MUST be implemented');

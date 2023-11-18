@@ -107,6 +107,8 @@ export default class MonitorRPKI extends Monitor {
         const origin = result.origin.getValue();
         if (result && !this.rpki.getStatus().stale) {
 
+            const rpkiMetadata = this.rpki.getMetadata();
+
             const cacheKey = "a" + [prefix, origin]
                 .join("-")
                 .replace(/\./g, "_")
@@ -123,20 +125,20 @@ export default class MonitorRPKI extends Monitor {
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
+                        { rpkiMetadata, covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
                 } else if (this.params.checkUncovered) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,
                         message,
-                        { covering: null, valid: null, subType: "rpki-unknown" });
+                        { rpkiMetadata, covering: null, valid: null, subType: "rpki-unknown" });
                 }
             } else if (result.valid === false) {
                 this.publishAlert(key,
                     prefix,
                     matchedRule,
                     message,
-                    { covering: result.covering, valid: false, subType: "rpki-invalid" });
+                    { rpkiMetadata, covering: result.covering, valid: false, subType: "rpki-invalid" });
 
             } else if (result.valid) {
 
@@ -183,18 +185,23 @@ export default class MonitorRPKI extends Monitor {
             const messageOrigin = message.originAS;
             const prefix = message.prefix;
 
-            const matchedPrefixRule = this.getMoreSpecificMatch(prefix, false, true);
+            const matchedPrefixRules = this.getMoreSpecificMatches(prefix, false, true);
 
-            if (matchedPrefixRule && matchedPrefixRule.matched) { // There is a prefix match
-                if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) { // The prefix match is not excluded in any way
-                    this.validate(message, matchedPrefixRule.matched);
+            if (matchedPrefixRules.length) {
+                for (let matchedPrefixRule of matchedPrefixRules) {
+                    if (matchedPrefixRule.matched) { // There is a prefix match
+                        if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) { // The prefix match is not excluded in any way
+                            this.validate(message, matchedPrefixRule.matched);
+                        }
+                    }
                 }
-            } else { // No prefix match
+            } else {
                 const matchedASRule = this.getMonitoredAsMatch(messageOrigin); // Try AS match
                 if (matchedASRule) {
                     this.validate(message, matchedASRule);
                 }
             }
+
         } catch (error) {
             this.logger.log({
                 level: 'error',

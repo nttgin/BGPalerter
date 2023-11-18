@@ -41,7 +41,7 @@ module.exports = function generatePrefixes(inputParameters) {
 
     let proxy;
     if (httpProxy) {
-        const HttpsProxyAgent = require("https-proxy-agent");
+        const {HttpsProxyAgent} = require("https-proxy-agent");
         proxy = new HttpsProxyAgent(url.parse(httpProxy));
     }
     axiosEnrich(axios, proxy, clientId);
@@ -76,7 +76,8 @@ module.exports = function generatePrefixes(inputParameters) {
             path: ["data", "asn-neighbours", "data.json"],
             params: {
                 client: clientId,
-                resource: asn
+                resource: asn,
+                lod: 0
             }
         });
 

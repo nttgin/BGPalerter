@@ -89,11 +89,11 @@ export default class myMonitor extends Monitor { // It MUST extend Monitor
              * This is where the real analysis happens and when the alerts are generated. Place here your complex filtering/analysis. 
              * The 'filter' function described before is needed to avoid useless calls to the 'monitor' function, which is much more expensive in terms of memory. */
 
-            const matchedRule = this.getMoreSpecificMatch(message.prefix); //The method getMoreSpecificMatch is inherited from the super class, it provides the rule in prefixes.yml that matches the current BGP message.
+            const matchedRules = this.getMoreSpecificMatches(message.prefix); //The method getMoreSpecificMatches is inherited from the super class, it provides the rule in prefixes.yml that matches the current BGP message.
             
-            if (matchedRule) { // We matched something in prefixes.yml
+            for (let matchedRule of matchedRules) { // We matched something in prefixes.yml
                 const signature = message.originAS.getId() + "-" + message.prefix; // All messages with the same origin AS and prefix will be bundled together. Read above the squash method to understand why.
-                
+
                 this.publishAlert(signature, // The method publishAlert is inherited from the super class.
                     message.prefix, // The monitored resource subject of the alert (it can be an AS or a prefix)
                     matchedRule, // The monitored rule that was matched (from prefixes.yml)
