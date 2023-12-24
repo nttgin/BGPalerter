@@ -7,12 +7,6 @@ jobs:
   build-debs:
     runs-on: ubuntu-latest
     steps:
-      - name: Build basic
-        run: npm run build
-
-      - name: Check out code
-        uses: actions/checkout@v3
-
       - name: Build debian
         uses: jtdor/build-deb-action@v1
         env:

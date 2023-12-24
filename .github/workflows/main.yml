@@ -34,6 +34,7 @@ jobs:
       run: |
         npm install
         npm run compile
+        npm run build
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
