@@ -1,3 +1,9 @@
+node-bgpalerter (1.33.0-1) unstable; urgency=medium
+
+    * Deb release of BGPalerter 1.33.0
+
+ -- Massimo Candela <massimo@ntt.net>  Sun, 24 Dec 2023 16:19:06 +0100
+
 node-bgpalerter (1.31.1-1) unstable; urgency=medium
 
     * Don't strip packages.json
