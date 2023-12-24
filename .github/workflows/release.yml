@@ -7,8 +7,7 @@ jobs:
   build-debs:
     runs-on: ubuntu-latest
     steps:
-      - name: Build debian
-        uses: jtdor/build-deb-action@v1
+      - uses: jtdor/build-deb-action@v1
         env:
           DEB_BUILD_OPTIONS: noautodbgsym
         with:
