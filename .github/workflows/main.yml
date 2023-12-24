@@ -34,6 +34,7 @@ jobs:
       run: |
         npm install
         npm run compile
+        npm run build
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
@@ -42,6 +43,25 @@ jobs:
         name: logs
         path: ~/.npm/_logs/*
         retention-days: 14
+
+  build-debs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jtdor/build-deb-action@v1
+        env:
+          DEB_BUILD_OPTIONS: noautodbgsym
+        with:
+          buildpackage-opts: --build=binary --no-sign
+          extra-build-deps: git
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          files: |
+            LICENSE
+            bin/*
+            debian/artifacts/*.deb
 
   test:
     name: Test
