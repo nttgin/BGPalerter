@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const chaiSubset = require('chai-subset');
-const axios = require('axios');
+const axios = require('redaxios');
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "redaxios";
 import url from "url";
 import brembo from "brembo";
 import merge from "deepmerge";

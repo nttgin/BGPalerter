@@ -1,7 +1,7 @@
 import RpkiValidator from "rpki-validator";
 import fs from "fs";
 import axiosEnrich from "./axiosEnrich";
-import axios from "axios";
+import axios from "redaxios";
 import moment from "moment";
 import fingerprint from "object-fingerprint";
 
