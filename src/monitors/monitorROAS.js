@@ -6,6 +6,20 @@ import moment from "moment";
 import ipUtils from "ip-sub";
 import batchPromises from "batch-promises";
 
+const getTaToleranceDict = (tolerance) => {
+    if (typeof(tolerance) === "number") {
+        return {
+            ripe: tolerance,
+            apnic: tolerance,
+            arin: tolerance,
+            lacnic: tolerance,
+            afrinic: tolerance
+        }
+    }
+
+    return tolerance;
+}
+
 export default class MonitorROAS extends Monitor {
 
     constructor(name, channel, params, env, input){
@@ -25,8 +39,8 @@ export default class MonitorROAS extends Monitor {
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
         this.checkOnlyASns = params.checkOnlyASns != null ? params.checkOnlyASns : true;
 
-        this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
-        this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
+        this.toleranceExpiredRoasTA = getTaToleranceDict(params.toleranceExpiredRoasTA || 20);
+        this.toleranceDeletedRoasTA = getTaToleranceDict(params.toleranceDeletedRoasTA || 20);
         this.timesDeletedTAs = {};
         this.seenTAs = {};
         this.monitored = {
@@ -84,7 +98,7 @@ export default class MonitorROAS extends Monitor {
                     const diff = max - min;
                     const percentage = 100 / max * diff;
 
-                    if (percentage > this.toleranceDeletedRoasTA) {
+                    if (percentage > this.toleranceDeletedRoasTA[ta]) {
                         const message = `Possible TA malfunction or incomplete VRP file: ${percentage.toFixed(2)}% of the ROAs disappeared from ${ta}`;
 
                         this.publishAlert(`disappeared-${ta}`,
@@ -115,7 +129,7 @@ export default class MonitorROAS extends Monitor {
             const max = sizes[ta];
             const percentage = (100 / max) * min;
 
-            if (percentage > this.toleranceExpiredRoasTA) {
+            if (percentage > this.toleranceExpiredRoasTA[ta]) {
                 const currentTaVrps = vrps.filter(i => i.ta === ta);
                 this._getExpiringItems(currentTaVrps)
                     .then(extra => {

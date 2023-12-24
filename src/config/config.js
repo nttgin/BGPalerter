@@ -94,8 +94,20 @@ export default class Config {
                         enableAdvancedRpkiStats: false,
                         roaExpirationAlertHours: 2,
                         checkOnlyASns: true,
-                        toleranceDeletedRoasTA: 20,
-                        toleranceExpiredRoasTA: 20
+                        toleranceDeletedRoasTA: {
+                            ripe: 20,
+                            apnic: 20,
+                            arin: 20,
+                            lacnic: 20,
+                            afrinic: 50
+                        },
+                        toleranceExpiredRoasTA: {
+                            ripe: 20,
+                            apnic: 20,
+                            arin: 20,
+                            lacnic: 20,
+                            afrinic: 50
+                        }
                     }
                 },
                 {
