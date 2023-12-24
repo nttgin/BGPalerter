@@ -104,20 +104,20 @@ export default class MonitorPath extends Monitor {
         }
     };
 
-    monitor = (message) =>
-        new Promise((resolve, reject) => {
+    monitor = (message) => {
 
-            const messagePrefix = message.prefix;
-            const matchedRule = this.getMoreSpecificMatch(messagePrefix, false);
+        const messagePrefix = message.prefix;
+        const matchedRules = this.getMoreSpecificMatches(messagePrefix, false);
 
-            if (matchedRule && !matchedRule.ignore && matchedRule.path) {
+        for (let matchedRule of matchedRules) {
+            if (!matchedRule.ignore && matchedRule.path) {
                 const pathRules = (matchedRule.path.length) ? matchedRule.path : [ matchedRule.path ];
 
                 pathRules.map((pathRule, position) => this.pathRuleCheck(pathRule, position, message, matchedRule));
-
             }
+        }
 
-            resolve(true);
-        });
+        return Promise.resolve(true);
+    };
 
 }

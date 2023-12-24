@@ -13,12 +13,12 @@ jobs:
     steps:
 
     - name: Set up Javascript/Node
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.14.0
+        node-version: 18.19.0
 
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 
@@ -49,12 +49,12 @@ jobs:
     steps:
 
     - name: Set up nodejs
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18.14.0
+        node-version: 18.19.0
 
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: '0'
 

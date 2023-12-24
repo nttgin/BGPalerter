@@ -1,9 +1,9 @@
 import RpkiValidator from "rpki-validator";
 import fs from "fs";
-import md5 from "md5";
 import axiosEnrich from "./axiosEnrich";
-import axios from "axios";
+import axios from "redaxios";
 import moment from "moment";
+import fingerprint from "object-fingerprint";
 
 export default class RpkiUtils {
     constructor(env) {
@@ -301,7 +301,8 @@ export default class RpkiUtils {
 
     _markAsStale = () => {
         if (!!this.params.preCacheROAs) {
-            const digest = md5(JSON.stringify(this.getVRPs()));
+            const digest = fingerprint(this.getVRPs());
+
             if (this.oldDigest) {
                 const stale = this.oldDigest === digest;
 

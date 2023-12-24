@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "redaxios";
 
 export default class Config {
     static configVersion = 2;
@@ -68,6 +68,7 @@ export default class Config {
                     channel: "misconfiguration",
                     name: "asn-monitor",
                     params: {
+                        skipPrefixMatch: false,
                         thresholdMinPeers: 3
                     }
                 },

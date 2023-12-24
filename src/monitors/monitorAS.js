@@ -37,6 +37,7 @@ export default class MonitorAS extends Monitor {
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
+        this.skipPrefixMatch = !!params?.skipPrefixMatch;
         this.updateMonitoredResources();
     };
 
@@ -68,7 +69,7 @@ export default class MonitorAS extends Monitor {
         if (prefixesOut.length > 1) {
             return `${matchedMessages[0].originAS} is announcing some prefixes which are not in the configured list of announced prefixes: ${prefixesOut}`
         } else if (prefixesOut.length === 1) {
-           return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
+            return `${matchedMessages[0].originAS} is announcing ${matchedMessages[0].prefix} but this prefix is not in the configured list of announced prefixes`;
         }
 
         return false;
@@ -79,15 +80,34 @@ export default class MonitorAS extends Monitor {
 
             const messageOrigin = message.originAS;
             const messagePrefix = message.prefix;
-            const matchedRule = this.getMonitoredAsMatch(messageOrigin);
+            const matchedASRule = this.getMonitoredAsMatch(messageOrigin);
 
-            if (matchedRule) {
+            if (matchedASRule) {
 
-                const matchedPrefixRule = this.getMoreSpecificMatch(messagePrefix, true);
-                if (!matchedPrefixRule) {
+                const matchedPrefixRules = this.getMoreSpecificMatches(messagePrefix, true, false);
+
+                if (this.skipPrefixMatch) {
+                    const skipMatches = matchedPrefixRules.map(i => i.group).flat();
+                    const goodMatches = [matchedASRule.group].flat();
+
+                    for (let g of goodMatches) {
+                        if (!skipMatches.includes(g)) {
+                            this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
+                                messageOrigin.getId(),
+                                {
+                                    ...matchedASRule,
+                                    group: [g]
+                                },
+                                message,
+                                {});
+                        }
+                    }
+
+                } else if (!matchedPrefixRules.length) {
+
                     this.publishAlert(messageOrigin.getId().toString() + "-" + messagePrefix,
                         messageOrigin.getId(),
-                        matchedRule,
+                        matchedASRule,
                         message,
                         {});
                 }

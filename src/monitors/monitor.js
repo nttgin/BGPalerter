@@ -31,7 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import axios from "axios";
+import axios from "redaxios";
 import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Monitor {
@@ -257,31 +257,31 @@ export default class Monitor {
         return null;
     };
 
-    _included = (matched) => {
-        if (matched.includeMonitors.length > 0) {
-            return matched.includeMonitors.includes(this.name);
-        } else {
-            return !matched.excludeMonitors.includes(this.name);
-        }
-    };
+    _filterMatched = (verbose) => {
+        return matched => {
+            if (matched) {
+                const included = matched.includeMonitors.length > 0
+                    ? matched.includeMonitors.includes(this.name)
+                    : !matched.excludeMonitors.includes(this.name);
 
-    getMoreSpecificMatch = (prefix, includeIgnoredMorespecifics, verbose=false) => {
-        const matched = this.input.getMoreSpecificMatch(prefix, includeIgnoredMorespecifics);
-
-        if (matched) {
-            const included = this._included(matched);
-
-            if (verbose) {
-                return {
-                    matched,
-                    included
-                };
-            } else if (included) {
-                return matched;
+                if (verbose) {
+                    return {
+                        matched,
+                        included
+                    };
+                } else if (included) {
+                    return matched;
+                }
             }
-        }
 
-        return null;
+            return null;
+        }
+    }
+
+    getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics, verbose) => {
+        return this.input.getMoreSpecificMatches(prefix, includeIgnoredMorespecifics)
+            .map(this._filterMatched(verbose))
+            .filter(i => !!i);
     };
 
 }

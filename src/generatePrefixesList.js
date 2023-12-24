@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "redaxios";
 import url from "url";
 import brembo from "brembo";
 import merge from "deepmerge";
@@ -41,7 +41,7 @@ module.exports = function generatePrefixes(inputParameters) {
 
     let proxy;
     if (httpProxy) {
-        const HttpsProxyAgent = require("https-proxy-agent");
+        const {HttpsProxyAgent} = require("https-proxy-agent");
         proxy = new HttpsProxyAgent(url.parse(httpProxy));
     }
     axiosEnrich(axios, proxy, clientId);

@@ -33,7 +33,7 @@
 
 import moment from "moment";
 import brembo from "brembo";
-import axios from "axios";
+import axios from "redaxios";
 import axiosEnrich from "../utils/axiosEnrich";
 import RpkiValidator from "rpki-validator";
 

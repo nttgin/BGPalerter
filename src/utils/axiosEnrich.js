@@ -3,14 +3,14 @@ import md5 from "md5";
 const attempts = {};
 const numAttempts = 2;
 
-const retry = function (axios, error) {
+const retry = function (axios, error, params) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const key = md5(JSON.stringify(error.config));
+            const key = md5(JSON.stringify(params));
             attempts[key] = attempts[key] || 0;
             attempts[key]++;
             if (attempts[key] <= numAttempts) {
-                resolve(axios.request(error.config));
+                resolve(axios.request(params));
             } else {
                 reject(error);
             }
@@ -19,6 +19,10 @@ const retry = function (axios, error) {
 }
 
 export default function(axios, httpsAgent, userAgent) {
+
+    axios.defaults ??= {};
+    axios.defaults.headers ??= {};
+    axios.defaults.headers.common ??= {};
 
     // Set agent/proxy
     if (httpsAgent) {
@@ -36,15 +40,6 @@ export default function(axios, httpsAgent, userAgent) {
         'Accept-Encoding': 'gzip'
     };
 
-    // Retry
-    axios.interceptors.response.use(
-        response => response,
-        error => {
-            if (error.config) {
-                return retry(axios, error);
-            }
-            return Promise.reject(error);
-        });
-
-    return axios;
+    return params => axios(params)
+        .catch(error => retry(axios, error, params));
 }

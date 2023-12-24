@@ -70,7 +70,7 @@ describe("Alerting", function () {
                     "affected": 101,
                     "matchedRule": {
                         "asn": [101],
-                        "group": "default",
+                        "group": ["default"],
                         "groupd": "default",
                         "upstreams": [100],
                         "downstreams": [104]
@@ -99,7 +99,7 @@ describe("Alerting", function () {
                     "affected": 80,
                     "matchedRule": {
                         "asn": [80],
-                        "group": "default",
+                        "group": ["default"],
                         "groupd": "default",
                         "upstreams": [99],
                         "downstreams": null
@@ -128,7 +128,7 @@ describe("Alerting", function () {
                     "affected": 101,
                     "matchedRule": {
                         "asn": [101],
-                        "group": "default",
+                        "group": ["default"],
                         "groupd": "default",
                         "upstreams": [100],
                         "downstreams": [104]

@@ -241,7 +241,7 @@ describe("Core functions", function() {
                             "description": "rpki valid not monitored AS",
                             "ignoreMorespecifics": false,
                             "prefix": "193.0.0.0/21",
-                            "group": "default",
+                            "group": ["default"],
                             "excludeMonitors" : [],
                             "includeMonitors": []
                         },
@@ -250,7 +250,7 @@ describe("Core functions", function() {
                             "description": "description 1",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.225.0/24",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -260,7 +260,7 @@ describe("Core functions", function() {
                             "description": "description 2",
                             "ignoreMorespecifics": false,
                             "prefix": "165.254.255.0/24",
-                            "group": "groupName",
+                            "group": ["groupName"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -270,7 +270,7 @@ describe("Core functions", function() {
                             "description": "description 3",
                             "ignoreMorespecifics": true,
                             "prefix": "192.147.168.0/24",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -280,7 +280,7 @@ describe("Core functions", function() {
                             "description": "alarig fix test",
                             "ignoreMorespecifics": false,
                             "prefix": "2a00:5884::/32",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -290,7 +290,7 @@ describe("Core functions", function() {
                             "description": "alarig fix test 2",
                             "ignoreMorespecifics": false,
                             "prefix": "2a0e:f40::/29",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -300,7 +300,7 @@ describe("Core functions", function() {
                             "description": "ignore sub test",
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:f40::/30",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -310,7 +310,7 @@ describe("Core functions", function() {
                             "description": "ignore flag test",
                             "ignoreMorespecifics": true,
                             "prefix": "2a0e:240::/32",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": true,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -320,7 +320,7 @@ describe("Core functions", function() {
                             "description": "include exclude test",
                             "ignoreMorespecifics": false,
                             "prefix": "175.254.205.0/24",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : ["basic-hijack-detection", "withdrawal-detection"],
                             "includeMonitors": []
@@ -330,7 +330,7 @@ describe("Core functions", function() {
                             "description": "include exclude test",
                             "ignoreMorespecifics": false,
                             "prefix": "170.254.205.0/24",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": ["prefix-detection"]
@@ -340,7 +340,7 @@ describe("Core functions", function() {
                             "description": "test fade off",
                             "ignoreMorespecifics": false,
                             "prefix": "165.24.225.0/24",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []
@@ -350,7 +350,7 @@ describe("Core functions", function() {
                             "description": "exact matching test",
                             "ignoreMorespecifics": true,
                             "prefix": "2001:db8:123::/48",
-                            "group": "default",
+                            "group": ["default"],
                             "ignore": false,
                             "excludeMonitors" : [],
                             "includeMonitors": []

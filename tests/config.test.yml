@@ -35,6 +35,7 @@ monitors:
     channel: misconfiguration
     name: asn-monitor
     params:
+      skipPrefixMatch: false
       thresholdMinPeers: 2
 
   - file: monitorRPKI
