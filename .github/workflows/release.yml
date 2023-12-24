@@ -7,8 +7,14 @@ jobs:
   build-debs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: jtdor/build-deb-action@v1
+      - name: Build basic
+        run: npm run build
+
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Build debian
+        uses: jtdor/build-deb-action@v1
         env:
           DEB_BUILD_OPTIONS: noautodbgsym
         with:
@@ -20,4 +26,5 @@ jobs:
           prerelease: true
           files: |
             LICENSE
+            bin/*
             debian/artifacts/*.deb
