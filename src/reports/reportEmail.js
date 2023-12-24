@@ -150,7 +150,10 @@ export default class ReportEmail extends Report {
                         from: this.params.senderEmail,
                         to,
                         subject: 'BGP alert: ' + channel,
-                        text: text
+                        text: text,
+                        headers: {
+                            "auto-submitted": "auto-generated"
+                        }
                     });
                 }
             }
