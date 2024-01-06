@@ -33,6 +33,7 @@
 
 import axios from "redaxios";
 import axiosEnrich from "../utils/axiosEnrich";
+import ipUtils from 'ip-sub';
 
 export default class Connector {
 
@@ -48,10 +49,40 @@ export default class Connector {
         this.errorCallback = null;
         this.disconnectCallback = null;
 
-
         this.axios = axiosEnrich(axios,
             (!this.params.noProxy && env.agent) ? env.agent : null,
             `${env.clientId}/${env.version}`);
+    }
+
+    _parseFilters = (callback) => {
+        const {blacklistSources=[]} = this.params;
+
+        if (blacklistSources) {
+            const filters = {
+                asns: blacklistSources.filter(i => Number.isInteger(i)),
+                prefixes: blacklistSources.filter(i => ipUtils.isValidPrefix(i) || ipUtils.isValidIP(i)).map(i => ipUtils.toPrefix(i)),
+            }
+
+            const generateCallback = (filters, callback) => {
+                return (message) => {
+                    const {data} = message;
+
+                    if (data && (data.peerAS || data.peer)) {
+                        const messagePeer = ipUtils.toPrefix(data.peer);
+                        if (!filters.prefixes.some(prefix => ipUtils.isEqualPrefix(prefix, messagePeer) || ipUtils.isSubnet(prefix, messagePeer))
+                            && !filters.asns.includes(data.peerAS)) {
+                            return callback(message);
+                        }
+                    } else {
+                        return callback(message);
+                    }
+                }
+            }
+
+            return generateCallback(filters, callback);
+        } else {
+            return null;
+        }
     }
 
     connect = () =>
@@ -93,7 +124,13 @@ export default class Connector {
     };
 
     onMessage = (callback) => {
-        this.messageCallback = callback;
+        const filterCallback = this._parseFilters(callback);
+
+        if (filterCallback) {
+            this.messageCallback = filterCallback;
+        } else {
+            this.messageCallback = callback;
+        }
     };
 
     onError = (callback) => {

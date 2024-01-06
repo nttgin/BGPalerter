@@ -2,6 +2,9 @@ connectors:
   - file: connectorRIS
     name: ris
     params:
+      blacklistSources:
+        - 123.0.0.1/24
+        - 3453
       carefulSubscription: true
       url: ws://ris-live.ripe.net/v1/ws/
       perMessageDeflate: true
