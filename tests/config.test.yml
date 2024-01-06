@@ -4,9 +4,6 @@ connectors:
   - file: connectorTest
     name: tes
     params:
-      blacklistSources:
-        - 124.0.0.3
-        - 3453
       testType: withdrawal
 
 monitors:
