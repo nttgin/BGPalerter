@@ -33,8 +33,20 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+var getTaToleranceDict = function getTaToleranceDict(tolerance) {
+  if (typeof tolerance === "number") {
+    return {
+      ripe: tolerance,
+      apnic: tolerance,
+      arin: tolerance,
+      lacnic: tolerance,
+      afrinic: tolerance
+    };
+  }
+  return tolerance;
+};
 var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
   _inherits(MonitorROAS, _Monitor);
   var _super = _createSuper(MonitorROAS);
@@ -81,7 +93,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             var max = Math.max(newSize, oldSize);
             var _diff = max - min;
             var percentage = 100 / max * _diff;
-            if (percentage > _this.toleranceDeletedRoasTA) {
+            if (percentage > _this.toleranceDeletedRoasTA[ta]) {
               var message = "Possible TA malfunction or incomplete VRP file: ".concat(percentage.toFixed(2), "% of the ROAs disappeared from ").concat(ta);
               _this.publishAlert("disappeared-".concat(ta), ta, {
                 group: "default"
@@ -106,7 +118,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         var min = expiringSizes[ta];
         var max = sizes[ta];
         var percentage = 100 / max * min;
-        if (percentage > _this.toleranceExpiredRoasTA) {
+        if (percentage > _this.toleranceExpiredRoasTA[ta]) {
           var currentTaVrps = vrps.filter(function (i) {
             return i.ta === ta;
           });
@@ -144,7 +156,6 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       if (_this.enableExpirationCheckTA) {
         _this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
       }
-
       if (_this.enableExpirationAlerts) {
         var prefixesIn = _this.monitored.prefixes.map(function (i) {
           return i.prefix;
@@ -311,7 +322,6 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       if (_this.enableDeletedCheckTA) {
         _this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas
       }
-
       if (_this.enableDiffAlerts) {
         if (_this._oldVrps) {
           // No diff if there were no vrps before
@@ -479,8 +489,8 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     // Default parameters
     _this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
     _this.checkOnlyASns = params.checkOnlyASns != null ? params.checkOnlyASns : true;
-    _this.toleranceExpiredRoasTA = params.toleranceExpiredRoasTA || 20;
-    _this.toleranceDeletedRoasTA = params.toleranceDeletedRoasTA || 20;
+    _this.toleranceExpiredRoasTA = getTaToleranceDict(params.toleranceExpiredRoasTA || 20);
+    _this.toleranceDeletedRoasTA = getTaToleranceDict(params.toleranceDeletedRoasTA || 20);
     _this.timesDeletedTAs = {};
     _this.seenTAs = {};
     _this.monitored = {

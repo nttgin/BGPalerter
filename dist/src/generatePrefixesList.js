@@ -1,6 +1,6 @@
 "use strict";
 
-var _axios = _interopRequireDefault(require("axios"));
+var _redaxios = _interopRequireDefault(require("redaxios"));
 var _url = _interopRequireDefault(require("url"));
 var _brembo = _interopRequireDefault(require("brembo"));
 var _deepmerge = _interopRequireDefault(require("deepmerge"));
@@ -49,7 +49,7 @@ module.exports = function generatePrefixes(inputParameters) {
       HttpsProxyAgent = _require.HttpsProxyAgent;
     proxy = new HttpsProxyAgent(_url["default"].parse(httpProxy));
   }
-  (0, _axiosEnrich["default"])(_axios["default"], proxy, clientId);
+  (0, _axiosEnrich["default"])(_redaxios["default"], proxy, clientId);
   if (historical) {
     logger("WARNING: you are using historical visibility data for generating the prefix list.");
   }
@@ -91,7 +91,7 @@ module.exports = function generatePrefixes(inputParameters) {
     if (debug) {
       logger("Query", url);
     }
-    return (0, _axios["default"])({
+    return (0, _redaxios["default"])({
       url: url,
       method: 'GET',
       responseType: 'json',
@@ -154,7 +154,7 @@ module.exports = function generatePrefixes(inputParameters) {
     if (debug) {
       logger("Query", url);
     }
-    return (0, _axios["default"])({
+    return (0, _redaxios["default"])({
       url: url,
       method: 'GET',
       responseType: 'json',
@@ -184,7 +184,7 @@ module.exports = function generatePrefixes(inputParameters) {
     if (debug) {
       logger("Query ".concat(url));
     }
-    return (0, _axios["default"])({
+    return (0, _redaxios["default"])({
       url: url,
       method: 'GET',
       responseType: 'json',
@@ -241,7 +241,7 @@ module.exports = function generatePrefixes(inputParameters) {
     if (debug) {
       logger("Query ".concat(url));
     }
-    return (0, _axios["default"])({
+    return (0, _redaxios["default"])({
       url: url,
       method: 'GET',
       responseType: 'json',

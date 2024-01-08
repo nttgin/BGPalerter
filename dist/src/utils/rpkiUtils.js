@@ -7,7 +7,7 @@ exports["default"] = void 0;
 var _rpkiValidator = _interopRequireDefault(require("rpki-validator"));
 var _fs = _interopRequireDefault(require("fs"));
 var _axiosEnrich = _interopRequireDefault(require("./axiosEnrich"));
-var _axios = _interopRequireDefault(require("axios"));
+var _redaxios = _interopRequireDefault(require("redaxios"));
 var _moment = _interopRequireDefault(require("moment"));
 var _objectFingerprint = _interopRequireDefault(require("object-fingerprint"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -25,8 +25,8 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtils(env) {
   var _this = this;
   _classCallCheck(this, RpkiUtils);
@@ -37,7 +37,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
         connector: _this.params.vrpProvider,
         clientId: _this.clientId,
         advancedStatsRefreshRateMinutes: (_this$params$advanced = _this.params.advancedStatsRefreshRateMinutes) !== null && _this$params$advanced !== void 0 ? _this$params$advanced : 120,
-        axios: (0, _axiosEnrich["default"])(_axios["default"], !_this.params.noProxy && _this.agent ? _this.agent : null, _this.userAgent)
+        axios: (0, _axiosEnrich["default"])(_redaxios["default"], !_this.params.noProxy && _this.agent ? _this.agent : null, _this.userAgent)
       };
       if (_this.params.url) {
         rpkiValidatorOptions.url = _this.params.url;
