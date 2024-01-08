@@ -1,0 +1,38 @@
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-debs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Javascript/Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.19.0
+
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - uses: jtdor/build-deb-action@v1
+        env:
+          DEB_BUILD_OPTIONS: noautodbgsym
+        with:
+          buildpackage-opts: --build=binary --no-sign
+          extra-build-deps: git
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: true
+          files: |
+            LICENSE
+            bin/*
+            debian/artifacts/*.deb

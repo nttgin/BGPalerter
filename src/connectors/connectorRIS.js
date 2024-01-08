@@ -386,6 +386,7 @@ export default class ConnectorRIS extends Connector {
                 const possibleRIS = message["possibleRIS"] || false;
                 const withdrawals = (message["withdrawals"] || []).filter(prefix => acceptPrefix(prefix, possibleRIS));
                 const peer = message["peer"];
+                const peerAS = message["peer_asn"];
                 const communities = message["community"] || [];
                 const timestamp = message["timestamp"] * 1000;
                 let path, originAS;
@@ -411,6 +412,7 @@ export default class ConnectorRIS extends Connector {
                                     type: "announcement",
                                     prefix,
                                     peer,
+                                    peerAS,
                                     path,
                                     originAS,
                                     nextHop,
@@ -428,6 +430,7 @@ export default class ConnectorRIS extends Connector {
                         type: "withdrawal",
                         prefix,
                         peer,
+                        peerAS,
                         timestamp
                     });
                 }

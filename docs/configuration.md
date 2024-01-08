@@ -131,6 +131,7 @@ Parameters for this connector module:
 |carefulSubscription| If this parameter is set to true (default), the RIS server will stream only the data related to our prefix. This is an advanced parameter useful only for research purposes. |
 |perMessageDeflate| Enable gzip compression on the connection. |
 |disableCanary| ConnectorRIS automatically receives BGP announcements about [RIS beacons](https://www.ripe.net/analyse/internet-measurements/routing-information-service-ris/current-ris-routing-beacons). RIS beacons are prefixes periodically announced and withdrawn for research purposes. BGPalerter uses these beacons to detect faulty data streams. By setting this parameter to true, you will disable such a check.|
+|blacklistSources| A list of prefixes, IPs, and AS numbers of blacklisted collectors' peers. Data coming from these collectors' peers will be ignored.|
 
 #### connectorRISDump
 It connects to the RIPEstat's BGPlay API and retrieves a RIS dump about the monitored resources. The retrieved dump is 2 hours old, due to limitations on the API side. 

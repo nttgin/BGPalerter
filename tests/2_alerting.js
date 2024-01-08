@@ -40,7 +40,7 @@ const cacheCloneDirectory = "tests/.cache_clone/";
 const asyncTimeout = 120000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
-const axios = require("axios");
+const axios = require("redaxios");
 
 const worker = require("../index");
 const pubSub = worker.pubSub;

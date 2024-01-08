@@ -34,7 +34,7 @@ const chai = require("chai");
 const chaiSubset = require('chai-subset');
 chai.use(chaiSubset);
 const expect = chai.expect;
-const axios = require('axios');
+const axios = require('redaxios');
 
 const asyncTimeout = 120000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";

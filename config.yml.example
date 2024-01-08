@@ -2,6 +2,9 @@ connectors:
   - file: connectorRIS
     name: ris
     params:
+      blacklistSources:
+        - 123.0.0.1/24
+        - 3453
       carefulSubscription: true
       url: ws://ris-live.ripe.net/v1/ws/
       perMessageDeflate: true
@@ -68,8 +71,18 @@ monitors:
       enableAdvancedRpkiStats: false
       roaExpirationAlertHours: 2
       checkOnlyASns: true
-      toleranceDeletedRoasTA: 20
-      toleranceExpiredRoasTA: 20
+      toleranceDeletedRoasTA:
+        ripe: 20
+        apnic: 20
+        arin: 20
+        lacnic: 20
+        afrinic: 50
+      toleranceExpiredRoasTA:
+        ripe: 20
+        apnic: 20
+        arin: 20
+        lacnic: 20
+        afrinic: 50
 
   - file: monitorPathNeighbors
     channel: path
