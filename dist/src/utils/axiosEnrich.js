@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = _default;
 var _md = _interopRequireDefault(require("md5"));
+var _nodeFetch = _interopRequireDefault(require("node-fetch"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -30,7 +31,9 @@ var retry = function retry(axios, error, params) {
 };
 function _default(axios, httpsAgent, userAgent) {
   var _axios$defaults, _axios$defaults2, _axios$defaults2$head, _axios$defaults$heade, _axios$defaults$heade2;
-  (_axios$defaults = axios.defaults) !== null && _axios$defaults !== void 0 ? _axios$defaults : axios.defaults = {};
+  (_axios$defaults = axios.defaults) !== null && _axios$defaults !== void 0 ? _axios$defaults : axios.defaults = {
+    fetch: _nodeFetch["default"]
+  };
   (_axios$defaults2$head = (_axios$defaults2 = axios.defaults).headers) !== null && _axios$defaults2$head !== void 0 ? _axios$defaults2$head : _axios$defaults2.headers = {};
   (_axios$defaults$heade2 = (_axios$defaults$heade = axios.defaults.headers).common) !== null && _axios$defaults$heade2 !== void 0 ? _axios$defaults$heade2 : _axios$defaults$heade.common = {};
 
