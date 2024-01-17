@@ -72,7 +72,7 @@
     "md5": "^2.3.0",
     "moment": "^2.30.1",
     "node-cleanup": "^2.1.2",
-    "node-fetch": "^2.7.0",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.8",
     "object-fingerprint": "^1.0.2",
     "path": "^0.12.7",
