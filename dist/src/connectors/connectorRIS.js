@@ -10,27 +10,16 @@ var _connector = _interopRequireDefault(require("./connector"));
 var _model = require("../model");
 var _brembo = _interopRequireDefault(require("brembo"));
 var _ipSub = _interopRequireDefault(require("ip-sub"));
+var _batchPromises = _interopRequireDefault(require("batch-promises"));
 var _class;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _callSuper(_this, derived, args) {
-  function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
-    try {
-      return !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
-    } catch (e) {
-      return false;
-    }
-  }
-  derived = _getPrototypeOf(derived);
-  return _possibleConstructorReturn(_this, isNativeReflectConstruct() ? Reflect.construct(derived, args || [], _getPrototypeOf(_this).constructor) : derived.apply(_this, args));
-}
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
@@ -192,7 +181,15 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
     });
     _defineProperty(_assertThisInitialized(_this), "_subscribeToPrefixes", function (input) {
       var monitoredPrefixes = input.getMonitoredLessSpecifics();
+      var risLimitPrefixes = 10000;
       var params = JSON.parse(JSON.stringify(_this.params.subscription));
+      if (monitoredPrefixes.length > risLimitPrefixes) {
+        _this.logger.log({
+          level: 'error',
+          message: "Prefix list of abnormal length, truncated to 10000 to prevent RIS overload"
+        });
+        monitoredPrefixes = monitoredPrefixes.slice(0, risLimitPrefixes);
+      }
       if (monitoredPrefixes.filter(function (i) {
         return _ipSub["default"].isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || _ipSub["default"].isEqualPrefix(i.prefix, '0.0.0.0/0');
       }).length === 2) {
@@ -208,56 +205,79 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
           data: params
         }));
       } else {
-        return Promise.all(monitoredPrefixes.map(function (p) {
-          if (!_this.subscribed[p.prefix]) {
-            console.log("Monitoring", p.prefix);
-            _this.subscribed[p.prefix] = true;
-          }
-          params.prefix = p.prefix;
-          filteredBeacons = filteredBeacons.filter(function (prefix) {
-            return !_ipSub["default"].isEqualPrefix(p.prefix, prefix) && !_ipSub["default"].isSubnet(p.prefix, prefix);
+        return (0, _batchPromises["default"])(1, monitoredPrefixes, function (p) {
+          return new Promise(function (resolve, reject) {
+            if (!_this.subscribed[p.prefix]) {
+              console.log("Monitoring", p.prefix);
+              _this.subscribed[p.prefix] = true;
+            }
+            params.prefix = p.prefix;
+            filteredBeacons = filteredBeacons.filter(function (prefix) {
+              return !_ipSub["default"].isEqualPrefix(p.prefix, prefix) && !_ipSub["default"].isSubnet(p.prefix, prefix);
+            });
+            _this.ws.send(JSON.stringify({
+              type: "ris_subscribe",
+              data: params
+            }));
+            setTimeout(function () {
+              return resolve(true);
+            }, _this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
           });
-          return _this.ws.send(JSON.stringify({
-            type: "ris_subscribe",
-            data: params
-          }));
-        }));
+        });
       }
     });
     _defineProperty(_assertThisInitialized(_this), "_subscribeToASns", function (input) {
       var monitoredASns = input.getMonitoredASns();
+      var risLimitAses = 10;
       var params = JSON.parse(JSON.stringify(_this.params.subscription));
-      return Promise.all(monitoredASns.map(function (asn) {
-        var asnString = asn.asn.getValue();
-        if (!_this.subscribed[asnString]) {
-          console.log("Monitoring AS".concat(asnString));
-          _this.subscribed[asnString] = true;
-        }
-        params.path = "".concat(asnString, "$");
-        return _this.ws.send(JSON.stringify({
-          type: "ris_subscribe",
-          data: params
-        }));
-      }));
+      if (monitoredASns.length > risLimitAses) {
+        _this.logger.log({
+          level: 'error',
+          message: "AS list of abnormal length, truncated to 10 to prevent RIS overload"
+        });
+        monitoredASns = monitoredASns.slice(0, risLimitAses);
+      }
+      return (0, _batchPromises["default"])(1, monitoredASns, function (asn) {
+        return new Promise(function (resolve, reject) {
+          var asnString = asn.asn.getValue();
+          if (!_this.subscribed[asnString]) {
+            console.log("Monitoring AS".concat(asnString));
+            _this.subscribed[asnString] = true;
+          }
+          params.path = "".concat(asnString, "$");
+          _this.ws.send(JSON.stringify({
+            type: "ris_subscribe",
+            data: params
+          }));
+          setTimeout(function () {
+            return resolve(true);
+          }, _this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
+        });
+      });
     });
     _defineProperty(_assertThisInitialized(_this), "_startCanary", function () {
       if (_this.connected) {
-        Promise.all(selectedBeacons.map(function (prefix) {
-          _this.canaryBeacons[prefix] = true;
-          return _this.ws.send(JSON.stringify({
-            type: "ris_subscribe",
-            data: {
-              moreSpecific: false,
-              lessSpecific: false,
-              prefix: prefix,
-              type: "UPDATE",
-              socketOptions: {
-                includeRaw: false,
-                acknowledge: false
+        return (0, _batchPromises["default"])(1, selectedBeacons, function (prefix) {
+          return new Promise(function (resolve, reject) {
+            _this.canaryBeacons[prefix] = true;
+            _this.ws.send(JSON.stringify({
+              type: "ris_subscribe",
+              data: {
+                moreSpecific: false,
+                lessSpecific: false,
+                prefix: prefix,
+                type: "UPDATE",
+                socketOptions: {
+                  includeRaw: false,
+                  acknowledge: false
+                }
               }
-            }
-          }));
-        })).then(function () {
+            }));
+            setTimeout(function () {
+              return resolve(true);
+            }, _this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
+          });
+        }).then(function () {
           _this._checkCanary();
           _this.logger.log({
             level: 'info',
@@ -348,6 +368,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
     _this.canaryBeacons = {};
     _this.clientId = env.clientId;
     _this.instanceId = env.instanceId;
+    _this.risSubscriptionDelay = 200;
     _this.url = _brembo["default"].build(_this.params.url, {
       params: {
         client_version: env.version,
