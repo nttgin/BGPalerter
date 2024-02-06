@@ -296,14 +296,14 @@ Example of alert:
 
 Parameters for this monitor module:
 
-|Parameter| Description                                                                                                                                                                                                                                                       | 
-|---|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                               |
-|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                       |
-|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                 | 
+|Parameter| Description                                                                                                                                                                                                                                                        | 
+|---|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|thresholdMinPeers| Minimum number of peers that need to see the BGP update before to trigger an alert.                                                                                                                                                                                |
+|notificationIntervalSeconds| It overwrite the global `notificationIntervalSeconds` for this specific monitor. See [here](#Configuration) the definition.                                                                                                                                        |
+|noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy.                                                                                                                  | 
 |maxDataSamples| Maximum number of collected BGP messages for each alert which doesn't reach yet the `thresholdMinPeers`. Default to 1000. As soon as the `thresholdMinPeers` is reached, the collected BGP messages are flushed, independently from the value of `maxDataSamples`. |
-    
-    
+|skipPrefixMatch| It allows to send all the AS-related alerts to the AS monitoring rule instead of giving priority to prefix rules. Default `false`.                                                                                                                                 |
+
 #### monitorRPKI
 
 This monitor will listen for all announcements produced by the monitored Autonomous Systems and for all the announcements 
