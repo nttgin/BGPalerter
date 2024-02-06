@@ -356,7 +356,7 @@ export default class MonitorROAS extends Monitor {
                     const matchedRules = this.getMoreSpecificMatches(prefix, false); // Get the matching rule
 
                     for (let matchedRule of matchedRules) {
-                        const alertsStrings = [...new Set(roas.map(this._roaToString))];
+                        const alertsStrings = [...new Set(roas.map(this._roaToString))].sort();
                         const message = alertsStrings.length <= 10 ?
                             `ROAs change detected: ${alertsStrings.join("; ")}` :
                             `ROAs change detected: ${alertsStrings.slice(0, 10).join("; ")} and more...`;
