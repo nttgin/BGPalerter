@@ -52,13 +52,13 @@
     "@babel/preset-env": "^7.23.9",
     "chai": "^4.3.10",
     "chai-subset": "^1.6.0",
-    "mocha": "^10.2.0",
+    "mocha": "^10.3.0",
     "pkg": "^5.8.1",
     "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.99.0",
+    "@sentry/node": "^7.100.1",
     "batch-promises": "^0.0.3",
     "brembo": "^2.1.0",
     "deepmerge": "^4.3.1",
