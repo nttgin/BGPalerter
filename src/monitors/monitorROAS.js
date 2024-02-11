@@ -28,12 +28,15 @@ export default class MonitorROAS extends Monitor {
         this.rpki = env.rpki;
 
         // Enabled checks
-        this.enableDiffAlerts = params.enableDiffAlerts != null ? params.enableDiffAlerts : true;
-        this.enableExpirationAlerts = params.enableExpirationAlerts != null ? params.enableExpirationAlerts : true;
-        this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
-        this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
+        this.enableDiffAlerts = params.enableDiffAlerts ?? true;
+        this.enableExpirationAlerts = params.enableExpirationAlerts ?? true;
+        this.enableExpirationCheckTA = params.enableExpirationCheckTA ?? true;
+        this.enableDeletedCheckTA = params.enableDeletedCheckTA ?? true;
+        this.diffEverySeconds = Math.max(params.diffEverySeconds || 600,  300);
+        this.checkExpirationVrpsEverySeconds = Math.max(this.diffEverySeconds,  600);
+        this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 0, this.diffEverySeconds, 15 * 60);
         this.enableAdvancedRpkiStats = params.enableAdvancedRpkiStats ?? true;
-        this.diffEverySeconds = params.diffEverySeconds ?? 30;
+
 
         // Default parameters
         this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
@@ -48,18 +51,20 @@ export default class MonitorROAS extends Monitor {
             prefixes: []
         };
 
-        if (this.enableDiffAlerts || this.enableDeletedCheckTA) {
-            setInterval(() => {
-                this._skipIfStaleVrps(this._diffVrps);
-            }, this.diffEverySeconds * 1000);
-        }
-        if (this.enableExpirationAlerts || this.enableExpirationCheckTA) {
+        this._enablePeriodicCheck(this.enableDiffAlerts, this._diffVrps, this.diffEverySeconds);
+        this._enablePeriodicCheck(this.enableExpirationAlerts, this._verifyExpiration, this.checkExpirationVrpsEverySeconds);
 
-            setInterval(() => {
-                this._skipIfStaleVrps(() => this._verifyExpiration(this.roaExpirationAlertHours));
-            }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
-        }
+        this._enablePeriodicCheck(this.enableDeletedCheckTA, this._checkDeletedRoasTAs, this.checkTaEverySeconds); // Check for TA malfunctions for too many deleted roas
+        this._enablePeriodicCheck(this.enableExpirationCheckTA, this._checkExpirationTAs, this.checkTaEverySeconds); // Check for TA malfunctions for too many expiring roas
     };
+
+    _enablePeriodicCheck = (condition, checkFunction, seconds) => {
+        if (condition) {
+            setInterval(() => {
+                this._skipIfStaleVrps(checkFunction);
+            }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000);
+        }
+    }
 
     _skipIfStaleVrps = (callback) => {
         if (!this.rpki.getStatus().stale) {
@@ -83,9 +88,15 @@ export default class MonitorROAS extends Monitor {
         return times;
     };
 
-    _checkDeletedRoasTAs = (vrps) => {
+    _checkDeletedRoasTAs = () => {
+        const vrps = this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
         const sizes =  this._calculateSizes(vrps);
         const metadata = this.rpki.getMetadata();
+
+        this.logger.log({
+            level: 'info',
+            message: "Performing TA deletion check"
+        });
 
         for (let ta in sizes) {
             if (this.timesDeletedTAs[ta]) {
@@ -120,9 +131,20 @@ export default class MonitorROAS extends Monitor {
         this.timesDeletedTAs = sizes;
     };
 
-    _checkExpirationTAs = (vrps, expiringVrps) => {
+    _checkExpirationTAs = () => {
+
+        const roaExpirationAlertHours = this.roaExpirationAlertHours;
+        const vrps = this.rpki.getVRPs();
+        const expiringVrps = vrps
+            .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
+
         const sizes =  this._calculateSizes(vrps);
         const expiringSizes =  this._calculateSizes(expiringVrps);
+
+        this.logger.log({
+            level: 'info',
+            message: "Performing TA expiration check"
+        });
 
         for (let ta in sizes) {
             const min = expiringSizes[ta];
@@ -161,17 +183,20 @@ export default class MonitorROAS extends Monitor {
         }
     };
 
-    _verifyExpiration = (roaExpirationAlertHours) => {
+    _verifyExpiration = () => {
+        const roaExpirationAlertHours = this.roaExpirationAlertHours;
         const roas = this.rpki.getVRPs();
         const metadata = this.rpki.getMetadata();
         const expiringRoas = roas
             .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
 
-        if (this.enableExpirationCheckTA) {
-            this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
-        }
-
         if (this.enableExpirationAlerts) {
+
+            this.logger.log({
+                level: 'info',
+                message: "Performing expiration check on VRPs"
+            });
+
             const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
             const asnsIn = this.monitored.asns.map(i => i.asn.getValue());
             const relevantVrps = getRelevant(expiringRoas, prefixesIn, asnsIn);
@@ -321,12 +346,14 @@ export default class MonitorROAS extends Monitor {
     _diffVrps = () => {
         const newVrps = this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
 
-        if (this.enableDeletedCheckTA) {
-            this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas
-        }
-
         if (this.enableDiffAlerts) {
             if (this._oldVrps) { // No diff if there were no vrps before
+
+                this.logger.log({
+                    level: 'info',
+                    message: "Performing diff on VRPs"
+                });
+
                 const prefixesIn = this.monitored.prefixes.map(i => i.prefix);
                 const asns = this.monitored.asns.map(i => i.asn.getValue());
                 let alerts = [];
