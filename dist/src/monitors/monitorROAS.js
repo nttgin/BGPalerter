@@ -50,10 +50,17 @@ var getTaToleranceDict = function getTaToleranceDict(tolerance) {
 var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
   _inherits(MonitorROAS, _Monitor);
   function MonitorROAS(name, channel, params, env, input) {
-    var _params$enableAdvance, _params$diffEverySeco;
+    var _params$enableDiffAle, _params$enableExpirat, _params$enableExpirat2, _params$enableDeleted, _params$enableAdvance;
     var _this;
     _classCallCheck(this, MonitorROAS);
     _this = _callSuper(this, MonitorROAS, [name, channel, params, env, input]);
+    _defineProperty(_assertThisInitialized(_this), "_enablePeriodicCheck", function (condition, checkFunction, seconds) {
+      if (condition) {
+        setInterval(function () {
+          _this._skipIfStaleVrps(checkFunction);
+        }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000);
+      }
+    });
     _defineProperty(_assertThisInitialized(_this), "_skipIfStaleVrps", function (callback) {
       if (!_this.rpki.getStatus().stale) {
         callback();
@@ -80,9 +87,14 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       }
       return times;
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkDeletedRoasTAs", function (vrps) {
+    _defineProperty(_assertThisInitialized(_this), "_checkDeletedRoasTAs", function () {
+      var vrps = _this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
       var sizes = _this._calculateSizes(vrps);
       var metadata = _this.rpki.getMetadata();
+      _this.logger.log({
+        level: 'info',
+        message: "Performing TA deletion check"
+      });
       for (var ta in sizes) {
         if (_this.timesDeletedTAs[ta]) {
           var oldSize = _this.timesDeletedTAs[ta];
@@ -110,9 +122,18 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       }
       _this.timesDeletedTAs = sizes;
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationTAs", function (vrps, expiringVrps) {
+    _defineProperty(_assertThisInitialized(_this), "_checkExpirationTAs", function () {
+      var roaExpirationAlertHours = _this.roaExpirationAlertHours;
+      var vrps = _this.rpki.getVRPs();
+      var expiringVrps = vrps.filter(function (i) {
+        return !!i.expires && i.expires - _moment["default"].utc().unix() < roaExpirationAlertHours * 3600;
+      });
       var sizes = _this._calculateSizes(vrps);
       var expiringSizes = _this._calculateSizes(expiringVrps);
+      _this.logger.log({
+        level: 'info',
+        message: "Performing TA expiration check"
+      });
       var _loop = function _loop(ta) {
         var min = expiringSizes[ta];
         var max = sizes[ta];
@@ -146,16 +167,18 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         _loop(ta);
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_verifyExpiration", function (roaExpirationAlertHours) {
+    _defineProperty(_assertThisInitialized(_this), "_verifyExpiration", function () {
+      var roaExpirationAlertHours = _this.roaExpirationAlertHours;
       var roas = _this.rpki.getVRPs();
       var metadata = _this.rpki.getMetadata();
       var expiringRoas = roas.filter(function (i) {
         return !!i.expires && i.expires - _moment["default"].utc().unix() < roaExpirationAlertHours * 3600;
       });
-      if (_this.enableExpirationCheckTA) {
-        _this._checkExpirationTAs(roas, expiringRoas); // Check for TA malfunctions
-      }
       if (_this.enableExpirationAlerts) {
+        _this.logger.log({
+          level: 'info',
+          message: "Performing expiration check on VRPs"
+        });
         var prefixesIn = _this.monitored.prefixes.map(function (i) {
           return i.prefix;
         });
@@ -318,12 +341,14 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _defineProperty(_assertThisInitialized(_this), "_diffVrps", function () {
       var newVrps = _this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
 
-      if (_this.enableDeletedCheckTA) {
-        _this._checkDeletedRoasTAs(newVrps); // Check for TA malfunctions for too many deleted roas
-      }
       if (_this.enableDiffAlerts) {
         if (_this._oldVrps) {
           // No diff if there were no vrps before
+
+          _this.logger.log({
+            level: 'info',
+            message: "Performing diff on VRPs"
+          });
           var prefixesIn = _this.monitored.prefixes.map(function (i) {
             return i.prefix;
           });
@@ -478,12 +503,14 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _this.rpki = env.rpki;
 
     // Enabled checks
-    _this.enableDiffAlerts = params.enableDiffAlerts != null ? params.enableDiffAlerts : true;
-    _this.enableExpirationAlerts = params.enableExpirationAlerts != null ? params.enableExpirationAlerts : true;
-    _this.enableExpirationCheckTA = params.enableExpirationCheckTA != null ? params.enableExpirationCheckTA : true;
-    _this.enableDeletedCheckTA = params.enableDeletedCheckTA != null ? params.enableDeletedCheckTA : true;
+    _this.enableDiffAlerts = (_params$enableDiffAle = params.enableDiffAlerts) !== null && _params$enableDiffAle !== void 0 ? _params$enableDiffAle : true;
+    _this.enableExpirationAlerts = (_params$enableExpirat = params.enableExpirationAlerts) !== null && _params$enableExpirat !== void 0 ? _params$enableExpirat : true;
+    _this.enableExpirationCheckTA = (_params$enableExpirat2 = params.enableExpirationCheckTA) !== null && _params$enableExpirat2 !== void 0 ? _params$enableExpirat2 : true;
+    _this.enableDeletedCheckTA = (_params$enableDeleted = params.enableDeletedCheckTA) !== null && _params$enableDeleted !== void 0 ? _params$enableDeleted : true;
+    _this.diffEverySeconds = Math.max(params.diffEverySeconds || 600, 300);
+    _this.checkExpirationVrpsEverySeconds = Math.max(_this.diffEverySeconds, 600);
+    _this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 0, _this.diffEverySeconds, 15 * 60);
     _this.enableAdvancedRpkiStats = (_params$enableAdvance = params.enableAdvancedRpkiStats) !== null && _params$enableAdvance !== void 0 ? _params$enableAdvance : true;
-    _this.diffEverySeconds = (_params$diffEverySeco = params.diffEverySeconds) !== null && _params$diffEverySeco !== void 0 ? _params$diffEverySeco : 30;
 
     // Default parameters
     _this.roaExpirationAlertHours = params.roaExpirationAlertHours || 2;
@@ -496,18 +523,10 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       asns: [],
       prefixes: []
     };
-    if (_this.enableDiffAlerts || _this.enableDeletedCheckTA) {
-      setInterval(function () {
-        _this._skipIfStaleVrps(_this._diffVrps);
-      }, _this.diffEverySeconds * 1000);
-    }
-    if (_this.enableExpirationAlerts || _this.enableExpirationCheckTA) {
-      setInterval(function () {
-        _this._skipIfStaleVrps(function () {
-          return _this._verifyExpiration(_this.roaExpirationAlertHours);
-        });
-      }, global.EXTERNAL_ROA_EXPIRATION_TEST || 600000);
-    }
+    _this._enablePeriodicCheck(_this.enableDiffAlerts, _this._diffVrps, _this.diffEverySeconds);
+    _this._enablePeriodicCheck(_this.enableExpirationAlerts, _this._verifyExpiration, _this.checkExpirationVrpsEverySeconds);
+    _this._enablePeriodicCheck(_this.enableDeletedCheckTA, _this._checkDeletedRoasTAs, _this.checkTaEverySeconds); // Check for TA malfunctions for too many deleted roas
+    _this._enablePeriodicCheck(_this.enableExpirationCheckTA, _this._checkExpirationTAs, _this.checkTaEverySeconds); // Check for TA malfunctions for too many expiring roas
     return _this;
   }
   return _createClass(MonitorROAS);
