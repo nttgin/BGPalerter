@@ -512,9 +512,9 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _this.enableExpirationAlerts = (_params$enableExpirat = params.enableExpirationAlerts) !== null && _params$enableExpirat !== void 0 ? _params$enableExpirat : true;
     _this.enableExpirationCheckTA = (_params$enableExpirat2 = params.enableExpirationCheckTA) !== null && _params$enableExpirat2 !== void 0 ? _params$enableExpirat2 : true;
     _this.enableDeletedCheckTA = (_params$enableDeleted = params.enableDeletedCheckTA) !== null && _params$enableDeleted !== void 0 ? _params$enableDeleted : true;
-    _this.diffEverySeconds = Math.max(params.diffEverySeconds || 600, 300);
-    _this.checkExpirationVrpsEverySeconds = Math.max(_this.diffEverySeconds, 600);
-    _this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 0, _this.diffEverySeconds, 15 * 60);
+    _this.diffEverySeconds = Math.max(params.diffEverySeconds || 600, 200);
+    _this.checkExpirationVrpsEverySeconds = Math.max(_this.diffEverySeconds, 300);
+    _this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 15 * 60, _this.diffEverySeconds);
     _this.enableAdvancedRpkiStats = (_params$enableAdvance = params.enableAdvancedRpkiStats) !== null && _params$enableAdvance !== void 0 ? _params$enableAdvance : true;
 
     // Default parameters
