@@ -60,9 +60,10 @@ export default class MonitorROAS extends Monitor {
 
     _enablePeriodicCheck = (condition, checkFunction, seconds) => {
         if (condition) {
-            setInterval(() => {
-                this._skipIfStaleVrps(checkFunction);
-            }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000);
+            if (!global.EXTERNAL_ROA_EXPIRATION_TEST) {
+                setTimeout(() => this._skipIfStaleVrps(checkFunction), 30 * 1000); // Initial run
+            }
+            setInterval(() => this._skipIfStaleVrps(checkFunction), global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000); // Periodic run
         }
     }
 
