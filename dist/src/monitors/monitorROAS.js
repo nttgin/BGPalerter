@@ -56,9 +56,14 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _this = _callSuper(this, MonitorROAS, [name, channel, params, env, input]);
     _defineProperty(_assertThisInitialized(_this), "_enablePeriodicCheck", function (condition, checkFunction, seconds) {
       if (condition) {
+        if (!global.EXTERNAL_ROA_EXPIRATION_TEST) {
+          setTimeout(function () {
+            return _this._skipIfStaleVrps(checkFunction);
+          }, 30 * 1000); // Initial run
+        }
         setInterval(function () {
-          _this._skipIfStaleVrps(checkFunction);
-        }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000);
+          return _this._skipIfStaleVrps(checkFunction);
+        }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000); // Periodic run
       }
     });
     _defineProperty(_assertThisInitialized(_this), "_skipIfStaleVrps", function (callback) {
