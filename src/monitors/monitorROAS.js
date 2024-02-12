@@ -32,9 +32,9 @@ export default class MonitorROAS extends Monitor {
         this.enableExpirationAlerts = params.enableExpirationAlerts ?? true;
         this.enableExpirationCheckTA = params.enableExpirationCheckTA ?? true;
         this.enableDeletedCheckTA = params.enableDeletedCheckTA ?? true;
-        this.diffEverySeconds = Math.max(params.diffEverySeconds || 600,  300);
-        this.checkExpirationVrpsEverySeconds = Math.max(this.diffEverySeconds,  600);
-        this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 0, this.diffEverySeconds, 15 * 60);
+        this.diffEverySeconds = Math.max(params.diffEverySeconds || 600,  200);
+        this.checkExpirationVrpsEverySeconds = Math.max(this.diffEverySeconds,  300);
+        this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 15 * 60, this.diffEverySeconds);
         this.enableAdvancedRpkiStats = params.enableAdvancedRpkiStats ?? true;
 
 
