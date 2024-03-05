@@ -106,7 +106,7 @@ export default class ReportKafka extends Report {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[ReportKafka.report] ' + error
                 });
             });
     }

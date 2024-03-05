@@ -67,7 +67,7 @@ export default class ReportFile extends Report {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[ReportFile.writeDataOnFile] ' + error
             });
         }
     };

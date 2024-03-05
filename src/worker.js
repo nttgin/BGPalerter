@@ -109,7 +109,6 @@ export default class Worker {
             .connectConnectors(this.input)
             .then(() => {
                 for (const connector of connectorFactory.getConnectors()) {
-
                     connector.onMessage((message) => {
                         buffer.add({
                             connector: connector.name,
@@ -131,7 +130,7 @@ export default class Worker {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[Worker] ' + error
                 });
             });
     }

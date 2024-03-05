@@ -31,6 +31,66 @@
  */
 
 import Report from "./report";
+import fs from "fs";
+
+
+const _context = {
+    buffer: [],
+    logger: null,
+    axios: null,
+    started: false
+}
+
+function processEvent() {
+    const requestParams = _context.buffer.shift(); 
+    if (!requestParams) {
+        setTimeout(processEvent, 50);
+        return;
+    }
+
+    _context.logger.log({
+        level: 'info',
+        message: `[ReportHTTP] sending report to: ${requestParams.url} [${_context.buffer.length} msgs in buffer]`
+    });
+
+    const before = new Date();
+    _context.axios(requestParams)
+        .then(response => {
+            const after = new Date();
+            // Log or handle the detailed error message as needed
+            _context.logger.log({
+                level: 'info',
+                message: `[ReportHTTP] response received: ${response.status} after ${after - before} ms from body  ${JSON.stringify(requestParams.data)}`
+            })
+        })
+        .catch((error) => {
+            let errorMessage = 'An unknown error occurred';
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                const statusCode = error.response.status;
+                const errorDetails = error.response.data || 'No additional error information';
+                errorMessage = `Request failed with status code ${statusCode}: ${errorDetails}`;
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                errorMessage = 'The request was made but no response was received';
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                errorMessage = `Error setting up the request: ${error.message} ${JSON.stringify(requestParams)}`;
+            }
+            // Log or handle the detailed error message as needed
+            _context.logger.log({
+                level: 'error',
+                message: '[ReportHTTP] ' + errorMessage
+            })
+        })
+        .finally(() => {
+            setTimeout(processEvent, 50);
+        });
+}
+
 
 export default class ReportHTTP extends Report {
 
@@ -75,6 +135,7 @@ export default class ReportHTTP extends Report {
 
     _sendHTTPMessage = (group, channel, content) => {
         const url = this.getUserGroup(group);
+        // console.log(`[${this.name}] sending report to: ${url}`)
         if (url) {
             const context = this.getContext(channel, content);
 
@@ -83,23 +144,58 @@ export default class ReportHTTP extends Report {
             }
             const blob = this.parseTemplate(this.getTemplate(group, channel, content), context);
 
-            this.logger.log({
-                level: 'info',
-                message: `[${this.name}] sending report to: ${url}`
-            });
-
-            this.axios({
+            const requestParams = {
                 url,
                 method: this.method,
                 headers: this.headers,
                 data: (this.params.isTemplateJSON) ? JSON.parse(blob) : blob
-            })
-                .catch((error) => {
-                    this.logger.log({
-                        level: 'error',
-                        message: error
-                    });
-                });
+            };
+
+            _context.buffer.push(requestParams);
+
+            if (!_context.started) {
+                _context.logger = this.logger;
+                _context.axios = this.axios;
+                _context.started = true;
+                setTimeout(processEvent, 50);
+            }
+        }
+    };
+
+    randomKey() {
+        let key = ''
+        for(let i = 0; i < 5; i++) {
+            key += (~~(Math.random() * 1000000)).toString(26)
+        }
+        return key;
+    }
+
+    _writeDataOnFile = (group, channel, content) => {
+        try {
+            const before = new Date();
+            const timestamp = `${content.earliest}-${content.latest}`;
+            const alertsDirectory = "alerts";
+            const filename = `${alertsDirectory}/${timestamp}-${this.randomKey()}.json`;
+            const context = this.getContext(channel, content);
+            if (this.params.showPaths > 0 && context.pathNumber > 0) {
+                context.summary = `${context.summary}. Top ${context.pathNumber} most used AS paths: ${context.paths}.`;
+            }
+            const blob = this.parseTemplate(this.getTemplate(group, channel, content), context);
+            const data = (this.params.isTemplateJSON) ? JSON.parse(blob) : blob;
+            if (!fs.existsSync(alertsDirectory)) {
+                fs.mkdirSync(alertsDirectory, { recursive: true });
+            }
+            fs.writeFileSync(filename, JSON.stringify(data));
+            const after = new Date();
+            this.logger.log({
+                level: 'info',
+                message: `Message sent to alerts folder after ${after - before}ms of processing`
+            });
+        } catch (error) {
+            this.logger.log({
+                level: 'error',
+                message: error
+            });
         }
     };
 
@@ -110,7 +206,8 @@ export default class ReportHTTP extends Report {
             groups = (groups.length) ? [...new Set(groups)] : ["default"];
 
             for (let group of groups) {
-                this._sendHTTPMessage(group, channel, content);
+                // this._sendHTTPMessage(group, channel, content);
+                this._writeDataOnFile(group, channel, content);
             }
         }
     };

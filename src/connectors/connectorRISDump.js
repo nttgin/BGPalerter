@@ -55,7 +55,7 @@ export default class ConnectorRISDump extends Connector {
                 .catch(error => {
                     this.logger.log({
                         level: 'error',
-                        message: error
+                        message: '[ConnectorRisDump.constructor] ' + error
                     });
                 });
         }
@@ -124,7 +124,7 @@ export default class ConnectorRISDump extends Connector {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: `Cannot download historic RIS data ${error}`
+                    message: '[ConnectorRisDump._loadResource] ' + `Cannot download historic RIS data ${error}`
                 });
             });
     };
@@ -141,7 +141,7 @@ export default class ConnectorRISDump extends Connector {
                     .catch(error => {
                         this.logger.log({
                             level: 'error',
-                            message: error
+                            message: '[ConnectorRisDump._subscribe] ' + error
                         });
                     });
 

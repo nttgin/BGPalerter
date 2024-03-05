@@ -179,7 +179,7 @@ export default class Monitor {
                 .catch(error => {
                     this.logger.log({
                         level: 'error',
-                        message: error
+                        message: '[Monitor._retrieveStatus] ' + error
                     });
                 });
         }
@@ -206,7 +206,7 @@ export default class Monitor {
                     .catch(error => {
                         this.logger.log({
                             level: 'error',
-                            message: error
+                            message: '[Monitor._persistStatusHelper] ' + error
                         });
                     });
             }

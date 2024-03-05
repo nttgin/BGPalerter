@@ -78,7 +78,7 @@ export default class InputYml extends Input {
                         .catch(error => {
                             this.logger.log({
                                 level: 'error',
-                                message: error
+                                message: '[InputYml._watchPrefixFile] ' + error
                             });
                         });
                 }, 5000);
@@ -124,8 +124,9 @@ export default class InputYml extends Input {
                                     .keys(monitoredPrefixesFile.options.monitorASns)
                                     .map(asn => {
                                         if (uniqueAsns[asn]) {
-                                            reject(new Error("Duplicate entry for monitored AS " + asn));
-                                            return;
+                                            // reject(new Error("Duplicate entry for monitored AS " + asn));
+                                            // return;
+                                            return null;
                                         }
                                         uniqueAsns[asn] = true;
                                         const item = Object.assign({
@@ -141,7 +142,8 @@ export default class InputYml extends Input {
                                         }
 
                                         return item;
-                                    });
+                                    })
+                                    .filter(asn => asn !== null);
 
                                 newAsList = newAsList.concat(newAsnSet);
                             }
@@ -152,8 +154,9 @@ export default class InputYml extends Input {
                             .filter(i => i !== "options")
                             .map(i => {
                                 if (uniquePrefixes[i]) {
-                                    reject(new Error("Duplicate entry for " + i));
-                                    return;
+                                    // reject(new Error("Duplicate entry for " + i));
+                                    // return;
+                                    return null;
                                 }
                                 uniquePrefixes[i] = true;
                                 monitoredPrefixesFile[i].asn = new AS(monitoredPrefixesFile[i].asn);
@@ -215,7 +218,7 @@ export default class InputYml extends Input {
                 let asns;
 
                 if (!prefix || !ipUtils.isValidPrefix(prefix)) {
-                    return "Not a valid prefix: " + prefix;
+                    return "Not a valid prefix: " + prefix + JSON.stringify(options.monitorASns);
                 }
 
 

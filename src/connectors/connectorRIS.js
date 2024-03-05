@@ -196,92 +196,45 @@ export default class ConnectorRIS extends Connector {
 
     _subscribeToPrefixes = (input) => {
         let monitoredPrefixes = input.getMonitoredLessSpecifics();
-        const risLimitPrefixes = 10000;
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-
-        if (monitoredPrefixes.length > risLimitPrefixes) {
-            this.logger.log({
-                level: 'error',
-                message: "Prefix list of abnormal length, truncated to 10000 to prevent RIS overload"
-            });
-            monitoredPrefixes = monitoredPrefixes.slice(0, risLimitPrefixes);
-        }
-
-        if (monitoredPrefixes.filter(i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))).length === 2) {
-
-            delete params.prefix;
-
-            if (!this.subscribed["everything"]) {
-                console.log("Monitoring everything");
-                this.subscribed["everything"] = true;
-            }
-
-            filteredBeacons = []; // No beacons to filter
-
-            return this.ws.send(JSON.stringify({
-                type: "ris_subscribe",
-                data: params
-            }));
-
-        } else {
-
-            return batchPromises(1, monitoredPrefixes, p => {
-                return new Promise((resolve, reject) => {
-                    if (!this.subscribed[p.prefix]) {
-                        console.log("Monitoring", p.prefix);
-                        this.subscribed[p.prefix] = true;
-                    }
-
-                    params.prefix = p.prefix;
-
-                    filteredBeacons = filteredBeacons.filter(prefix => {
-                        return !ipUtils.isEqualPrefix(p.prefix, prefix) && !ipUtils.isSubnet(p.prefix, prefix);
-                    });
-
+        return new Promise(resolve => {
+            console.log(`Monitoring ${monitoredPrefixes.length} prefixes...`)
+            monitoredPrefixes.forEach(({prefix}) => {
+                if (!this.subscribed[prefix]) {
+                    this.subscribed[prefix] = true;
                     this.ws.send(JSON.stringify({
                         type: "ris_subscribe",
-                        data: params
+                        data: { prefix, ...params }
                     }));
-
-                    setTimeout(() => resolve(true), this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
-                });
+                }
+            })
+            console.log('All subscriptions completed.');
+            filteredBeacons = filteredBeacons.filter(bacon => {
+                return monitoredPrefixes.some(({prefix}) => 
+                    !ipUtils.isEqualPrefix(prefix, bacon) && !ipUtils.isSubnet(prefix, bacon)
+                )
             });
-
-        }
+            resolve(true)
+        });
     };
 
     _subscribeToASns = (input) => {
         let monitoredASns = input.getMonitoredASns();
-        const risLimitAses = 10;
         const params = JSON.parse(JSON.stringify(this.params.subscription));
-
-        if (monitoredASns.length > risLimitAses) {
-            this.logger.log({
-                level: 'error',
-                message: "AS list of abnormal length, truncated to 10 to prevent RIS overload"
-            });
-            monitoredASns = monitoredASns.slice(0, risLimitAses);
-        }
-
-        return batchPromises(1, monitoredASns, asn => {
-            return new Promise((resolve, reject) => {
-
+        return new Promise(resolve => {
+            monitoredASns.forEach(asn => {
                 const asnString = asn.asn.getValue();
-
                 if (!this.subscribed[asnString]) {
                     console.log(`Monitoring AS${asnString}`);
                     this.subscribed[asnString] = true;
+                    params.path = `${asnString}\$`;
+                    this.ws.send(JSON.stringify({
+                        type: "ris_subscribe",
+                        data: params
+                    }));
                 }
-
-                params.path = `${asnString}\$`;
-
-                this.ws.send(JSON.stringify({
-                    type: "ris_subscribe",
-                    data: params
-                }));
-
-                setTimeout(() => resolve(true), this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
-            });
+            })
+            resolve(true)
         });
     };
 
@@ -360,7 +313,7 @@ export default class ConnectorRIS extends Connector {
                 if (error) {
                     this.logger.log({
                         level: 'error',
-                        message: error
+                        message: '[ConnectorRis._onInputChange] ' + error
                     });
                 }
             });
@@ -386,6 +339,15 @@ export default class ConnectorRIS extends Connector {
             ? Promise.all([this._subscribeToPrefixes(input), this._subscribeToASns(input)])
             : this._subscribeToAll(input))
             .then(() => {
+                    this.ws.send(JSON.stringify({
+                        type: "ris_monitore",
+                        data: null
+                    }));
+                    this.logger.log({
+                        level: 'info',
+                        message: "Sending ris_monitore"
+                    });
+                    console.log('Sending ris_monitore')
                     this.logger.log({
                         level: 'info',
                         message: "Subscribed to monitored resources"
@@ -401,8 +363,7 @@ export default class ConnectorRIS extends Connector {
                 return true;
             })
             .catch(error => {
-                this._error(error);
-
+                this._error('[ConnectorRis.subscribe] ' + error);
                 return false;
             });
     }

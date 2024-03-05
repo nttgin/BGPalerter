@@ -125,7 +125,7 @@ export default class ReportEmail extends Report {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[ReportEmail._sendEmail] ' + error
                 });
             });
     };

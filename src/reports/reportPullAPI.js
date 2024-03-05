@@ -51,7 +51,7 @@ export default class ReportPullAPI extends Report {
             .catch(error => {
                 env.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[ReportPullAPI.constructor 1] ' + error
                 });
             });
 
@@ -59,7 +59,7 @@ export default class ReportPullAPI extends Report {
             .catch(error => {
                 env.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[ReportPullAPI.constructor 2] ' + error
                 });
             });
 
@@ -67,7 +67,7 @@ export default class ReportPullAPI extends Report {
             .catch(error => {
                 env.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[ReportPullAPI.constructor 3] ' + error
                 });
             });
 

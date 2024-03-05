@@ -202,7 +202,8 @@ switch(params._[0]) {
     default: // Run monitor
 
         if (!params.M && os.totalmem() < 4294967296) {
-            throw new Error("You need 4GB or RAM to run BGPalerter");
+            // throw new Error("You need 4GB or RAM to run BGPalerter");
+            console.log("You need 4GB or RAM to run BGPalerter");
         }
 
         global.DRY_RUN = !!params.t;

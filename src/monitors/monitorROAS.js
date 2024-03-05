@@ -1,6 +1,6 @@
 import Monitor from "./monitor";
 import md5 from "md5";
-import { getRelevant, diff } from "../utils/rpkiDiffingTool";
+import { getRelevant, diff, diffBetweenOldAndNew } from "../utils/rpkiDiffingTool";
 import {AS} from "../model";
 import moment from "moment";
 import ipUtils from "ip-sub";
@@ -154,7 +154,7 @@ export default class MonitorROAS extends Monitor {
 
                         this.logger.log({
                             level: 'error',
-                            message: error
+                            message: '[MonitorROAS._checkExpirationTAs] ' + error
                         });
                     });
             }
@@ -256,7 +256,7 @@ export default class MonitorROAS extends Monitor {
 
                                     this.logger.log({
                                         level: 'error',
-                                        message: error
+                                        message: '[MonitorROAS._checkExpirationPrefixes] ' + error
                                     });
                                 });
                         }))
@@ -303,7 +303,7 @@ export default class MonitorROAS extends Monitor {
 
                             this.logger.log({
                                 level: 'error',
-                                message: error
+                                message: '[MonitorROAS._checkExpirationAs] ' + error
                             });
                         });
                 }
@@ -313,7 +313,7 @@ export default class MonitorROAS extends Monitor {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[MonitorROAS._checkExpirationAs] ' + error
             });
         }
     };
@@ -333,8 +333,9 @@ export default class MonitorROAS extends Monitor {
                 if (!this.checkOnlyASns) {
                     alerts = this._diffVrpsPrefixes(this._oldVrps, newVrps, prefixesIn);
                 }
+                const diff = diffBetweenOldAndNew(this._oldVrps, newVrps); 
                 for (let asn of asns) {
-                    this._diffVrpsAs(this._oldVrps, newVrps, asn, alerts);
+                    this._diffVrpsAs(this._oldVrps, newVrps, asn, alerts, diff);
                 }
             }
 
@@ -347,6 +348,7 @@ export default class MonitorROAS extends Monitor {
     _diffVrpsPrefixes = (oldVrps, newVrps, prefixesIn) => {
         try {
             const roaDiff = diff(oldVrps, newVrps, [], prefixesIn);
+            
             let alerts = [];
 
             if (roaDiff && roaDiff.length) { // Differences found
@@ -381,14 +383,14 @@ export default class MonitorROAS extends Monitor {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[MonitorROAS._diffVrpsPrefixes] ' + error
             });
         }
     };
 
-    _diffVrpsAs = (oldVrps, newVrps, asn, sent) => {
+    _diffVrpsAs = (oldVrps, newVrps, asn, sent, diff) => {
         try {
-            const roaDiff = diff(oldVrps, newVrps, asn, []);
+            const roaDiff = diff[asn] ?? []; 
             let alerts = [];
 
             if (roaDiff && roaDiff.length) { // Differences found
@@ -422,7 +424,7 @@ export default class MonitorROAS extends Monitor {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[MonitorROAS._diffVrpsAs] ' + error
             });
         }
     };

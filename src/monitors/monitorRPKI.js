@@ -66,7 +66,7 @@ export default class MonitorRPKI extends Monitor {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[MonitorRPKI.constructor] ' + error
                 });
             });
 
@@ -167,7 +167,7 @@ export default class MonitorRPKI extends Monitor {
                         .catch(error => {
                             this.logger.log({
                                 level: 'error',
-                                message: error
+                                message: '[MonitorRPKI._validate] ' + error
                             });
                         });
                 }, 1000);
@@ -205,7 +205,7 @@ export default class MonitorRPKI extends Monitor {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[MonitorRPKI.monitor] ' + error
             });
         }
 

@@ -54,7 +54,7 @@ export default class Input {
                 .catch(error => {
                     this.logger.log({
                         level: 'error',
-                        message: error
+                        message: '[Input.constructor] ' + error
                     });
                     console.log(error);
                     process.exit();
@@ -121,14 +121,14 @@ export default class Input {
 
             for (let n = prefixes.length - 2; n >= 0; n--) {
                 const p1 = prefixes[n];
-                if (!this._isAlreadyContained(p1.prefix, lessSpecifics)) {
+                // if (!this._isAlreadyContained(p1.prefix, lessSpecifics)) {
                     lessSpecifics.push(p1);
-                }
+                // }
             }
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error.message
+                message: error.message + ' ' + error.stack
             });
         }
 
@@ -254,7 +254,7 @@ export default class Input {
                 console.log(error);
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[Input.generate] ' + error
                 });
                 process.exit();
             });
@@ -340,7 +340,7 @@ export default class Input {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[Input._reGeneratePrefixList] ' + error
                 });
             });
     };

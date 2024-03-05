@@ -163,16 +163,16 @@ config.reports = (config.reports || [])
 
     });
 
-if (!config.reports.some(report => report.channels.includes("software-update"))) { // Check if software-update channel is declared
-    config.reports.forEach(report => report.channels.push("software-update")); // If not, declare it everywhere
-}
+// if (!config.reports.some(report => report.channels.includes("software-update"))) { // Check if software-update channel is declared
+//     config.reports.forEach(report => report.channels.push("software-update")); // If not, declare it everywhere
+// }
 
 config.connectors = config.connectors || [];
 
-config.connectors.push({
-    file: "connectorSwUpdates",
-    name: "upd"
-});
+// config.connectors.push({
+//     file: "connectorSwUpdates",
+//     name: "upd"
+// });
 
 if ([...new Set(config.connectors)].length !== config.connectors.length) {
     throw new Error('Connectors names MUST be unique');

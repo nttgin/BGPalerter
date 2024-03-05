@@ -38,8 +38,67 @@ function diff(vrpsOld, vrpsNew, asn, prefixesIn=[]) {
     return Object.values(index).filter(i => i.length === 1).map(i => i[0]);
 }
 
+
+
+function diffBetweenOldAndNew(vrpsOld, vrpsNew)
+{
+    const diff = {};
+    const keyIterator = vrp => vrp._key = `${vrp.ta}-${vrp.prefix}-${vrp.asn}-${vrp.maxLength}`;
+    const sorter = (a,b) => {
+        if (a._key < b._key) {
+            return -1;
+        }
+        if (a._key > b._key) {
+            return 1;
+        }
+        return 0;
+    }; 
+    vrpsOld.forEach(keyIterator);
+    vrpsNew.forEach(keyIterator);
+    vrpsOld.sort(sorter);
+    vrpsNew.sort(sorter);
+    let diffs = [...compare(vrpsNew, vrpsOld, 'added'), ...compare(vrpsOld, vrpsNew, 'removed')];
+    for(const vrp of diffs) {
+        if (diff[vrp.asn]) {
+            diff[vrp.asn].push(vrp)
+        } else {
+            diff[vrp.asn] =[vrp]
+        }
+    }
+    return diff;
+}
+
+// Contains in arr1 and not contains in array 2
+function compare(arr1, arr2, status) {
+    let i = 0;
+    let j = 0;
+    let compare = [];
+
+    if (!arr1.length) {
+        return [];
+    }
+    if (!arr2.length) {
+        return arr1;
+    }
+    while (i < arr1.length && j < arr2.length) {
+        if (arr1[i]._key < arr2[j]._key) {
+            compare.push({status, ...arr1[i++]});
+        } else if (arr1[i]._key === arr2[j]._key) {
+            i++;
+            j++;
+        } else {
+            j++;
+        }
+    }
+    for (; i < arr1.length; i++) {
+        compare.push({status, ...arr1[i]});
+    }
+    return compare;
+}
+
 export {
     getPrefixes,
     getRelevant,
-    diff
+    diff,
+    diffBetweenOldAndNew
 };

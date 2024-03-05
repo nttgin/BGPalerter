@@ -224,7 +224,7 @@ export default class RpkiUtils {
             .catch(error => {
                 this.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[RPKIUtils._validateQueue] ' + error
                 });
             });
     };

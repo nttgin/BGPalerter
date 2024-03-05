@@ -51,14 +51,19 @@ export default class Consumer {
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error
+                message: '[Consumer.constructor]' + error
             });
         }
         process.on('message', this.dispatch);
         env.pubSub.subscribe('data', this.dispatch);
     };
 
-    dispatch = (buffer) => {
+    dispatch = async (buffer) => {
+        this.logger.log({
+            level: 'info',
+            message: `Consuming ${buffer.length} events`
+        });
+        console.log(`Consuming ${buffer.length} events`)
         try {
             for (let data of buffer){
 
@@ -66,27 +71,30 @@ export default class Consumer {
                 const messagesRaw = data.message;
                 const messages = this.connectors[connector].transform(messagesRaw) || [];
 
+                const before = new Date();
                 for (let monitor of this.monitors) {
 
                     // Blocking filtering to reduce stack usage
                     for (const message of messages.filter(monitor.filter)) {
 
                         // Promise call to reduce waiting times
-                        monitor
-                            .monitor(message)
-                            .catch(error => {
-                                this.logger.log({
-                                    level: 'error',
-                                    message: error
-                                });
+                        try {
+                            await monitor.monitor(message);
+                        } catch(e) {
+                            this.logger.log({
+                                level: 'error',
+                                message: e.message + ' ' + e.stack
                             });
+                        }
                     }
                 }
+                const after = new Date();
+                // console.log(`Event processed after ${after - before} ms.`)
             }
         } catch (error) {
             this.logger.log({
                 level: 'error',
-                message: error.message
+                message: error.message + ' ' + error.stack
             });
         }
     };

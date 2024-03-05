@@ -45,9 +45,9 @@ export default class WebSocket {
         if (this.ws) {
             this._ping();
             if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
-                this._publishError(`The WebSocket client didn't receive ${nPings} pings. Disconnecting.`)
-                this.disconnect();
-                this.connect();
+                // this._publishError(`The WebSocket client didn't receive ${nPings} pings.`)
+                // this.disconnect();
+                // this.connect();
             }
         }
     };

@@ -47,7 +47,7 @@ export default class UptimeApi extends Uptime {
             .catch(error => {
                 env.logger.log({
                     level: 'error',
-                    message: error
+                    message: '[UptimeApi.constructor] ' + error
                 });
             });
     };
