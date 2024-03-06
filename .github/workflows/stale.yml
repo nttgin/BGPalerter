@@ -1,0 +1,41 @@
+# This workflow warns and then closes issues and PRs that have had no activity for a specified amount of time.
+#
+# You can adjust the behavior by modifying this file.
+# For more information, see:
+# https://github.com/actions/stale
+name: Stale
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 13 * * *'
+
+jobs:
+  stale:
+
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/stale@v5
+        with:
+          days-before-issue-stale: 90
+          days-before-pr-stale: 90
+          days-before-issue-close: 0
+          days-before-pr-close: 0
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          exempt-issue-labels: >
+            no-stale,
+            pinned
+          close-issue-message: >
+            This issue has been automatically closed as stale.
+            This mechanism helps to prioritize feature requests which received more support from the community.
+            If you want to open again this issue you have to provide a Pull Request.
+          close-pr-message: >
+            This pr has been automatically closed as stale.
+            This mechanism helps to prioritize feature requests which received more support from the community.
+            A pr may become stale because there is no interest or bandwidth in reviewing/merging it.
+          stale-issue-label: 'wontfix'
+          stale-pr-label: 'wontfix'
