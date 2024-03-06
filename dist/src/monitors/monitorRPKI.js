@@ -214,6 +214,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
     });
     _this.thresholdMinPeers = params && params.thresholdMinPeers != null ? params.thresholdMinPeers : 1;
     _this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
+    _this.seenRpkiValidAnnouncements = {};
     _this.storage // Reload the previously discovered ROAs (needed to alert in case of disappearing ROAs)
     .get(_this.seenRpkiValidAnnouncementsKey).then(function (prefixes) {
       _this.seenRpkiValidAnnouncements = prefixes ? prefixes : {};
