@@ -57,6 +57,7 @@ export default class MonitorRPKI extends Monitor {
 
         this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
         this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
+        this.seenRpkiValidAnnouncements = {};
 
         this.storage // Reload the previously discovered ROAs (needed to alert in case of disappearing ROAs)
             .get(this.seenRpkiValidAnnouncementsKey)
