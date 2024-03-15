@@ -54,10 +54,10 @@ export default class reportTelegram extends ReportHTTP {
         super(channels, telegramParams, env);
         this.chatIds = params.chatIds;
 
-        if (!params.botUrl) {
+        if (!params.botUrl || !(params.botUrl.startsWith("https://api.telegram.org/bot") && params.botUrl.endsWith("/sendMessage"))) {
             this.logger.log({
                 level: 'error',
-                message: `${this.name} is not enabled: no botUrl provided`
+                message: `${this.name} is not enabled: invalid botUrl provided`
             });
             this.enabled = false;
         }

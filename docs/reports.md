@@ -162,7 +162,7 @@ Parameters for this report module:
 |Parameter| Description| 
 |---|---|
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). |
-|botUrl| The Telegram bot URL. Usually `https://api.telegram.org/bot_BOT_ID_/` where `_BOT_ID_` is your both ID. |
+|botUrl| The Telegram bot URL. `https://api.telegram.org/bot_BOT_ID_/sendMessage` where `_BOT_ID_` is your bot ID. |
 |noProxy| If there is a global proxy configuration (see [here](http-proxy.md)), this parameter if set to true allows the single module to bypass the proxy. |
 |chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).| 
 |chatIds.default| The chat ID of the default user group.| 
