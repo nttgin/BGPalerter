@@ -195,7 +195,7 @@ config.connectors = config.connectors
 
 if (config.httpProxy) {
     const {HttpsProxyAgent} = require("https-proxy-agent");
-    vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
+    vector.agent = new HttpsProxyAgent(config.httpProxy);
 }
 
 vector.storage = new Storage({}, config);

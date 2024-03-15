@@ -42,7 +42,7 @@ module.exports = function generatePrefixes(inputParameters) {
     let proxy;
     if (httpProxy) {
         const {HttpsProxyAgent} = require("https-proxy-agent");
-        proxy = new HttpsProxyAgent(url.parse(httpProxy));
+        proxy = new HttpsProxyAgent(httpProxy);
     }
     axiosEnrich(axios, proxy, clientId);
 
