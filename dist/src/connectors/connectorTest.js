@@ -7,7 +7,7 @@ exports["default"] = void 0;
 var _connector = _interopRequireDefault(require("./connector"));
 var _model = require("../model");
 var _ipSub = _interopRequireDefault(require("ip-sub"));
-var _class;
+var _ConnectorTest;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
@@ -18,13 +18,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /*
  * 	BSD 3-Clause License
  *
@@ -57,16 +57,15 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */ // IMPORTANT: This Connector is used by the automated tests. Please, ignore!
 var ConnectorTest = exports["default"] = /*#__PURE__*/function (_Connector) {
-  _inherits(ConnectorTest, _Connector);
   function ConnectorTest(name, _params, env) {
     var _this;
     _classCallCheck(this, ConnectorTest);
     _this = _callSuper(this, ConnectorTest, [name, _params, env]);
-    _defineProperty(_assertThisInitialized(_this), "connect", function () {
+    _defineProperty(_this, "connect", function () {
       _this._connect("Test connector connected");
       return Promise.resolve();
     });
-    _defineProperty(_assertThisInitialized(_this), "_fadeOffTest", function (fade) {
+    _defineProperty(_this, "_fadeOffTest", function (fade) {
       var updates = [{
         data: {
           withdrawals: ["165.24.225.0/24"],
@@ -99,7 +98,7 @@ var ConnectorTest = exports["default"] = /*#__PURE__*/function (_Connector) {
         _this._message(updates[3]);
       }, (_this.config.fadeOffSeconds + (fade ? -4 : 4)) * 1000); // depending on "fade" it goes in our out of the fading period
     });
-    _defineProperty(_assertThisInitialized(_this), "subscribe", function (params) {
+    _defineProperty(_this, "subscribe", function (params) {
       var type = params.type || _this.params.testType;
       var updates;
       switch (type) {
@@ -504,9 +503,10 @@ var ConnectorTest = exports["default"] = /*#__PURE__*/function (_Connector) {
     });
     return _this;
   }
+  _inherits(ConnectorTest, _Connector);
   return _createClass(ConnectorTest);
 }(_connector["default"]);
-_class = ConnectorTest;
+_ConnectorTest = ConnectorTest;
 _defineProperty(ConnectorTest, "transform", function (message) {
   if (message.type === 'ris_message') {
     try {
@@ -588,7 +588,7 @@ _defineProperty(ConnectorTest, "transform", function (message) {
       }
       return components;
     } catch (error) {
-      throw new Error("Error during transform (".concat(_class.name, "): ") + error.message);
+      throw new Error("Error during transform (".concat(_ConnectorTest.name, "): ") + error.message);
     }
   } else if (message.type === 'ris_error') {
     throw new Error("Error from RIS: " + message.data.message);

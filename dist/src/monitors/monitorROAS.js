@@ -27,13 +27,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : String(i); }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var getTaToleranceDict = function getTaToleranceDict(tolerance) {
   if (typeof tolerance === "number") {
@@ -48,13 +48,12 @@ var getTaToleranceDict = function getTaToleranceDict(tolerance) {
   return tolerance;
 };
 var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
-  _inherits(MonitorROAS, _Monitor);
   function MonitorROAS(name, channel, params, env, input) {
     var _params$enableDiffAle, _params$enableExpirat, _params$enableExpirat2, _params$enableDeleted, _params$enableAdvance;
     var _this;
     _classCallCheck(this, MonitorROAS);
     _this = _callSuper(this, MonitorROAS, [name, channel, params, env, input]);
-    _defineProperty(_assertThisInitialized(_this), "_enablePeriodicCheck", function (condition, checkFunction, seconds) {
+    _defineProperty(_this, "_enablePeriodicCheck", function (condition, checkFunction, seconds) {
       if (condition) {
         if (!global.EXTERNAL_ROA_EXPIRATION_TEST) {
           setTimeout(function () {
@@ -66,12 +65,12 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         }, global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000); // Periodic run
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_skipIfStaleVrps", function (callback) {
+    _defineProperty(_this, "_skipIfStaleVrps", function (callback) {
       if (!_this.rpki.getStatus().stale) {
         callback();
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_calculateSizes", function (vrps) {
+    _defineProperty(_this, "_calculateSizes", function (vrps) {
       var times = {};
       for (var ta in _this.seenTAs) {
         times[ta] = 0;
@@ -92,7 +91,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       }
       return times;
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkDeletedRoasTAs", function () {
+    _defineProperty(_this, "_checkDeletedRoasTAs", function () {
       var vrps = _this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
       var sizes = _this._calculateSizes(vrps);
       var metadata = _this.rpki.getMetadata();
@@ -127,7 +126,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       }
       _this.timesDeletedTAs = sizes;
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationTAs", function () {
+    _defineProperty(_this, "_checkExpirationTAs", function () {
       var roaExpirationAlertHours = _this.roaExpirationAlertHours;
       var vrps = _this.rpki.getVRPs();
       var expiringVrps = vrps.filter(function (i) {
@@ -172,7 +171,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         _loop(ta);
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_verifyExpiration", function () {
+    _defineProperty(_this, "_verifyExpiration", function () {
       var roaExpirationAlertHours = _this.roaExpirationAlertHours;
       var roas = _this.rpki.getVRPs();
       var metadata = _this.rpki.getMetadata();
@@ -200,7 +199,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         }
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_getExpiringItems", function (vrps) {
+    _defineProperty(_this, "_getExpiringItems", function (vrps) {
       if (_this.enableAdvancedRpkiStats) {
         var uniqItems = {};
         var items = vrps.slice(0, 40).filter(function (vrp) {
@@ -240,7 +239,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         return Promise.resolve({});
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationPrefixes", function (vrps, metadata, roaExpirationAlertHours) {
+    _defineProperty(_this, "_checkExpirationPrefixes", function (vrps, metadata, roaExpirationAlertHours) {
       var alerts = [];
       return Promise.all(_toConsumableArray(new Set(vrps.map(function (i) {
         return i.prefix;
@@ -280,7 +279,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         return alerts;
       });
     });
-    _defineProperty(_assertThisInitialized(_this), "_checkExpirationAs", function (vrps, asn, sent, metadata, roaExpirationAlertHours) {
+    _defineProperty(_this, "_checkExpirationAs", function (vrps, asn, sent, metadata, roaExpirationAlertHours) {
       try {
         var alerts = [];
         var impactedASes = _toConsumableArray(new Set(vrps.map(function (i) {
@@ -343,7 +342,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         });
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_diffVrps", function () {
+    _defineProperty(_this, "_diffVrps", function () {
       var newVrps = _this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
 
       if (_this.enableDiffAlerts) {
@@ -382,7 +381,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         }
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_diffVrpsPrefixes", function (oldVrps, newVrps, prefixesIn) {
+    _defineProperty(_this, "_diffVrpsPrefixes", function (oldVrps, newVrps, prefixesIn) {
       try {
         var roaDiff = (0, _rpkiDiffingTool.diff)(oldVrps, newVrps, [], prefixesIn);
         var alerts = [];
@@ -431,7 +430,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         });
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_diffVrpsAs", function (oldVrps, newVrps, asn, sent) {
+    _defineProperty(_this, "_diffVrpsAs", function (oldVrps, newVrps, asn, sent) {
       try {
         var roaDiff = (0, _rpkiDiffingTool.diff)(oldVrps, newVrps, asn, []);
         var alerts = [];
@@ -482,26 +481,26 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         });
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "_roaToString", function (roa) {
+    _defineProperty(_this, "_roaToString", function (roa) {
       if (roa.status) {
         return "".concat(roa.status, " <").concat(roa.prefix, ", ").concat(roa.asn, ", ").concat(roa.maxLength, ", ").concat(roa.ta || "", ">");
       } else {
         return "<".concat(roa.prefix, ", ").concat(roa.asn, ", ").concat(roa.maxLength, ", ").concat(roa.ta || "", ">");
       }
     });
-    _defineProperty(_assertThisInitialized(_this), "updateMonitoredResources", function () {
+    _defineProperty(_this, "updateMonitoredResources", function () {
       _this.monitored = {
         asns: _this.input.getMonitoredASns(),
         prefixes: _this.input.getMonitoredPrefixes()
       };
     });
-    _defineProperty(_assertThisInitialized(_this), "filter", function (message) {
+    _defineProperty(_this, "filter", function (message) {
       return false;
     });
-    _defineProperty(_assertThisInitialized(_this), "squashAlerts", function (alerts) {
+    _defineProperty(_this, "squashAlerts", function (alerts) {
       return alerts[0] ? alerts[0].matchedMessage : false;
     });
-    _defineProperty(_assertThisInitialized(_this), "monitor", function (message) {
+    _defineProperty(_this, "monitor", function (message) {
       return Promise.resolve(true);
     });
     _this.logger = env.logger;
@@ -534,5 +533,6 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _this._enablePeriodicCheck(_this.enableExpirationCheckTA, _this._checkExpirationTAs, _this.checkTaEverySeconds); // Check for TA malfunctions for too many expiring roas
     return _this;
   }
+  _inherits(MonitorROAS, _Monitor);
   return _createClass(MonitorROAS);
 }(_monitor["default"]);

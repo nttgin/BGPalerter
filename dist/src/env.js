@@ -5,7 +5,6 @@ var _pubSub = _interopRequireDefault(require("./utils/pubSub"));
 var _fastFileLogger = _interopRequireDefault(require("fast-file-logger"));
 var _package = require("../package.json");
 var _storageFile = _interopRequireDefault(require("./utils/storages/storageFile"));
-var _url = _interopRequireDefault(require("url"));
 var _rpkiUtils = _interopRequireDefault(require("./utils/rpkiUtils"));
 var _configYml = _interopRequireDefault(require("./config/configYml"));
 var _config = _interopRequireDefault(require("./config/config"));
@@ -188,7 +187,7 @@ config.connectors = config.connectors.map(function (item, index) {
 if (config.httpProxy) {
   var _require = require("https-proxy-agent"),
     HttpsProxyAgent = _require.HttpsProxyAgent;
-  vector.agent = new HttpsProxyAgent(_url["default"].parse(config.httpProxy));
+  vector.agent = new HttpsProxyAgent(config.httpProxy);
 }
 vector.storage = new _storageFile["default"]({}, config);
 vector.config = config;
