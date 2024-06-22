@@ -37,7 +37,7 @@ export default class MonitorNewPrefix extends Monitor {
 
     constructor(name, channel, params, env, input){
         super(name, channel, params, env, input);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 3;
+        this.thresholdMinPeers = params?.thresholdMinPeers ?? 3;
         this.updateMonitoredResources();
     };
 

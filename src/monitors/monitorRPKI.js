@@ -55,7 +55,7 @@ export default class MonitorRPKI extends Monitor {
             this.updateMonitoredResources();
         });
 
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 1;
+        this.thresholdMinPeers = params?.thresholdMinPeers ?? 1;
         this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
         this.seenRpkiValidAnnouncements = {};
 
