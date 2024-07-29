@@ -64,7 +64,7 @@
     "deepmerge": "^4.3.1",
     "fast-file-logger": "^1.1.5",
     "https-proxy-agent": "^7.0.5",
-    "inquirer": "=8.2.6",
+    "inquirer": "=10.1.4",
     "ip-sub": "^1.5.5",
     "js-yaml": "^4.1.0",
     "kafkajs": "^2.2.4",
