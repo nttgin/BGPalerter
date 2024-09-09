@@ -1,6 +1,5 @@
 # Who is using BGPalerter
 
-> This page is new, so many names are missing.  
 Please, let me know so I can add your company name here.
 
 * Seattle Internet Exchange (SIX)
@@ -61,4 +60,5 @@ Please, let me know so I can add your company name here.
 * IX.br (AS26162, AS263044, AS20121)
 * Cyberfusion (AS204983)
 * EscapeNet (AS7600)
+* Productsup GmbH (AS200249)
 * QuxLabs (AS203038, AS214503)

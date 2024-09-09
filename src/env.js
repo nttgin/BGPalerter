@@ -35,7 +35,6 @@ import PubSub from './utils/pubSub';
 import FileLogger from 'fast-file-logger';
 import { version } from '../package.json';
 import Storage from './utils/storages/storageFile';
-import url from 'url';
 import RpkiUtils from './utils/rpkiUtils';
 import ConfigYml from './config/configYml';
 import Config from "./config/config";
@@ -195,7 +194,7 @@ config.connectors = config.connectors
 
 if (config.httpProxy) {
     const {HttpsProxyAgent} = require("https-proxy-agent");
-    vector.agent = new HttpsProxyAgent(url.parse(config.httpProxy));
+    vector.agent = new HttpsProxyAgent(config.httpProxy);
 }
 
 vector.storage = new Storage({}, config);

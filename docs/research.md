@@ -13,15 +13,6 @@ This tutorial will briefly explain how to use BGPalerter for research.
 In `config.yml` you can set the parameter `environment` to the value `research`. 
 This will disable some of the rules enforced for production monitoring.
 
-In particular, you will be able to define (if needed) a rule in `prefixes.yml` such us:
-
-```yaml
-"::/0":
-  description: Monitoring the entire v6 space!
-  ignoreMorespecifics: false
-  ignore: false
-```
-
 If during your analysis you will find a warning of messages dropped in the logs, you may want to:
 
 1) Check your code to verify if something is taking too much time for the processing of a single BGP message

@@ -42,7 +42,7 @@ module.exports = function generatePrefixes(inputParameters) {
     let proxy;
     if (httpProxy) {
         const {HttpsProxyAgent} = require("https-proxy-agent");
-        proxy = new HttpsProxyAgent(url.parse(httpProxy));
+        proxy = new HttpsProxyAgent(httpProxy);
     }
     axiosEnrich(axios, proxy, clientId);
 
@@ -77,7 +77,8 @@ module.exports = function generatePrefixes(inputParameters) {
             params: {
                 client: clientId,
                 resource: asn,
-                lod: 0
+                lod: 0,
+                data_overload_limit: "ignore"
             }
         });
 
@@ -129,7 +130,8 @@ module.exports = function generatePrefixes(inputParameters) {
             params: {
                 min_peers_seeing: 0,
                 client: clientId,
-                resource: prefix
+                resource: prefix,
+                data_overload_limit: "ignore"
             }
         });
 
@@ -163,7 +165,8 @@ module.exports = function generatePrefixes(inputParameters) {
             path: ["data", "related-prefixes", "data.json"],
             params: {
                 client: clientId,
-                resource: prefix
+                resource: prefix,
+                data_overload_limit: "ignore"
             }
         });
 
@@ -229,7 +232,8 @@ module.exports = function generatePrefixes(inputParameters) {
             path: ["data", "announced-prefixes", "data.json"],
             params: {
                 client: clientId,
-                resource: asn
+                resource: asn,
+                data_overload_limit: "ignore"
             }
         });
 
