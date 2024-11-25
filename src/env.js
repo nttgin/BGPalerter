@@ -39,6 +39,7 @@ import url from 'url';
 import RpkiUtils from './utils/rpkiUtils';
 import ConfigYml from './config/configYml';
 import Config from "./config/config";
+import inputNetbox from "./inputs/inputNetbox";
 import { v4 as uuidv4 } from 'uuid';
 
 const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
@@ -82,6 +83,10 @@ if (config.volume && config.volume.length) {
 
 if (!config.configVersion || config.configVersion < Config.configVersion) {
     console.log("Your config.yml file is old. It works, but it may not support all the new features. Update your config file or generate a new one (e.g., rename the file into config.yml.bak, run BGPalerter and proceed with the auto configuration, apply to the new config.yml the personalizations you did in config.yml.bak.");
+}
+
+if (config.inputNetbox) {
+    global.EXTERNAL_INPUT_CONNECTOR = inputNetbox
 }
 
 const loggingDirectory = config.volume + config.logging.directory;
