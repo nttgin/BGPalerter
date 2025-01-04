@@ -34,9 +34,9 @@ import Monitor from "./monitor";
 
 export default class MonitorPathNeighbors extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
-        this.thresholdMinPeers = (params && params.thresholdMinPeers != null) ? params.thresholdMinPeers : 0;
+        this.thresholdMinPeers = params?.thresholdMinPeers ?? 0;
         this.updateMonitoredResources();
     };
 
@@ -45,7 +45,7 @@ export default class MonitorPathNeighbors extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement';
+        return message.type === "announcement";
     };
 
     squashAlerts = (alerts) => {
@@ -67,7 +67,7 @@ export default class MonitorPathNeighbors extends Monitor {
             const path = message.path;
 
             for (let monitoredAs of this.monitored) {
-                if (monitoredAs.upstreams || monitoredAs.downstreams) {
+                if (monitoredAs.upstreams !== undefined || monitoredAs.downstreams !== undefined) {
                     const [left, _, right] = path.getNeighbors(monitoredAs.asn);
 
                     if (!!left || !!right) {
@@ -75,28 +75,16 @@ export default class MonitorPathNeighbors extends Monitor {
                         let side = null;
                         let id = null;
 
-                        if (left) {
-                            if (monitoredAs.upstreams === null) {
-                                side = "upstream";
-                                id = left.getId();
-                                match = true;
-                            } else if (monitoredAs.upstreams && !monitoredAs.upstreams.includes(left)) {
-                                side = "upstream";
-                                id = left.getId();
-                                match = true;
-                            }
+                        if (left && (monitoredAs.upstreams !== undefined && !monitoredAs.upstreams?.includes(left))) {
+                            side = "upstream";
+                            id = left.getId();
+                            match = true;
                         }
 
-                        if (right) {
-                            if (monitoredAs.downstreams === null) {
-                                side = "downstream";
-                                id = right.getId();
-                                match = true;
-                            } else if (monitoredAs.downstreams && !monitoredAs.downstreams.includes(right)) {
-                                side = "downstream";
-                                id = right.getId();
-                                match = true;
-                            }
+                        if (right && (monitoredAs.downstreams !== undefined && !monitoredAs.downstreams?.includes(right))) {
+                            side = "downstream";
+                            id = right.getId();
+                            match = true;
                         }
 
 

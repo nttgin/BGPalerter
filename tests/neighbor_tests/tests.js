@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const fs = require("fs");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -42,10 +42,10 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume, { recursive: true });
+    fs.mkdirSync(volume, {recursive: true});
 } else {
-    fs.rmdirSync(volume, { recursive: true });
-    fs.mkdirSync(volume, { recursive: true });
+    fs.rmdirSync(volume, {recursive: true});
+    fs.mkdirSync(volume, {recursive: true});
 }
 fs.copyFileSync("tests/neighbor_tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/neighbor_tests/prefixes.test.yml", volume + "prefixes.test.yml");
@@ -71,7 +71,6 @@ describe("Alerting", function () {
                     "matchedRule": {
                         "asn": [101],
                         "group": ["default"],
-                        "groupd": "default",
                         "upstreams": [100],
                         "downstreams": [104]
                     },
@@ -100,7 +99,6 @@ describe("Alerting", function () {
                     "matchedRule": {
                         "asn": [80],
                         "group": ["default"],
-                        "groupd": "default",
                         "upstreams": [99],
                         "downstreams": null
                     },
@@ -129,7 +127,6 @@ describe("Alerting", function () {
                     "matchedRule": {
                         "asn": [101],
                         "group": ["default"],
-                        "groupd": "default",
                         "upstreams": [100],
                         "downstreams": [104]
                     },
