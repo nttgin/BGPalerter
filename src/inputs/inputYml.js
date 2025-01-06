@@ -34,11 +34,11 @@ import yaml from "js-yaml";
 import fs from "fs";
 import Input from "./input";
 import ipUtils from "ip-sub";
-import { AS } from "../model";
+import {AS} from "../model";
 
 export default class InputYml extends Input {
 
-    constructor(env){
+    constructor(env) {
         super(env);
         this.prefixes = [];
         this.asns = [];
@@ -68,7 +68,7 @@ export default class InputYml extends Input {
 
             fs.watchFile(file, () => {
                 if (this._watchPrefixFileTimer) {
-                    clearTimeout(this._watchPrefixFileTimer)
+                    clearTimeout(this._watchPrefixFileTimer);
                 }
                 this._watchPrefixFileTimer = setTimeout(() => {
                     this.prefixes = [];
@@ -77,7 +77,7 @@ export default class InputYml extends Input {
                         .then(() => this._change())
                         .catch(error => {
                             this.logger.log({
-                                level: 'error',
+                                level: "error",
                                 message: error
                             });
                         });
@@ -100,7 +100,7 @@ export default class InputYml extends Input {
                 let fileContent;
 
                 if (fs.existsSync(file)) {
-                    fileContent = fs.readFileSync(file, 'utf8');
+                    fileContent = fs.readFileSync(file, "utf8");
                     try {
                         monitoredPrefixesFile = yaml.load(fileContent) || {};
                         this._watchPrefixFile(file);
@@ -130,7 +130,7 @@ export default class InputYml extends Input {
                                         uniqueAsns[asn] = true;
                                         const item = Object.assign({
                                             asn: new AS(asn),
-                                            group: ['default']
+                                            group: ["default"]
                                         }, monitoredPrefixesFile.options.monitorASns[asn]);
 
                                         if (item.upstreams && item.upstreams.length) {
@@ -160,11 +160,11 @@ export default class InputYml extends Input {
 
                                 return Object.assign({
                                     prefix: i,
-                                    group: ['default'],
+                                    group: ["default"],
                                     ignore: false,
                                     excludeMonitors: [],
-                                    includeMonitors: [],
-                                }, monitoredPrefixesFile[i])
+                                    includeMonitors: []
+                                }, monitoredPrefixesFile[i]);
                             })
                             .filter(i => i !== null);
 
@@ -222,7 +222,7 @@ export default class InputYml extends Input {
                 if (this.config.environment === "research") {
                     item.asn = item.asn || 0;
                 }
-                if (["string", "number"].includes(typeof(item.asn))) {
+                if (["string", "number"].includes(typeof (item.asn))) {
                     asns = [item.asn];
                 } else if (item.asn instanceof Array) {
                     asns = item.asn;
@@ -235,15 +235,15 @@ export default class InputYml extends Input {
                     return "Not a valid AS number for: " + prefix;
                 }
 
-                if (!["string", "number"].includes(typeof(item.description))) {
+                if (!["string", "number"].includes(typeof (item.description))) {
                     return "Not a valid description for: " + prefix;
                 }
 
-                if (typeof(item.ignoreMorespecifics) !== "boolean") {
+                if (typeof (item.ignoreMorespecifics) !== "boolean") {
                     return "Not a valid ignoreMorespecifics value for: " + prefix;
                 }
 
-                if (item.ignore !== undefined && typeof(item.ignore) !== "boolean") {
+                if (item.ignore !== undefined && typeof (item.ignore) !== "boolean") {
                     return "Not a valid ignore value for: " + prefix;
                 }
 
@@ -263,19 +263,19 @@ export default class InputYml extends Input {
                 if (item.path) {
                     ((item.path.length) ? item.path : [item.path])
                         .map(rule => {
-                            if (!rule.matchDescription){
+                            if (!rule.matchDescription) {
                                 return "No matchDescription set";
                             }
                             this._validateRegex(rule.match);
                             this._validateRegex(rule.notMatch);
-                            if (rule.maxLength && !(typeof(rule.maxLength) == "number" && rule.maxLength > 1)) {
+                            if (rule.maxLength && !(typeof (rule.maxLength) == "number" && rule.maxLength > 1)) {
                                 return "Not valid maxLength";
                             }
 
-                            if (rule.minLength && !(typeof(rule.minLength) == "number" && rule.minLength > 1)) {
+                            if (rule.minLength && !(typeof (rule.minLength) == "number" && rule.minLength > 1)) {
                                 return "Not valid minLength";
                             }
-                        })
+                        });
 
                 }
 
@@ -317,7 +317,7 @@ export default class InputYml extends Input {
 
     save = (content) =>
         new Promise((resolve, reject) => {
-            if (content && typeof(content) === "object" && Object.keys(content).length > 0) {
+            if (content && typeof (content) === "object" && Object.keys(content).length > 0) {
                 try {
                     fs.writeFileSync(this.defaultPrefixFile, yaml.dump(content));
                     resolve();
@@ -351,12 +351,12 @@ export default class InputYml extends Input {
                 monitorASns[asnRule.asn.getValue()] = {
                     group: [asnRule.group].flat(),
                     upstreams: asnRule.upstreams ? asnRule.upstreams.numbers : null,
-                    downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null,
+                    downstreams: asnRule.downstreams ? asnRule.downstreams.numbers : null
                 };
             }
 
-            const options = Object.assign({}, this.options, { monitorASns });
+            const options = Object.assign({}, this.options, {monitorASns});
 
-            resolve({ ...prefixes, options });
+            resolve({...prefixes, options});
         });
 }

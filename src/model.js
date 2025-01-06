@@ -3,47 +3,65 @@ export class Path {
         this.value = listAS;
     };
 
-    getLast (){
+    getLast() {
         return this.value[this.value.length - 1];
     };
 
-    length () {
+    length() {
         return this.value.length;
     };
 
-    toString () {
+    toString() {
         return JSON.stringify(this.toJSON());
     };
 
-    getValues () {
+    getValues() {
         return this.value.map(i => i.getValue());
     };
 
-    toJSON () {
+    toJSON() {
         return this.getValues();
     };
 
-    getNeighbors (asn) {
-        const path = this.value;
-        const length = path.length - 1
-        for (let n=0; n < length; n++) {
-            const current = path[n] || null;
-            if (current.getId() === asn.getId()) {
-                const left = path[n - 1] || null;
-                const right = path[n + 1] || null;
+    getUniqueValues() {
+        if (!this.uniqueValues) {
+            const index = {};
+            const out = [];
 
-                return [left, current, right];
+            for (let asn of this.value) {
+                const key = asn.getId();
+
+                if (!index[key]) {
+                    out.push(asn);
+                    index[key] = asn;
+                }
             }
+
+            this.uniqueValues = out;
+        }
+
+        return this.uniqueValues ?? [];
+    }
+
+    getNeighbors(of) {
+        const path = [null, ...this.getUniqueValues(), null];
+        const simplePath = path.map(i => i?.numbers?.[0] ?? null);
+        const asn = of.numbers[0];
+        const i = simplePath.indexOf(asn);
+
+        if (i >= 0) {
+            const [left = null, current = null, right = null] = path.slice(i - 1, i + 2);
+
+            return [left, current, right];
         }
 
         return [null, null, null];
     };
 
-    includes (asn) {
+    includes(asn) {
         return this.value.some(i => i.includes(asn));
     };
 }
-
 
 export class AS {
     static _instances = {};
@@ -53,9 +71,9 @@ export class AS {
         this.ASset = false;
         this._valid = null;
 
-        if (["string", "number"].includes(typeof(numbers))) {
-            this.numbers = [ numbers ];
-        } else if (numbers instanceof Array && numbers.length){
+        if (["string", "number"].includes(typeof (numbers))) {
+            this.numbers = [numbers];
+        } else if (numbers instanceof Array && numbers.length) {
             if (numbers.length > 1) {
                 this.ASset = true;
             }
@@ -76,11 +94,11 @@ export class AS {
         }
     }
 
-    getId () {
+    getId() {
         return (this.numbers.length === 1) ? this.numbers[0] : this.numbers.sort().join("-");
     };
 
-    isValid () {
+    isValid() {
         if (this._valid === null) {
             this._valid = this.numbers &&
                 this.numbers.length > 0 &&
@@ -105,22 +123,15 @@ export class AS {
         return this._valid;
     };
 
-    includes (ASn){
-
-        for (let a of ASn.numbers) {
-            if (!this.numbers.includes(a)) {
-                return false;
-            }
-        }
-
-        return true;
+    includes(ASn) {
+        return ASn.numbers.every(i => this.numbers.includes(i));
     };
 
-    isASset () {
+    isASset() {
         return this.ASset;
     };
 
-    getValue () {
+    getValue() {
         return (this.numbers.length > 1) ? this.numbers : this.numbers[0];
     };
 
@@ -130,7 +141,7 @@ export class AS {
         return (list.length === 1 ? list : list.slice(0, list.length - 1).map(i => [i, ", "]).concat(["and ", list[list.length - 1]]).flat()).join("");
     };
 
-    toJSON () {
+    toJSON() {
         return this.numbers;
     };
 }

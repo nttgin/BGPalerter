@@ -45,7 +45,7 @@ export default class MonitorPathNeighbors extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === "announcement";
+        return message.type === "announcement" && this.monitored.some(i => message.path.includes(i.asn));
     };
 
     squashAlerts = (alerts) => {
@@ -86,7 +86,6 @@ export default class MonitorPathNeighbors extends Monitor {
                             id = right.getId();
                             match = true;
                         }
-
 
                         if (match) {
                             const monitoredId = monitoredAs.asn.getId();

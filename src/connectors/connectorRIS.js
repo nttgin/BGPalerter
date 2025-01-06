@@ -32,10 +32,10 @@
 
 import WebSocket from "../utils/WebSocket";
 import Connector from "./connector";
-import { AS, Path } from "../model";
+import {AS, Path} from "../model";
 import brembo from "brembo";
 import ipUtils from "ip-sub";
-import batchPromises from 'batch-promises';
+import batchPromises from "batch-promises";
 
 const beacons = {
     v4: ["84.205.64.0/24", "84.205.65.0/24", "84.205.67.0/24", "84.205.68.0/24", "84.205.69.0/24",
@@ -111,11 +111,11 @@ export default class ConnectorRIS extends Connector {
 
     _appendListeners = (resolve, reject) => {
         if (this._shouldCanaryMonitoringStart()) {
-            this.ws.on('message', this._messageToJsonCanary);
+            this.ws.on("message", this._messageToJsonCanary);
         } else {
-            this.ws.on('message', this._messageToJson);
+            this.ws.on("message", this._messageToJson);
         }
-        this.ws.on('close', (error) => {
+        this.ws.on("close", (error) => {
 
             if (this.connected) {
                 this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/main/docs/ris-disconnections.md");
@@ -124,10 +124,10 @@ export default class ConnectorRIS extends Connector {
                 reject();
             }
         });
-        this.ws.on('error', error => {
+        this.ws.on("error", error => {
             this._error(`${this.name} ${error.message} (instance:${this.instanceId} connection:${error.connection})`);
         });
-        this.ws.on('open', data => this._openConnect(resolve, data));
+        this.ws.on("open", data => this._openConnect(resolve, data));
     };
 
     connect = () =>
@@ -140,10 +140,10 @@ export default class ConnectorRIS extends Connector {
                     perMessageDeflate: this.params.perMessageDeflate
                 };
 
-                if (this.params.authorizationHeader){
+                if (this.params.authorizationHeader) {
                     wsOptions.headers = {
                         Authorization: this.params.authorizationHeader
-                    }
+                    };
                 }
 
                 if (!this.params.noProxy && this.agent) {
@@ -154,7 +154,7 @@ export default class ConnectorRIS extends Connector {
                 this.ws.connect();
                 this._appendListeners(resolve, reject);
 
-            } catch(error) {
+            } catch (error) {
                 this._error(error);
                 reject(error);
             }
@@ -176,8 +176,8 @@ export default class ConnectorRIS extends Connector {
     _optimizedPathMatch = (regex) => {
 
         if (regex) {
-            regex = (regex.slice(0,2) === ".*") ? regex.slice(2) : regex;
-            regex = (regex.slice(-2) === ".*") ? regex.slice(0,-2) : regex;
+            regex = (regex.slice(0, 2) === ".*") ? regex.slice(2) : regex;
+            regex = (regex.slice(-2) === ".*") ? regex.slice(0, -2) : regex;
             const regexTests = [
                 "^[\\^]*\\d+[\\$]*$",
                 "^[\\^]*[\\d+,]+\\d+[\\$]*$",
@@ -201,13 +201,13 @@ export default class ConnectorRIS extends Connector {
 
         if (monitoredPrefixes.length > risLimitPrefixes) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "Prefix list of abnormal length, truncated to 10000 to prevent RIS overload"
             });
             monitoredPrefixes = monitoredPrefixes.slice(0, risLimitPrefixes);
         }
 
-        if (monitoredPrefixes.filter(i => (ipUtils.isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || ipUtils.isEqualPrefix(i.prefix,'0.0.0.0/0'))).length === 2) {
+        if (monitoredPrefixes.filter(i => (ipUtils.isEqualPrefix(i.prefix, "0:0:0:0:0:0:0:0/0") || ipUtils.isEqualPrefix(i.prefix, "0.0.0.0/0"))).length === 2) {
 
             delete params.prefix;
 
@@ -257,7 +257,7 @@ export default class ConnectorRIS extends Connector {
 
         if (monitoredASns.length > risLimitAses) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "AS list of abnormal length, truncated to 10 to prevent RIS overload"
             });
             monitoredASns = monitoredASns.slice(0, risLimitAses);
@@ -311,13 +311,13 @@ export default class ConnectorRIS extends Connector {
                 .then(() => {
                     this._checkCanary();
                     this.logger.log({
-                        level: 'info',
+                        level: "info",
                         message: "Subscribed to beacons"
                     });
                 })
                 .catch(() => {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: "Failed to subscribe to beacons"
                     });
                 });
@@ -328,7 +328,7 @@ export default class ConnectorRIS extends Connector {
         clearTimeout(this._timerCheckCanary);
         if (!this.connected) {
             this.logger.log({
-                level: 'info',
+                level: "info",
                 message: "RIS connected again, the streaming session is working properly"
             });
         }
@@ -337,7 +337,7 @@ export default class ConnectorRIS extends Connector {
             if (this.connected) {
                 this.connected = false;
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "RIS has been silent for too long, probably there is something wrong"
                 });
             }
@@ -352,14 +352,14 @@ export default class ConnectorRIS extends Connector {
             .then(() => this.subscribe(input))
             .then(() => {
                 this.logger.log({
-                    level: 'info',
+                    level: "info",
                     message: "Prefix rules reloaded"
                 });
             })
             .catch(error => {
                 if (error) {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                 }
@@ -387,7 +387,7 @@ export default class ConnectorRIS extends Connector {
             : this._subscribeToAll(input))
             .then(() => {
                     this.logger.log({
-                        level: 'info',
+                        level: "info",
                         message: "Subscribed to monitored resources"
                     });
                     if (this._shouldCanaryMonitoringStart()) {
@@ -405,10 +405,10 @@ export default class ConnectorRIS extends Connector {
 
                 return false;
             });
-    }
+    };
 
     static transform = (message) => {
-        if (message.type === 'ris_message') {
+        if (message.type === "ris_message") {
             try {
                 message = message.data;
                 const components = [];
@@ -470,8 +470,8 @@ export default class ConnectorRIS extends Connector {
             } catch (error) {
                 throw new Error(`Error during transform (${this.name}): ` + error.message);
             }
-        } else if (message.type === 'ris_error') {
+        } else if (message.type === "ris_error") {
             throw new Error("Error from RIS: " + message.data.message);
         }
-    }
+    };
 };

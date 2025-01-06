@@ -44,7 +44,7 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 if (!fs.existsSync(volume)) {
     fs.mkdirSync(volume, { recursive: true });
 } else {
-    fs.rmdirSync(volume, { recursive: true });
+    fs.rmSync(volume, { recursive: true });
     fs.mkdirSync(volume, { recursive: true });
 }
 fs.copyFileSync("tests/dump_tests/config.test.yml", volume + "config.test.yml");
