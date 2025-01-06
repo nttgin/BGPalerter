@@ -37,7 +37,7 @@ import LongestPrefixMatch from "longest-prefix-match";
 
 export default class Input {
 
-    constructor(env){
+    constructor(env) {
         this.prefixes = [];
         this.asns = [];
         this.config = env.config;
@@ -53,7 +53,7 @@ export default class Input {
                 .then(() => this._change())
                 .catch(error => {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                     console.log(error);
@@ -127,7 +127,7 @@ export default class Input {
             }
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error.message
             });
         }
@@ -136,11 +136,11 @@ export default class Input {
     };
 
     getMonitoredMoreSpecifics = () => {
-        throw new Error('The method getMonitoredMoreSpecifics MUST be implemented');
+        throw new Error("The method getMonitoredMoreSpecifics MUST be implemented");
     };
 
     getMonitoredPrefixes = () => {
-        throw new Error('The method getMonitoredPrefixes MUST be implemented');
+        throw new Error("The method getMonitoredPrefixes MUST be implemented");
     };
 
 
@@ -148,36 +148,36 @@ export default class Input {
         return includeIgnoredMorespecifics
             || !i.ignoreMorespecifics
             || ipUtils._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
-    }
+    };
 
-    getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics=false) => {
+    getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics = false) => {
         return this.index.getMatch(prefix, false)
             .filter(i => this._filterIgnoreMorespecifics(i, prefix, includeIgnoredMorespecifics))
             .map(i => ({...i}));
-    }
+    };
 
     getMonitoredASns = () => {
-        throw new Error('The method getMonitoredASns MUST be implemented');
+        throw new Error("The method getMonitoredASns MUST be implemented");
     };
 
     loadPrefixes = () => {
-        throw new Error('The method loadPrefixes MUST be implemented');
+        throw new Error("The method loadPrefixes MUST be implemented");
     };
 
     save = (data) => {
-        throw new Error('The method save MUST be implemented');
+        throw new Error("The method save MUST be implemented");
     };
 
     retrieve = () => {
-        throw new Error('The method retrieve MUST be implemented');
+        throw new Error("The method retrieve MUST be implemented");
     };
 
     generate = () => {
         return inquirer
             .prompt([
                 {
-                    type: 'confirm',
-                    name: 'continue',
+                    type: "confirm",
+                    name: "continue",
                     message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
                     default: true
                 }
@@ -187,32 +187,32 @@ export default class Input {
                     return inquirer
                         .prompt([
                             {
-                                type: 'input',
-                                name: 'asns',
+                                type: "input",
+                                name: "asns",
                                 message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
                                 default: null,
-                                validate: function(value) {
+                                validate: function (value) {
                                     const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
                                     return asns.length > 0;
                                 }
                             },
 
                             {
-                                type: 'confirm',
-                                name: 'm',
+                                type: "confirm",
+                                name: "m",
                                 message: "Do you want to be notified when your AS is announcing a new prefix?",
                                 default: true
                             },
 
                             {
-                                type: 'confirm',
-                                name: 'upstreams',
+                                type: "confirm",
+                                name: "upstreams",
                                 message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
                                 default: true
                             },
                             {
-                                type: 'confirm',
-                                name: 'downstreams',
+                                type: "confirm",
+                                name: "downstreams",
                                 message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
                                 default: true
                             }
@@ -253,7 +253,7 @@ export default class Input {
             .catch(error => {
                 console.log(error);
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
                 process.exit();
@@ -262,7 +262,7 @@ export default class Input {
 
     _reGeneratePrefixList = () => {
         this.logger.log({
-            level: 'info',
+            level: "info",
             message: "Updating prefix list"
         });
 
@@ -322,7 +322,7 @@ export default class Input {
 
                         if (newPrefixesNotMergeable.length) {
                             this.logger.log({
-                                level: 'info',
+                                level: "info",
                                 message: `The rules about ${newPrefixesNotMergeable.join(", ")} cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.`
                             });
                         }
@@ -333,13 +333,13 @@ export default class Input {
             .then(this.save)
             .then(() => {
                 this.logger.log({
-                    level: 'info',
+                    level: "info",
                     message: `Prefix list updated.`
                 });
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
