@@ -71,7 +71,9 @@ var MonitorPathNeighbors = exports["default"] = /*#__PURE__*/function (_Monitor)
       _this.monitored = _this.input.getMonitoredASns();
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === "announcement";
+      return message.type === "announcement" && _this.monitored.some(function (i) {
+        return message.path.includes(i.asn);
+      });
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       var peers = _toConsumableArray(new Set(alerts.map(function (alert) {

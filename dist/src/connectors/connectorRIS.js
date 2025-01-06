@@ -108,11 +108,11 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
     });
     _defineProperty(_this, "_appendListeners", function (resolve, reject) {
       if (_this._shouldCanaryMonitoringStart()) {
-        _this.ws.on('message', _this._messageToJsonCanary);
+        _this.ws.on("message", _this._messageToJsonCanary);
       } else {
-        _this.ws.on('message', _this._messageToJson);
+        _this.ws.on("message", _this._messageToJson);
       }
-      _this.ws.on('close', function (error) {
+      _this.ws.on("close", function (error) {
         if (_this.connected) {
           _this._disconnect("RIPE RIS disconnected (error: " + error + "). Read more at https://github.com/nttgin/BGPalerter/blob/main/docs/ris-disconnections.md");
         } else {
@@ -120,10 +120,10 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
           reject();
         }
       });
-      _this.ws.on('error', function (error) {
+      _this.ws.on("error", function (error) {
         _this._error("".concat(_this.name, " ").concat(error.message, " (instance:").concat(_this.instanceId, " connection:").concat(error.connection, ")"));
       });
-      _this.ws.on('open', function (data) {
+      _this.ws.on("open", function (data) {
         return _this._openConnect(resolve, data);
       });
     });
@@ -184,13 +184,13 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
       var params = JSON.parse(JSON.stringify(_this.params.subscription));
       if (monitoredPrefixes.length > risLimitPrefixes) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "Prefix list of abnormal length, truncated to 10000 to prevent RIS overload"
         });
         monitoredPrefixes = monitoredPrefixes.slice(0, risLimitPrefixes);
       }
       if (monitoredPrefixes.filter(function (i) {
-        return _ipSub["default"].isEqualPrefix(i.prefix, '0:0:0:0:0:0:0:0/0') || _ipSub["default"].isEqualPrefix(i.prefix, '0.0.0.0/0');
+        return _ipSub["default"].isEqualPrefix(i.prefix, "0:0:0:0:0:0:0:0/0") || _ipSub["default"].isEqualPrefix(i.prefix, "0.0.0.0/0");
       }).length === 2) {
         delete params.prefix;
         if (!_this.subscribed["everything"]) {
@@ -231,7 +231,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
       var params = JSON.parse(JSON.stringify(_this.params.subscription));
       if (monitoredASns.length > risLimitAses) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "AS list of abnormal length, truncated to 10 to prevent RIS overload"
         });
         monitoredASns = monitoredASns.slice(0, risLimitAses);
@@ -279,12 +279,12 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
         }).then(function () {
           _this._checkCanary();
           _this.logger.log({
-            level: 'info',
+            level: "info",
             message: "Subscribed to beacons"
           });
         })["catch"](function () {
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: "Failed to subscribe to beacons"
           });
         });
@@ -294,7 +294,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
       clearTimeout(_this._timerCheckCanary);
       if (!_this.connected) {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "RIS connected again, the streaming session is working properly"
         });
       }
@@ -303,7 +303,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
         if (_this.connected) {
           _this.connected = false;
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: "RIS has been silent for too long, probably there is something wrong"
           });
         }
@@ -317,13 +317,13 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
         return _this.subscribe(input);
       }).then(function () {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "Prefix rules reloaded"
         });
       })["catch"](function (error) {
         if (error) {
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: error
           });
         }
@@ -345,7 +345,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
       _this.subscription = input;
       return (_this.params.carefulSubscription ? Promise.all([_this._subscribeToPrefixes(input), _this._subscribeToASns(input)]) : _this._subscribeToAll(input)).then(function () {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "Subscribed to monitored resources"
         });
         if (_this._shouldCanaryMonitoringStart()) {
@@ -382,7 +382,7 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
 }(_connector["default"]);
 _ConnectorRIS = ConnectorRIS;
 _defineProperty(ConnectorRIS, "transform", function (message) {
-  if (message.type === 'ris_message') {
+  if (message.type === "ris_message") {
     try {
       message = message.data;
       var components = [];
@@ -470,7 +470,7 @@ _defineProperty(ConnectorRIS, "transform", function (message) {
     } catch (error) {
       throw new Error("Error during transform (".concat(_ConnectorRIS.name, "): ") + error.message);
     }
-  } else if (message.type === 'ris_error') {
+  } else if (message.type === "ris_error") {
     throw new Error("Error from RIS: " + message.data.message);
   }
 });

@@ -91,7 +91,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
               return _this._change();
             })["catch"](function (error) {
               _this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
               });
             });
@@ -114,7 +114,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
               var monitoredPrefixesFile = {};
               var fileContent;
               if (_fs["default"].existsSync(file)) {
-                fileContent = _fs["default"].readFileSync(file, 'utf8');
+                fileContent = _fs["default"].readFileSync(file, "utf8");
                 try {
                   monitoredPrefixesFile = _jsYaml["default"].load(fileContent) || {};
                   _this._watchPrefixFile(file);
@@ -142,7 +142,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
                         uniqueAsns[asn] = true;
                         var item = Object.assign({
                           asn: new _model.AS(asn),
-                          group: ['default']
+                          group: ["default"]
                         }, monitoredPrefixesFile.options.monitorASns[asn]);
                         if (item.upstreams && item.upstreams.length) {
                           item.upstreams = new _model.AS(item.upstreams);
@@ -166,7 +166,7 @@ var InputYml = exports["default"] = /*#__PURE__*/function (_Input) {
                     monitoredPrefixesFile[i].asn = new _model.AS(monitoredPrefixesFile[i].asn);
                     return Object.assign({
                       prefix: i,
-                      group: ['default'],
+                      group: ["default"],
                       ignore: false,
                       excludeMonitors: [],
                       includeMonitors: []

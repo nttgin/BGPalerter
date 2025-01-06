@@ -146,17 +146,17 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
       }
     } catch (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error.message
       });
     }
     return lessSpecifics;
   });
   _defineProperty(this, "getMonitoredMoreSpecifics", function () {
-    throw new Error('The method getMonitoredMoreSpecifics MUST be implemented');
+    throw new Error("The method getMonitoredMoreSpecifics MUST be implemented");
   });
   _defineProperty(this, "getMonitoredPrefixes", function () {
-    throw new Error('The method getMonitoredPrefixes MUST be implemented');
+    throw new Error("The method getMonitoredPrefixes MUST be implemented");
   });
   _defineProperty(this, "_filterIgnoreMorespecifics", function (i, prefix, includeIgnoredMorespecifics) {
     return includeIgnoredMorespecifics || !i.ignoreMorespecifics || _ipSub["default"]._isEqualPrefix(i.prefix, prefix); // last piece says "or it is not a more specific"
@@ -170,28 +170,28 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     });
   });
   _defineProperty(this, "getMonitoredASns", function () {
-    throw new Error('The method getMonitoredASns MUST be implemented');
+    throw new Error("The method getMonitoredASns MUST be implemented");
   });
   _defineProperty(this, "loadPrefixes", function () {
-    throw new Error('The method loadPrefixes MUST be implemented');
+    throw new Error("The method loadPrefixes MUST be implemented");
   });
   _defineProperty(this, "save", function (data) {
-    throw new Error('The method save MUST be implemented');
+    throw new Error("The method save MUST be implemented");
   });
   _defineProperty(this, "retrieve", function () {
-    throw new Error('The method retrieve MUST be implemented');
+    throw new Error("The method retrieve MUST be implemented");
   });
   _defineProperty(this, "generate", function () {
     return _inquirer["default"].prompt([{
-      type: 'confirm',
-      name: 'continue',
+      type: "confirm",
+      name: "continue",
       message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
       "default": true
     }]).then(function (answer) {
       if (answer["continue"]) {
         return _inquirer["default"].prompt([{
-          type: 'input',
-          name: 'asns',
+          type: "input",
+          name: "asns",
           message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
           "default": null,
           validate: function validate(value) {
@@ -201,18 +201,18 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
             return asns.length > 0;
           }
         }, {
-          type: 'confirm',
-          name: 'm',
+          type: "confirm",
+          name: "m",
           message: "Do you want to be notified when your AS is announcing a new prefix?",
           "default": true
         }, {
-          type: 'confirm',
-          name: 'upstreams',
+          type: "confirm",
+          name: "upstreams",
           message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
           "default": true
         }, {
-          type: 'confirm',
-          name: 'downstreams',
+          type: "confirm",
+          name: "downstreams",
           message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
           "default": true
         }]).then(function (answer) {
@@ -245,7 +245,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
     })["catch"](function (error) {
       console.log(error);
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
       process.exit();
@@ -253,7 +253,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
   });
   _defineProperty(this, "_reGeneratePrefixList", function () {
     _this.logger.log({
-      level: 'info',
+      level: "info",
       message: "Updating prefix list"
     });
     _this.setReGeneratePrefixList();
@@ -312,7 +312,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
         }
         if (newPrefixesNotMergeable.length) {
           _this.logger.log({
-            level: 'info',
+            level: "info",
             message: "The rules about ".concat(newPrefixesNotMergeable.join(", "), " cannot be automatically added to the prefix list since their origin cannot be validated. They are not RPKI valid and they are not announced by a monitored AS. Add the prefixes manually if you want to start monitoring them.")
           });
         }
@@ -320,12 +320,12 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
       });
     }).then(_this.save).then(function () {
       _this.logger.log({
-        level: 'info',
+        level: "info",
         message: "Prefix list updated."
       });
     })["catch"](function (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });
@@ -354,7 +354,7 @@ var Input = exports["default"] = /*#__PURE__*/_createClass(function Input(env) {
       return _this._change();
     })["catch"](function (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
       console.log(error);
