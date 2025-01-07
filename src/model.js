@@ -52,7 +52,7 @@ export class Path {
         if (i >= 0) {
             const [left = null, current = null, right = null] = path.slice(i - 1, i + 2);
 
-            return [left, current, right];
+            return [left ?? null, current, right ?? null];
         }
 
         return [null, null, null];
