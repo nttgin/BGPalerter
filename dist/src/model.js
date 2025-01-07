@@ -100,7 +100,7 @@ var Path = exports.Path = /*#__PURE__*/function () {
           current = _path$slice2$2 === void 0 ? null : _path$slice2$2,
           _path$slice2$3 = _path$slice2[2],
           right = _path$slice2$3 === void 0 ? null : _path$slice2$3;
-        return [left, current, right];
+        return [left !== null && left !== void 0 ? left : null, current, right !== null && right !== void 0 ? right : null];
       }
       return [null, null, null];
     }
