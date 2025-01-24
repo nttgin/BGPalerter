@@ -52,7 +52,7 @@
     "@babel/preset-env": "^7.26.7",
     "chai": "^4.3.10",
     "chai-subset": "^1.6.0",
-    "mocha": "^10.7.3",
+    "mocha": "^11.1.0",
     "pkg": "^5.8.1",
     "read-last-lines": "^1.8.0",
     "syslogd": "^1.1.2"
