@@ -79,30 +79,30 @@ describe("RPKI monitoring external", function() {
                 ]
             }
             ,
-            "28c7aa78b6286e0e3c6583797f7df47c": {
-                id: '28c7aa78b6286e0e3c6583797f7df47c',
+            "d73cec3dff536ee9d815e2e84a5f0e6e": {
+                id: 'd73cec3dff536ee9d815e2e84a5f0e6e',
                 truncated: false,
                 origin: 'roa-monitor',
                 affected: 2914,
                 message: 'The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>',
 
             },
-            "47807c7558dbe001b4aad9f3a87eb427": {
-                id: '47807c7558dbe001b4aad9f3a87eb427',
+            "e3fe0356a69144801ec33bb0e23a59e0": {
+                id: 'e3fe0356a69144801ec33bb0e23a59e0',
                 truncated: false,
                 origin: 'roa-monitor',
                 affected: '94.5.4.3/22',
                 message: 'ROAs change detected: removed <94.5.4.3/22, 2914, 22, ripe>'
             },
-            "de3bd9a6cdeeb05e1c2c7c04f7220485" : {
-                id: 'de3bd9a6cdeeb05e1c2c7c04f7220485',
+            "743e491dfaa8a6fcb5193f290d30450e" : {
+                id: '743e491dfaa8a6fcb5193f290d30450e',
                 truncated: false,
                 origin: 'roa-monitor',
                 affected: '2001:db8:123::/48',
                 message: 'ROAs change detected: removed <2001:db8:123::/48, 65000, 48, ripe>'
             },
-            "129aafe3c8402fb045b71e810a73d425": {
-                id: '129aafe3c8402fb045b71e810a73d425',
+            "fca966677a80a6f4b9144452ae23f139": {
+                id: 'fca966677a80a6f4b9144452ae23f139',
                 truncated: false,
                 origin: 'roa-monitor',
                 affected: 2914,
