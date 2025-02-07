@@ -266,7 +266,7 @@ export default class MonitorROAS extends Monitor {
                                     }
                                     alerts = alerts.concat(alertsStrings);
 
-                                    this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                                    this.publishAlert(md5(alertsStrings.join(",")), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                                         matchedRule.prefix,
                                         matchedRule,
                                         message,
@@ -313,7 +313,7 @@ export default class MonitorROAS extends Monitor {
 
                             alerts = alerts.concat(alertsStrings);
 
-                            this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                            this.publishAlert(md5(alertsStrings.join(",")), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                                 matchedRule.asn.getId(),
                                 matchedRule,
                                 message,
@@ -392,7 +392,7 @@ export default class MonitorROAS extends Monitor {
                         alerts = alerts.concat(alertsStrings);
                         const metadata = this.rpki.getMetadata();
 
-                        this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(md5(alertsStrings.join(",")), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.prefix,
                             matchedRule,
                             message,
@@ -433,7 +433,7 @@ export default class MonitorROAS extends Monitor {
                         alerts = alerts.concat(alertsStrings);
                         const metadata = this.rpki.getMetadata();
 
-                        this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(md5(alertsStrings.join(",")), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.asn.getId(),
                             matchedRule,
                             message,
