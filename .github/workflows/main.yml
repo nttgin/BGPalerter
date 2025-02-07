@@ -35,14 +35,6 @@ jobs:
         npm install
         npm run compile
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      if: ${{ always() }}
-      with:
-        name: logs
-        path: ~/.npm/_logs/*
-        retention-days: 14
-
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -104,11 +96,3 @@ jobs:
         nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
         nohup ./kafka/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
         sleep 30 && npm run test-kafka
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      if: ${{ always() }}
-      with:
-        name: logs
-        path: ~/.npm/_logs/*
-        retention-days: 14
