@@ -251,7 +251,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
 
         return Promise.all(matchedRules.map(function (matchedRule) {
           return _this._getExpiringItems(roas).then(function (extra) {
-            var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString)));
+            var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString))).sort();
             var message = "";
             if (extra && extra.type === "chain") {
               message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
@@ -260,7 +260,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
             }
             alerts = alerts.concat(alertsStrings);
-            _this.publishAlert((0, _md["default"])(message),
+            _this.publishAlert((0, _md["default"])(alertsStrings.join(",")),
             // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
             matchedRule.prefix, matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
               vrps: vrps,
@@ -299,7 +299,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             var unsentVrps = vrps.filter(function (i) {
               return !sent.includes(_this._roaToString(i));
             });
-            var alertsStrings = _toConsumableArray(new Set(unsentVrps.map(_this._roaToString)));
+            var alertsStrings = _toConsumableArray(new Set(unsentVrps.map(_this._roaToString))).sort();
             if (alertsStrings.length) {
               _this._getExpiringItems(vrps).then(function (extra) {
                 var message = "";
@@ -310,7 +310,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
                   message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
                 }
                 alerts = alerts.concat(alertsStrings);
-                _this.publishAlert((0, _md["default"])(message),
+                _this.publishAlert((0, _md["default"])(alertsStrings.join(",")),
                 // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                 matchedRule.asn.getId(), matchedRule, message, _objectSpread(_objectSpread({}, extra), {}, {
                   vrps: unsentVrps,
@@ -401,7 +401,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
                 var message = alertsStrings.length <= 10 ? "ROAs change detected: ".concat(alertsStrings.join("; ")) : "ROAs change detected: ".concat(alertsStrings.slice(0, 10).join("; "), " and more...");
                 alerts = alerts.concat(alertsStrings);
                 var metadata = _this.rpki.getMetadata();
-                _this.publishAlert((0, _md["default"])(message),
+                _this.publishAlert((0, _md["default"])(alertsStrings.join(",")),
                 // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                 matchedRule.prefix, matchedRule, message, {
                   diff: alertsStrings,
@@ -453,12 +453,12 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               // An alert for each AS involved (they may have different user group)
               var alertsStrings = _toConsumableArray(new Set(roaDiff.map(_this._roaToString))).filter(function (i) {
                 return !sent.includes(i);
-              });
+              }).sort();
               if (alertsStrings.length) {
                 var message = alertsStrings.length <= 10 ? "ROAs change detected: ".concat(alertsStrings.join("; ")) : "ROAs change detected: ".concat(alertsStrings.slice(0, 10).join("; "), " and more...");
                 alerts = alerts.concat(alertsStrings);
                 var metadata = _this.rpki.getMetadata();
-                _this.publishAlert((0, _md["default"])(message),
+                _this.publishAlert((0, _md["default"])(alertsStrings.join(",")),
                 // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                 matchedRule.asn.getId(), matchedRule, message, {
                   diff: alertsStrings,
