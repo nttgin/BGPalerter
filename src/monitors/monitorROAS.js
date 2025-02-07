@@ -255,7 +255,7 @@ export default class MonitorROAS extends Monitor {
                         .map(matchedRule => {
                             return this._getExpiringItems(roas)
                                 .then(extra => {
-                                    const alertsStrings = [...new Set(roas.map(this._roaToString))];
+                                    const alertsStrings = [...new Set(roas.map(this._roaToString))].sort();
                                     let message = "";
 
                                     if (extra && extra.type === "chain") {
@@ -266,7 +266,7 @@ export default class MonitorROAS extends Monitor {
                                     }
                                     alerts = alerts.concat(alertsStrings);
 
-                                    this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                                    this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                                         matchedRule.prefix,
                                         matchedRule,
                                         message,
@@ -298,7 +298,7 @@ export default class MonitorROAS extends Monitor {
 
             for (let matchedRule of matchedRules.filter(i => !!i)) { // An alert for each AS involved (they may have different user group)
                 const unsentVrps = vrps.filter(i => !sent.includes(this._roaToString(i)));
-                const alertsStrings = [...new Set(unsentVrps.map(this._roaToString))];
+                const alertsStrings = [...new Set(unsentVrps.map(this._roaToString))].sort();
                 if (alertsStrings.length) {
                     this._getExpiringItems(vrps)
                         .then(extra => {
@@ -313,7 +313,7 @@ export default class MonitorROAS extends Monitor {
 
                             alerts = alerts.concat(alertsStrings);
 
-                            this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                            this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                                 matchedRule.asn.getId(),
                                 matchedRule,
                                 message,
@@ -392,7 +392,7 @@ export default class MonitorROAS extends Monitor {
                         alerts = alerts.concat(alertsStrings);
                         const metadata = this.rpki.getMetadata();
 
-                        this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.prefix,
                             matchedRule,
                             message,
@@ -425,7 +425,7 @@ export default class MonitorROAS extends Monitor {
                 const matchedRules = impactedASes.map(asn => this.getMonitoredAsMatch(new AS(asn)));
 
                 for (let matchedRule of matchedRules.filter(i => !!i)) { // An alert for each AS involved (they may have different user group)
-                    const alertsStrings = [...new Set(roaDiff.map(this._roaToString))].filter(i => !sent.includes(i));
+                    const alertsStrings = [...new Set(roaDiff.map(this._roaToString))].filter(i => !sent.includes(i)).sort();
                     if (alertsStrings.length) {
                         const message = alertsStrings.length <= 10 ?
                             `ROAs change detected: ${alertsStrings.join("; ")}` :
@@ -433,7 +433,7 @@ export default class MonitorROAS extends Monitor {
                         alerts = alerts.concat(alertsStrings);
                         const metadata = this.rpki.getMetadata();
 
-                        this.publishAlert(md5(message), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
+                        this.publishAlert(md5(alertsStrings), // The hash will prevent alert duplications in case multiple ASes/prefixes are involved
                             matchedRule.asn.getId(),
                             matchedRule,
                             message,
