@@ -31,7 +31,7 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -47,18 +47,18 @@ const ConfigTest = function () {
         data.test = true;
 
         return data;
-    }
+    };
 
     this.save = () => {
         return true;
-    }
+    };
 };
 
-describe("External Connector", function() {
+describe("External Connector", function () {
 
     it("load external connector", function () {
         const Worker = require("../../src/worker").default;
-        const worker = new Worker({ volume, configConnector: ConfigTest });
+        const worker = new Worker({volume, configConnector: ConfigTest});
         const config = worker.config;
         expect(config.test).to.equal(true);
     })

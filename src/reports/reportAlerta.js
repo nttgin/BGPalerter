@@ -41,18 +41,17 @@ export default class ReportAlerta extends Report {
         this.enabled = true;
         if (!this.getUserGroup("default")) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "Alerta is not enabled: no default group defined"
             });
             this.enabled = false;
         }
 
-        this.headers = {
-        };
-        if (this.params.key){
+        this.headers = {};
+        if (this.params.key) {
             this.headers.Authorization = "Key " + this.params.key;
         }
-        if (this.params.token){
+        if (this.params.token) {
             this.headers.Authorization = "Bearer " + this.params.token;
         }
 
@@ -67,7 +66,7 @@ export default class ReportAlerta extends Report {
 
         if (this.params.resource_templates) {
             this.logger.log({
-                level: 'info',
+                level: "info",
                 message: "The resource_templates parameter is deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
             });
         }
@@ -91,10 +90,10 @@ export default class ReportAlerta extends Report {
         })
             .catch((error) => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
-            })
+            });
     };
 
     getUserGroup = (group) => {
@@ -104,7 +103,7 @@ export default class ReportAlerta extends Report {
     };
 
     report = (channel, content) => {
-        if (this.enabled){
+        if (this.enabled) {
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
             groups = (groups.length) ? [...new Set(groups)] : ["default"];

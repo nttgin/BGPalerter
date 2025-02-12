@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const fs = require("fs");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -47,25 +47,25 @@ const pubSub = worker.pubSub;
 
 describe("Alerting", function () {
 
-    it("visibility reporting", function(done) {
+    it("visibility reporting", function (done) {
         const expectedData = {
             "165.254.225.0/24": {
-                id: '165.254.225.0/24',
-                origin: 'withdrawal-detection',
+                id: "165.254.225.0/24",
+                origin: "withdrawal-detection",
                 affected: 15562,
-                message: 'The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers'
+                message: "The prefix 165.254.225.0/24 (description 1) has been withdrawn. It is no longer visible from 4 peers"
             },
             "2a00:5884::/32": {
-                id: '2a00:5884::/32',
-                origin: 'withdrawal-detection',
+                id: "2a00:5884::/32",
+                origin: "withdrawal-detection",
                 affected: "204092-45",
-                message: 'The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers'
+                message: "The prefix 2a00:5884::/32 (alarig fix test) has been withdrawn. It is no longer visible from 4 peers"
             },
             "2001:db8:123::/48": {
-                id: '2001:db8:123::/48',
-                origin: 'withdrawal-detection',
+                id: "2001:db8:123::/48",
+                origin: "withdrawal-detection",
                 affected: 65000,
-                message: 'The prefix 2001:db8:123::/48 (exact matching test) has been withdrawn. It is no longer visible from 4 peers'
+                message: "The prefix 2001:db8:123::/48 (exact matching test) has been withdrawn. It is no longer visible from 4 peers"
             }
         };
 
@@ -107,14 +107,14 @@ describe("Alerting", function () {
         pubSub.publish("test-type", "visibility");
     }).timeout(asyncTimeout);
 
-    it("hijack reporting", function(done) {
+    it("hijack reporting", function (done) {
 
         const expectedData = {
             "15562-4-165.254.255.0/25": {
-                id: '15562-4-165.254.255.0/25',
-                origin: 'basic-hijack-detection',
+                id: "15562-4-165.254.255.0/25",
+                origin: "basic-hijack-detection",
                 affected: 15562,
-                message: 'A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562',
+                message: "A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562",
                 data: [
                     {
                         extra: {},
@@ -137,19 +137,19 @@ describe("Alerting", function () {
                 ]
             },
             "208585-2a00:5884:ffff::/48": {
-                id: '208585-2a00:5884:ffff::/48',
-                origin: 'basic-hijack-detection',
+                id: "208585-2a00:5884:ffff::/48",
+                origin: "basic-hijack-detection",
                 affected: "204092-45",
-                message: 'A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45',
+                message: "A new prefix 2a00:5884:ffff::/48 is announced by AS208585. It should be instead 2a00:5884::/32 (alarig fix test) announced by AS204092, and AS45",
                 data: [
                     {
                         extra: {},
-                        matchedRule:{
-                            prefix:"2a00:5884::/32",
+                        matchedRule: {
+                            prefix: "2a00:5884::/32",
                             group: ["default"],
-                            description:"alarig fix test",
+                            description: "alarig fix test",
                             asn: [204092, 45],
-                            ignoreMorespecifics:false
+                            ignoreMorespecifics: false
                         },
                         matchedMessage: {
                             type: "announcement",
@@ -163,14 +163,14 @@ describe("Alerting", function () {
                 ]
             },
             "15563-2a00:5884::/32": {
-                id: '15563-2a00:5884::/32',
-                origin: 'basic-hijack-detection',
+                id: "15563-2a00:5884::/32",
+                origin: "basic-hijack-detection",
                 affected: "204092-45",
-                message: 'The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45',
+                message: "The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45",
                 data: [
                     {
                         extra: {},
-                        matchedRule:{
+                        matchedRule: {
                             prefix: "2a00:5884::/32",
                             group: ["default"],
                             description: "alarig fix test",
@@ -181,7 +181,7 @@ describe("Alerting", function () {
                             type: "announcement",
                             prefix: "2a00:5884::/32",
                             peer: "124.0.0.3",
-                            path: [1,2,3,15563],
+                            path: [1, 2, 3, 15563],
                             originAS: [15563],
                             nextHop: "124.0.0.3"
                         }
@@ -189,7 +189,7 @@ describe("Alerting", function () {
                 ]
             }
         };
-        let hijackTestCompleted = false
+        let hijackTestCompleted = false;
         pubSub.subscribe("hijack", (message, type) => {
             try {
                 if (!hijackTestCompleted) {
@@ -225,110 +225,110 @@ describe("Alerting", function () {
 
         const expectedData = {
             "1234-175.254.205.0/25": {
-                id: '1234-175.254.205.0/25',
-                origin: 'prefix-detection',
+                id: "1234-175.254.205.0/25",
+                origin: "prefix-detection",
                 affected: 1234,
-                message: 'A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.',
+                message: "A new prefix 175.254.205.0/25 is announced by AS1234. It is a more specific of 175.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.",
                 data: [
                     {
                         extra: {},
                         matchedRule: {
-                            prefix: '175.254.205.0/24',
-                            group: ['default'],
-                            description: 'include exclude test',
+                            prefix: "175.254.205.0/24",
+                            group: ["default"],
+                            description: "include exclude test",
                             asn: [1234],
                             ignoreMorespecifics: false,
                             ignore: false,
                             excludeMonitors: ["basic-hijack-detection", "withdrawal-detection"]
                         },
                         matchedMessage: {
-                            type: 'announcement',
-                            prefix: '175.254.205.0/25',
-                            peer: '124.0.0.3',
-                            path: [ 1, 2, 3, 1234 ],
+                            type: "announcement",
+                            prefix: "175.254.205.0/25",
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 1234],
                             originAS: [1234],
-                            nextHop: '124.0.0.3'
+                            nextHop: "124.0.0.3"
                         }
                     }
                 ]
             },
             "1234-170.254.205.0/25": {
-                id: '1234-170.254.205.0/25',
-                origin: 'prefix-detection',
+                id: "1234-170.254.205.0/25",
+                origin: "prefix-detection",
                 affected: 1234,
-                message: 'A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.',
+                message: "A new prefix 170.254.205.0/25 is announced by AS1234. It is a more specific of 170.254.205.0/24 (include exclude test). Maybe you need to update your BGPalerter prefix list.",
                 data: [
                     {
                         extra: {},
                         matchedRule: {
-                            prefix: '170.254.205.0/24',
-                            group: ['default'],
-                            description: 'include exclude test',
+                            prefix: "170.254.205.0/24",
+                            group: ["default"],
+                            description: "include exclude test",
                             asn: [1234],
                             ignoreMorespecifics: false,
                             includeMonitors: ["prefix-detection"],
                             ignore: false
                         },
                         matchedMessage: {
-                            type: 'announcement',
-                            prefix: '170.254.205.0/25',
-                            peer: '124.0.0.3',
-                            path: [ 1, 2, 3, 1234 ],
+                            type: "announcement",
+                            prefix: "170.254.205.0/25",
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 1234],
                             originAS: [1234],
-                            nextHop: '124.0.0.3'
+                            nextHop: "124.0.0.3"
                         }
                     }
                 ]
             },
             "15562-165.254.255.0/25":
                 {
-                    id: '15562-165.254.255.0/25',
-                    origin: 'prefix-detection',
+                    id: "15562-165.254.255.0/25",
+                    origin: "prefix-detection",
                     affected: 15562,
-                    message: 'A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2). Maybe you need to update your BGPalerter prefix list.',
+                    message: "A new prefix 165.254.255.0/25 is announced by AS15562. It is a more specific of 165.254.255.0/24 (description 2). Maybe you need to update your BGPalerter prefix list.",
                     data: [
                         {
                             extra: {},
                             matchedRule: {
-                                prefix: '165.254.255.0/24',
-                                group: ['groupName'],
-                                description: 'description 2',
+                                prefix: "165.254.255.0/24",
+                                group: ["groupName"],
+                                description: "description 2",
                                 asn: [15562],
                                 ignoreMorespecifics: false
                             },
                             matchedMessage: {
-                                type: 'announcement',
-                                prefix: '165.254.255.0/25',
-                                peer: '124.0.0.2',
-                                path: [ 1, 2, 3, 15562 ],
+                                type: "announcement",
+                                prefix: "165.254.255.0/25",
+                                peer: "124.0.0.2",
+                                path: [1, 2, 3, 15562],
                                 originAS: [15562],
-                                nextHop: '124.0.0.2'
+                                nextHop: "124.0.0.2"
                             }
                         }
                     ]
                 },
             "204092-2a00:5884:ffff::/48": {
-                id: '204092-2a00:5884:ffff::/48',
-                origin: 'prefix-detection',
+                id: "204092-2a00:5884:ffff::/48",
+                origin: "prefix-detection",
                 affected: "204092-45",
-                message: 'A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test). Maybe you need to update your BGPalerter prefix list.',
+                message: "A new prefix 2a00:5884:ffff::/48 is announced by AS204092. It is a more specific of 2a00:5884::/32 (alarig fix test). Maybe you need to update your BGPalerter prefix list.",
                 data: [
                     {
                         extra: {},
                         matchedRule: {
-                            prefix: '2a00:5884::/32',
-                            group: ['default'],
-                            description: 'alarig fix test',
-                            asn: [ 204092, 45],
+                            prefix: "2a00:5884::/32",
+                            group: ["default"],
+                            description: "alarig fix test",
+                            asn: [204092, 45],
                             ignoreMorespecifics: false
                         },
                         matchedMessage: {
-                            type: 'announcement',
-                            prefix: '2a00:5884:ffff::/48',
-                            peer: '124.0.0.3',
-                            path: [ 1, 2, 3, 204092 ],
+                            type: "announcement",
+                            prefix: "2a00:5884:ffff::/48",
+                            peer: "124.0.0.3",
+                            path: [1, 2, 3, 204092],
                             originAS: [204092],
-                            nextHop: '124.0.0.3'
+                            nextHop: "124.0.0.3"
                         }
                     }
                 ]
@@ -375,10 +375,10 @@ describe("Alerting", function () {
     it("path match reporting", function (done) {
         const expectedData = {
             "98.5.4.3/22-1": {
-                id: '98.5.4.3/22-1',
-                origin: 'path-matching',
+                id: "98.5.4.3/22-1",
+                origin: "path-matching",
                 affected: "98.5.4.3/22",
-                message: 'Matched test description2 on prefix 98.5.4.3/22 (including length violation) 1 times',
+                message: "Matched test description2 on prefix 98.5.4.3/22 (including length violation) 1 times",
                 "data":
                     [
                         {
@@ -422,10 +422,10 @@ describe("Alerting", function () {
             },
 
             "99.5.4.3/22-0": {
-                id: '99.5.4.3/22-0',
-                origin: 'path-matching',
+                id: "99.5.4.3/22-0",
+                origin: "path-matching",
                 affected: "99.5.4.3/22",
-                message: 'Matched test description on prefix 99.5.4.3/22 1 times',
+                message: "Matched test description on prefix 99.5.4.3/22 1 times",
                 data: [
                     {
                         "affected": "99.5.4.3/22",
@@ -459,7 +459,7 @@ describe("Alerting", function () {
                         }
                     }
                 ]
-            },
+            }
         };
 
         let pathTestCompleted = false;
@@ -502,16 +502,16 @@ describe("Alerting", function () {
 
         const expectedData = {
             "2914-2.2.2.3/22": {
-                id:  "2914-2.2.2.3/22",
-                origin: 'asn-monitor',
+                id: "2914-2.2.2.3/22",
+                origin: "asn-monitor",
                 affected: 2914,
-                message: 'AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes',
+                message: "AS2914 is announcing 2.2.2.3/22 but this prefix is not in the configured list of announced prefixes"
             },
             "2914-2001:db9:123::/49": {
-                id: '2914-2001:db9:123::/49',
-                origin: 'asn-monitor',
+                id: "2914-2001:db9:123::/49",
+                origin: "asn-monitor",
                 affected: 2914,
-                message: 'AS2914 is announcing 2001:db9:123::/49 but this prefix is not in the configured list of announced prefixes',
+                message: "AS2914 is announcing 2001:db9:123::/49 but this prefix is not in the configured list of announced prefixes"
             }
         };
 
@@ -553,7 +553,7 @@ describe("Alerting", function () {
         let notReceived = true;
 
         setTimeout(() => {
-            if (notReceived){
+            if (notReceived) {
                 done();
             } else {
                 done(new Error("Not received"));
@@ -597,8 +597,8 @@ describe("Status storage", function () {
             expect(exists).to.equal(true);
 
             if (exists) {
-                const clone = JSON.parse(fs.readFileSync(fileClone, 'utf8')).value;
-                const original = JSON.parse(fs.readFileSync(fileOriginal, 'utf8')).value;
+                const clone = JSON.parse(fs.readFileSync(fileClone, "utf8")).value;
+                const original = JSON.parse(fs.readFileSync(fileOriginal, "utf8")).value;
                 expect(original.sent).to.have.keys(Object.keys(clone.sent));
             }
         }

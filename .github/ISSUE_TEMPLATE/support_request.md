@@ -14,6 +14,7 @@ assignees: ''
 **Did you read the documentation? Then ask the community for help.**
 
 ### In your request, provide an answer to all the following questions:
+
 * A clear and concise description of what the issue is.
 * Point to the part of the documentation you tried to use to address the issue.
 * Provide the steps to reproduce the issue

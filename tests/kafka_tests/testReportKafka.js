@@ -31,39 +31,39 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 const asyncTimeout = 60000;
 chai.use(chaiSubset);
 
-const { Kafka } = require('kafkajs')
+const {Kafka} = require("kafkajs");
 const kafka = new Kafka({
-    clientId: 'bgpalerter',
-    brokers: ['localhost:9092']
+    clientId: "bgpalerter",
+    brokers: ["localhost:9092"]
 });
 
 global.EXTERNAL_CONFIG_FILE = "tests/kafka_tests/config.kafka.test.yml";
 
-describe("Reports 1", function() {
+describe("Reports 1", function () {
     const worker = require("../../index");
     const pubSub = worker.pubSub;
 
     it("kafka", function (done) {
         let doneCalled = false;
-        const consumer = kafka.consumer({ groupId: 'bgpalerter' });
-        consumer.connect()
+        const consumer = kafka.consumer({groupId: "bgpalerter"});
+        consumer.connect();
         consumer
-            .subscribe({ topic: 'bgpalerter', fromBeginning: true })
+            .subscribe({topic: "bgpalerter", fromBeginning: true})
             .then(() => {
 
                 pubSub.publish("test-type", "visibility");
                 consumer.run({
-                    eachMessage: ({ topic, partition, message }) => {
+                    eachMessage: ({topic, partition, message}) => {
                         if (!doneCalled) {
                             done();
                             doneCalled = true;
                         }
-                        return Promise.resolve()
-                    },
+                        return Promise.resolve();
+                    }
                 });
             })
             .catch(error => {

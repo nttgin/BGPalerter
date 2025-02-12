@@ -48,6 +48,70 @@ export default class ConnectorTest extends Connector {
         this.subscribe({type: params.testType});
     }
 
+    static transform = (message) => {
+        if (message.type === "ris_message") {
+            try {
+                message = message.data;
+                const components = [];
+                const announcements = message["announcements"] || [];
+                const aggregator = message["aggregator"] || null;
+                const withdrawals = message["withdrawals"] || [];
+                const peer = message["peer"];
+                const communities = message["community"] || [];
+                const timestamp = new Date().getTime();
+                let path, originAS;
+
+                if (message["path"] && message["path"].length) {
+                    path = new Path(message["path"].map(i => new AS(i)));
+                    originAS = path.getLast();
+                } else {
+                    path = new Path([]);
+                    originAS = null;
+                }
+
+                if (originAS && path.length()) {
+                    for (let announcement of announcements) {
+                        const nextHop = announcement["next_hop"];
+
+                        if (ipUtils.isValidIP(nextHop)) {
+                            const prefixes = (announcement["prefixes"] || [])
+                                .filter(prefix => ipUtils.isValidPrefix(prefix));
+
+                            for (let prefix of prefixes) {
+                                components.push({
+                                    type: "announcement",
+                                    prefix,
+                                    peer,
+                                    path,
+                                    originAS,
+                                    nextHop,
+                                    aggregator,
+                                    timestamp,
+                                    communities
+                                });
+                            }
+                        }
+                    }
+                }
+
+                for (let prefix of withdrawals) {
+                    components.push({
+                        type: "withdrawal",
+                        prefix,
+                        peer,
+                        timestamp
+                    });
+                }
+
+                return components;
+            } catch (error) {
+                throw new Error(`Error during transform (${this.name}): ` + error.message);
+            }
+        } else if (message.type === "ris_error") {
+            throw new Error("Error from RIS: " + message.data.message);
+        }
+    };
+
     connect = () => {
         this._connect("Test connector connected");
         return Promise.resolve();
@@ -524,8 +588,8 @@ export default class ConnectorTest extends Connector {
         this.timer = setInterval(() => {
             updates.forEach(update => {
                 this._message(update);
-                if (type === 'visibility') {
-                    let peer = update.data.peer.split('.');
+                if (type === "visibility") {
+                    let peer = update.data.peer.split(".");
                     peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
                     update.data.peer = peer.join(".");
                 }
@@ -533,69 +597,5 @@ export default class ConnectorTest extends Connector {
         }, 1000);
 
         return Promise.resolve();
-    };
-
-    static transform = (message) => {
-        if (message.type === 'ris_message') {
-            try {
-                message = message.data;
-                const components = [];
-                const announcements = message["announcements"] || [];
-                const aggregator = message["aggregator"] || null;
-                const withdrawals = message["withdrawals"] || [];
-                const peer = message["peer"];
-                const communities = message["community"] || [];
-                const timestamp = new Date().getTime();
-                let path, originAS;
-
-                if (message["path"] && message["path"].length) {
-                    path = new Path(message["path"].map(i => new AS(i)));
-                    originAS = path.getLast();
-                } else {
-                    path = new Path([]);
-                    originAS = null;
-                }
-
-                if (originAS && path.length()) {
-                    for (let announcement of announcements) {
-                        const nextHop = announcement["next_hop"];
-
-                        if (ipUtils.isValidIP(nextHop)) {
-                            const prefixes = (announcement["prefixes"] || [])
-                                .filter(prefix => ipUtils.isValidPrefix(prefix));
-
-                            for (let prefix of prefixes) {
-                                components.push({
-                                    type: "announcement",
-                                    prefix,
-                                    peer,
-                                    path,
-                                    originAS,
-                                    nextHop,
-                                    aggregator,
-                                    timestamp,
-                                    communities
-                                });
-                            }
-                        }
-                    }
-                }
-
-                for (let prefix of withdrawals) {
-                    components.push({
-                        type: "withdrawal",
-                        prefix,
-                        peer,
-                        timestamp
-                    })
-                }
-
-                return components;
-            } catch (error) {
-                throw new Error(`Error during transform (${this.name}): ` + error.message);
-            }
-        } else if (message.type === 'ris_error') {
-            throw new Error("Error from RIS: " + message.data.message);
-        }
     };
 }

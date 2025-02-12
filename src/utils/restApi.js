@@ -36,8 +36,8 @@ export default class RestApi {
                         this.enabled = true;
                         resolve();
                     } else {
-                        this.enabled = false
-                        reject("The port parameter must be specified to start the REST API.")
+                        this.enabled = false;
+                        reject("The port parameter must be specified to start the REST API.");
                     }
                 } catch (error) {
                     this.enabled = false;
@@ -57,7 +57,7 @@ export default class RestApi {
             return this._startServer()
                 .then(() => {
                     this.server.get(url, this.urls[url]);
-                })
+                });
         }
-    }
+    };
 }

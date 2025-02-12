@@ -35,11 +35,11 @@ import ReportHTTP from "./reportHTTP";
 export default class ReportSlack extends ReportHTTP {
     constructor(channels, params, env) {
         const templates = {};
-        const defaultColor = '#4287f5';
+        const defaultColor = "#4287f5";
         const colors = params.colors || {};
 
         const getTemplateItem = (color) => {
-           return JSON.stringify({
+            return JSON.stringify({
                 attachments: [
                     {
                         color: color,

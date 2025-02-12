@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -34,7 +33,7 @@
 import fs from "fs";
 import path from "path";
 
-const templateHijack = '${summary}\n\
+const templateHijack = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -51,9 +50,9 @@ Detected by peers:    ${peers}\n\
 See in BGPlay:        ${bgplay}\n\
 \n\
 Top ${pathNumber} most used AS paths:\n\
-${paths}';
+${paths}";
 
-const templateNewPrefix = '${summary}\n\
+const templateNewPrefix = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -67,9 +66,9 @@ Announced by:         ${neworigin}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
-See in BGPlay:        ${bgplay}';
+See in BGPlay:        ${bgplay}";
 
-const templatePath = '${summary}\n\
+const templatePath = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -80,11 +79,11 @@ Last event:           ${latest} UTC\n\
 \n\
 \n\
 Top ${pathNumber} triggering AS paths:\n\
-${paths}';
+${paths}";
 
-const templateSoftwareUpdate = '${summary}';
+const templateSoftwareUpdate = "${summary}";
 
-const templateVisibility = '${summary}\n\
+const templateVisibility = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -96,9 +95,9 @@ Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
-See in BGPlay:        ${bgplay}';
+See in BGPlay:        ${bgplay}";
 
-const templateMisconfiguration = '${summary}\n\
+const templateMisconfiguration = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -109,9 +108,9 @@ Last event:           ${latest} UTC\n\
 \n\
 \n\
 Top ${pathNumber} most used AS paths:\n\
-${paths}';
+${paths}";
 
-const templateRPKI = '${summary}\n\
+const templateRPKI = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -119,55 +118,55 @@ DETAILS:\n\
 Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
-See:                  ${rpkiLink}';
+See:                  ${rpkiLink}";
 
-const templateRoa = '${summary}\n\
+const templateRoa = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
 ------------------------------------------------------\n\
 Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
-Last event:           ${latest} UTC';
+Last event:           ${latest} UTC";
 
 
-const defaultTemplate = '${summary}';
+const defaultTemplate = "${summary}";
 
 export default class emailTemplates {
 
     constructor(logger) {
-        const directory = 'src/reports/email_templates/';
+        const directory = "src/reports/email_templates/";
         const templateFiles = [
             {
-                channel: 'hijack',
+                channel: "hijack",
                 content: templateHijack
             },
             {
-                channel: 'newprefix',
+                channel: "newprefix",
                 content: templateNewPrefix
             },
             {
-                channel: 'path',
+                channel: "path",
                 content: templatePath
             },
             {
-                channel: 'software-update',
+                channel: "software-update",
                 content: templateSoftwareUpdate
             },
             {
-                channel: 'visibility',
+                channel: "visibility",
                 content: templateVisibility
             },
             {
-                channel: 'misconfiguration',
+                channel: "misconfiguration",
                 content: templateMisconfiguration
             },
             {
-                channel: 'rpki',
+                channel: "rpki",
                 content: templateRPKI
             },
             {
-                channel: 'roa',
+                channel: "roa",
                 content: templateRoa
             }
         ];
@@ -175,24 +174,24 @@ export default class emailTemplates {
         this.indexedFiles = {};
 
         if (!fs.existsSync(directory)) {
-            fs.mkdirSync(directory,  { recursive: true });
+            fs.mkdirSync(directory, {recursive: true});
         }
 
         templateFiles
             .forEach(template => {
                 try {
-                    const file = path.resolve(directory, template.channel + '.txt');
+                    const file = path.resolve(directory, template.channel + ".txt");
 
                     if (fs.existsSync(file)) {
-                        this.indexedFiles[template.channel] = fs.readFileSync(file, 'utf8');
+                        this.indexedFiles[template.channel] = fs.readFileSync(file, "utf8");
                     } else {
                         fs.writeFileSync(file, template.content);
                         this.indexedFiles[template.channel] = template.content;
                     }
                 } catch (error) {
                     logger.log({
-                        level: 'error',
-                        message: 'Email template: ' + error
+                        level: "error",
+                        message: "Email template: " + error
                     });
                 }
             });

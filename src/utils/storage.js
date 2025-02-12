@@ -1,6 +1,6 @@
 export default class Storage {
 
-    constructor(params, config){
+    constructor(params, config) {
         this.config = config;
         this.params = params;
         this.validity = (this.params.validitySeconds ? (this.params.validitySeconds * 1000) : null) || Infinity;
@@ -24,7 +24,7 @@ export default class Storage {
         return this._get(key)
             .then((data) => {
                 if (!!data) {
-                    const { date, value } = data;
+                    const {date, value} = data;
                     const now = new Date().getTime();
                     if (date + this.validity >= now) {
                         return value;

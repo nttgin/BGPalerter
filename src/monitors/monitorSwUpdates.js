@@ -34,7 +34,7 @@ import Monitor from "./monitor";
 
 export default class MonitorSwUpdates extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
     };
 
@@ -43,7 +43,7 @@ export default class MonitorSwUpdates extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'software-update';
+        return message.type === "software-update";
     };
 
     squashAlerts = (alerts) => {

@@ -33,11 +33,15 @@
 import Connector from "./connector";
 import semver from "semver";
 
-export default class ConnectorSwUpdates extends Connector{
+export default class ConnectorSwUpdates extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
     }
+
+    static transform = (message) => {
+        return [message];
+    };
 
     connect = () =>
         new Promise((resolve, reject) => {
@@ -62,7 +66,7 @@ export default class ConnectorSwUpdates extends Connector{
             })
             .catch(() => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "It was not possible to check for software updates"
                 });
             });
@@ -70,14 +74,10 @@ export default class ConnectorSwUpdates extends Connector{
 
     subscribe = (input) =>
         new Promise((resolve, reject) => {
-            if (this.config.checkForUpdatesAtBoot){
+            if (this.config.checkForUpdatesAtBoot) {
                 setTimeout(this._checkForUpdates, 20000); // Check after 20 seconds from boot
             }
             setInterval(this._checkForUpdates, 1000 * 3600 * 24 * 5); // Check every 5 days
             resolve(true);
         });
-
-    static transform = (message) => {
-        return [ message ];
-    }
 };

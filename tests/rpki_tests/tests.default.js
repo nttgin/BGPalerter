@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const fs = require("fs");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
@@ -47,24 +47,24 @@ const worker = require("../../index");
 const pubSub = worker.pubSub;
 
 
-describe("RPKI monitoring default", function() {
+describe("RPKI monitoring default", function () {
 
     it("default connector", function (done) {
 
         const expectedData = {
 
             "a103_21_244_0_24-13335-false": {
-                id:  "a103_21_244_0_24-13335-false",
-                origin: 'rpki-monitor',
-                affected: '103.21.244.0/24',
-                message: 'The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23',
+                id: "a103_21_244_0_24-13335-false",
+                origin: "rpki-monitor",
+                affected: "103.21.244.0/24",
+                message: "The route 103.21.244.0/24 announced by AS13335 is not RPKI valid. Valid ROAs: 103.21.244.0/23|AS0|maxLength:23"
             },
 
             "a8_8_8_8_22-2914-null": {
-                id:  "a8_8_8_8_22-2914-null",
-                origin: 'rpki-monitor',
-                affected: '8.8.8.8/22',
-                message: 'The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA',
+                id: "a8_8_8_8_22-2914-null",
+                origin: "rpki-monitor",
+                affected: "8.8.8.8/22",
+                message: "The route 8.8.8.8/22 announced by AS2914 is not covered by a ROA"
             }
         };
 

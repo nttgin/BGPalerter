@@ -1,6 +1,6 @@
 export default class LossyBuffer {
 
-    constructor(bufferSize, cleaningInterval, logger){
+    constructor(bufferSize, cleaningInterval, logger) {
         this.callback = null;
         this.buffer = [];
         this.bufferSize = bufferSize;
@@ -10,7 +10,7 @@ export default class LossyBuffer {
     };
 
     sendData = () => {
-        if (this.callback && this.buffer.length){
+        if (this.callback && this.buffer.length) {
             this.callback(this.buffer);
             this.buffer = [];
         }
@@ -23,7 +23,7 @@ export default class LossyBuffer {
         } else if (!this.alertOnce) {
             this.alertOnce = true;
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "The data rate is too high, messages are getting dropped due to full buffer. Increase the buffer size if you think your machine could handle more."
             });
         }

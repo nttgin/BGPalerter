@@ -1,13 +1,12 @@
-
 function getPrefixes(vrp, asn) {
     return [...new Set(vrp.filter(i => i.asn === asn).map(i => i.prefix))];
 }
 
-function getRelevant(vrp, prefixes, asns=[]){
+function getRelevant(vrp, prefixes, asns = []) {
     return vrp.filter(i => asns.includes(i.asn) || prefixes.includes(i.prefix));
 }
 
-function diff(vrpsOld, vrpsNew, asn, prefixesIn=[]) {
+function diff(vrpsOld, vrpsNew, asn, prefixesIn = []) {
     asn = parseInt(asn);
 
     let prefixes;

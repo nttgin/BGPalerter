@@ -18,6 +18,5 @@ A clear and concise description of what you expected to happen.
 
 **Are you using the binary or the source code?**
 
-
 **Your information**
 Provide your name and your AS/company (see Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/).

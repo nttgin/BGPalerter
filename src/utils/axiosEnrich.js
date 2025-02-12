@@ -17,9 +17,9 @@ const retry = function (axios, error, params) {
             }
         }, 2000);
     });
-}
+};
 
-export default function(axios, httpsAgent, userAgent) {
+export default function (axios, httpsAgent, userAgent) {
 
     axios.defaults ??= {fetch};
     axios.defaults.headers ??= {};
@@ -38,7 +38,7 @@ export default function(axios, httpsAgent, userAgent) {
 
     axios.defaults.headers.common = {
         ...axios.defaults.headers.common,
-        'Accept-Encoding': 'gzip'
+        "Accept-Encoding": "gzip"
     };
 
     return params => axios(params)

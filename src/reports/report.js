@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -46,7 +45,7 @@ export default class Report {
         this.params = params;
         this.enabled = true;
 
-        for (let channel of channels){
+        for (let channel of channels) {
             env.pubSub.subscribe(channel, (content, message) => {
                 return this.report(message, content);
             });
@@ -57,7 +56,7 @@ export default class Report {
             `${env.clientId}/${env.version}`);
     }
 
-    getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0,1,2,5,6,7,10,11,13,14,15,16,18,20]) => {
+    getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0, 1, 2, 5, 6, 7, 10, 11, 13, 14, 15, 16, 18, 20]) => {
         const bgplayTimeOffset = 5 * 60; // 5 minutes
         return brembo.build("https://bgplay.massimocandela.com/", {
             path: [],
@@ -68,7 +67,7 @@ export default class Report {
                 "endtime": moment(end).utc().unix(),
                 "rrcs": rrcs.join(","),
                 "instant": null,
-                "type": "bgp",
+                "type": "bgp"
 
             }
         });
@@ -127,7 +126,7 @@ export default class Report {
                     .join(",");
             }
 
-            switch(channel){
+            switch (channel) {
                 case "hijack":
                     matched = content.data[0].matchedRule;
                     context.prefix = matched.prefix;
@@ -212,26 +211,26 @@ export default class Report {
 
         } catch (error) { // This MUST never happen. But if it happens we need to send a basic alert anyway and don't crash
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `It was not possible to generate a context: ${error}`
             });
 
             return {
                 summary: content.message
-            }
+            };
         }
     };
 
     parseTemplate = (template, context) => {
-        return template.replace(/\${([^}]*)}/g, (r,k)=>context[k]);
+        return template.replace(/\${([^}]*)}/g, (r, k) => context[k]);
     };
 
     report = (message, content) => {
-        throw new Error('The method report must be implemented');
+        throw new Error("The method report must be implemented");
     };
 
     getUserGroup = (group) => {
-        throw new Error('The method getUserGroup must be implemented');
+        throw new Error("The method getUserGroup must be implemented");
     };
 
 }

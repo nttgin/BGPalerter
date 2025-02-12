@@ -1,15 +1,14 @@
 import axios from "redaxios";
-import url from "url";
 import brembo from "brembo";
 import merge from "deepmerge";
 import batchPromises from "batch-promises";
 import RpkiValidator from "rpki-validator";
-import { AS } from "./model";
+import {AS} from "./model";
 import ipUtils from "ip-sub";
+import axiosEnrich from "./utils/axiosEnrich";
 
 const apiTimeout = 120000;
 const clientId = "ntt-bgpalerter";
-import axiosEnrich from "./utils/axiosEnrich";
 
 module.exports = function generatePrefixes(inputParameters) {
     let {
@@ -83,19 +82,19 @@ module.exports = function generatePrefixes(inputParameters) {
         });
 
         if (debug) {
-            logger("Query", url)
+            logger("Query", url);
         }
 
         return axios({
             url,
-            method: 'GET',
-            responseType: 'json',
+            method: "GET",
+            responseType: "json",
             timeout: apiTimeout
         })
             .then(data => {
                 let neighbors = [];
 
-                if (data.data && data.data.data && data.data.data.neighbours){
+                if (data.data && data.data.data && data.data.data.neighbours) {
                     const items = data.data.data.neighbours;
 
                     for (let item of items) {
@@ -107,7 +106,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 }
 
                 const uncertain = neighbors.filter(i => i.type === "uncertain");
-                const out =  {
+                const out = {
                     asn,
                     upstreams: neighbors.filter(i => i.type === "left").concat(uncertain).map(i => i.asn),
                     downstreams: neighbors.filter(i => i.type === "right").concat(uncertain).map(i => i.asn)
@@ -136,18 +135,18 @@ module.exports = function generatePrefixes(inputParameters) {
         });
 
         if (debug) {
-            logger("Query", url)
+            logger("Query", url);
         }
 
         return axios({
             url,
-            method: 'GET',
-            responseType: 'json',
+            method: "GET",
+            responseType: "json",
             timeout: apiTimeout
         })
             .then(data => {
                 let asns = [];
-                if (data.data && data.data.data && data.data.data.asns){
+                if (data.data && data.data.data && data.data.data.asns) {
                     asns = data.data.data.asns.map(i => i.asn);
                 }
 
@@ -176,13 +175,13 @@ module.exports = function generatePrefixes(inputParameters) {
 
         return axios({
             url,
-            method: 'GET',
-            responseType: 'json',
+            method: "GET",
+            responseType: "json",
             timeout: apiTimeout
         })
             .then(data => {
                 let prefixes = [];
-                if (data.data && data.data.data && data.data.data.prefixes){
+                if (data.data && data.data.data && data.data.data.prefixes) {
                     prefixes = data.data.data.prefixes
                         .filter(i => i.relationship === "Overlap - More Specific")
                         .map(i => {
@@ -192,7 +191,7 @@ module.exports = function generatePrefixes(inputParameters) {
                                 asn: i.origin_asn,
                                 description: i.asn_name,
                                 prefix: i.prefix
-                            }
+                            };
                         });
                 }
 
@@ -245,8 +244,8 @@ module.exports = function generatePrefixes(inputParameters) {
 
         return axios({
             url,
-            method: 'GET',
-            responseType: 'json',
+            method: "GET",
+            responseType: "json",
             timeout: apiTimeout
         })
             .then(data => {
@@ -255,14 +254,14 @@ module.exports = function generatePrefixes(inputParameters) {
                         .filter(item => {
                             const latest = item.timelines
                                 .map(t => (t.endtime) ? new Date(t.endtime) : new Date())
-                                .sort((a,b) => a-b)
+                                .sort((a, b) => a - b)
                                 .pop();
 
                             const validityPeriodDays = (historical) ?
                                 (3600 * 1000 * 24 * 7) : // 7 days
                                 (3600 * 1000 * 28); // 28 hours (1 day and 4 hours margin)
                             return latest.getTime() + validityPeriodDays > new Date().getTime();
-                        })
+                        });
                 }
                 return [];
             })
@@ -297,7 +296,7 @@ module.exports = function generatePrefixes(inputParameters) {
                     delete generateList[prefix];
                     logger(`RPKI invalid: ${prefix} ${asn}`);
                 } else {
-                    generateList[prefix].description += ' (No ROA available)';
+                    generateList[prefix].description += " (No ROA available)";
                     someNotValidatedPrefixes = true;
                 }
             })
@@ -341,11 +340,11 @@ module.exports = function generatePrefixes(inputParameters) {
                     })
                     .catch((e) => {
                         logger(`Cannot download more specific prefixes of ${prefix} ${e}`);
-                    })
+                    });
             })
                 .catch((e) => {
                     logger(`Cannot download more specific prefixes ${e}`);
-                })
+                });
         })
         .then(() => {
             return rpki.getAvailableConnectors()
@@ -357,7 +356,7 @@ module.exports = function generatePrefixes(inputParameters) {
                 .all(Object.keys(generateList).map(prefix => validatePrefix(generateList[prefix].asn[0], prefix)))
                 .catch((e) => {
                     logger(`ROA check failed due to error ${e}`);
-                })
+                });
         })
         .then(() => { // Add the options for monitorASns
 

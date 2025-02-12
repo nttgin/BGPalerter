@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -35,7 +34,7 @@ import Monitor from "./monitor";
 
 export default class MonitorRPKI extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
 
         // Warn about deprecated config parameters
@@ -43,7 +42,7 @@ export default class MonitorRPKI extends Monitor {
             const deprecated = ["preCacheROAs", "refreshVrpListMinutes", "vrpFile", "vrpProvider"];
             if (deprecated.includes(configParamKey)) {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: `The parameters ${deprecated.join(",")} are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md`
                 });
             }
@@ -66,7 +65,7 @@ export default class MonitorRPKI extends Monitor {
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
@@ -79,7 +78,7 @@ export default class MonitorRPKI extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement';
+        return message.type === "announcement";
     };
 
     squashAlerts = (alerts) => {
@@ -91,7 +90,7 @@ export default class MonitorRPKI extends Monitor {
             const message = firstAlert.matchedMessage;
             const extra = firstAlert.extra;
             const covering = (extra.covering && extra.covering.length) ? extra.covering.map(i => `${i.prefix}|AS${i.asn}|maxLength:${i.maxLength}`).join(", ") : false;
-            const coveringString = (covering) ? `. Valid ROAs: ${covering}`: '';
+            const coveringString = (covering) ? `. Valid ROAs: ${covering}` : "";
 
             if (extra.roaDisappeared && this.params.checkDisappearing) {
                 return `The route ${message.prefix} announced by ${message.originAS} is no longer covered by a ROA`;
@@ -126,20 +125,20 @@ export default class MonitorRPKI extends Monitor {
                         prefix,
                         matchedRule,
                         message,
-                        { rpkiMetadata, covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear" });
+                        {rpkiMetadata, covering: null, valid: null, roaDisappeared: true, subType: "rpki-disappear"});
                 } else if (this.params.checkUncovered) {
                     this.publishAlert(key,
                         prefix,
                         matchedRule,
                         message,
-                        { rpkiMetadata, covering: null, valid: null, subType: "rpki-unknown" });
+                        {rpkiMetadata, covering: null, valid: null, subType: "rpki-unknown"});
                 }
             } else if (result.valid === false) {
                 this.publishAlert(key,
                     prefix,
                     matchedRule,
                     message,
-                    { rpkiMetadata, covering: result.covering, valid: false, subType: "rpki-invalid" });
+                    {rpkiMetadata, covering: result.covering, valid: false, subType: "rpki-invalid"});
 
             } else if (result.valid) {
 
@@ -167,7 +166,7 @@ export default class MonitorRPKI extends Monitor {
                         .set(this.seenRpkiValidAnnouncementsKey, this.seenRpkiValidAnnouncements)
                         .catch(error => {
                             this.logger.log({
-                                level: 'error',
+                                level: "error",
                                 message: error
                             });
                         });
@@ -205,7 +204,7 @@ export default class MonitorRPKI extends Monitor {
 
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }

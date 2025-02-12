@@ -32,12 +32,12 @@
 
 export default class Consumer {
 
-    constructor(env, input){
+    constructor(env, input) {
         this.logger = env.logger;
         this.connectors = {};
 
         for (let connector of env.config.connectors) {
-            this.connectors[connector.name] = connector.class
+            this.connectors[connector.name] = connector.class;
         }
 
         try {
@@ -50,17 +50,17 @@ export default class Consumer {
 
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }
-        process.on('message', this.dispatch);
-        env.pubSub.subscribe('data', this.dispatch);
+        process.on("message", this.dispatch);
+        env.pubSub.subscribe("data", this.dispatch);
     };
 
     dispatch = (buffer) => {
         try {
-            for (let data of buffer){
+            for (let data of buffer) {
 
                 const connector = data.connector;
                 const messagesRaw = data.message;
@@ -76,7 +76,7 @@ export default class Consumer {
                             .monitor(message)
                             .catch(error => {
                                 this.logger.log({
-                                    level: 'error',
+                                    level: "error",
                                     message: error
                                 });
                             });
@@ -85,7 +85,7 @@ export default class Consumer {
             }
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error.message
             });
         }

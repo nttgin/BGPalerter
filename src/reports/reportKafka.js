@@ -31,27 +31,27 @@
  */
 
 import Report from "./report";
-import { Kafka, logLevel } from "kafkajs";
+import {Kafka, logLevel} from "kafkajs";
 
 export default class ReportKafka extends Report {
 
-    constructor(channels,params, env) {
+    constructor(channels, params, env) {
         super(channels, params, env);
         this.client = null;
         this.clientId = env.clientId;
         this.producer = null;
         this.connected = false;
-        this.host = [ this.params.host || "localhost", this.params.port ].filter(i => i != null).join(":");
+        this.host = [this.params.host || "localhost", this.params.port].filter(i => i != null).join(":");
         this.topics = this.params.topics;
         this.connecting = null;
     }
 
     _getTopic = (channel) => {
-        const topic = this.topics[channel] || this.topics['default'];
+        const topic = this.topics[channel] || this.topics["default"];
         if (!topic) {
             this.logger.log({
-                level: 'error',
-                message: 'No topic available for alert channel: ' + channel
+                level: "error",
+                message: "No topic available for alert channel: " + channel
             });
             return false;
         } else {
@@ -77,8 +77,8 @@ export default class ReportKafka extends Report {
                 })
                 .catch((error) => {
                     this.logger.log({
-                        level: 'error',
-                        message: 'Kafka connector error: ' + error
+                        level: "error",
+                        message: "Kafka connector error: " + error
                     });
                 });
         }
@@ -89,7 +89,7 @@ export default class ReportKafka extends Report {
     _getPayload = (topic, channel, message) => {
         return {
             topic: topic,
-            messages: [ { value: JSON.stringify(message) }],
+            messages: [{value: JSON.stringify(message)}],
             key: channel,
             attributes: 1,
             timestamp: Date.now()
@@ -105,9 +105,9 @@ export default class ReportKafka extends Report {
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
-    }
+    };
 }

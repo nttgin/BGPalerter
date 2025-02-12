@@ -31,8 +31,8 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
-const fs = require('fs');
+const chaiSubset = require("chai-subset");
+const fs = require("fs");
 const expect = chai.expect;
 const asyncTimeout = 120000;
 chai.use(chaiSubset);
@@ -46,17 +46,17 @@ const pubSub = worker.pubSub;
 
 pubSub.publish("test-type", "rpki");
 
-describe("RPKI monitoring external", function() {
+describe("RPKI monitoring external", function () {
 
     it("missing roas", function (done) {
 
         const expectedData = {
 
             "a82_112_100_0_24-2914-null": {
-                id: 'a82_112_100_0_24-2914-null',
-                origin: 'roa-monitor',
-                affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA'
+                id: "a82_112_100_0_24-2914-null",
+                origin: "roa-monitor",
+                affected: "82.112.100.0/24",
+                message: "The route 82.112.100.0/24 announced by AS2914 is no longer covered by a ROA"
             }
 
         };

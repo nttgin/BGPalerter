@@ -1,1 +1,11 @@
-{"date":1593370429793,"value":{"alerts":{},"sent":{"software-update":1593370424789},"truncated":{},"fadeOff":{}}}
+{
+    "date": 1593370429793,
+    "value": {
+        "alerts": {},
+        "sent": {
+            "software-update": 1593370424789
+        },
+        "truncated": {},
+        "fadeOff": {}
+    }
+}

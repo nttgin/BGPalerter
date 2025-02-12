@@ -31,7 +31,7 @@
  */
 
 import ReportHTTP from "./reportHTTP";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from "uuid";
 import brembo from "brembo";
 
 export default class reportMatrix extends ReportHTTP {
@@ -62,7 +62,7 @@ export default class reportMatrix extends ReportHTTP {
 
         if (!params.homeserverUrl || !params.accessToken) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} reporting is not enabled: homeserverUrl and accessToken are required`
             });
             this.enabled = false;
@@ -70,7 +70,7 @@ export default class reportMatrix extends ReportHTTP {
 
         if (!params.roomIds || !params.roomIds["default"]) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} reporting is not enabled: no default room id provided`
             });
             this.enabled = false;
@@ -83,13 +83,13 @@ export default class reportMatrix extends ReportHTTP {
         const groups = this.params.hooks || this.params.userGroups || {};
         const baseUrl = groups[group] || groups["default"];
 
-        return brembo.build(baseUrl, {path: [transactionId]})
+        return brembo.build(baseUrl, {path: [transactionId]});
     };
 
     getTemplate = (group, channel, content) => {
         return JSON.stringify({
             "msgtype": "m.text",
-            "body": "${summary}${markDownUrl}",
+            "body": "${summary}${markDownUrl}"
         });
     };
 }

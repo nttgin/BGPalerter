@@ -83,6 +83,74 @@ export default class ConnectorRIS extends Connector {
         });
     };
 
+    static transform = (message) => {
+        if (message.type === "ris_message") {
+            try {
+                message = message.data;
+                const components = [];
+                const announcements = message["announcements"] || [];
+                const aggregator = message["aggregator"] || null;
+                const possibleRIS = message["possibleRIS"] || false;
+                const withdrawals = (message["withdrawals"] || []).filter(prefix => acceptPrefix(prefix, possibleRIS));
+                const peer = message["peer"];
+                const peerAS = message["peer_asn"];
+                const communities = message["community"] || [];
+                const timestamp = message["timestamp"] * 1000;
+                let path, originAS;
+
+                if (message["path"] && message["path"].length) {
+                    path = new Path(message["path"].map(i => new AS(i)));
+                    originAS = path.getLast();
+                } else {
+                    path = new Path([]);
+                    originAS = null;
+                }
+
+                if (originAS && path.length()) {
+                    for (let announcement of announcements) {
+                        const nextHop = announcement["next_hop"];
+
+                        if (ipUtils.isValidIP(nextHop)) {
+                            const prefixes = (announcement["prefixes"] || [])
+                                .filter(prefix => acceptPrefix(prefix, possibleRIS));
+
+                            for (let prefix of prefixes) {
+                                components.push({
+                                    type: "announcement",
+                                    prefix,
+                                    peer,
+                                    peerAS,
+                                    path,
+                                    originAS,
+                                    nextHop,
+                                    aggregator,
+                                    timestamp,
+                                    communities
+                                });
+                            }
+                        }
+                    }
+                }
+
+                for (let prefix of withdrawals) {
+                    components.push({
+                        type: "withdrawal",
+                        prefix,
+                        peer,
+                        peerAS,
+                        timestamp
+                    });
+                }
+
+                return components;
+            } catch (error) {
+                throw new Error(`Error during transform (${this.name}): ` + error.message);
+            }
+        } else if (message.type === "ris_error") {
+            throw new Error("Error from RIS: " + message.data.message);
+        }
+    };
+
     _shouldCanaryMonitoringStart = () => {
         return this.environment !== "research" && !this.params.disableCanary;
     };
@@ -405,73 +473,5 @@ export default class ConnectorRIS extends Connector {
 
                 return false;
             });
-    };
-
-    static transform = (message) => {
-        if (message.type === "ris_message") {
-            try {
-                message = message.data;
-                const components = [];
-                const announcements = message["announcements"] || [];
-                const aggregator = message["aggregator"] || null;
-                const possibleRIS = message["possibleRIS"] || false;
-                const withdrawals = (message["withdrawals"] || []).filter(prefix => acceptPrefix(prefix, possibleRIS));
-                const peer = message["peer"];
-                const peerAS = message["peer_asn"];
-                const communities = message["community"] || [];
-                const timestamp = message["timestamp"] * 1000;
-                let path, originAS;
-
-                if (message["path"] && message["path"].length) {
-                    path = new Path(message["path"].map(i => new AS(i)));
-                    originAS = path.getLast();
-                } else {
-                    path = new Path([]);
-                    originAS = null;
-                }
-
-                if (originAS && path.length()) {
-                    for (let announcement of announcements) {
-                        const nextHop = announcement["next_hop"];
-
-                        if (ipUtils.isValidIP(nextHop)) {
-                            const prefixes = (announcement["prefixes"] || [])
-                                .filter(prefix => acceptPrefix(prefix, possibleRIS));
-
-                            for (let prefix of prefixes) {
-                                components.push({
-                                    type: "announcement",
-                                    prefix,
-                                    peer,
-                                    peerAS,
-                                    path,
-                                    originAS,
-                                    nextHop,
-                                    aggregator,
-                                    timestamp,
-                                    communities
-                                });
-                            }
-                        }
-                    }
-                }
-
-                for (let prefix of withdrawals) {
-                    components.push({
-                        type: "withdrawal",
-                        prefix,
-                        peer,
-                        peerAS,
-                        timestamp
-                    });
-                }
-
-                return components;
-            } catch (error) {
-                throw new Error(`Error during transform (${this.name}): ` + error.message);
-            }
-        } else if (message.type === "ris_error") {
-            throw new Error("Error from RIS: " + message.data.message);
-        }
     };
 };

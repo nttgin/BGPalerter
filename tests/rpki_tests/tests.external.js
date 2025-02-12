@@ -31,8 +31,8 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
-const fs = require('fs');
+const chaiSubset = require("chai-subset");
+const fs = require("fs");
 const expect = chai.expect;
 const asyncTimeout = 200000;
 chai.use(chaiSubset);
@@ -44,17 +44,17 @@ fs.copyFileSync("tests/rpki_tests/vrp.wrong.json", "tests/rpki_tests/vrp.json");
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external", function() {
+describe("RPKI monitoring external", function () {
 
     it("external connector", function (done) {
 
         const expectedData = {
 
-            "a82_112_100_0_24-2914-false" : {
-                id: 'a82_112_100_0_24-2914-false',
-                origin: 'roa-monitor',
-                affected: '82.112.100.0/24',
-                message: 'The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24'
+            "a82_112_100_0_24-2914-false": {
+                id: "a82_112_100_0_24-2914-false",
+                origin: "roa-monitor",
+                affected: "82.112.100.0/24",
+                message: "The route 82.112.100.0/24 announced by AS2914 is not RPKI valid. Valid ROAs: 82.112.100.0/24|AS1234|maxLength:24"
             }
         };
 

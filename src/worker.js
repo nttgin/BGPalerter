@@ -35,7 +35,7 @@ import fs from "fs";
 import inputYml from "./inputs/inputYml"; // Default input connector
 
 export default class Worker {
-    constructor({ configFile, volume, configConnector, inputConnector, groupFile }) {
+    constructor({configFile, volume, configConnector, inputConnector, groupFile}) {
         global.EXTERNAL_CONFIG_CONNECTOR = global.EXTERNAL_CONFIG_CONNECTOR || configConnector;
         global.EXTERNAL_INPUT_CONNECTOR = global.EXTERNAL_INPUT_CONNECTOR || inputConnector;
         global.EXTERNAL_CONFIG_FILE = global.EXTERNAL_CONFIG_FILE || configFile;
@@ -79,7 +79,7 @@ export default class Worker {
                 fs.writeFileSync(this.config.pidFile, (process.pid || "").toString());
             } catch (error) {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "Cannot write pid file: " + error
                 });
             }
@@ -89,7 +89,7 @@ export default class Worker {
 
         if (this.config.uptimeMonitor) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/main/docs/process-monitors.md"
             });
         }
@@ -103,7 +103,7 @@ export default class Worker {
 
         const bufferCleaningInterval = 200;
         this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
-        const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond /(1000/bufferCleaningInterval)), bufferCleaningInterval, this.logger);
+        const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond / (1000 / bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
         return connectorFactory
             .connectConnectors(this.input)
@@ -116,7 +116,7 @@ export default class Worker {
                             message
                         });
                     });
-                    if (worker){
+                    if (worker) {
                         buffer.onData((message) => {
                             worker.send(message);
                         });
@@ -130,11 +130,11 @@ export default class Worker {
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
-    }
+    };
 }
 
 

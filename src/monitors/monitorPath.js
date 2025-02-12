@@ -34,7 +34,7 @@ import Monitor from "./monitor";
 
 export default class MonitorPath extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
         this.thresholdMinPeers = params?.thresholdMinPeers ?? 1;
         this.updateMonitoredResources();
@@ -45,7 +45,7 @@ export default class MonitorPath extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement';
+        return message.type === "announcement";
     };
 
     squashAlerts = (alerts) => {
@@ -75,7 +75,7 @@ export default class MonitorPath extends Monitor {
             }
         }
 
-        if (pathRule.notMatch){
+        if (pathRule.notMatch) {
             expNotMatch = !(new RegExp(pathRule.notMatch)).test(pathString);
             if (!expNotMatch) {
                 return;
@@ -111,7 +111,7 @@ export default class MonitorPath extends Monitor {
 
         for (let matchedRule of matchedRules) {
             if (!matchedRule.ignore && matchedRule.path) {
-                const pathRules = (matchedRule.path.length) ? matchedRule.path : [ matchedRule.path ];
+                const pathRules = (matchedRule.path.length) ? matchedRule.path : [matchedRule.path];
 
                 pathRules.map((pathRule, position) => this.pathRuleCheck(pathRule, position, message, matchedRule));
             }

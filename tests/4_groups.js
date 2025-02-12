@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const fs = require("fs");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -40,7 +40,7 @@ const asyncTimeout = 20000;
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume, { recursive: true });
+    fs.mkdirSync(volume, {recursive: true});
 }
 fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
@@ -50,14 +50,14 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 const worker = require("../index");
 
-describe("External groups file", function() {
+describe("External groups file", function () {
 
     it("load groups", function () {
         const config = worker.config;
         expect(config.groupsFile).to.equal("groups.test.yml");
         expect(config.reports[0].params.userGroups).to
             .containSubset({
-                test:  [
+                test: [
                     "filename"
                 ]
             });
@@ -72,7 +72,7 @@ describe("External groups file", function() {
             const config = worker.config;
             expect(config.reports[0].params.userGroups).to
                 .containSubset({
-                    test:  [
+                    test: [
                         "filename-after"
                     ]
                 });

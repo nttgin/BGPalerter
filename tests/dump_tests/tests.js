@@ -32,7 +32,7 @@
 
 const chai = require("chai");
 const fs = require("fs");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -42,10 +42,10 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume, { recursive: true });
+    fs.mkdirSync(volume, {recursive: true});
 } else {
-    fs.rmSync(volume, { recursive: true });
-    fs.mkdirSync(volume, { recursive: true });
+    fs.rmSync(volume, {recursive: true});
+    fs.mkdirSync(volume, {recursive: true});
 }
 fs.copyFileSync("tests/dump_tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/dump_tests/prefixes.test.yml", volume + "prefixes.test.yml");
@@ -59,11 +59,11 @@ describe("Alerting", function () {
 
         const expectedData = {
             "3333-193.0.20.0/23": {
-                id: '3333-193.0.20.0/23',
+                id: "3333-193.0.20.0/23",
                 truncated: false,
-                origin: 'basic-hijack-detection',
+                origin: "basic-hijack-detection",
                 affected: 1234,
-                message: 'The prefix 193.0.20.0/23 (No description provided) is announced by AS3333 instead of AS1234',
+                message: "The prefix 193.0.20.0/23 (No description provided) is announced by AS3333 instead of AS1234",
                 data: [
                     {
                         affected: 1234

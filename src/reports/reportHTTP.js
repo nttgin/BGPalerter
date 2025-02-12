@@ -43,7 +43,7 @@ export default class ReportHTTP extends Report {
 
         if (!["post", "put", "patch", "delete"].includes(this.method)) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} is not enabled: the configured HTTP method is not valid`
             });
             this.enabled = false;
@@ -51,7 +51,7 @@ export default class ReportHTTP extends Report {
 
         if (!this.getUserGroup("default")) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} is not enabled: no default group defined`
             });
             this.enabled = false;
@@ -84,7 +84,7 @@ export default class ReportHTTP extends Report {
             const blob = this.parseTemplate(this.getTemplate(group, channel, content), context);
 
             this.logger.log({
-                level: 'info',
+                level: "info",
                 message: `[${this.name}] sending report to: ${url}`
             });
 
@@ -96,7 +96,7 @@ export default class ReportHTTP extends Report {
             })
                 .catch((error) => {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                 });

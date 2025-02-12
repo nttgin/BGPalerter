@@ -56,7 +56,7 @@ export default class reportTelegram extends ReportHTTP {
 
         if (!params.botUrl) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} is not enabled: no botUrl provided`
             });
             this.enabled = false;
@@ -64,7 +64,7 @@ export default class reportTelegram extends ReportHTTP {
 
         if (!params.chatIds || !params.chatIds["default"]) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `${this.name} is not enabled: no default chat id provided`
             });
             this.enabled = false;
@@ -75,7 +75,7 @@ export default class reportTelegram extends ReportHTTP {
         return JSON.stringify({
             "chat_id": this.chatIds[group] || this.chatIds["default"],
             "text": "${summary}${markDownUrl}",
-            "parse_mode": 'markdown',
+            "parse_mode": "markdown",
             "disable_web_page_preview": true
         });
     };

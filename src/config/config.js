@@ -2,6 +2,7 @@ import axios from "redaxios";
 
 export default class Config {
     static configVersion = 2;
+
     constructor(params) {
         this.default = {
             configVersion: Config.configVersion,
@@ -23,7 +24,7 @@ export default class Config {
                             }
                         }
                     }
-                },
+                }
                 // {
                 //     file: "connectorRISDump",
                 //     name: "dmp"
@@ -135,7 +136,7 @@ export default class Config {
                 logRotatePattern: "YYYY-MM-DD",
                 maxRetainedFiles: 10,
                 maxFileSizeMB: 15,
-                compressOnRotation: false,
+                compressOnRotation: false
             },
             rpki: {
                 vrpProvider: "rpkiclient",
@@ -156,19 +157,19 @@ export default class Config {
 
     downloadDefault = () => {
         return axios({
-            url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example',
-            method: 'GET',
-            responseType: 'blob', // important
+            url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example",
+            method: "GET",
+            responseType: "blob" // important
         })
             .then(response => response.data);
     };
 
     retrieve = () => {
-        throw new Error('The method retrieve must be implemented in the config connector');
+        throw new Error("The method retrieve must be implemented in the config connector");
     };
 
     save = () => {
-        throw new Error('The method save must be implemented in the config connector');
+        throw new Error("The method save must be implemented in the config connector");
     };
 
 }

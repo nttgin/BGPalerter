@@ -31,10 +31,10 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
-const readLastLines = require('read-last-lines');
-const moment = require('moment');
-const fs = require('fs');
+const chaiSubset = require("chai-subset");
+const readLastLines = require("read-last-lines");
+const moment = require("moment");
+const fs = require("fs");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -45,13 +45,13 @@ global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
 // Prepare test environment
 if (!fs.existsSync(volume)) {
-    fs.mkdirSync(volume, { recursive: true });
+    fs.mkdirSync(volume, {recursive: true});
 }
 fs.copyFileSync("tests/config.test.yml", volume + "config.test.yml");
 fs.copyFileSync("tests/prefixes.test.yml", volume + "prefixes.test.yml");
 fs.copyFileSync("tests/groups.test.yml", volume + "groups.test.yml");
 
-describe("Core functions", function() {
+describe("Core functions", function () {
 
     describe("Configuration loader", function () {
         const worker = require("../index");
@@ -83,7 +83,7 @@ describe("Core functions", function() {
                 ]);
 
             expect(config.connectors[0]).to.have
-                .property('class')
+                .property("class");
         });
 
         it("volume setting", function () {
@@ -97,11 +97,11 @@ describe("Core functions", function() {
         it("loading connectors", function () {
             expect(config.connectors[0]).to
                 .containSubset({
-                    "params": { "testType": "withdrawal" },
+                    "params": {"testType": "withdrawal"},
                     "name": "tes"
                 });
             expect(config.connectors[0]).to.have
-                .property('class')
+                .property("class");
         });
 
         it("loading monitors", function () {
@@ -178,7 +178,7 @@ describe("Core functions", function() {
 
 
             expect(config.monitors[0]).to.have
-                .property('class')
+                .property("class");
         });
 
         it("loading reports", function () {
@@ -197,7 +197,7 @@ describe("Core functions", function() {
                 });
 
             expect(config.reports[0]).to.have
-                .property('class')
+                .property("class");
         });
 
         it("rpki config", function () {
@@ -242,7 +242,7 @@ describe("Core functions", function() {
                             "ignoreMorespecifics": false,
                             "prefix": "193.0.0.0/21",
                             "group": ["default"],
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -252,7 +252,7 @@ describe("Core functions", function() {
                             "prefix": "165.254.225.0/24",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -262,7 +262,7 @@ describe("Core functions", function() {
                             "prefix": "165.254.255.0/24",
                             "group": ["groupName"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -272,7 +272,7 @@ describe("Core functions", function() {
                             "prefix": "192.147.168.0/24",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -282,7 +282,7 @@ describe("Core functions", function() {
                             "prefix": "2a00:5884::/32",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -292,7 +292,7 @@ describe("Core functions", function() {
                             "prefix": "2a0e:f40::/29",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -302,7 +302,7 @@ describe("Core functions", function() {
                             "prefix": "2a0e:f40::/30",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -312,7 +312,7 @@ describe("Core functions", function() {
                             "prefix": "2a0e:240::/32",
                             "group": ["default"],
                             "ignore": true,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -322,7 +322,7 @@ describe("Core functions", function() {
                             "prefix": "175.254.205.0/24",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : ["basic-hijack-detection", "withdrawal-detection"],
+                            "excludeMonitors": ["basic-hijack-detection", "withdrawal-detection"],
                             "includeMonitors": []
                         },
                         {
@@ -332,7 +332,7 @@ describe("Core functions", function() {
                             "prefix": "170.254.205.0/24",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": ["prefix-detection"]
                         },
                         {
@@ -342,7 +342,7 @@ describe("Core functions", function() {
                             "prefix": "165.24.225.0/24",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         },
                         {
@@ -352,13 +352,13 @@ describe("Core functions", function() {
                             "prefix": "2001:db8:123::/48",
                             "group": ["default"],
                             "ignore": false,
-                            "excludeMonitors" : [],
+                            "excludeMonitors": [],
                             "includeMonitors": []
                         }
                     ]
                 });
 
-            expect(input.asns.map(i => i.asn.getValue())).to.eql([ 2914, 3333, 13335, 65000 ]);
+            expect(input.asns.map(i => i.asn.getValue())).to.eql([2914, 3333, 13335, 65000]);
         });
     });
 
@@ -375,7 +375,7 @@ describe("Core functions", function() {
                     message: message
                 });
 
-            const file = volume + config.logging.directory + "/error-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/error-" + moment().format("YYYY-MM-DD") + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
@@ -396,7 +396,7 @@ describe("Core functions", function() {
                     message: message
                 });
 
-            const file = volume + config.logging.directory + "/reports-" + moment().format('YYYY-MM-DD') + ".log";
+            const file = volume + config.logging.directory + "/reports-" + moment().format("YYYY-MM-DD") + ".log";
             readLastLines
                 .read(file, 1)
                 .then((line) => {
