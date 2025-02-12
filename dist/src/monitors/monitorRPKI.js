@@ -69,7 +69,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       _this.monitored = _this.input.getMonitoredASns();
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === 'announcement';
+      return message.type === "announcement";
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       var peers = _toConsumableArray(new Set(alerts.map(function (alert) {
@@ -82,7 +82,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
         var covering = extra.covering && extra.covering.length ? extra.covering.map(function (i) {
           return "".concat(i.prefix, "|AS").concat(i.asn, "|maxLength:").concat(i.maxLength);
         }).join(", ") : false;
-        var coveringString = covering ? ". Valid ROAs: ".concat(covering) : '';
+        var coveringString = covering ? ". Valid ROAs: ".concat(covering) : "";
         if (extra.roaDisappeared && _this.params.checkDisappearing) {
           return "The route ".concat(message.prefix, " announced by ").concat(message.originAS, " is no longer covered by a ROA");
         } else if (extra.valid === null && _this.params.checkUncovered) {
@@ -148,7 +148,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
             }
             _this.storage.set(_this.seenRpkiValidAnnouncementsKey, _this.seenRpkiValidAnnouncements)["catch"](function (error) {
               _this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
               });
             });
@@ -191,7 +191,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
         }
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }
@@ -202,7 +202,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       var deprecated = ["preCacheROAs", "refreshVrpListMinutes", "vrpFile", "vrpProvider"];
       if (deprecated.includes(configParamKey)) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "The parameters ".concat(deprecated.join(","), " are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md")
         });
       }
@@ -220,7 +220,7 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       _this.seenRpkiValidAnnouncements = prefixes ? prefixes : {};
     })["catch"](function (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });

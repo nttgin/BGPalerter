@@ -72,21 +72,21 @@ var reportTelegram = exports["default"] = /*#__PURE__*/function (_ReportHTTP) {
       return JSON.stringify({
         "chat_id": _this.chatIds[group] || _this.chatIds["default"],
         "text": "${summary}${markDownUrl}",
-        "parse_mode": 'markdown',
+        "parse_mode": "markdown",
         "disable_web_page_preview": true
       });
     });
     _this.chatIds = params.chatIds;
     if (!params.botUrl) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " is not enabled: no botUrl provided")
       });
       _this.enabled = false;
     }
     if (!params.chatIds || !params.chatIds["default"]) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " is not enabled: no default chat id provided")
       });
       _this.enabled = false;

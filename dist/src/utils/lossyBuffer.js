@@ -26,7 +26,7 @@ var LossyBuffer = exports["default"] = /*#__PURE__*/_createClass(function LossyB
     } else if (!_this.alertOnce) {
       _this.alertOnce = true;
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The data rate is too high, messages are getting dropped due to full buffer. Increase the buffer size if you think your machine could handle more."
       });
     }

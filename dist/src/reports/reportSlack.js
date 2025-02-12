@@ -56,7 +56,7 @@ var ReportSlack = exports["default"] = /*#__PURE__*/function (_ReportHTTP) {
   function ReportSlack(channels, params, env) {
     _classCallCheck(this, ReportSlack);
     var templates = {};
-    var defaultColor = '#4287f5';
+    var defaultColor = "#4287f5";
     var colors = params.colors || {};
     var getTemplateItem = function getTemplateItem(color) {
       return JSON.stringify({

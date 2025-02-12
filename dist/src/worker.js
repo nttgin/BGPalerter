@@ -68,7 +68,7 @@ var Worker = exports["default"] = /*#__PURE__*/_createClass(function Worker(_ref
         _fs["default"].writeFileSync(_this.config.pidFile, (process.pid || "").toString());
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "Cannot write pid file: " + error
         });
       }
@@ -76,7 +76,7 @@ var Worker = exports["default"] = /*#__PURE__*/_createClass(function Worker(_ref
     var connectorFactory = new ConnectorFactory();
     if (_this.config.uptimeMonitor) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The uptime monitor configuration changed. Please see the documentation https://github.com/nttgin/BGPalerter/blob/main/docs/process-monitors.md"
       });
     }
@@ -131,7 +131,7 @@ var Worker = exports["default"] = /*#__PURE__*/_createClass(function Worker(_ref
       }
     })["catch"](function (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });

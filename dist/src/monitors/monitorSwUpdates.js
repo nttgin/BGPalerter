@@ -59,7 +59,7 @@ var MonitorSwUpdates = exports["default"] = /*#__PURE__*/function (_Monitor) {
       // nothing
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === 'software-update';
+      return message.type === "software-update";
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       var message = alerts[0].matchedMessage;

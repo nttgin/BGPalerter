@@ -79,7 +79,7 @@ var ReportHTTP = exports["default"] = /*#__PURE__*/function (_Report) {
         }
         var blob = _this.parseTemplate(_this.getTemplate(group, channel, content), context);
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "[".concat(_this.name, "] sending report to: ").concat(url)
         });
         _this.axios({
@@ -89,7 +89,7 @@ var ReportHTTP = exports["default"] = /*#__PURE__*/function (_Report) {
           data: _this.params.isTemplateJSON ? JSON.parse(blob) : blob
         })["catch"](function (error) {
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: error
           });
         });
@@ -122,14 +122,14 @@ var ReportHTTP = exports["default"] = /*#__PURE__*/function (_Report) {
     _this.method = ((_this$params$method = (_this$params = _this.params) === null || _this$params === void 0 ? void 0 : _this$params.method) !== null && _this$params$method !== void 0 ? _this$params$method : "post").toLowerCase();
     if (!["post", "put", "patch", "delete"].includes(_this.method)) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " is not enabled: the configured HTTP method is not valid")
       });
       _this.enabled = false;
     }
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " is not enabled: no default group defined")
       });
       _this.enabled = false;

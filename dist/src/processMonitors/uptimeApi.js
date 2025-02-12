@@ -58,7 +58,7 @@ var UptimeApi = exports["default"] = /*#__PURE__*/function (_Uptime) {
     _classCallCheck(this, UptimeApi);
     _this = _callSuper(this, UptimeApi, [connectors, params]);
     _defineProperty(_this, "respond", function (req, res, next) {
-      res.contentType = 'json';
+      res.contentType = "json";
       var response = _this.getCurrentStatus();
       if (_this.params.useStatusCodes && response.warning) {
         res.status(500);
@@ -73,9 +73,9 @@ var UptimeApi = exports["default"] = /*#__PURE__*/function (_Uptime) {
       host: params.host
     };
     var rest = new _restApi["default"](restDefault);
-    rest.addUrl('/status', _this.respond)["catch"](function (error) {
+    rest.addUrl("/status", _this.respond)["catch"](function (error) {
       _env["default"].logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });

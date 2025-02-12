@@ -152,7 +152,7 @@ var ConnectorFullThrottle = exports["default"] = /*#__PURE__*/function (_Connect
   return _createClass(ConnectorFullThrottle);
 }(_connector["default"]);
 _defineProperty(ConnectorFullThrottle, "transform", function (message) {
-  if (message.type === 'ris_message') {
+  if (message.type === "ris_message") {
     message = message.data;
     var components = [];
     var announcements = message["announcements"] || [];

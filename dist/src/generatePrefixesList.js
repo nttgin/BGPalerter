@@ -1,7 +1,6 @@
 "use strict";
 
 var _redaxios = _interopRequireDefault(require("redaxios"));
-var _url = _interopRequireDefault(require("url"));
 var _brembo = _interopRequireDefault(require("brembo"));
 var _deepmerge = _interopRequireDefault(require("deepmerge"));
 var _batchPromises = _interopRequireDefault(require("batch-promises"));
@@ -36,6 +35,7 @@ module.exports = function generatePrefixes(inputParameters) {
     upstreams = inputParameters.upstreams,
     downstreams = inputParameters.downstreams;
   var rpki = new _rpkiValidator["default"]({
+    defaultRpkiApi: null,
     clientId: clientId
   });
   exclude = exclude || [];
@@ -94,8 +94,8 @@ module.exports = function generatePrefixes(inputParameters) {
     }
     return (0, _redaxios["default"])({
       url: url,
-      method: 'GET',
-      responseType: 'json',
+      method: "GET",
+      responseType: "json",
       timeout: apiTimeout
     }).then(function (data) {
       var neighbors = [];
@@ -158,8 +158,8 @@ module.exports = function generatePrefixes(inputParameters) {
     }
     return (0, _redaxios["default"])({
       url: url,
-      method: 'GET',
-      responseType: 'json',
+      method: "GET",
+      responseType: "json",
       timeout: apiTimeout
     }).then(function (data) {
       var asns = [];
@@ -189,8 +189,8 @@ module.exports = function generatePrefixes(inputParameters) {
     }
     return (0, _redaxios["default"])({
       url: url,
-      method: 'GET',
-      responseType: 'json',
+      method: "GET",
+      responseType: "json",
       timeout: apiTimeout
     }).then(function (data) {
       var prefixes = [];
@@ -247,8 +247,8 @@ module.exports = function generatePrefixes(inputParameters) {
     }
     return (0, _redaxios["default"])({
       url: url,
-      method: 'GET',
-      responseType: 'json',
+      method: "GET",
+      responseType: "json",
       timeout: apiTimeout
     }).then(function (data) {
       if (data.data && data.data.data && data.data.data.prefixes) {
@@ -297,7 +297,7 @@ module.exports = function generatePrefixes(inputParameters) {
         delete generateList[prefix];
         logger("RPKI invalid: ".concat(prefix, " ").concat(asn));
       } else {
-        generateList[prefix].description += ' (No ROA available)';
+        generateList[prefix].description += " (No ROA available)";
         someNotValidatedPrefixes = true;
       }
     })["catch"](function (error) {
@@ -342,10 +342,7 @@ module.exports = function generatePrefixes(inputParameters) {
     });
   }).then(function () {
     return rpki.getAvailableConnectors().then(function (connectors) {
-      rpki.setConnector(connectors[0]);
-      if (Object.keys(generateList).length > 2000) {
-        return rpki.preCache();
-      }
+      return rpki.setConnector(connectors[0]);
     })["catch"](function () {
       return rpki.preCache();
     });

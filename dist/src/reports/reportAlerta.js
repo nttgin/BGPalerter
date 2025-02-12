@@ -67,7 +67,7 @@ var ReportAlerta = exports["default"] = /*#__PURE__*/function (_Report) {
       var context = _this.getContext(channel, content);
       if (_this.params.resource_templates) {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "The resource_templates parameter is deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
         });
       }
@@ -88,7 +88,7 @@ var ReportAlerta = exports["default"] = /*#__PURE__*/function (_Report) {
         }
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });
@@ -126,7 +126,7 @@ var ReportAlerta = exports["default"] = /*#__PURE__*/function (_Report) {
     _this.enabled = true;
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "Alerta is not enabled: no default group defined"
       });
       _this.enabled = false;

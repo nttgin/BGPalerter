@@ -57,11 +57,11 @@ var ReportKafka = exports["default"] = /*#__PURE__*/function (_Report) {
     _classCallCheck(this, ReportKafka);
     _this = _callSuper(this, ReportKafka, [channels, params, env]);
     _defineProperty(_this, "_getTopic", function (channel) {
-      var topic = _this.topics[channel] || _this.topics['default'];
+      var topic = _this.topics[channel] || _this.topics["default"];
       if (!topic) {
         _this.logger.log({
-          level: 'error',
-          message: 'No topic available for alert channel: ' + channel
+          level: "error",
+          message: "No topic available for alert channel: " + channel
         });
         return false;
       } else {
@@ -80,8 +80,8 @@ var ReportKafka = exports["default"] = /*#__PURE__*/function (_Report) {
           _this.connected = true;
         })["catch"](function (error) {
           _this.logger.log({
-            level: 'error',
-            message: 'Kafka connector error: ' + error
+            level: "error",
+            message: "Kafka connector error: " + error
           });
         });
       }
@@ -104,7 +104,7 @@ var ReportKafka = exports["default"] = /*#__PURE__*/function (_Report) {
         return _this.producer.send(_this._getPayload(topic, channel, content));
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });

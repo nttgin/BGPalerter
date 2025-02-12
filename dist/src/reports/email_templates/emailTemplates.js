@@ -44,7 +44,7 @@ function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e 
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-var templateHijack = '${summary}\n\
+var templateHijack = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -61,8 +61,8 @@ Detected by peers:    ${peers}\n\
 See in BGPlay:        ${bgplay}\n\
 \n\
 Top ${pathNumber} most used AS paths:\n\
-${paths}';
-var templateNewPrefix = '${summary}\n\
+${paths}";
+var templateNewPrefix = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -76,8 +76,8 @@ Announced by:         ${neworigin}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
-See in BGPlay:        ${bgplay}';
-var templatePath = '${summary}\n\
+See in BGPlay:        ${bgplay}";
+var templatePath = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -88,9 +88,9 @@ Last event:           ${latest} UTC\n\
 \n\
 \n\
 Top ${pathNumber} triggering AS paths:\n\
-${paths}';
-var templateSoftwareUpdate = '${summary}';
-var templateVisibility = '${summary}\n\
+${paths}";
+var templateSoftwareUpdate = "${summary}";
+var templateVisibility = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -102,8 +102,8 @@ Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
 Detected by peers:    ${peers}\n\
-See in BGPlay:        ${bgplay}';
-var templateMisconfiguration = '${summary}\n\
+See in BGPlay:        ${bgplay}";
+var templateMisconfiguration = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -114,8 +114,8 @@ Last event:           ${latest} UTC\n\
 \n\
 \n\
 Top ${pathNumber} most used AS paths:\n\
-${paths}';
-var templateRPKI = '${summary}\n\
+${paths}";
+var templateRPKI = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
@@ -123,46 +123,46 @@ DETAILS:\n\
 Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
 Last event:           ${latest} UTC\n\
-See:                  ${rpkiLink}';
-var templateRoa = '${summary}\n\
+See:                  ${rpkiLink}";
+var templateRoa = "${summary}\n\
 \n\
 \n\
 DETAILS:\n\
 ------------------------------------------------------\n\
 Event type:           ${type}\n\
 When event started:   ${earliest} UTC\n\
-Last event:           ${latest} UTC';
-var defaultTemplate = '${summary}';
+Last event:           ${latest} UTC";
+var defaultTemplate = "${summary}";
 var emailTemplates = exports["default"] = /*#__PURE__*/_createClass(function emailTemplates(logger) {
   var _this = this;
   _classCallCheck(this, emailTemplates);
   _defineProperty(this, "getTemplate", function (channel) {
     return _this.indexedFiles[channel] || defaultTemplate;
   });
-  var directory = 'src/reports/email_templates/';
+  var directory = "src/reports/email_templates/";
   var templateFiles = [{
-    channel: 'hijack',
+    channel: "hijack",
     content: templateHijack
   }, {
-    channel: 'newprefix',
+    channel: "newprefix",
     content: templateNewPrefix
   }, {
-    channel: 'path',
+    channel: "path",
     content: templatePath
   }, {
-    channel: 'software-update',
+    channel: "software-update",
     content: templateSoftwareUpdate
   }, {
-    channel: 'visibility',
+    channel: "visibility",
     content: templateVisibility
   }, {
-    channel: 'misconfiguration',
+    channel: "misconfiguration",
     content: templateMisconfiguration
   }, {
-    channel: 'rpki',
+    channel: "rpki",
     content: templateRPKI
   }, {
-    channel: 'roa',
+    channel: "roa",
     content: templateRoa
   }];
   this.indexedFiles = {};
@@ -173,17 +173,17 @@ var emailTemplates = exports["default"] = /*#__PURE__*/_createClass(function ema
   }
   templateFiles.forEach(function (template) {
     try {
-      var file = _path["default"].resolve(directory, template.channel + '.txt');
+      var file = _path["default"].resolve(directory, template.channel + ".txt");
       if (_fs["default"].existsSync(file)) {
-        _this.indexedFiles[template.channel] = _fs["default"].readFileSync(file, 'utf8');
+        _this.indexedFiles[template.channel] = _fs["default"].readFileSync(file, "utf8");
       } else {
         _fs["default"].writeFileSync(file, template.content);
         _this.indexedFiles[template.channel] = template.content;
       }
     } catch (error) {
       logger.log({
-        level: 'error',
-        message: 'Email template: ' + error
+        level: "error",
+        message: "Email template: " + error
       });
     }
   });

@@ -68,7 +68,7 @@ var MonitorNewPrefix = exports["default"] = /*#__PURE__*/function (_Monitor) {
       _this.monitored = _this.input.getMonitoredMoreSpecifics();
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === 'announcement';
+      return message.type === "announcement";
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       var peers = _toConsumableArray(new Set(alerts.map(function (alert) {

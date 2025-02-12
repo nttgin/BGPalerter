@@ -34,6 +34,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
     if (!_this.rpki) {
       var _this$params$advanced;
       var rpkiValidatorOptions = {
+        defaultRpkiApi: null,
         connector: _this.params.vrpProvider,
         clientId: _this.clientId,
         advancedStatsRefreshRateMinutes: (_this$params$advanced = _this.params.advancedStatsRefreshRateMinutes) !== null && _this$params$advanced !== void 0 ? _this$params$advanced : 120,
@@ -56,7 +57,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       }
       _this.watchFileTimer = setTimeout(function () {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "VRPs reloaded due to file change."
         });
         _this._loadRpkiValidatorFromVrpFile(vrpFile);
@@ -67,7 +68,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
   _defineProperty(this, "_loadRpkiValidatorFromVrpFile", function (vrpFile) {
     if (_fs["default"].existsSync(vrpFile)) {
       try {
-        var vrps = JSON.parse(_fs["default"].readFileSync(vrpFile, 'utf8'));
+        var vrps = JSON.parse(_fs["default"].readFileSync(vrpFile, "utf8"));
         if (vrps) {
           if (vrps.roas && vrps.roas.length) {
             vrps = vrps.roas;
@@ -77,6 +78,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
               _this.rpki.empty();
             } else {
               _this.rpki = new _rpkiValidator["default"]({
+                defaultRpkiApi: null,
                 connector: "external",
                 clientId: _this.clientId
               });
@@ -85,20 +87,20 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
             _this._preCache();
           } else {
             _this.logger.log({
-              level: 'error',
+              level: "error",
               message: "The provided VRPs file is empty. Using default vrpProvider."
             });
           }
         }
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "The provided VRPs file cannot be parsed. Using default vrpProvider."
         });
       }
     } else {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The provided VRPs file cannot be found. Using default vrpProvider."
       });
     }
@@ -121,7 +123,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       })["catch"](function () {
         if (!_this._cannotDownloadErrorOnce) {
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
           });
         }
@@ -193,7 +195,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       }
     })["catch"](function (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });
@@ -273,7 +275,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
         });
       }))["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "RPKI validation failed due to:" + error
         });
       });
@@ -296,12 +298,12 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
         if (_this.status.stale !== stale) {
           if (stale) {
             _this.logger.log({
-              level: 'error',
+              level: "error",
               message: "The VRP file is stale"
             });
           } else {
             _this.logger.log({
-              level: 'info',
+              level: "info",
               message: "The VRP file is back to normal"
             });
           }
@@ -329,7 +331,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       this.params.vrpProvider = providers[0];
       this.params.url = null;
       this.logger.log({
-        level: 'error',
+        level: "error",
         message: "No url provided for the vrps api. Using default vrpProvider."
       });
     }
@@ -345,7 +347,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
     } else if (!providers.includes(this.params.vrpProvider)) {
       this.params.vrpProvider = providers[0];
       this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The specified vrpProvider is not valid. Using default vrpProvider."
       });
     }
@@ -355,7 +357,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
   if (this.params.markDataAsStaleAfterMinutes !== undefined) {
     if (this.params.markDataAsStaleAfterMinutes <= this.params.refreshVrpListMinutes) {
       this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The specified markDataAsStaleAfterMinutes cannot be <= of refreshVrpListMinutes (".concat(defaultMarkDataAsStaleAfterMinutes, " minutes will be used).")
       });
       this.params.markDataAsStaleAfterMinutes = defaultMarkDataAsStaleAfterMinutes;

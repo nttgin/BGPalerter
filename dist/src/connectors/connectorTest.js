@@ -483,8 +483,8 @@ var ConnectorTest = exports["default"] = /*#__PURE__*/function (_Connector) {
       _this.timer = setInterval(function () {
         updates.forEach(function (update) {
           _this._message(update);
-          if (type === 'visibility') {
-            var peer = update.data.peer.split('.');
+          if (type === "visibility") {
+            var peer = update.data.peer.split(".");
             peer[3] = Math.min(parseInt(peer[3]) + 1, 254);
             update.data.peer = peer.join(".");
           }
@@ -508,7 +508,7 @@ var ConnectorTest = exports["default"] = /*#__PURE__*/function (_Connector) {
 }(_connector["default"]);
 _ConnectorTest = ConnectorTest;
 _defineProperty(ConnectorTest, "transform", function (message) {
-  if (message.type === 'ris_message') {
+  if (message.type === "ris_message") {
     try {
       message = message.data;
       var components = [];
@@ -590,7 +590,7 @@ _defineProperty(ConnectorTest, "transform", function (message) {
     } catch (error) {
       throw new Error("Error during transform (".concat(_ConnectorTest.name, "): ") + error.message);
     }
-  } else if (message.type === 'ris_error') {
+  } else if (message.type === "ris_error") {
     throw new Error("Error from RIS: " + message.data.message);
   }
 });

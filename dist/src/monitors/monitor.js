@@ -51,7 +51,7 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
   var _this = this;
   _classCallCheck(this, Monitor);
   _defineProperty(this, "updateMonitoredResources", function () {
-    throw new Error('The method updateMonitoredResources must be implemented in ' + _this.name);
+    throw new Error("The method updateMonitoredResources must be implemented in " + _this.name);
   });
   _defineProperty(this, "monitor", function (message) {
     return new Promise(function (resolve, reject) {
@@ -59,10 +59,10 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
     });
   });
   _defineProperty(this, "filter", function (message) {
-    throw new Error('The method filter must be implemented in ' + _this.name);
+    throw new Error("The method filter must be implemented in " + _this.name);
   });
   _defineProperty(this, "squashAlerts", function (alerts) {
-    throw new Error('The method squashAlerts must be implemented in ' + _this.name);
+    throw new Error("The method squashAlerts must be implemented in " + _this.name);
   });
   _defineProperty(this, "_squash", function (id) {
     var alerts = _this.alerts[id] || [];
@@ -151,7 +151,7 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
         _this.fadeOff = fadeOff;
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });
@@ -176,7 +176,7 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
         // If there is anything in the cache
         _this.storage.set("status-".concat(_this.name), status)["catch"](function (error) {
           _this.logger.log({
-            level: 'error',
+            level: "error",
             message: error
           });
         });

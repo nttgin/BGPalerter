@@ -86,8 +86,8 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
         });
       } catch (error) {
         _this.logger.log({
-          level: 'error',
-          message: 'Not all groups have an associated email address'
+          level: "error",
+          message: "Not all groups have an associated email address"
         });
       }
       return [];
@@ -101,7 +101,7 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
     _defineProperty(_this, "_sendEmail", function (email) {
       _this.transporter.sendMail(email)["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });
@@ -116,15 +116,15 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
             var emails = _step.value;
             var text = _this.getEmailText(channel, content);
             if (text) {
-              var to = emails.join(', ');
+              var to = emails.join(", ");
               _this.logger.log({
-                level: 'info',
+                level: "info",
                 message: "[reportEmail] sending report to: ".concat(to)
               });
               _this.emailBacklog.push({
                 from: _this.params.senderEmail,
                 to: to,
-                subject: 'BGP alert: ' + channel,
+                subject: "BGP alert: " + channel,
                 text: text,
                 headers: {
                   "auto-submitted": "auto-generated"
@@ -145,7 +145,7 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
     if (!_this.getUserGroup("default")) {
       _this.enabled = false;
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
       });
     } else {
@@ -159,8 +159,8 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
             _this.templates[channel] = _this.emailTemplates.getTemplate(channel);
           } catch (error) {
             _this.logger.log({
-              level: 'error',
-              message: channel + ' template cannot be loaded'
+              level: "error",
+              message: channel + " template cannot be loaded"
             });
           }
         }
@@ -172,7 +172,7 @@ var ReportEmail = exports["default"] = /*#__PURE__*/function (_Report) {
       if (Object.keys(_this.templates).length === 0) {
         _this.enabled = false;
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "Email templates cannot be associated to channels."
         });
       }

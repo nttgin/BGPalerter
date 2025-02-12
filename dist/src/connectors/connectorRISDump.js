@@ -67,7 +67,7 @@ var ConnectorRISDump = exports["default"] = /*#__PURE__*/function (_Connector) {
     _classCallCheck(this, ConnectorRISDump);
     _this = _callSuper(this, ConnectorRISDump, [name, params, env]);
     _defineProperty(_this, "_shouldDownloadDump", function () {
-      return !_this.lastRun || _this.lastRun.diff((0, _moment["default"])(), 'hours') > 2;
+      return !_this.lastRun || _this.lastRun.diff((0, _moment["default"])(), "hours") > 2;
     });
     _defineProperty(_this, "connect", function () {
       return new Promise(function (resolve, reject) {
@@ -143,7 +143,7 @@ var ConnectorRISDump = exports["default"] = /*#__PURE__*/function (_Connector) {
         }
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "Cannot download historic RIS data ".concat(error)
         });
       });
@@ -162,7 +162,7 @@ var ConnectorRISDump = exports["default"] = /*#__PURE__*/function (_Connector) {
         if (dumps.length) {
           _this.storage.set("run-".concat(_this.name), _moment["default"].utc().unix())["catch"](function (error) {
             _this.logger.log({
-              level: 'error',
+              level: "error",
               message: error
             });
           });
@@ -192,7 +192,7 @@ var ConnectorRISDump = exports["default"] = /*#__PURE__*/function (_Connector) {
         }
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });

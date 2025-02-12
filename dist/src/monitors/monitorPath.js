@@ -67,7 +67,7 @@ var MonitorPath = exports["default"] = /*#__PURE__*/function (_Monitor) {
       _this.monitored = _this.input.getMonitoredPrefixes();
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === 'announcement';
+      return message.type === "announcement";
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       alerts = alerts.filter(function (i) {

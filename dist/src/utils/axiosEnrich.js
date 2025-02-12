@@ -47,7 +47,7 @@ function _default(axios, httpsAgent, userAgent) {
     };
   }
   axios.defaults.headers.common = _objectSpread(_objectSpread({}, axios.defaults.headers.common), {}, {
-    'Accept-Encoding': 'gzip'
+    "Accept-Encoding": "gzip"
   });
   return function (params) {
     return axios(params)["catch"](function (error) {

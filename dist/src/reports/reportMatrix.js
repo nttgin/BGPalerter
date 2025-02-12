@@ -93,14 +93,14 @@ var reportMatrix = exports["default"] = /*#__PURE__*/function (_ReportHTTP) {
     _this.roomIds = params.roomIds;
     if (!params.homeserverUrl || !params.accessToken) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " reporting is not enabled: homeserverUrl and accessToken are required")
       });
       _this.enabled = false;
     }
     if (!params.roomIds || !params.roomIds["default"]) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "".concat(_this.name, " reporting is not enabled: no default room id provided")
       });
       _this.enabled = false;

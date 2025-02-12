@@ -63,14 +63,14 @@ var UptimeHealthcheck = exports["default"] = /*#__PURE__*/function (_Uptime) {
         var query = {
           url: _this.params.url,
           method: method,
-          responseType: 'json'
+          responseType: "json"
         };
         if (_this.params.method === "post") {
           query.data = status;
         }
         _this.axios(query)["catch"](function (error) {
           _env["default"].logger.log({
-            level: 'error',
+            level: "error",
             message: "UptimeHealthcheck cannot send heartbeat: ".concat(error.message)
           });
         });

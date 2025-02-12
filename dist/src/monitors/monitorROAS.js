@@ -96,7 +96,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       var sizes = _this._calculateSizes(vrps);
       var metadata = _this.rpki.getMetadata();
       _this.logger.log({
-        level: 'info',
+        level: "info",
         message: "Performing TA deletion check"
       });
       for (var ta in sizes) {
@@ -135,7 +135,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       var sizes = _this._calculateSizes(vrps);
       var expiringSizes = _this._calculateSizes(expiringVrps);
       _this.logger.log({
-        level: 'info',
+        level: "info",
         message: "Performing TA expiration check"
       });
       var _loop = function _loop(ta) {
@@ -161,7 +161,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             }));
           })["catch"](function (error) {
             _this.logger.log({
-              level: 'error',
+              level: "error",
               message: error
             });
           });
@@ -180,7 +180,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
       });
       if (_this.enableExpirationAlerts) {
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "Performing expiration check on VRPs"
         });
         var prefixesIn = _this.monitored.prefixes.map(function (i) {
@@ -270,7 +270,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             }));
           })["catch"](function (error) {
             _this.logger.log({
-              level: 'error',
+              level: "error",
               message: error
             });
           });
@@ -320,7 +320,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
                 }));
               })["catch"](function (error) {
                 _this.logger.log({
-                  level: 'error',
+                  level: "error",
                   message: error
                 });
               });
@@ -337,7 +337,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         return alerts;
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }
@@ -350,7 +350,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
           // No diff if there were no vrps before
 
           _this.logger.log({
-            level: 'info',
+            level: "info",
             message: "Performing diff on VRPs"
           });
           var prefixesIn = _this.monitored.prefixes.map(function (i) {
@@ -425,7 +425,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         return alerts;
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }
@@ -476,7 +476,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
         return alerts;
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }

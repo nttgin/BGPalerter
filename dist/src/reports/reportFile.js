@@ -73,14 +73,14 @@ var ReportFile = exports["default"] = /*#__PURE__*/function (_Report) {
         _fs["default"].writeFileSync(filename, JSON.stringify(message));
       } catch (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }
     });
     _defineProperty(_this, "report", function (message, content) {
       _this.logger.log({
-        level: 'verbose',
+        level: "verbose",
         message: content.message
       });
       if (_this.persistAlerts) {
@@ -92,7 +92,7 @@ var ReportFile = exports["default"] = /*#__PURE__*/function (_Report) {
     if (_this.persistAlerts && !_this.alertsDirectory) {
       _this.persistAlerts = false;
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "Cannot persist alert data, the parameter alertDataDirectory is missing."
       });
     }

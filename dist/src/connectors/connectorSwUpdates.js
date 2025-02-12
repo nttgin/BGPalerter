@@ -76,7 +76,7 @@ var ConnectorSwUpdates = exports["default"] = /*#__PURE__*/function (_Connector)
         }
       })["catch"](function () {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: "It was not possible to check for software updates"
         });
       });

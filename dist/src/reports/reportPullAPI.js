@@ -65,7 +65,7 @@ var ReportPullAPI = exports["default"] = /*#__PURE__*/function (_Report) {
     _classCallCheck(this, ReportPullAPI);
     _this = _callSuper(this, ReportPullAPI, [channels, params, env]);
     _defineProperty(_this, "respond", function (req, res, next) {
-      res.contentType = 'json';
+      res.contentType = "json";
       res.send({
         meta: {
           lastQuery: _this.lastQuery
@@ -133,21 +133,21 @@ var ReportPullAPI = exports["default"] = /*#__PURE__*/function (_Report) {
       host: params.host
     };
     var rest = new _restApi["default"](restDefault);
-    rest.addUrl('/alerts', _this.respond)["catch"](function (error) {
+    rest.addUrl("/alerts", _this.respond)["catch"](function (error) {
       env.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });
-    rest.addUrl('/alerts/:hash', _this.respond)["catch"](function (error) {
+    rest.addUrl("/alerts/:hash", _this.respond)["catch"](function (error) {
       env.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });
-    rest.addUrl('/alerts/groups/:group', _this.respond)["catch"](function (error) {
+    rest.addUrl("/alerts/groups/:group", _this.respond)["catch"](function (error) {
       env.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });

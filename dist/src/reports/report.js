@@ -205,7 +205,7 @@ var Report = exports["default"] = /*#__PURE__*/_createClass(function Report(chan
     } catch (error) {
       // This MUST never happen. But if it happens we need to send a basic alert anyway and don't crash
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "It was not possible to generate a context: ".concat(error)
       });
       return {
@@ -219,10 +219,10 @@ var Report = exports["default"] = /*#__PURE__*/_createClass(function Report(chan
     });
   });
   _defineProperty(this, "report", function (message, content) {
-    throw new Error('The method report must be implemented');
+    throw new Error("The method report must be implemented");
   });
   _defineProperty(this, "getUserGroup", function (group) {
-    throw new Error('The method getUserGroup must be implemented');
+    throw new Error("The method getUserGroup must be implemented");
   });
   this.config = env.config;
   this.logger = env.logger;

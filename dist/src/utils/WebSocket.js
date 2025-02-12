@@ -63,20 +63,20 @@ var WebSocket = exports["default"] = /*#__PURE__*/_createClass(function WebSocke
     });
     _this.ws = new _ws2["default"](url, _this.options);
     _this.setOpenTimeout(true);
-    _this.ws.on('message', function (data) {
+    _this.ws.on("message", function (data) {
       _this._pingReceived();
       _this.pubsub.publish("message", data);
     });
-    _this.ws.on('close', function (data) {
+    _this.ws.on("close", function (data) {
       _this.alive = false;
       _this.setOpenTimeout(false);
       _this.pubsub.publish("close", data);
     });
-    _this.ws.on('pong', _this._pingReceived);
-    _this.ws.on('error', function (message) {
+    _this.ws.on("pong", _this._pingReceived);
+    _this.ws.on("error", function (message) {
       _this._publishError(message);
     });
-    _this.ws.on('open', function () {
+    _this.ws.on("open", function () {
       _this.alive = true;
       _this.setOpenTimeout(false);
       _this.pubsub.publish("open", {

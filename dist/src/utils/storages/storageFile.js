@@ -47,7 +47,7 @@ var StorageFile = exports["default"] = /*#__PURE__*/function (_Storage) {
           var file = _this.directory + key + ".json";
           try {
             if (_fs["default"].existsSync(file)) {
-              resolve(JSON.parse(_fs["default"].readFileSync(file, 'utf8')));
+              resolve(JSON.parse(_fs["default"].readFileSync(file, "utf8")));
             } else {
               resolve(null);
             }

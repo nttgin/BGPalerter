@@ -68,7 +68,7 @@ var ReportWebex = exports["default"] = /*#__PURE__*/function (_Report) {
     });
     _defineProperty(_this, "_sendWebexMessage", function (url, message, content) {
       _this.logger.log({
-        level: 'info',
+        level: "info",
         message: "[reportWebex] sending report to: ".concat(url)
       });
       _this.axios({
@@ -80,7 +80,7 @@ var ReportWebex = exports["default"] = /*#__PURE__*/function (_Report) {
         }
       })["catch"](function (error) {
         _this.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       });
@@ -112,7 +112,7 @@ var ReportWebex = exports["default"] = /*#__PURE__*/function (_Report) {
     });
     if (!_this.getUserGroup("default")) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "Webex is not enabled: no default group defined"
       });
       _this.enabled = false;

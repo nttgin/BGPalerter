@@ -34,7 +34,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
     _defineProperty(_this, "save", function (config) {
       try {
         _fs["default"].writeFileSync(_this.configFile, _jsYaml["default"].dump(config));
-        _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, 'utf8')); // Test readability and format
+        _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, "utf8")); // Test readability and format
       } catch (error) {
         throw new Error("Cannot save the configuration in " + _this.configFile);
       }
@@ -43,7 +43,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
       var ymlBasicConfig = _jsYaml["default"].dump(_this["default"]);
       if (_fs["default"].existsSync(_this.configFile)) {
         try {
-          var config = _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, 'utf8')) || _this["default"];
+          var config = _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, "utf8")) || _this["default"];
           _this._readUserGroupsFiles(config);
           return config;
         } catch (error) {
@@ -53,7 +53,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
         console.log("Impossible to load config.yml. A default configuration file has been generated.");
         _this.downloadDefault().then(function (data) {
           _fs["default"].writeFileSync(_this.configFile, data);
-          _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, 'utf8')); // Test readability and format
+          _jsYaml["default"].load(_fs["default"].readFileSync(_this.configFile, "utf8")); // Test readability and format
 
           _this._readUserGroupsFiles(data);
         })["catch"](function () {
@@ -65,7 +65,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
     _defineProperty(_this, "_readUserGroupsFiles", function (config) {
       if (config.groupsFile) {
         _this.groupsFile = config.volume ? config.volume + config.groupsFile : _path["default"].resolve(process.cwd(), config.groupsFile);
-        var userGroups = _jsYaml["default"].load(_fs["default"].readFileSync(_this.groupsFile, 'utf8'));
+        var userGroups = _jsYaml["default"].load(_fs["default"].readFileSync(_this.groupsFile, "utf8"));
         var _iterator = _createForOfIteratorHelper(config.reports),
           _step;
         try {
@@ -87,7 +87,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
             clearTimeout(_this._watchPrefixFileTimer);
           }
           _this._watchPrefixFileTimer = setTimeout(function () {
-            var userGroups = _jsYaml["default"].load(_fs["default"].readFileSync(_this.groupsFile, 'utf8'));
+            var userGroups = _jsYaml["default"].load(_fs["default"].readFileSync(_this.groupsFile, "utf8"));
             var _iterator2 = _createForOfIteratorHelper(config.reports),
               _step2;
             try {
@@ -108,7 +108,7 @@ var ConfigYml = exports["default"] = /*#__PURE__*/function (_Config) {
         });
       }
     });
-    _this.configFile = global.EXTERNAL_CONFIG_FILE || (global.EXTERNAL_VOLUME_DIRECTORY ? global.EXTERNAL_VOLUME_DIRECTORY + 'config.yml' : _path["default"].resolve(process.cwd(), 'config.yml'));
+    _this.configFile = global.EXTERNAL_CONFIG_FILE || (global.EXTERNAL_VOLUME_DIRECTORY ? global.EXTERNAL_VOLUME_DIRECTORY + "config.yml" : _path["default"].resolve(process.cwd(), "config.yml"));
     _this.groupsFile = global.EXTERNAL_GROUP_FILE;
     console.log("Loaded config:", _this.configFile);
     return _this;

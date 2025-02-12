@@ -17,18 +17,18 @@ var Config = exports["default"] = /*#__PURE__*/_createClass(function Config(para
   _classCallCheck(this, Config);
   _defineProperty(this, "downloadDefault", function () {
     return (0, _redaxios["default"])({
-      url: 'https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example',
-      method: 'GET',
-      responseType: 'blob' // important
+      url: "https://raw.githubusercontent.com/nttgin/BGPalerter/main/config.yml.example",
+      method: "GET",
+      responseType: "blob" // important
     }).then(function (response) {
       return response.data;
     });
   });
   _defineProperty(this, "retrieve", function () {
-    throw new Error('The method retrieve must be implemented in the config connector');
+    throw new Error("The method retrieve must be implemented in the config connector");
   });
   _defineProperty(this, "save", function () {
-    throw new Error('The method save must be implemented in the config connector');
+    throw new Error("The method save must be implemented in the config connector");
   });
   this["default"] = {
     configVersion: Config.configVersion,

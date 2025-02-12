@@ -68,7 +68,7 @@ var MonitorVisibility = exports["default"] = /*#__PURE__*/function (_Monitor) {
       _this.monitored = _this.input.getMonitoredPrefixes();
     });
     _defineProperty(_this, "filter", function (message) {
-      return message.type === 'withdrawal';
+      return message.type === "withdrawal";
     });
     _defineProperty(_this, "squashAlerts", function (alerts) {
       var peers = _toConsumableArray(new Set(alerts.map(function (alert) {
@@ -103,7 +103,7 @@ var MonitorVisibility = exports["default"] = /*#__PURE__*/function (_Monitor) {
     _this.thresholdMinPeers = (_params$thresholdMinP = params === null || params === void 0 ? void 0 : params.thresholdMinPeers) !== null && _params$thresholdMinP !== void 0 ? _params$thresholdMinP : 40;
     if (params.threshold) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
       });
       _this.thresholdMinPeers = params.threshold;

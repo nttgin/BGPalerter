@@ -78,26 +78,26 @@ var ConnectorFactory = exports["default"] = /*#__PURE__*/_createClass(function C
   _defineProperty(this, "_connectConnector", function (connector) {
     connector.onError(function (error) {
       _env.logger.log({
-        level: 'error',
+        level: "error",
         message: error
       });
     });
     connector.onConnect(function (message) {
       _env.logger.log({
-        level: 'info',
+        level: "info",
         message: message
       });
     });
     connector.onDisconnect(function (error) {
       if (error) {
         _env.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       } else {
         _env.logger.log({
-          level: 'info',
-          message: connector.name + ' disconnected'
+          level: "info",
+          message: connector.name + " disconnected"
         });
       }
     });
@@ -105,7 +105,7 @@ var ConnectorFactory = exports["default"] = /*#__PURE__*/_createClass(function C
       // If not connected log the error and move on
       if (error) {
         _env.logger.log({
-          level: 'error',
+          level: "error",
           message: error
         });
       }
@@ -123,7 +123,7 @@ var ConnectorFactory = exports["default"] = /*#__PURE__*/_createClass(function C
           })["catch"](function (error) {
             if (error) {
               _env.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
               });
             }

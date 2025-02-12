@@ -49,7 +49,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
 var configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || _configYml["default"])();
 var vector = {
   version: global.EXTERNAL_VERSION_FOR_TEST || _package.version,
-  clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
+  clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", "base64").toString("ascii")
 };
 var config = configConnector.retrieve();
 if (global.DRY_RUN) {
@@ -96,8 +96,8 @@ try {
 }
 var errorTransport = new _fastFileLogger["default"]({
   logRotatePattern: config.logging.logRotatePattern,
-  filename: 'error-%DATE%.log',
-  symLink: 'error.log',
+  filename: "error-%DATE%.log",
+  symLink: "error.log",
   directory: loggingDirectory,
   maxRetainedFiles: config.logging.maxRetainedFiles,
   maxFileSizeMB: config.logging.maxFileSizeMB,
@@ -112,8 +112,8 @@ var errorTransport = new _fastFileLogger["default"]({
 });
 var verboseTransport = new _fastFileLogger["default"]({
   logRotatePattern: config.logging.logRotatePattern,
-  filename: 'reports-%DATE%.log',
-  symLink: 'reports.log',
+  filename: "reports-%DATE%.log",
+  symLink: "reports.log",
   directory: loggingDirectory,
   maxRetainedFiles: config.logging.maxRetainedFiles,
   maxFileSizeMB: config.logging.maxFileSizeMB,
@@ -172,11 +172,11 @@ config.connectors.push({
   name: "upd"
 });
 if (_toConsumableArray(new Set(config.connectors)).length !== config.connectors.length) {
-  throw new Error('Connectors names MUST be unique');
+  throw new Error("Connectors names MUST be unique");
 }
 config.connectors = config.connectors.map(function (item, index) {
   if (item.name.length !== 3) {
-    throw new Error('Connectors names MUST be exactly 3 letters');
+    throw new Error("Connectors names MUST be exactly 3 letters");
   }
   return {
     "class": require(item.external ? item.file : "./connectors/" + item.file)["default"],

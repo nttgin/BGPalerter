@@ -84,25 +84,33 @@ var Connector = exports["default"] = /*#__PURE__*/_createClass(function Connecto
   });
   _defineProperty(this, "connect", function () {
     return new Promise(function (resolve, reject) {
-      return reject(new Error('The method connect MUST be implemented'));
+      return reject(new Error("The method connect MUST be implemented"));
     });
   });
   _defineProperty(this, "_error", function (error) {
-    if (_this.errorCallback) _this.errorCallback(error);
+    if (_this.errorCallback) {
+      _this.errorCallback(error);
+    }
   });
   _defineProperty(this, "subscribe", function (input) {
-    throw new Error('The method subscribe MUST be implemented');
+    throw new Error("The method subscribe MUST be implemented");
   });
   _defineProperty(this, "_disconnect", function (message) {
     _this.connected = false;
-    if (_this.disconnectCallback) _this.disconnectCallback(message);
+    if (_this.disconnectCallback) {
+      _this.disconnectCallback(message);
+    }
   });
   _defineProperty(this, "_message", function (message) {
-    if (_this.messageCallback) _this.messageCallback(message);
+    if (_this.messageCallback) {
+      _this.messageCallback(message);
+    }
   });
   _defineProperty(this, "_connect", function (message) {
     _this.connected = true;
-    if (_this.connectCallback) _this.connectCallback(message);
+    if (_this.connectCallback) {
+      _this.connectCallback(message);
+    }
   });
   _defineProperty(this, "onConnect", function (callback) {
     _this.connectCallback = callback;
@@ -137,5 +145,5 @@ var Connector = exports["default"] = /*#__PURE__*/_createClass(function Connecto
   this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], !this.params.noProxy && env.agent ? env.agent : null, "".concat(env.clientId, "/").concat(env.version));
 });
 _defineProperty(Connector, "transform", function (message) {
-  throw new Error('The method transform (STATIC) MUST be implemented');
+  throw new Error("The method transform (STATIC) MUST be implemented");
 });

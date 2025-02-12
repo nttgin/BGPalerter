@@ -69,14 +69,14 @@ var ReportSyslog = exports["default"] = /*#__PURE__*/function (_Report) {
             _this.connected = true;
             _this.client.on("close", function (error) {
               this.logger.log({
-                level: 'error',
-                message: 'Syslog disconnected: ' + error
+                level: "error",
+                message: "Syslog disconnected: " + error
               });
             });
             _this.client.on("error", function (error) {
               this.logger.log({
-                level: 'error',
-                message: 'Syslog: ' + error
+                level: "error",
+                message: "Syslog: " + error
               });
             });
             resolve(true);
@@ -89,14 +89,14 @@ var ReportSyslog = exports["default"] = /*#__PURE__*/function (_Report) {
       return _this._connectToSyslog().then(function () {
         var message = _this._getMessage(channel, content);
         _this.logger.log({
-          level: 'info',
+          level: "info",
           message: "[reportSyslog] sending report to: ".concat(_this.options.syslogHostname)
         });
         _this.client.log(message, {}, function (error) {
           if (error) {
             _this.logger.log({
-              level: 'error',
-              message: 'Syslog: ' + error
+              level: "error",
+              message: "Syslog: " + error
             });
           }
         });
@@ -108,7 +108,7 @@ var ReportSyslog = exports["default"] = /*#__PURE__*/function (_Report) {
     _this.host = params.host;
     _this.options = {
       syslogHostname: params.host,
-      transport: params.transport === 'tcp' ? _syslogClient["default"].Transport.Tcp : _syslogClient["default"].Transport.Udp,
+      transport: params.transport === "tcp" ? _syslogClient["default"].Transport.Tcp : _syslogClient["default"].Transport.Udp,
       port: params.port
     };
     return _this;

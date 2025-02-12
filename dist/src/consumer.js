@@ -72,7 +72,7 @@ var Consumer = exports["default"] = /*#__PURE__*/_createClass(function Consumer(
                   // Promise call to reduce waiting times
                   monitor.monitor(message)["catch"](function (error) {
                     _this.logger.log({
-                      level: 'error',
+                      level: "error",
                       message: error
                     });
                   });
@@ -96,7 +96,7 @@ var Consumer = exports["default"] = /*#__PURE__*/_createClass(function Consumer(
       }
     } catch (error) {
       _this.logger.log({
-        level: 'error',
+        level: "error",
         message: error.message
       });
     }
@@ -124,10 +124,10 @@ var Consumer = exports["default"] = /*#__PURE__*/_createClass(function Consumer(
     });
   } catch (error) {
     this.logger.log({
-      level: 'error',
+      level: "error",
       message: error
     });
   }
-  process.on('message', this.dispatch);
-  env.pubSub.subscribe('data', this.dispatch);
+  process.on("message", this.dispatch);
+  env.pubSub.subscribe("data", this.dispatch);
 });
