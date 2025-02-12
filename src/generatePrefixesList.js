@@ -30,7 +30,7 @@ module.exports = function generatePrefixes(inputParameters) {
         downstreams
     } = inputParameters;
 
-    const rpki = new RpkiValidator({clientId});
+    const rpki = new RpkiValidator({defaultRpkiApi: null, clientId});
 
     exclude = exclude || [];
     logger = logger || console.log;
@@ -349,13 +349,7 @@ module.exports = function generatePrefixes(inputParameters) {
         })
         .then(() => {
             return rpki.getAvailableConnectors()
-                .then((connectors) => {
-                    rpki.setConnector(connectors[0]);
-
-                    if (Object.keys(generateList).length > 2000) {
-                        return rpki.preCache();
-                    }
-                })
+                .then((connectors) => rpki.setConnector(connectors[0]))
                 .catch(() => rpki.preCache());
         })
         .then(() => { // Check

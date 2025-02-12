@@ -78,6 +78,7 @@ export default class RpkiUtils {
 
         if (!this.rpki) {
             const rpkiValidatorOptions = {
+                defaultRpkiApi: null,
                 connector: this.params.vrpProvider,
                 clientId: this.clientId,
                 advancedStatsRefreshRateMinutes: this.params.advancedStatsRefreshRateMinutes ?? 120,
@@ -128,6 +129,7 @@ export default class RpkiUtils {
                             this.rpki.empty();
                         } else {
                             this.rpki = new RpkiValidator({
+                                defaultRpkiApi: null,
                                 connector: "external",
                                 clientId: this.clientId
                             });
