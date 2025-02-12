@@ -36,24 +36,24 @@ import RestApi from "../utils/restApi";
 
 export default class UptimeApi extends Uptime {
 
-    constructor(connectors, params){
+    constructor(connectors, params) {
         super(connectors, params);
         this.server = null;
         this.connectors = connectors;
-        let restDefault = env.config.rest || { port: params.port, host: params.host };
+        let restDefault = env.config.rest || {port: params.port, host: params.host};
         const rest = new RestApi(restDefault);
 
-        rest.addUrl('/status', this.respond)
+        rest.addUrl("/status", this.respond)
             .catch(error => {
                 env.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
     };
 
     respond = (req, res, next) => {
-        res.contentType = 'json';
+        res.contentType = "json";
         const response = this.getCurrentStatus();
         if (this.params.useStatusCodes && response.warning) {
             res.status(500);

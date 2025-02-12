@@ -45,7 +45,7 @@ export default class ReportEmail extends Report {
         if (!this.getUserGroup("default")) {
             this.enabled = false;
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "In notifiedEmails, for reportEmail, a group named 'default' is required for communications to the admin."
             });
         } else {
@@ -57,16 +57,16 @@ export default class ReportEmail extends Report {
                     this.templates[channel] = this.emailTemplates.getTemplate(channel);
                 } catch (error) {
                     this.logger.log({
-                        level: 'error',
-                        message: channel + ' template cannot be loaded'
-                    })
+                        level: "error",
+                        message: channel + " template cannot be loaded"
+                    });
                 }
             }
 
             if (Object.keys(this.templates).length === 0) {
                 this.enabled = false;
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "Email templates cannot be associated to channels."
                 });
             }
@@ -90,7 +90,7 @@ export default class ReportEmail extends Report {
     getEmails = (content) => {
         const users = content.data
             .map(item => {
-                if (item.matchedRule){
+                if (item.matchedRule) {
                     return item.matchedRule.group || "default";
                 } else {
                     return false;
@@ -104,8 +104,8 @@ export default class ReportEmail extends Report {
                 .filter(item => !!item);
         } catch (error) {
             this.logger.log({
-                level: 'error',
-                message: 'Not all groups have an associated email address'
+                level: "error",
+                message: "Not all groups have an associated email address"
             });
         }
 
@@ -115,7 +115,7 @@ export default class ReportEmail extends Report {
     getEmailText = (channel, content) => {
         const context = this.getContext(channel, content);
         const paths = JSON.parse(`[${context.paths}]`);
-        context.paths = paths.length ? paths.join("\n") : "Disabled"
+        context.paths = paths.length ? paths.join("\n") : "Disabled";
         return this.parseTemplate(this.templates[channel], context);
     };
 
@@ -124,7 +124,7 @@ export default class ReportEmail extends Report {
             .sendMail(email)
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
@@ -140,16 +140,16 @@ export default class ReportEmail extends Report {
                 const text = this.getEmailText(channel, content);
 
                 if (text) {
-                    const to = emails.join(', ');
+                    const to = emails.join(", ");
                     this.logger.log({
-                        level: 'info',
+                        level: "info",
                         message: `[reportEmail] sending report to: ${to}`
                     });
 
                     this.emailBacklog.push({
                         from: this.params.senderEmail,
                         to,
-                        subject: 'BGP alert: ' + channel,
+                        subject: "BGP alert: " + channel,
                         text: text,
                         headers: {
                             "auto-submitted": "auto-generated"
@@ -158,5 +158,5 @@ export default class ReportEmail extends Report {
                 }
             }
         }
-    }
+    };
 }

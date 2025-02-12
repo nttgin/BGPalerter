@@ -31,8 +31,8 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
-const axios = require('redaxios');
+const chaiSubset = require("chai-subset");
+const axios = require("redaxios");
 chai.use(chaiSubset);
 const expect = chai.expect;
 const volume = "volumetests/";
@@ -40,7 +40,7 @@ const asyncTimeout = 20000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = volume + "config.test.yml";
 
-describe("Uptime Monitor", function() {
+describe("Uptime Monitor", function () {
 
     const worker = require("../index");
     const config = worker.config;
@@ -57,8 +57,8 @@ describe("Uptime Monitor", function() {
     it("API format and header", function (done) {
 
         axios({
-            method: 'get',
-            responseType: 'json',
+            method: "get",
+            responseType: "json",
             url: `http://localhost:8011/status`
         })
             .then(data => {

@@ -54,15 +54,19 @@ export default class ConnectorRISDump extends Connector {
                 })
                 .catch(error => {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                 });
         }
     };
 
+    static transform = (message) => {
+        return [message];
+    };
+
     _shouldDownloadDump = () => {
-        return !this.lastRun || this.lastRun.diff(moment(), 'hours') > 2;
+        return !this.lastRun || this.lastRun.diff(moment(), "hours") > 2;
     };
 
     connect = () =>
@@ -92,7 +96,7 @@ export default class ConnectorRISDump extends Connector {
                     const sent = {};
 
                     for (let entry of dump) {
-                        const path = new Path((entry.path|| []).map(i => new AS(i)));
+                        const path = new Path((entry.path || []).map(i => new AS(i)));
                         sent[entry.target_prefix] = true;
                         this._message({
                             type: "announcement",
@@ -123,7 +127,7 @@ export default class ConnectorRISDump extends Connector {
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: `Cannot download historic RIS data ${error}`
                 });
             });
@@ -140,7 +144,7 @@ export default class ConnectorRISDump extends Connector {
                     .set(`run-${this.name}`, moment.utc().unix())
                     .catch(error => {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: error
                         });
                     });
@@ -163,9 +167,5 @@ export default class ConnectorRISDump extends Connector {
         });
 
         return Promise.resolve();
-    };
-
-    static transform = (message) => {
-        return [ message ];
     };
 };

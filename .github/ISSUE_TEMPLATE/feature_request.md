@@ -16,6 +16,5 @@ A clear and concise description.
 **Provide an example**
 Provide an example in terms of prefixes and BGP messages. Possibly provide a snippet of config.yml and prefixes.yml.
 
-
 **Your information**
 Provide your name and your AS/company (see Bert Hubert's post https://berthub.eu/articles/posts/anonymous-help/).

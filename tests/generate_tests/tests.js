@@ -33,15 +33,15 @@
 const chai = require("chai");
 const fs = require("fs");
 const yaml = require("js-yaml");
-const chaiSubset = require('chai-subset');
-const generatePrefixes = require('../../src/generatePrefixesList');
+const chaiSubset = require("chai-subset");
+const generatePrefixes = require("../../src/generatePrefixesList");
 const expect = chai.expect;
 const asyncTimeout = 120000;
 chai.use(chaiSubset);
 
 global.EXTERNAL_CONFIG_FILE = "tests/generate_tests/config.test.yml";
 
-describe("Prefix List", function() {
+describe("Prefix List", function () {
 
     it("generate file - default group - exclude 1 prefix", function (done) {
         const asns = ["3333"];
@@ -61,15 +61,15 @@ describe("Prefix List", function() {
             group: null,
             append: false,
             logger: () => {}
-        }
+        };
         generatePrefixes(inputParameters)
             .then(content => {
                 fs.writeFileSync(outputFile, yaml.dump(content));
             })
             .then(() => {
-                const result = fs.readFileSync(outputFile, 'utf8');
+                const result = fs.readFileSync(outputFile, "utf8");
                 fs.unlinkSync(outputFile);
-                const original = fs.readFileSync(originalFile, 'utf8');
+                const original = fs.readFileSync(originalFile, "utf8");
                 const resultJson = yaml.load(result) || {};
                 const originalJson = yaml.load(original) || {};
 
@@ -99,16 +99,16 @@ describe("Prefix List", function() {
             group: "test",
             append: false,
             logger: () => {}
-        }
+        };
 
         generatePrefixes(inputParameters)
             .then(content => {
                 fs.writeFileSync(outputFile, yaml.dump(content));
             })
             .then(() => {
-                const result = fs.readFileSync(outputFile, 'utf8');
+                const result = fs.readFileSync(outputFile, "utf8");
                 fs.unlinkSync(outputFile);
-                const original = fs.readFileSync(originalFile, 'utf8');
+                const original = fs.readFileSync(originalFile, "utf8");
                 const resultJson = yaml.load(result) || {};
                 const originalJson = yaml.load(original) || {};
 
@@ -144,16 +144,16 @@ describe("Prefix List", function() {
                 const content = yaml.load(fs.readFileSync(outputFile, "utf8"));
                 return Promise.resolve(content);
             }
-        }
+        };
 
         generatePrefixes(inputParameters)
             .then(content => {
                 fs.writeFileSync(outputFile, yaml.dump(content));
             })
             .then(() => {
-                const result = fs.readFileSync(outputFile, 'utf8');
+                const result = fs.readFileSync(outputFile, "utf8");
                 fs.unlinkSync(outputFile);
-                const original = fs.readFileSync(originalFile, 'utf8');
+                const original = fs.readFileSync(originalFile, "utf8");
                 const resultJson = yaml.load(result) || {};
                 const originalJson = yaml.load(original) || {};
 

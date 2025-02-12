@@ -12,103 +12,87 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set up Javascript/Node
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.19.0
+      - name: Set up Javascript/Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.19.0
 
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
 
-    - name: Cache multiple paths
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+      - name: Cache multiple paths
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Build
-      run: |
-        npm install
-        npm run compile
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      if: ${{ always() }}
-      with:
-        name: logs
-        path: ~/.npm/_logs/*
-        retention-days: 14
+      - name: Build
+        run: |
+          npm install
+          npm run compile
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
 
-    - name: Set up nodejs
-      uses: actions/setup-node@v4
-      with:
-        node-version: 18.19.0
+      - name: Set up nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.19.0
 
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: '0'
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
 
-    - name: Cache multiple paths
-      uses: actions/cache@v4
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+      - name: Cache multiple paths
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    - name: Install
-      run: |
-        npm install
+      - name: Install
+        run: |
+          npm install
 
-    - name: Tests
-      run: |
-        npm run test-core
-        npm run test-generate
-        npm run test-reports
-        npm run test-neighbor
-        npm run test-dump
+      - name: Tests
+        run: |
+          npm run test-core
+          npm run test-generate
+          npm run test-reports
+          npm run test-neighbor
+          npm run test-dump
 
-    - name: Tests RPKI
-      run: |
-        npm run test-rpki
+      - name: Tests RPKI
+        run: |
+          npm run test-rpki
 
-    - name: Tests Proxy
-      run: |
-        npm install -g anyproxy
-        nohup anyproxy --port 8001 &
-        ANYPROXY_PID=$!
-        npm run test-proxy
-        kill $ANYPROXY_PID
+      - name: Tests Proxy
+        run: |
+          npm install -g anyproxy
+          nohup anyproxy --port 8001 &
+          ANYPROXY_PID=$!
+          npm run test-proxy
+          kill $ANYPROXY_PID
 
-    - name: Tests NPM
-      run: |
-        npm run test-npm
+      - name: Tests NPM
+        run: |
+          npm run test-npm
 
-    - name: Tests Kafka
-      run: |
-        sudo apt-get -y install tar
-        sudo apt-get -y install wget
-        wget -O kafka.tgz https://archive.apache.org/dist/kafka/3.5.0/kafka_2.12-3.5.0.tgz
-        mkdir kafka && tar -xzf kafka.tgz -C kafka --strip-components=1
-        nohup ./kafka/bin/zookeeper-server-start.sh ./kafka/config/zookeeper.properties &
-        nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
-        nohup ./kafka/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
-        sleep 30 && npm run test-kafka
-
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v3
-      if: ${{ always() }}
-      with:
-        name: logs
-        path: ~/.npm/_logs/*
-        retention-days: 14
+      - name: Tests Kafka
+        run: |
+          sudo apt-get -y install tar
+          sudo apt-get -y install wget
+          wget -O kafka.tgz https://archive.apache.org/dist/kafka/3.5.0/kafka_2.12-3.5.0.tgz
+          mkdir kafka && tar -xzf kafka.tgz -C kafka --strip-components=1
+          nohup ./kafka/bin/zookeeper-server-start.sh ./kafka/config/zookeeper.properties &
+          nohup ./kafka/bin/kafka-server-start.sh ./kafka/config/server.properties &
+          nohup ./kafka/bin/kafka-topics.sh --create --topic bgpalerter --bootstrap-server 0.0.0.0:9092 --replication-factor 1 --partitions 1 &
+          sleep 30 && npm run test-kafka

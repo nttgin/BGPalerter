@@ -40,7 +40,7 @@ export default class ReportWebex extends Report {
 
         if (!this.getUserGroup("default")) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: `Webex is not enabled: no default group defined`
             });
             this.enabled = false;
@@ -55,7 +55,7 @@ export default class ReportWebex extends Report {
 
     _sendWebexMessage = (url, message, content) => {
         this.logger.log({
-            level: 'info',
+            level: "info",
             message: `[reportWebex] sending report to: ${url}`
         });
 
@@ -69,14 +69,14 @@ export default class ReportWebex extends Report {
         })
             .catch((error) => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
-            })
+            });
     };
 
     report = (message, content) => {
-        if (this.enabled){
+        if (this.enabled) {
             let groups = content.data.map(i => i.matchedRule.group).filter(i => i != null);
 
             groups = (groups.length) ? [...new Set(groups)] : ["default"];
@@ -89,5 +89,5 @@ export default class ReportWebex extends Report {
             }
         }
 
-    }
+    };
 }

@@ -31,19 +31,19 @@
  */
 
 import fs from "fs";
-import PubSub from './utils/pubSub';
-import FileLogger from 'fast-file-logger';
-import { version } from '../package.json';
-import Storage from './utils/storages/storageFile';
-import RpkiUtils from './utils/rpkiUtils';
-import ConfigYml from './config/configYml';
+import PubSub from "./utils/pubSub";
+import FileLogger from "fast-file-logger";
+import {version} from "../package.json";
+import Storage from "./utils/storages/storageFile";
+import RpkiUtils from "./utils/rpkiUtils";
+import ConfigYml from "./config/configYml";
 import Config from "./config/config";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from "uuid";
 
 const configConnector = new (global.EXTERNAL_CONFIG_CONNECTOR || ConfigYml);
 const vector = {
     version: global.EXTERNAL_VERSION_FOR_TEST || version,
-    clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", 'base64').toString('ascii')
+    clientId: Buffer.from("bnR0LWJncGFsZXJ0ZXI=", "base64").toString("ascii")
 };
 
 const config = configConnector.retrieve();
@@ -75,7 +75,7 @@ if (config.volume && config.volume.length) {
     }
 
     if (!fs.existsSync(config.volume)) {
-        fs.mkdirSync(config.volume, { recursive: true });
+        fs.mkdirSync(config.volume, {recursive: true});
     }
 }
 
@@ -87,16 +87,16 @@ const loggingDirectory = config.volume + config.logging.directory;
 
 try {
     if (!fs.existsSync(loggingDirectory)) {
-        fs.mkdirSync(loggingDirectory, { recursive: true });
+        fs.mkdirSync(loggingDirectory, {recursive: true});
     }
-} catch(error) {
+} catch (error) {
     console.log(error);
 }
 
 const errorTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
-    filename: 'error-%DATE%.log',
-    symLink: 'error.log',
+    filename: "error-%DATE%.log",
+    symLink: "error.log",
     directory: loggingDirectory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
@@ -108,8 +108,8 @@ const errorTransport = new FileLogger({
 
 const verboseTransport = new FileLogger({
     logRotatePattern: config.logging.logRotatePattern,
-    filename: 'reports-%DATE%.log',
-    symLink: 'reports.log',
+    filename: "reports-%DATE%.log",
+    symLink: "reports.log",
     directory: loggingDirectory,
     maxRetainedFiles: config.logging.maxRetainedFiles,
     maxFileSizeMB: config.logging.maxFileSizeMB,
@@ -127,7 +127,7 @@ const loggerTransports = {
 
 const wlogger = {
     log:
-        function(data){
+        function (data) {
             return loggerTransports[data.level].log(data);
         }
 };
@@ -136,7 +136,7 @@ config.monitors = (config.monitors || []);
 config.monitors.push({
     file: "monitorSwUpdates",
     channel: "software-update",
-    name: "software-update",
+    name: "software-update"
 });
 
 
@@ -174,14 +174,14 @@ config.connectors.push({
 });
 
 if ([...new Set(config.connectors)].length !== config.connectors.length) {
-    throw new Error('Connectors names MUST be unique');
+    throw new Error("Connectors names MUST be unique");
 }
 
 config.connectors = config.connectors
     .map((item, index) => {
 
         if (item.name.length !== 3) {
-            throw new Error('Connectors names MUST be exactly 3 letters');
+            throw new Error("Connectors names MUST be exactly 3 letters");
         }
 
         return {

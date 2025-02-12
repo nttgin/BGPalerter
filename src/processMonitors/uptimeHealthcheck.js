@@ -35,7 +35,7 @@ import env from "../env";
 
 export default class UptimeHealthcheck extends Uptime {
 
-    constructor(connectors, params){
+    constructor(connectors, params) {
         super(connectors, params);
 
         setInterval(this.check, params.intervalSeconds * 1000);
@@ -49,7 +49,7 @@ export default class UptimeHealthcheck extends Uptime {
             const query = {
                 url: this.params.url,
                 method,
-                responseType: 'json'
+                responseType: "json"
             };
 
             if (this.params.method === "post") {
@@ -59,7 +59,7 @@ export default class UptimeHealthcheck extends Uptime {
             this.axios(query)
                 .catch(error => {
                     env.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: `UptimeHealthcheck cannot send heartbeat: ${error.message}`
                     });
                 });

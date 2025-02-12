@@ -1,15 +1,15 @@
 [
-  {
-    "asn": "2914",
-    "prefix": "1.2.3.0/24",
-    "maxLength": 24,
-    "ta": "ripe",
-    "expires": 1621691602
-  },
-  {
-    "asn": 2914,
-    "prefix": "2001:db8:123::/48",
-    "maxLength": 48,
-    "ta": "ripe"
-  }
+    {
+        "asn": "2914",
+        "prefix": "1.2.3.0/24",
+        "maxLength": 24,
+        "ta": "ripe",
+        "expires": 1621691602
+    },
+    {
+        "asn": 2914,
+        "prefix": "2001:db8:123::/48",
+        "maxLength": 48,
+        "ta": "ripe"
+    }
 ]

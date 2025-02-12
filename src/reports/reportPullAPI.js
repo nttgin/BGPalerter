@@ -44,29 +44,29 @@ export default class ReportPullAPI extends Report {
         this.maxAlertsAmount = Math.min(this.params.maxAlertsAmount || 25, 100);
         this.lastQuery = null;
 
-        let restDefault = env.config.rest || { port: params.port, host: params.host };
+        let restDefault = env.config.rest || {port: params.port, host: params.host};
         const rest = new RestApi(restDefault);
 
-        rest.addUrl('/alerts', this.respond)
+        rest.addUrl("/alerts", this.respond)
             .catch(error => {
                 env.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
 
-        rest.addUrl('/alerts/:hash', this.respond)
+        rest.addUrl("/alerts/:hash", this.respond)
             .catch(error => {
                 env.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
 
-        rest.addUrl('/alerts/groups/:group', this.respond)
+        rest.addUrl("/alerts/groups/:group", this.respond)
             .catch(error => {
                 env.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
@@ -75,7 +75,7 @@ export default class ReportPullAPI extends Report {
     };
 
     respond = (req, res, next) => {
-        res.contentType = 'json';
+        res.contentType = "json";
         res.send({
             meta: {
                 lastQuery: this.lastQuery
@@ -86,7 +86,7 @@ export default class ReportPullAPI extends Report {
         this.lastQuery = new Date().getTime();
     };
 
-    _getAlerts = ({ hash, group }) => {
+    _getAlerts = ({hash, group}) => {
         let alerts;
 
         if (group) {
@@ -98,7 +98,7 @@ export default class ReportPullAPI extends Report {
         }
 
         return alerts.map(i => i.alert);
-    }
+    };
 
     getUserGroup = (group) => {
         return null;

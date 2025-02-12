@@ -30,14 +30,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import * as Sentry from '@sentry/node';
+import * as Sentry from "@sentry/node";
 
 export default class SentryModule {
 
-    constructor(connectors, params){
+    constructor(connectors, params) {
 
-        if (params.dsn){
-            Sentry.init({ dsn: params.dsn });
+        if (params.dsn) {
+            Sentry.init({dsn: params.dsn});
         }
 
     };

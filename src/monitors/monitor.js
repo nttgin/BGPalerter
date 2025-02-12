@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -62,7 +61,7 @@ export default class Monitor {
         this.internalConfig = {
             notificationInterval: (this.params.notificationIntervalSeconds || this.config.notificationIntervalSeconds || 14400) * 1000,
             checkFadeOffGroups: (this.config.checkFadeOffGroupsSeconds || 30) * 1000,
-            fadeOff:  this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
+            fadeOff: this.config.fadeOffSeconds * 1000 || 60 * 6 * 1000
         };
 
         setInterval(this._publishFadeOffGroups, this.internalConfig.checkFadeOffGroups);
@@ -73,7 +72,7 @@ export default class Monitor {
     };
 
     updateMonitoredResources = () => {
-        throw new Error('The method updateMonitoredResources must be implemented in ' + this.name);
+        throw new Error("The method updateMonitoredResources must be implemented in " + this.name);
     };
 
     monitor = (message) =>
@@ -82,11 +81,11 @@ export default class Monitor {
         });
 
     filter = (message) => {
-        throw new Error('The method filter must be implemented in ' + this.name);
+        throw new Error("The method filter must be implemented in " + this.name);
     };
 
     squashAlerts = (alerts) => {
-        throw new Error('The method squashAlerts must be implemented in ' + this.name);
+        throw new Error("The method squashAlerts must be implemented in " + this.name);
     };
 
     _squash = (id) => {
@@ -114,7 +113,7 @@ export default class Monitor {
                     affected: firstAlert.affected,
                     message,
                     data: alerts
-                }
+                };
             }
         }
     };
@@ -171,14 +170,14 @@ export default class Monitor {
         if (this.config.persistStatus && this.storage) {
             this.storage
                 .get(`status-${this.name}`)
-                .then(({ sent={}, truncated={}, fadeOff={} }) => {
+                .then(({sent = {}, truncated = {}, fadeOff = {}}) => {
                     this.sent = sent;
                     this.truncated = truncated;
                     this.fadeOff = fadeOff;
                 })
                 .catch(error => {
                     this.logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                 });
@@ -186,7 +185,7 @@ export default class Monitor {
     };
 
     _persistStatus = () => {
-        if (this._persistStatusTimer){
+        if (this._persistStatusTimer) {
             clearTimeout(this._persistStatusTimer);
         }
         this._persistStatusTimer = setTimeout(this._persistStatusHelper, 5000);
@@ -205,7 +204,7 @@ export default class Monitor {
                     .set(`status-${this.name}`, status)
                     .catch(error => {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: error
                         });
                     });
@@ -275,8 +274,8 @@ export default class Monitor {
             }
 
             return null;
-        }
-    }
+        };
+    };
 
     getMoreSpecificMatches = (prefix, includeIgnoredMorespecifics, verbose) => {
         return this.input.getMoreSpecificMatches(prefix, includeIgnoredMorespecifics)

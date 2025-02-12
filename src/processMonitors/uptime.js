@@ -36,7 +36,7 @@ import axiosEnrich from "../utils/axiosEnrich";
 
 export default class Uptime {
 
-    constructor(connectors, params){
+    constructor(connectors, params) {
         this.connectors = connectors;
         this.params = params;
 

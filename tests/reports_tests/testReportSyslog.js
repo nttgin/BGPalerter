@@ -31,7 +31,7 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 const Syslogd = require("syslogd");
 const expect = chai.expect;
 const asyncTimeout = 20000;
@@ -40,7 +40,7 @@ chai.use(chaiSubset);
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/reports_tests/config.reports.test.yml";
 
-describe("Reports 1", function() {
+describe("Reports 1", function () {
     const worker = require("../../index");
     const pubSub = worker.pubSub;
 
@@ -53,9 +53,9 @@ describe("Reports 1", function() {
             "The prefix 2001:db8:123::/48 (exact matching test) has been withdrawn."
         ];
 
-        Syslogd(function(info) {
+        Syslogd(function (info) {
             if (!doneCalled) {
-                expect(info.hostname).to.equals('127.0.0.1');
+                expect(info.hostname).to.equals("127.0.0.1");
                 const object = expectedData.filter(i => info.msg.startsWith(i))[0];
                 expectedData = expectedData.filter(i => i !== object);
 
@@ -67,9 +67,9 @@ describe("Reports 1", function() {
                 }
             }
         })
-            .listen(1516, function(error) {
+            .listen(1516, function (error) {
                 if (error) {
-                    console.log(error)
+                    console.log(error);
                 }
             });
 

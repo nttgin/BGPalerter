@@ -8,8 +8,8 @@ export default class ConfigYml extends Config {
         super(params);
         this.configFile = global.EXTERNAL_CONFIG_FILE ||
             ((global.EXTERNAL_VOLUME_DIRECTORY)
-                ? global.EXTERNAL_VOLUME_DIRECTORY + 'config.yml'
-                : path.resolve(process.cwd(), 'config.yml'));
+                ? global.EXTERNAL_VOLUME_DIRECTORY + "config.yml"
+                : path.resolve(process.cwd(), "config.yml"));
 
         this.groupsFile = global.EXTERNAL_GROUP_FILE;
 
@@ -18,8 +18,8 @@ export default class ConfigYml extends Config {
 
     save = (config) => {
         try {
-            fs.writeFileSync(this.configFile,  yaml.dump(config));
-            yaml.load(fs.readFileSync(this.configFile, 'utf8')); // Test readability and format
+            fs.writeFileSync(this.configFile, yaml.dump(config));
+            yaml.load(fs.readFileSync(this.configFile, "utf8")); // Test readability and format
         } catch (error) {
             throw new Error("Cannot save the configuration in " + this.configFile);
         }
@@ -30,7 +30,7 @@ export default class ConfigYml extends Config {
 
         if (fs.existsSync(this.configFile)) {
             try {
-                const config = yaml.load(fs.readFileSync(this.configFile, 'utf8')) || this.default;
+                const config = yaml.load(fs.readFileSync(this.configFile, "utf8")) || this.default;
                 this._readUserGroupsFiles(config);
 
                 return config;
@@ -43,7 +43,7 @@ export default class ConfigYml extends Config {
             this.downloadDefault()
                 .then(data => {
                     fs.writeFileSync(this.configFile, data);
-                    yaml.load(fs.readFileSync(this.configFile, 'utf8')); // Test readability and format
+                    yaml.load(fs.readFileSync(this.configFile, "utf8")); // Test readability and format
 
                     this._readUserGroupsFiles(data);
                 })
@@ -61,7 +61,7 @@ export default class ConfigYml extends Config {
                 ? config.volume + config.groupsFile
                 : path.resolve(process.cwd(), config.groupsFile));
 
-            const userGroups = yaml.load(fs.readFileSync(this.groupsFile, 'utf8'));
+            const userGroups = yaml.load(fs.readFileSync(this.groupsFile, "utf8"));
 
             for (let report of config.reports) {
                 const name = report.file;
@@ -73,10 +73,10 @@ export default class ConfigYml extends Config {
 
             fs.watchFile(this.groupsFile, () => {
                 if (this._watchPrefixFileTimer) {
-                    clearTimeout(this._watchPrefixFileTimer)
+                    clearTimeout(this._watchPrefixFileTimer);
                 }
                 this._watchPrefixFileTimer = setTimeout(() => {
-                    const userGroups = yaml.load(fs.readFileSync(this.groupsFile, 'utf8'));
+                    const userGroups = yaml.load(fs.readFileSync(this.groupsFile, "utf8"));
 
                     for (let report of config.reports) {
                         const name = report.file;

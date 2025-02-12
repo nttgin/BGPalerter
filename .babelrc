@@ -1,20 +1,19 @@
 {
-  "presets": [
-    "@babel/preset-env"
-  ],
-  "plugins": [
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-transform-async-to-generator",
-    "@babel/plugin-proposal-object-rest-spread"
-  ],
-
-  "ignore": [
-    "./node_modules",
-    "./assets",
-    "./view",
-    "./tests",
-    "./logs",
-    "./dist",
-    "./build"
-  ]
+    "presets": [
+        "@babel/preset-env"
+    ],
+    "plugins": [
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-async-to-generator",
+        "@babel/plugin-proposal-object-rest-spread"
+    ],
+    "ignore": [
+        "./node_modules",
+        "./assets",
+        "./view",
+        "./tests",
+        "./logs",
+        "./dist",
+        "./build"
+    ]
 }

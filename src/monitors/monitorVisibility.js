@@ -35,12 +35,12 @@ import ipUtils from "ip-sub";
 
 export default class MonitorVisibility extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
         this.thresholdMinPeers = params?.thresholdMinPeers ?? 40;
         if (params.threshold) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
             });
             this.thresholdMinPeers = params.threshold;
@@ -53,7 +53,7 @@ export default class MonitorVisibility extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'withdrawal';
+        return message.type === "withdrawal";
     };
 
     squashAlerts = (alerts) => {
@@ -86,5 +86,5 @@ export default class MonitorVisibility extends Monitor {
         }
 
         return Promise.resolve(true);
-    }
+    };
 }

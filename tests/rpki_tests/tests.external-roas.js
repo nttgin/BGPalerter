@@ -31,8 +31,8 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
-const fs = require('fs');
+const chaiSubset = require("chai-subset");
+const fs = require("fs");
 const expect = chai.expect;
 const asyncTimeout = 100000;
 chai.use(chaiSubset);
@@ -46,67 +46,67 @@ fs.copyFileSync("tests/rpki_tests/roas.before.json", "tests/rpki_tests/roas.json
 const worker = require("../../index");
 const pubSub = worker.pubSub;
 
-describe("RPKI monitoring external", function() {
+describe("RPKI monitoring external", function () {
 
     it("ROA diff and expiration - external connector", function (done) {
 
         const expectedData = {
             "disappeared-ripe": {
-                id: 'disappeared-ripe',
+                id: "disappeared-ripe",
                 truncated: false,
-                origin: 'roa-monitor',
-                affected: 'ripe',
-                message: 'Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe',
+                origin: "roa-monitor",
+                affected: "ripe",
+                message: "Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe",
                 data: [
                     {
-                        affected: 'ripe',
-                        matchedMessage: 'Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe'
+                        affected: "ripe",
+                        matchedMessage: "Possible TA malfunction or incomplete VRP file: 60.00% of the ROAs disappeared from ripe"
                     }
                 ]
             },
             "expiring-ripe": {
-                id: 'expiring-ripe',
+                id: "expiring-ripe",
                 truncated: false,
-                origin: 'roa-monitor',
-                affected: 'ripe',
-                message: 'Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe',
+                origin: "roa-monitor",
+                affected: "ripe",
+                message: "Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe",
                 data: [
                     {
-                        affected: 'ripe',
-                        matchedMessage: 'Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe',
+                        affected: "ripe",
+                        matchedMessage: "Possible TA malfunction or incomplete VRP file: 50.00% of the ROAs are expiring in ripe",
                         extra: {}
                     }
                 ]
             }
             ,
             "d73cec3dff536ee9d815e2e84a5f0e6e": {
-                id: 'd73cec3dff536ee9d815e2e84a5f0e6e',
+                id: "d73cec3dff536ee9d815e2e84a5f0e6e",
                 truncated: false,
-                origin: 'roa-monitor',
+                origin: "roa-monitor",
                 affected: 2914,
-                message: 'The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>',
+                message: "The following ROAs will expire in less than 2 hours: <1.2.3.0/24, 2914, 24, ripe>"
 
             },
             "e3fe0356a69144801ec33bb0e23a59e0": {
-                id: 'e3fe0356a69144801ec33bb0e23a59e0',
+                id: "e3fe0356a69144801ec33bb0e23a59e0",
                 truncated: false,
-                origin: 'roa-monitor',
-                affected: '94.5.4.3/22',
-                message: 'ROAs change detected: removed <94.5.4.3/22, 2914, 22, ripe>'
+                origin: "roa-monitor",
+                affected: "94.5.4.3/22",
+                message: "ROAs change detected: removed <94.5.4.3/22, 2914, 22, ripe>"
             },
-            "743e491dfaa8a6fcb5193f290d30450e" : {
-                id: '743e491dfaa8a6fcb5193f290d30450e',
+            "743e491dfaa8a6fcb5193f290d30450e": {
+                id: "743e491dfaa8a6fcb5193f290d30450e",
                 truncated: false,
-                origin: 'roa-monitor',
-                affected: '2001:db8:123::/48',
-                message: 'ROAs change detected: removed <2001:db8:123::/48, 65000, 48, ripe>'
+                origin: "roa-monitor",
+                affected: "2001:db8:123::/48",
+                message: "ROAs change detected: removed <2001:db8:123::/48, 65000, 48, ripe>"
             },
             "fca966677a80a6f4b9144452ae23f139": {
-                id: 'fca966677a80a6f4b9144452ae23f139',
+                id: "fca966677a80a6f4b9144452ae23f139",
                 truncated: false,
-                origin: 'roa-monitor',
+                origin: "roa-monitor",
                 affected: 2914,
-                message: 'ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>'
+                message: "ROAs change detected: removed <2.3.4.0/24, 2914, 24, ripe>"
             }
         };
 

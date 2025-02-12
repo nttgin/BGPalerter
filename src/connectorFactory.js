@@ -60,14 +60,14 @@ export default class ConnectorFactory {
 
         connector.onError(error => {
             logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         });
 
         connector.onConnect(message => {
             logger.log({
-                level: 'info',
+                level: "info",
                 message: message
             });
         });
@@ -75,13 +75,13 @@ export default class ConnectorFactory {
         connector.onDisconnect(error => {
             if (error) {
                 logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             } else {
                 logger.log({
-                    level: 'info',
-                    message: connector.name + ' disconnected'
+                    level: "info",
+                    message: connector.name + " disconnected"
                 });
             }
         });
@@ -91,7 +91,7 @@ export default class ConnectorFactory {
                 // If not connected log the error and move on
                 if (error) {
                     logger.log({
-                        level: 'error',
+                        level: "error",
                         message: error
                     });
                 }
@@ -114,11 +114,11 @@ export default class ConnectorFactory {
                             .catch((error) => {
                                 if (error) {
                                     logger.log({
-                                        level: 'error',
+                                        level: "error",
                                         message: error
                                     });
                                 }
-                            })
+                            });
                     });
 
                 resolve(Promise.all(calls));

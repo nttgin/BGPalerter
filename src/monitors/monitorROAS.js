@@ -1,28 +1,28 @@
 import Monitor from "./monitor";
 import md5 from "md5";
-import { getRelevant, diff } from "../utils/rpkiDiffingTool";
+import {diff, getRelevant} from "../utils/rpkiDiffingTool";
 import {AS} from "../model";
 import moment from "moment";
 import ipUtils from "ip-sub";
 import batchPromises from "batch-promises";
 
 const getTaToleranceDict = (tolerance) => {
-    if (typeof(tolerance) === "number") {
+    if (typeof (tolerance) === "number") {
         return {
             ripe: tolerance,
             apnic: tolerance,
             arin: tolerance,
             lacnic: tolerance,
             afrinic: tolerance
-        }
+        };
     }
 
     return tolerance;
-}
+};
 
 export default class MonitorROAS extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
         this.logger = env.logger;
         this.rpki = env.rpki;
@@ -32,8 +32,8 @@ export default class MonitorROAS extends Monitor {
         this.enableExpirationAlerts = params.enableExpirationAlerts ?? true;
         this.enableExpirationCheckTA = params.enableExpirationCheckTA ?? true;
         this.enableDeletedCheckTA = params.enableDeletedCheckTA ?? true;
-        this.diffEverySeconds = Math.max(params.diffEverySeconds || 600,  200);
-        this.checkExpirationVrpsEverySeconds = Math.max(this.diffEverySeconds,  300);
+        this.diffEverySeconds = Math.max(params.diffEverySeconds || 600, 200);
+        this.checkExpirationVrpsEverySeconds = Math.max(this.diffEverySeconds, 300);
         this.checkTaEverySeconds = Math.max(params.checkTaEverySeconds || 15 * 60, this.diffEverySeconds);
         this.enableAdvancedRpkiStats = params.enableAdvancedRpkiStats ?? true;
 
@@ -65,13 +65,13 @@ export default class MonitorROAS extends Monitor {
             }
             setInterval(() => this._skipIfStaleVrps(checkFunction), global.EXTERNAL_ROA_EXPIRATION_TEST || seconds * 1000); // Periodic run
         }
-    }
+    };
 
     _skipIfStaleVrps = (callback) => {
         if (!this.rpki.getStatus().stale) {
             callback();
         }
-    }
+    };
 
     _calculateSizes = (vrps) => {
         const times = {};
@@ -82,7 +82,7 @@ export default class MonitorROAS extends Monitor {
 
         for (let vrp of vrps) {
             times[vrp.ta] = times[vrp.ta] || 0;
-            times[vrp.ta]++
+            times[vrp.ta]++;
             this.seenTAs[vrp.ta] = true;
         }
 
@@ -91,11 +91,11 @@ export default class MonitorROAS extends Monitor {
 
     _checkDeletedRoasTAs = () => {
         const vrps = this.rpki.getVRPs(); // Get all the vrps as retrieved from the rpki validator
-        const sizes =  this._calculateSizes(vrps);
+        const sizes = this._calculateSizes(vrps);
         const metadata = this.rpki.getMetadata();
 
         this.logger.log({
-            level: 'info',
+            level: "info",
             message: "Performing TA deletion check"
         });
 
@@ -137,13 +137,13 @@ export default class MonitorROAS extends Monitor {
         const roaExpirationAlertHours = this.roaExpirationAlertHours;
         const vrps = this.rpki.getVRPs();
         const expiringVrps = vrps
-            .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
+            .filter(i => !!i.expires && (i.expires - moment.utc().unix() < roaExpirationAlertHours * 3600));
 
-        const sizes =  this._calculateSizes(vrps);
-        const expiringSizes =  this._calculateSizes(expiringVrps);
+        const sizes = this._calculateSizes(vrps);
+        const expiringSizes = this._calculateSizes(expiringVrps);
 
         this.logger.log({
-            level: 'info',
+            level: "info",
             message: "Performing TA expiration check"
         });
 
@@ -176,7 +176,7 @@ export default class MonitorROAS extends Monitor {
                     .catch(error => {
 
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: error
                         });
                     });
@@ -189,12 +189,12 @@ export default class MonitorROAS extends Monitor {
         const roas = this.rpki.getVRPs();
         const metadata = this.rpki.getMetadata();
         const expiringRoas = roas
-            .filter(i => !!i.expires && (i.expires - moment.utc().unix()  < roaExpirationAlertHours * 3600));
+            .filter(i => !!i.expires && (i.expires - moment.utc().unix() < roaExpirationAlertHours * 3600));
 
         if (this.enableExpirationAlerts) {
 
             this.logger.log({
-                level: 'info',
+                level: "info",
                 message: "Performing expiration check on VRPs"
             });
 
@@ -206,7 +206,7 @@ export default class MonitorROAS extends Monitor {
 
                 return (this.checkOnlyASns ? Promise.resolve([]) : this._checkExpirationPrefixes(relevantVrps, metadata, roaExpirationAlertHours))
                     .then(alerts => {
-                        return batchPromises(1, asnsIn,  asn => this._checkExpirationAs(relevantVrps, asn, alerts, metadata, roaExpirationAlertHours));
+                        return batchPromises(1, asnsIn, asn => this._checkExpirationAs(relevantVrps, asn, alerts, metadata, roaExpirationAlertHours));
                     });
             }
         }
@@ -224,7 +224,7 @@ export default class MonitorROAS extends Monitor {
                         for (let item of expiring) {
                             uniqItems[item.hash_id] = item;
                         }
-                    })
+                    });
             })
                 .then(() => {
                     const items = Object.values(uniqItems);
@@ -240,7 +240,7 @@ export default class MonitorROAS extends Monitor {
         } else {
             return Promise.resolve({});
         }
-    }
+    };
 
     _checkExpirationPrefixes = (vrps, metadata, roaExpirationAlertHours) => {
         let alerts = [];
@@ -259,7 +259,7 @@ export default class MonitorROAS extends Monitor {
                                     let message = "";
 
                                     if (extra && extra.type === "chain") {
-                                        message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
+                                        message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
                                         message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
                                     } else {
                                         message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
@@ -281,11 +281,11 @@ export default class MonitorROAS extends Monitor {
                                 .catch(error => {
 
                                     this.logger.log({
-                                        level: 'error',
+                                        level: "error",
                                         message: error
                                     });
                                 });
-                        }))
+                        }));
             }))
             .then(() => alerts);
     };
@@ -305,7 +305,7 @@ export default class MonitorROAS extends Monitor {
                             let message = "";
 
                             if (extra && extra.type === "chain") {
-                                message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`
+                                message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
                                 message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
                             } else {
                                 message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
@@ -328,7 +328,7 @@ export default class MonitorROAS extends Monitor {
                         .catch(error => {
 
                             this.logger.log({
-                                level: 'error',
+                                level: "error",
                                 message: error
                             });
                         });
@@ -338,7 +338,7 @@ export default class MonitorROAS extends Monitor {
             return alerts;
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }
@@ -351,7 +351,7 @@ export default class MonitorROAS extends Monitor {
             if (this._oldVrps) { // No diff if there were no vrps before
 
                 this.logger.log({
-                    level: 'info',
+                    level: "info",
                     message: "Performing diff on VRPs"
                 });
 
@@ -408,7 +408,7 @@ export default class MonitorROAS extends Monitor {
             return alerts;
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }
@@ -449,7 +449,7 @@ export default class MonitorROAS extends Monitor {
             return alerts;
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }
@@ -467,7 +467,7 @@ export default class MonitorROAS extends Monitor {
         this.monitored = {
             asns: this.input.getMonitoredASns(),
             prefixes: this.input.getMonitoredPrefixes()
-        }
+        };
     };
 
     filter = (message) => false;

@@ -43,7 +43,7 @@ export default class ReportFile extends Report {
         if (this.persistAlerts && !this.alertsDirectory) {
             this.persistAlerts = false;
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "Cannot persist alert data, the parameter alertDataDirectory is missing."
             });
         }
@@ -60,13 +60,13 @@ export default class ReportFile extends Report {
             const filename = `${this.alertsDirectory}/alert-${timestamp}-${count}.json`;
 
             if (!fs.existsSync(this.alertsDirectory)) {
-                fs.mkdirSync(this.alertsDirectory, { recursive: true });
+                fs.mkdirSync(this.alertsDirectory, {recursive: true});
             }
 
             fs.writeFileSync(filename, JSON.stringify(message));
         } catch (error) {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: error
             });
         }
@@ -74,12 +74,12 @@ export default class ReportFile extends Report {
 
     report = (message, content) => {
         this.logger.log({
-            level: 'verbose',
+            level: "verbose",
             message: content.message
         });
 
         if (this.persistAlerts) {
             this.writeDataOnFile(content);
         }
-    }
+    };
 }

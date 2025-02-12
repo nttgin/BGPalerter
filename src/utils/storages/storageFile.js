@@ -1,16 +1,16 @@
 import Storage from "../storage";
 import fs from "fs";
 
-export default class StorageFile extends Storage{
-    constructor(params, config){
+export default class StorageFile extends Storage {
+    constructor(params, config) {
         super(params, config);
         this.directory = this.config.volume + (this.params.directory || ".cache/");
         this.enabled = true;
         try {
             if (!fs.existsSync(this.directory)) {
-                fs.mkdirSync(this.directory, { recursive: true });
+                fs.mkdirSync(this.directory, {recursive: true});
             }
-        } catch(error) {
+        } catch (error) {
             this.enabled = false;
         }
     };
@@ -36,7 +36,7 @@ export default class StorageFile extends Storage{
                 const file = this.directory + key + ".json";
                 try {
                     if (fs.existsSync(file)) {
-                        resolve(JSON.parse(fs.readFileSync(file, 'utf8')));
+                        resolve(JSON.parse(fs.readFileSync(file, "utf8")));
                     } else {
                         resolve(null);
                     }

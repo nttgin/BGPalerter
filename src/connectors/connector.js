@@ -1,4 +1,3 @@
-
 /*
  * 	BSD 3-Clause License
  *
@@ -33,11 +32,11 @@
 
 import axios from "redaxios";
 import axiosEnrich from "../utils/axiosEnrich";
-import ipUtils from 'ip-sub';
+import ipUtils from "ip-sub";
 
 export default class Connector {
 
-    constructor(name, params, env){
+    constructor(name, params, env) {
         this.version = env.version;
         this.config = env.config;
         this.logger = env.logger;
@@ -54,14 +53,18 @@ export default class Connector {
             `${env.clientId}/${env.version}`);
     }
 
+    static transform = (message) => {
+        throw new Error("The method transform (STATIC) MUST be implemented");
+    };
+
     _parseFilters = (callback) => {
-        const {blacklistSources=[]} = this.params;
+        const {blacklistSources = []} = this.params;
 
         if (blacklistSources) {
             const filters = {
                 asns: blacklistSources.filter(i => Number.isInteger(i)),
-                prefixes: blacklistSources.filter(i => ipUtils.isValidPrefix(i) || ipUtils.isValidIP(i)).map(i => ipUtils.toPrefix(i)),
-            }
+                prefixes: blacklistSources.filter(i => ipUtils.isValidPrefix(i) || ipUtils.isValidIP(i)).map(i => ipUtils.toPrefix(i))
+            };
 
             const generateCallback = (filters, callback) => {
                 return (message) => {
@@ -76,47 +79,46 @@ export default class Connector {
                     } else {
                         return callback(message);
                     }
-                }
-            }
+                };
+            };
 
             return generateCallback(filters, callback);
         } else {
             return null;
         }
-    }
+    };
 
     connect = () =>
-        new Promise((resolve, reject) => reject(new Error('The method connect MUST be implemented')));
-
+        new Promise((resolve, reject) => reject(new Error("The method connect MUST be implemented")));
 
     _error = (error) => {
-        if (this.errorCallback)
+        if (this.errorCallback) {
             this.errorCallback(error);
+        }
     };
 
     subscribe = (input) => {
-        throw new Error('The method subscribe MUST be implemented');
+        throw new Error("The method subscribe MUST be implemented");
     };
 
     _disconnect = (message) => {
         this.connected = false;
-        if (this.disconnectCallback)
+        if (this.disconnectCallback) {
             this.disconnectCallback(message);
+        }
     };
 
     _message = (message) => {
-        if (this.messageCallback)
+        if (this.messageCallback) {
             this.messageCallback(message);
+        }
     };
 
     _connect = (message) => {
         this.connected = true;
-        if (this.connectCallback)
+        if (this.connectCallback) {
             this.connectCallback(message);
-    };
-
-    static transform = (message) => {
-        throw new Error('The method transform (STATIC) MUST be implemented');
+        }
     };
 
     onConnect = (callback) => {

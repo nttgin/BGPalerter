@@ -35,7 +35,7 @@ import ipUtils from "ip-sub";
 
 export default class MonitorNewPrefix extends Monitor {
 
-    constructor(name, channel, params, env, input){
+    constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
         this.thresholdMinPeers = params?.thresholdMinPeers ?? 3;
         this.updateMonitoredResources();
@@ -46,7 +46,7 @@ export default class MonitorNewPrefix extends Monitor {
     };
 
     filter = (message) => {
-        return message.type === 'announcement';
+        return message.type === "announcement";
     };
 
     squashAlerts = (alerts) => {
@@ -81,6 +81,6 @@ export default class MonitorNewPrefix extends Monitor {
         }
 
         return Promise.resolve(true);
-    }
+    };
 
 }

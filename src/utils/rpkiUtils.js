@@ -23,7 +23,7 @@ export default class RpkiUtils {
                 this.params.vrpProvider = providers[0];
                 this.params.url = null;
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "No url provided for the vrps api. Using default vrpProvider."
                 });
             }
@@ -39,7 +39,7 @@ export default class RpkiUtils {
             } else if (!providers.includes(this.params.vrpProvider)) {
                 this.params.vrpProvider = providers[0];
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "The specified vrpProvider is not valid. Using default vrpProvider."
                 });
             }
@@ -50,7 +50,7 @@ export default class RpkiUtils {
         if (this.params.markDataAsStaleAfterMinutes !== undefined) {
             if (this.params.markDataAsStaleAfterMinutes <= this.params.refreshVrpListMinutes) {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: `The specified markDataAsStaleAfterMinutes cannot be <= of refreshVrpListMinutes (${defaultMarkDataAsStaleAfterMinutes} minutes will be used).`
                 });
                 this.params.markDataAsStaleAfterMinutes = defaultMarkDataAsStaleAfterMinutes;
@@ -78,6 +78,7 @@ export default class RpkiUtils {
 
         if (!this.rpki) {
             const rpkiValidatorOptions = {
+                defaultRpkiApi: null,
                 connector: this.params.vrpProvider,
                 clientId: this.clientId,
                 advancedStatsRefreshRateMinutes: this.params.advancedStatsRefreshRateMinutes ?? 120,
@@ -102,7 +103,7 @@ export default class RpkiUtils {
             }
             this.watchFileTimer = setTimeout(() => {
                 this.logger.log({
-                    level: 'info',
+                    level: "info",
                     message: "VRPs reloaded due to file change."
                 });
                 this._loadRpkiValidatorFromVrpFile(vrpFile);
@@ -116,7 +117,7 @@ export default class RpkiUtils {
 
         if (fs.existsSync(vrpFile)) {
             try {
-                let vrps = JSON.parse(fs.readFileSync(vrpFile, 'utf8'));
+                let vrps = JSON.parse(fs.readFileSync(vrpFile, "utf8"));
 
                 if (vrps) {
                     if (vrps.roas && vrps.roas.length) {
@@ -128,6 +129,7 @@ export default class RpkiUtils {
                             this.rpki.empty();
                         } else {
                             this.rpki = new RpkiValidator({
+                                defaultRpkiApi: null,
                                 connector: "external",
                                 clientId: this.clientId
                             });
@@ -138,7 +140,7 @@ export default class RpkiUtils {
 
                     } else {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: "The provided VRPs file is empty. Using default vrpProvider."
                         });
                     }
@@ -146,13 +148,13 @@ export default class RpkiUtils {
 
             } catch (error) {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: "The provided VRPs file cannot be parsed. Using default vrpProvider."
                 });
             }
         } else {
             this.logger.log({
-                level: 'error',
+                level: "error",
                 message: "The provided VRPs file cannot be found. Using default vrpProvider."
             });
         }
@@ -182,12 +184,12 @@ export default class RpkiUtils {
                 .catch(() => {
                     if (!this._cannotDownloadErrorOnce) {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
                         });
                     }
                     this._cannotDownloadErrorOnce = true;
-                })
+                });
         } else {
             this.status.data = true;
             return Promise.resolve();
@@ -197,33 +199,33 @@ export default class RpkiUtils {
     _validateQueue = () => {
         const batch = {};
 
-        for (let { message, matchedRule, callback } of this.queue) {
+        for (let {message, matchedRule, callback} of this.queue) {
             const key = message.originAS.getId() + "-" + message.prefix;
             batch[key] = batch[key] || [];
-            batch[key].push({ message, matchedRule, callback });
+            batch[key].push({message, matchedRule, callback});
         }
         this.queue = [];
 
         this.validateBatch(Object
             .values(batch)
             .map((elements) => {
-                const { message } = elements[0];
+                const {message} = elements[0];
                 return {
                     prefix: message.prefix,
                     origin: message.originAS
                 };
             }))
-            .then((results=[]) => {
+            .then((results = []) => {
                 for (let result of results) {
                     const key = result.origin.getId() + "-" + result.prefix;
-                    for (let { message, matchedRule, callback } of batch[key]) {
+                    for (let {message, matchedRule, callback} of batch[key]) {
                         callback(result, message, matchedRule);
                     }
                 }
             })
             .catch(error => {
                 this.logger.log({
-                    level: 'error',
+                    level: "error",
                     message: error
                 });
             });
@@ -236,7 +238,7 @@ export default class RpkiUtils {
     };
 
     validate = (prefix, origin) => {
-        return this.validateBatch([{ prefix, origin }])
+        return this.validateBatch([{prefix, origin}])
             .then(results => results[0]);
     };
 
@@ -244,14 +246,14 @@ export default class RpkiUtils {
         return this._preCache()
             .then(() => {
                 return Promise.all(batch
-                    .map(({ prefix, origin }) => {
+                    .map(({prefix, origin}) => {
                         const origins = [origin.getValue()].flat();
 
                         return Promise
                             .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
-                            .then((results=[]) => {
+                            .then((results = []) => {
                                 if (results.length === 1) { // Only one result = only one origin, just return
-                                    return { ...results[0], prefix, origin };
+                                    return {...results[0], prefix, origin};
                                 } else { // Multiple origin
                                     if (!!results.length && results.every(result => result && result.valid)) { // All valid
                                         return {
@@ -280,10 +282,10 @@ export default class RpkiUtils {
                     }))
                     .catch(error => {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: "RPKI validation failed due to:" + error
                         });
-                    })
+                    });
             });
     };
 
@@ -309,12 +311,12 @@ export default class RpkiUtils {
                 if (this.status.stale !== stale) {
                     if (stale) {
                         this.logger.log({
-                            level: 'error',
+                            level: "error",
                             message: "The VRP file is stale"
                         });
                     } else {
                         this.logger.log({
-                            level: 'info',
+                            level: "info",
                             message: "The VRP file is back to normal"
                         });
                     }
@@ -329,6 +331,6 @@ export default class RpkiUtils {
 
     getExpiringElements = (vrp, expires) => {
         return this.rpki.getExpiringElements(vrp, expires, moment.utc().unix());
-    }
+    };
 
 }

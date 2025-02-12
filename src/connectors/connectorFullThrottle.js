@@ -36,7 +36,7 @@
 import Connector from "./connector";
 import {AS, Path} from "../model";
 
-export default class ConnectorFullThrottle extends Connector{
+export default class ConnectorFullThrottle extends Connector {
 
     constructor(name, params, env) {
         super(name, params, env);
@@ -110,6 +110,46 @@ export default class ConnectorFullThrottle extends Connector{
         ];
     }
 
+    static transform = (message) => {
+        if (message.type === "ris_message") {
+            message = message.data;
+            const components = [];
+            const announcements = message["announcements"] || [];
+            const withdrawals = message["withdrawals"] || [];
+            const aggregator = message["aggregator"] || null;
+            const peer = message["peer"];
+
+            for (let announcement of announcements) {
+                const nextHop = announcement["next_hop"];
+                const prefixes = announcement["prefixes"] || [];
+                let path = new Path(message["path"].map(i => new AS(i)));
+                let originAS = path.getLast();
+
+                for (let prefix of prefixes) {
+                    components.push({
+                        type: "announcement",
+                        prefix,
+                        peer,
+                        path,
+                        originAS,
+                        nextHop,
+                        aggregator
+                    });
+                }
+            }
+
+            for (let prefix of withdrawals) {
+                components.push({
+                    type: "withdrawal",
+                    prefix,
+                    peer
+                });
+            }
+
+            return components;
+        }
+    };
+
     connect = () =>
         new Promise((resolve, reject) => {
             resolve(true);
@@ -134,45 +174,5 @@ export default class ConnectorFullThrottle extends Connector{
             this.updates.forEach(this._message);
             this.updates.forEach(this._message);
         }, 2);
-    };
-
-    static transform = (message) => {
-        if (message.type === 'ris_message') {
-            message = message.data;
-            const components = [];
-            const announcements = message["announcements"] || [];
-            const withdrawals = message["withdrawals"] || [];
-            const aggregator = message["aggregator"] || null;
-            const peer = message["peer"];
-
-            for (let announcement of announcements){
-                const nextHop = announcement["next_hop"];
-                const prefixes = announcement["prefixes"] || [];
-                let path = new Path(message["path"].map(i => new AS(i)));
-                let originAS = path.getLast();
-
-                for (let prefix of prefixes){
-                    components.push({
-                        type: "announcement",
-                        prefix,
-                        peer,
-                        path,
-                        originAS,
-                        nextHop,
-                        aggregator
-                    })
-                }
-            }
-
-            for (let prefix of withdrawals){
-                components.push({
-                    type: "withdrawal",
-                    prefix,
-                    peer
-                })
-            }
-
-            return components;
-        }
     };
 }

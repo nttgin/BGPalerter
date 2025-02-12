@@ -31,16 +31,16 @@
  */
 
 const chai = require("chai");
-const chaiSubset = require('chai-subset');
+const chaiSubset = require("chai-subset");
 chai.use(chaiSubset);
 const expect = chai.expect;
-const axios = require('redaxios');
+const axios = require("redaxios");
 
 const asyncTimeout = 120000;
 global.EXTERNAL_VERSION_FOR_TEST = "0.0.1";
 global.EXTERNAL_CONFIG_FILE = "tests/proxy_tests/config.proxy.test.yml";
 
-describe("Composition", function() {
+describe("Composition", function () {
 
     const worker = require("../../index");
     const pubSub = worker.pubSub;
@@ -80,7 +80,7 @@ describe("Composition", function() {
                     "volume"
                 ]);
             expect(config.connectors[0]).to.have
-                .property('class')
+                .property("class");
         });
 
     });

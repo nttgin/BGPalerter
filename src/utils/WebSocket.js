@@ -1,7 +1,7 @@
 import _ws from "ws";
 import PubSub from "../utils/pubSub";
 import brembo from "brembo";
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from "uuid";
 import nodeCleanup from "node-cleanup";
 
 export default class WebSocket {
@@ -45,7 +45,7 @@ export default class WebSocket {
         if (this.ws) {
             this._ping();
             if (this.lastPingReceived + (this.pingInterval * nPings) < new Date().getTime()) {
-                this._publishError(`The WebSocket client didn't receive ${nPings} pings. Disconnecting.`)
+                this._publishError(`The WebSocket client didn't receive ${nPings} pings. Disconnecting.`);
                 this.disconnect();
                 this.connect();
             }
@@ -74,23 +74,23 @@ export default class WebSocket {
         this.ws = new _ws(url, this.options);
         this.setOpenTimeout(true);
 
-        this.ws.on('message', (data) => {
+        this.ws.on("message", (data) => {
             this._pingReceived();
             this.pubsub.publish("message", data);
         });
-        this.ws.on('close', data => {
+        this.ws.on("close", data => {
             this.alive = false;
             this.setOpenTimeout(false);
             this.pubsub.publish("close", data);
         });
-        this.ws.on('pong', this._pingReceived);
-        this.ws.on('error', message => {
+        this.ws.on("pong", this._pingReceived);
+        this.ws.on("error", message => {
             this._publishError(message);
         });
-        this.ws.on('open', () => {
+        this.ws.on("open", () => {
             this.alive = true;
             this.setOpenTimeout(false);
-            this.pubsub.publish("open", { connection: this.connectionId });
+            this.pubsub.publish("open", {connection: this.connectionId});
         });
 
         this._startPing();
@@ -121,7 +121,7 @@ export default class WebSocket {
     };
 
     _publishError = (message) => {
-        this.pubsub.publish("error", { type: "error", message, connection: this.connectionId });
+        this.pubsub.publish("error", {type: "error", message, connection: this.connectionId});
     };
 
     setOpenTimeout = (setting) => {
