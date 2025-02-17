@@ -51,7 +51,7 @@
         "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
         "@babel/preset-env": "^7.26.8",
         "@yao-pkg/pkg": "^6.3.0",
-        "chai": "^4.3.10",
+        "chai": "^5.2.0",
         "chai-subset": "^1.6.0",
         "mocha": "^10.7.3",
         "read-last-lines": "^1.8.0",
