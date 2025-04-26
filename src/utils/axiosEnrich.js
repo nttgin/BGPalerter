@@ -1,5 +1,4 @@
 import md5 from "md5";
-import fetch from "node-fetch";
 
 const attempts = {};
 const numAttempts = 2;
@@ -21,7 +20,7 @@ const retry = function (axios, error, params) {
 
 export default function (axios, httpsAgent, userAgent) {
 
-    axios.defaults ??= {fetch};
+    axios.defaults ??= {};
     axios.defaults.headers ??= {};
     axios.defaults.headers.common ??= {};
 
