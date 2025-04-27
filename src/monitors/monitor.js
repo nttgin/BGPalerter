@@ -71,6 +71,10 @@ export default class Monitor {
         });
     };
 
+    getPeers = (alerts) => {
+        return [...new Set(alerts.map(alert => alert.matchedMessage.path.getFirst() ?? alert.matchedMessage.peer))].length;
+    };
+
     updateMonitoredResources = () => {
         throw new Error("The method updateMonitoredResources must be implemented in " + this.name);
     };
