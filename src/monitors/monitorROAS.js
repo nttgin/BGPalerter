@@ -259,7 +259,7 @@ export default class MonitorROAS extends Monitor {
                                     let message = "";
 
                                     if (extra && extra.type === "chain") {
-                                        message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
+                                        message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
                                         message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
                                     } else {
                                         message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
@@ -305,7 +305,7 @@ export default class MonitorROAS extends Monitor {
                             let message = "";
 
                             if (extra && extra.type === "chain") {
-                                message = `The following ROAs will become invalid in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
+                                message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}.`;
                                 message += ` The reason is the expiration of the following parent components: ${extra.expiring.join(", ")}`;
                             } else {
                                 message = `The following ROAs will expire in less than ${roaExpirationAlertHours} hours: ${alertsStrings.join("; ")}`;
