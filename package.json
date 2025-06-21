@@ -77,7 +77,7 @@
         "path": "^0.12.7",
         "redaxios": "^0.5.1",
         "restify": "github:massimocandela/node-restify",
-        "rpki-validator": "^2.13.21",
+        "rpki-validator": "^2.13.22",
         "semver": "^7.7.2",
         "syslog-client": "^1.1.1",
         "uuid": "^11.1.0",
