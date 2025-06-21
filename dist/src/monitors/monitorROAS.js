@@ -254,7 +254,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
             var alertsStrings = _toConsumableArray(new Set(roas.map(_this._roaToString))).sort();
             var message = "";
             if (extra && extra.type === "chain") {
-              message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
+              message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
               message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
             } else {
               message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
@@ -304,7 +304,7 @@ var MonitorROAS = exports["default"] = /*#__PURE__*/function (_Monitor) {
               _this._getExpiringItems(vrps).then(function (extra) {
                 var message = "";
                 if (extra && extra.type === "chain") {
-                  message = "The following ROAs will become invalid in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
+                  message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "), ".");
                   message += " The reason is the expiration of the following parent components: ".concat(extra.expiring.join(", "));
                 } else {
                   message = "The following ROAs will expire in less than ".concat(roaExpirationAlertHours, " hours: ").concat(alertsStrings.join("; "));
