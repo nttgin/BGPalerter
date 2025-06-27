@@ -2,6 +2,10 @@
 [![Build Status](https://github.com/nttgin/BGPalerter/workflows/Main/badge.svg)](https://github.com/nttgin/BGPalerter/actions?query=workflow%3AMain)
 [![Reviewed by Hound](https://img.shields.io/badge/Reviewed_by-Hound-8E64B0.svg)](https://houndci.com)
 
+```
+Development is done in the `dev` branch. The `main` branch is the latest stable release.
+```
+
 # BGPalerter
 Self-configuring BGP monitoring tool, which allows you to monitor in **real-time** if:
 * any of your prefixes loses visibility;
