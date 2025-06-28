@@ -34,7 +34,6 @@ persistStatus: false
 rpki:
   vrpProvider: api
   url: https://rpki.gin.ntt.net/api/export.json
-  preCacheROAs: true
 
 notificationIntervalSeconds: 1800 # Repeat the same alert (which keeps being triggered) after x seconds
 alertOnlyOnce: false

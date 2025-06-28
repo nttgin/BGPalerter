@@ -37,17 +37,6 @@ export default class MonitorRPKI extends Monitor {
     constructor(name, channel, params, env, input) {
         super(name, channel, params, env, input);
 
-        // Warn about deprecated config parameters
-        for (const configParamKey of Object.keys(params)) {
-            const deprecated = ["preCacheROAs", "refreshVrpListMinutes", "vrpFile", "vrpProvider"];
-            if (deprecated.includes(configParamKey)) {
-                this.logger.log({
-                    level: "error",
-                    message: `The parameters ${deprecated.join(",")} are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md`
-                });
-            }
-        }
-
         this.rpki = env.rpki;
         this.cacheValidPrefixesMs = (this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
         this.input.onChange(() => {

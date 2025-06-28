@@ -204,7 +204,6 @@ describe("Core functions", function () {
             expect(config.rpki).to
                 .containSubset({
                     "vrpProvider": "ntt",
-                    "preCacheROAs": true,
                     "refreshVrpListMinutes": 15,
                     "markDataAsStaleAfterMinutes": 120
                 });
