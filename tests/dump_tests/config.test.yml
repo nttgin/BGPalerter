@@ -44,7 +44,6 @@ volume: volumetests/
 
 
 rpki:
-  preCacheROAs: true
   refreshVrpListMinutes: 15
   vrpFile: tests/dump_tests/vrps.json
 

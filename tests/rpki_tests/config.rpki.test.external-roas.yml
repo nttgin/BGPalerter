@@ -38,7 +38,6 @@ checkForUpdatesAtBoot: false
 persistStatus: false
 
 rpki:
-  preCacheROAs: true
   refreshVrpListMinutes: 15
   vrpFile: tests/rpki_tests/roas.json
 

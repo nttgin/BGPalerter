@@ -392,7 +392,6 @@ monitoredPrefixesFiles:
 
 rpki:
   vrpProvider: rpkiclient
-  preCacheROAs: true
   refreshVrpListMinutes: 15
   markDataAsStaleAfterMinutes: 120
 

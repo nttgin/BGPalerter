@@ -1,7 +1,7 @@
 import axios from "redaxios";
 
 export default class Config {
-    static configVersion = 2;
+    static configVersion = 3;
 
     constructor(params) {
         this.default = {
@@ -140,7 +140,6 @@ export default class Config {
             },
             rpki: {
                 vrpProvider: "rpkiclient",
-                preCacheROAs: true,
                 refreshVrpListMinutes: 15,
                 markDataAsStaleAfterMinutes: 120
             },

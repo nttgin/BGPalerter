@@ -16,9 +16,12 @@ export default class RpkiUtils {
         const defaultMarkDataAsStaleAfterMinutes = 120;
         const providers = [...RpkiValidator.providers, "api"];
 
+        if (this.params?.preCacheROAs === false) {
+            throw new Error("The preCacheROAs parameter is not supported anymore");
+        }
+
         if (this.params.url || this.params.vrpProvider === "api") {
             this.params.vrpProvider = "api";
-            this.params.preCacheROAs = true;
             if (!this.params.url) {
                 this.params.vrpProvider = providers[0];
                 this.params.url = null;
@@ -32,7 +35,6 @@ export default class RpkiUtils {
         if (this.params.vrpFile) {
             this.params.vrpProvider = "external";
             this.params.refreshVrpListMinutes = null;
-            this.params.preCacheROAs = true;
         } else {
             if (!this.params.vrpProvider) {
                 this.params.vrpProvider = providers[0];
@@ -44,7 +46,6 @@ export default class RpkiUtils {
                 });
             }
             this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 1);
-            this.params.preCacheROAs = !!(this.params.preCacheROAs ?? true);
         }
 
         if (this.params.markDataAsStaleAfterMinutes !== undefined) {
@@ -90,9 +91,7 @@ export default class RpkiUtils {
             }
             this.rpki = new RpkiValidator(rpkiValidatorOptions);
 
-            if (this.params.preCacheROAs) {
-                this._preCache();
-            }
+            this._preCache();
         }
     };
 
@@ -173,27 +172,22 @@ export default class RpkiUtils {
     };
 
     _preCache = () => {
-        if (!!this.params.preCacheROAs) {
-            return this.rpki
-                .preCache(this.params.refreshVrpListMinutes)
-                .then(data => {
-                    this.status.data = true;
+        return this.rpki
+            .preCache(this.params.refreshVrpListMinutes)
+            .then(data => {
+                this.status.data = true;
 
-                    return data;
-                })
-                .catch(() => {
-                    if (!this._cannotDownloadErrorOnce) {
-                        this.logger.log({
-                            level: "error",
-                            message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
-                        });
-                    }
-                    this._cannotDownloadErrorOnce = true;
-                });
-        } else {
-            this.status.data = true;
-            return Promise.resolve();
-        }
+                return data;
+            })
+            .catch(() => {
+                if (!this._cannotDownloadErrorOnce) {
+                    this.logger.log({
+                        level: "error",
+                        message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                    });
+                }
+                this._cannotDownloadErrorOnce = true;
+            });
     };
 
     _validateQueue = () => {
@@ -302,31 +296,29 @@ export default class RpkiUtils {
     };
 
     _markAsStale = () => {
-        if (!!this.params.preCacheROAs) {
-            const digest = fingerprint(this.getVRPs());
+        const digest = fingerprint(this.getVRPs());
 
-            if (this.oldDigest) {
-                const stale = this.oldDigest === digest;
+        if (this.oldDigest) {
+            const stale = this.oldDigest === digest;
 
-                if (this.status.stale !== stale) {
-                    if (stale) {
-                        this.logger.log({
-                            level: "error",
-                            message: "The VRP file is stale"
-                        });
-                    } else {
-                        this.logger.log({
-                            level: "info",
-                            message: "The VRP file is back to normal"
-                        });
-                    }
+            if (this.status.stale !== stale) {
+                if (stale) {
+                    this.logger.log({
+                        level: "error",
+                        message: "The VRP file is stale"
+                    });
+                } else {
+                    this.logger.log({
+                        level: "info",
+                        message: "The VRP file is back to normal"
+                    });
                 }
-
-                this.status.stale = stale;
             }
 
-            this.oldDigest = digest;
+            this.status.stale = stale;
         }
+
+        this.oldDigest = digest;
     };
 
     getExpiringElements = (vrp, expires) => {
