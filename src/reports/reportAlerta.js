@@ -65,10 +65,7 @@ export default class ReportAlerta extends Report {
         const context = this.getContext(channel, content);
 
         if (this.params.resource_templates) {
-            this.logger.log({
-                level: "info",
-                message: "The resource_templates parameter is deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
-            });
+            throw new Error("The resource_templates parameter has been deprecated in favour of resourceTemplates. Please update your config.yml file accordingly.");
         }
 
         const resource = this.params.resourceTemplates[channel] || this.params.resourceTemplates["default"];

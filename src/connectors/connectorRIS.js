@@ -214,10 +214,6 @@ export default class ConnectorRIS extends Connector {
                     };
                 }
 
-                if (!this.params.noProxy && this.agent) {
-                    wsOptions.agent = this.agent;
-                }
-
                 this.ws = new WebSocket(this.url, wsOptions);
                 this.ws.connect();
                 this._appendListeners(resolve, reject);

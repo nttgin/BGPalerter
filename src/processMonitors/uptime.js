@@ -40,9 +40,7 @@ export default class Uptime {
         this.connectors = connectors;
         this.params = params;
 
-        this.axios = axiosEnrich(axios,
-            (!this.params.noProxy && env.agent) ? env.agent : null,
-            `${env.clientId}/${env.version}`);
+        this.axios = axiosEnrich(axios, `${env.clientId}/${env.version}`);
     };
 
 

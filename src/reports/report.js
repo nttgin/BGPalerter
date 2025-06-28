@@ -51,9 +51,7 @@ export default class Report {
             });
         }
 
-        this.axios = axiosEnrich(axios,
-            (!this.params.noProxy && env.agent) ? env.agent : null,
-            `${env.clientId}/${env.version}`);
+        this.axios = axiosEnrich(axios, `${env.clientId}/${env.version}`);
     }
 
     getBGPlayLink = (prefix, start, end, instant = null, rrcs = [0, 1, 2, 5, 6, 7, 10, 11, 13, 14, 15, 16, 18, 20]) => {

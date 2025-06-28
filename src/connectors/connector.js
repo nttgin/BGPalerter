@@ -48,9 +48,7 @@ export default class Connector {
         this.errorCallback = null;
         this.disconnectCallback = null;
 
-        this.axios = axiosEnrich(axios,
-            (!this.params.noProxy && env.agent) ? env.agent : null,
-            `${env.clientId}/${env.version}`);
+        this.axios = axiosEnrich(axios, `${env.clientId}/${env.version}`);
     }
 
     static transform = (message) => {

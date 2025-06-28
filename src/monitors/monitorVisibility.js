@@ -39,11 +39,7 @@ export default class MonitorVisibility extends Monitor {
         super(name, channel, params, env, input);
         this.thresholdMinPeers = params?.thresholdMinPeers ?? 40;
         if (params.threshold) {
-            this.logger.log({
-                level: "error",
-                message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
-            });
-            this.thresholdMinPeers = params.threshold;
+            throw new Error("The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated.")
         }
         this.updateMonitoredResources();
     };
