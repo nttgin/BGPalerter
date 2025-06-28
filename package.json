@@ -60,7 +60,7 @@
         "brembo": "^2.1.5",
         "deepmerge": "^4.3.1",
         "express": "^5.1.0",
-        "fast-file-logger": "^1.1.5",
+        "fast-file-logger": "^1.1.6",
         "inquirer": "=12.6.3",
         "ip-sub": "^1.7.0",
         "js-yaml": "^4.1.0",
@@ -78,7 +78,7 @@
         "syslog-client": "^1.1.1",
         "uuid": "^11.1.0",
         "ws": "^8.18.3",
-        "yargs": "^17.7.2"
+        "yargs": "=17.7.2"
     },
     "pkg": {
         "scripts": [
