@@ -82,8 +82,7 @@ export default class MonitorRPKI extends Monitor {
     };
 
     squashAlerts = (alerts) => {
-
-        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+        const peers = this.getPeers(alerts);
 
         if (peers >= this.thresholdMinPeers) {
             const firstAlert = alerts[0];

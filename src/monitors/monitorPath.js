@@ -50,7 +50,7 @@ export default class MonitorPath extends Monitor {
 
     squashAlerts = (alerts) => {
         alerts = alerts.filter(i => i.matchedRule && i.matchedRule.path);
-        const peers = [...new Set(alerts.map(alert => alert.matchedMessage.peer))].length;
+        const peers = this.getPeers(alerts);
 
         if (peers >= this.thresholdMinPeers) {
             const lengthViolation = (alerts.some(i => i.extra.lengthViolation)) ? "(including length violation) " : "";
