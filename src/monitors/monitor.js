@@ -72,7 +72,7 @@ export default class Monitor {
     };
 
     getPeers = (alerts) => {
-        return [...new Set(alerts.map(alert => alert.matchedMessage.path.getFirst() ?? alert.matchedMessage.peer))].length;
+        return [...new Set(alerts.map(alert => alert.matchedMessage?.path?.getFirst() ?? alert.matchedMessage.peer))].length;
     };
 
     updateMonitoredResources = () => {
