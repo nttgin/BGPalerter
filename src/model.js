@@ -3,8 +3,12 @@ export class Path {
         this.value = listAS;
     };
 
+    getFirst() {
+        return this.value[0] ?? null;
+    };
+
     getLast() {
-        return this.value[this.value.length - 1];
+        return this.value[this.value.length - 1] ?? null;
     };
 
     length() {
@@ -44,8 +48,12 @@ export class Path {
     }
 
     getNeighbors(of) {
-        const path = [null, ...this.getUniqueValues(), null];
-        const simplePath = path.map(i => i?.numbers?.[0] ?? null);
+        const rawPath = this.getUniqueValues()
+            .slice(1); // Remove peer
+
+        const path = [null, ...rawPath, null];
+        const simplePath = path
+            .map(i => i?.numbers?.[0] ?? null);
         const asn = of.numbers[0];
         const i = simplePath.indexOf(asn);
 
