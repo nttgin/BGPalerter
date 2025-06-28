@@ -185,9 +185,7 @@ config.connectors = config.connectors.map(function (item, index) {
   };
 });
 if (config.httpProxy) {
-  var _require = require("https-proxy-agent"),
-    HttpsProxyAgent = _require.HttpsProxyAgent;
-  vector.agent = new HttpsProxyAgent(config.httpProxy);
+  throw new Error("httpProxy configuration no longer supported");
 }
 vector.storage = new _storageFile["default"]({}, config);
 vector.config = config;

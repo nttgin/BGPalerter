@@ -243,5 +243,5 @@ var Report = exports["default"] = /*#__PURE__*/_createClass(function Report(chan
   } finally {
     _iterator.f();
   }
-  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], !this.params.noProxy && env.agent ? env.agent : null, "".concat(env.clientId, "/").concat(env.version));
+  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], "".concat(env.clientId, "/").concat(env.version));
 });

@@ -266,7 +266,7 @@ var Monitor = exports["default"] = /*#__PURE__*/_createClass(function Monitor(na
   this.name = name;
   this.channel = channel;
   this.monitored = [];
-  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], !this.params.noProxy && env.agent ? env.agent : null, "".concat(env.clientId, "/").concat(env.version));
+  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], "".concat(env.clientId, "/").concat(env.version));
   this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
   this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>
   this.truncated = {}; // Dictionary containing <id, boolean> if the alerts Array for "id" is truncated according to maxDataSamples

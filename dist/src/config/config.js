@@ -154,7 +154,6 @@ var Config = exports["default"] = /*#__PURE__*/_createClass(function Config(para
     },
     rpki: {
       vrpProvider: "rpkiclient",
-      preCacheROAs: true,
       refreshVrpListMinutes: 15,
       markDataAsStaleAfterMinutes: 120
     },
@@ -168,4 +167,4 @@ var Config = exports["default"] = /*#__PURE__*/_createClass(function Config(para
     checkFadeOffGroupsSeconds: 30
   };
 });
-_defineProperty(Config, "configVersion", 2);
+_defineProperty(Config, "configVersion", 3);

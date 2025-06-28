@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-var _restify = _interopRequireDefault(require("restify"));
+var _express = _interopRequireDefault(require("express"));
 function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
@@ -20,18 +20,12 @@ var RestApi = exports["default"] = /*#__PURE__*/_createClass(function RestApi(pa
     if (!_this._serverPromise) {
       _this._serverPromise = new Promise(function (resolve, reject) {
         try {
-          if (_this.host && _this.port) {
-            _this.server = _restify["default"].createServer();
-            _this.server.pre(_restify["default"].pre.sanitizePath());
-            _this.server.listen(_this.port, _this.host);
-            _this.enabled = true;
-            resolve();
-          } else if (_this.port) {
-            _this.server = _restify["default"].createServer();
-            _this.server.pre(_restify["default"].pre.sanitizePath());
-            _this.server.listen(_this.port);
-            _this.enabled = true;
-            resolve();
+          if (_this.port) {
+            _this.server = (0, _express["default"])();
+            _this.server.listen(_this.port, _this.host || undefined, function () {
+              _this.enabled = true;
+              resolve();
+            });
           } else {
             _this.enabled = false;
             reject("The port parameter must be specified to start the REST API.");

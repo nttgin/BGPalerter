@@ -59,8 +59,6 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
     var _this;
     _classCallCheck(this, MonitorRPKI);
     _this = _callSuper(this, MonitorRPKI, [name, channel, params, env, input]);
-
-    // Warn about deprecated config parameters
     _defineProperty(_this, "updateMonitoredResources", function () {
       _this.monitored = _this.input.getMonitoredASns();
     });
@@ -191,16 +189,6 @@ var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
       }
       return Promise.resolve(true);
     });
-    for (var _i2 = 0, _Object$keys2 = Object.keys(params); _i2 < _Object$keys2.length; _i2++) {
-      var configParamKey = _Object$keys2[_i2];
-      var deprecated = ["preCacheROAs", "refreshVrpListMinutes", "vrpFile", "vrpProvider"];
-      if (deprecated.includes(configParamKey)) {
-        _this.logger.log({
-          level: "error",
-          message: "The parameters ".concat(deprecated.join(","), " are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md")
-        });
-      }
-    }
     _this.rpki = env.rpki;
     _this.cacheValidPrefixesMs = (_this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
     _this.input.onChange(function () {

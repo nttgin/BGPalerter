@@ -90,7 +90,6 @@ If the installation doesn't go smoothly, read [here](docs/installation.md). Read
     - [Notification user groups](docs/usergroups.md)
     - [RPKI configuration](docs/rpki.md)
         - [Staging/testing ROAs](docs/rpki.md#stagingtesting-roas)
-    - [HTTP/HTTPS proxy](docs/http-proxy.md)
 - [Update to latest version](docs/update.md)
 - [More information for developers](docs/develop.md)
     - [All npm commands](docs/develop.md#all-npm-commands)

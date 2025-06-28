@@ -141,9 +141,6 @@ var ConnectorRIS = exports["default"] = /*#__PURE__*/function (_Connector) {
               Authorization: _this.params.authorizationHeader
             };
           }
-          if (!_this.params.noProxy && _this.agent) {
-            wsOptions.agent = _this.agent;
-          }
           _this.ws = new _WebSocket["default"](_this.url, wsOptions);
           _this.ws.connect();
           _this._appendListeners(resolve, reject);

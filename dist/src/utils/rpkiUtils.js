@@ -28,7 +28,8 @@ function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object
 function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtils(env) {
-  var _this = this;
+  var _this = this,
+    _this$params;
   _classCallCheck(this, RpkiUtils);
   _defineProperty(this, "_loadRpkiValidatorFromVrpProvider", function () {
     if (!_this.rpki) {
@@ -38,15 +39,13 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
         connector: _this.params.vrpProvider,
         clientId: _this.clientId,
         advancedStatsRefreshRateMinutes: (_this$params$advanced = _this.params.advancedStatsRefreshRateMinutes) !== null && _this$params$advanced !== void 0 ? _this$params$advanced : 120,
-        axios: (0, _axiosEnrich["default"])(_redaxios["default"], !_this.params.noProxy && _this.agent ? _this.agent : null, _this.userAgent)
+        axios: (0, _axiosEnrich["default"])(_redaxios["default"], _this.userAgent)
       };
       if (_this.params.url) {
         rpkiValidatorOptions.url = _this.params.url;
       }
       _this.rpki = new _rpkiValidator["default"](rpkiValidatorOptions);
-      if (_this.params.preCacheROAs) {
-        _this._preCache();
-      }
+      _this._preCache();
     }
   });
   _defineProperty(this, "_watchVrpFile", function (vrpFile) {
@@ -116,23 +115,18 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
     }
   });
   _defineProperty(this, "_preCache", function () {
-    if (!!_this.params.preCacheROAs) {
-      return _this.rpki.preCache(_this.params.refreshVrpListMinutes).then(function (data) {
-        _this.status.data = true;
-        return data;
-      })["catch"](function () {
-        if (!_this._cannotDownloadErrorOnce) {
-          _this.logger.log({
-            level: "error",
-            message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
-          });
-        }
-        _this._cannotDownloadErrorOnce = true;
-      });
-    } else {
+    return _this.rpki.preCache(_this.params.refreshVrpListMinutes).then(function (data) {
       _this.status.data = true;
-      return Promise.resolve();
-    }
+      return data;
+    })["catch"](function () {
+      if (!_this._cannotDownloadErrorOnce) {
+        _this.logger.log({
+          level: "error",
+          message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+        });
+      }
+      _this._cannotDownloadErrorOnce = true;
+    });
   });
   _defineProperty(this, "_validateQueue", function () {
     var batch = {};
@@ -291,42 +285,41 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
     return _this.status;
   });
   _defineProperty(this, "_markAsStale", function () {
-    if (!!_this.params.preCacheROAs) {
-      var digest = (0, _objectFingerprint["default"])(_this.getVRPs());
-      if (_this.oldDigest) {
-        var stale = _this.oldDigest === digest;
-        if (_this.status.stale !== stale) {
-          if (stale) {
-            _this.logger.log({
-              level: "error",
-              message: "The VRP file is stale"
-            });
-          } else {
-            _this.logger.log({
-              level: "info",
-              message: "The VRP file is back to normal"
-            });
-          }
+    var digest = (0, _objectFingerprint["default"])(_this.getVRPs());
+    if (_this.oldDigest) {
+      var stale = _this.oldDigest === digest;
+      if (_this.status.stale !== stale) {
+        if (stale) {
+          _this.logger.log({
+            level: "error",
+            message: "The VRP file is stale"
+          });
+        } else {
+          _this.logger.log({
+            level: "info",
+            message: "The VRP file is back to normal"
+          });
         }
-        _this.status.stale = stale;
       }
-      _this.oldDigest = digest;
+      _this.status.stale = stale;
     }
+    _this.oldDigest = digest;
   });
   _defineProperty(this, "getExpiringElements", function (vrp, expires) {
     return _this.rpki.getExpiringElements(vrp, expires, _moment["default"].utc().unix());
   });
   this.config = env.config;
-  this.agent = env.agent;
   this.params = this.config.rpki || {};
   this.clientId = env.clientId || "";
   this.logger = env.logger;
   this.userAgent = "".concat(this.clientId, "/").concat(env.version);
   var defaultMarkDataAsStaleAfterMinutes = 120;
   var providers = [].concat(_toConsumableArray(_rpkiValidator["default"].providers), ["api"]);
+  if (((_this$params = this.params) === null || _this$params === void 0 ? void 0 : _this$params.preCacheROAs) === false) {
+    throw new Error("The preCacheROAs parameter is not supported anymore");
+  }
   if (this.params.url || this.params.vrpProvider === "api") {
     this.params.vrpProvider = "api";
-    this.params.preCacheROAs = true;
     if (!this.params.url) {
       this.params.vrpProvider = providers[0];
       this.params.url = null;
@@ -339,9 +332,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
   if (this.params.vrpFile) {
     this.params.vrpProvider = "external";
     this.params.refreshVrpListMinutes = null;
-    this.params.preCacheROAs = true;
   } else {
-    var _this$params$preCache;
     if (!this.params.vrpProvider) {
       this.params.vrpProvider = providers[0];
     } else if (!providers.includes(this.params.vrpProvider)) {
@@ -352,7 +343,6 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       });
     }
     this.params.refreshVrpListMinutes = Math.max(this.params.refreshVrpListMinutes || 0, 1);
-    this.params.preCacheROAs = !!((_this$params$preCache = this.params.preCacheROAs) !== null && _this$params$preCache !== void 0 ? _this$params$preCache : true);
   }
   if (this.params.markDataAsStaleAfterMinutes !== undefined) {
     if (this.params.markDataAsStaleAfterMinutes <= this.params.refreshVrpListMinutes) {

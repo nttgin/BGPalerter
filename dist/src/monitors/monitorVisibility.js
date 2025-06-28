@@ -96,11 +96,7 @@ var MonitorVisibility = exports["default"] = /*#__PURE__*/function (_Monitor) {
     });
     _this.thresholdMinPeers = (_params$thresholdMinP = params === null || params === void 0 ? void 0 : params.thresholdMinPeers) !== null && _params$thresholdMinP !== void 0 ? _params$thresholdMinP : 40;
     if (params.threshold) {
-      _this.logger.log({
-        level: "error",
-        message: "The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated."
-      });
-      _this.thresholdMinPeers = params.threshold;
+      throw new Error("The parameter threshold has been replaced by thresholdMinPeers and it will be soon deprecated.");
     }
     _this.updateMonitoredResources();
     return _this;

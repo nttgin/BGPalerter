@@ -24,7 +24,6 @@ module.exports = function generatePrefixes(inputParameters) {
     excludeDelegated = inputParameters.excludeDelegated,
     prefixes = inputParameters.prefixes,
     monitoredASes = inputParameters.monitoredASes,
-    httpProxy = inputParameters.httpProxy,
     debug = inputParameters.debug,
     historical = inputParameters.historical,
     group = inputParameters.group,
@@ -43,13 +42,7 @@ module.exports = function generatePrefixes(inputParameters) {
   group = group || "noc";
   var generateList = {};
   var someNotValidatedPrefixes = false;
-  var proxy;
-  if (httpProxy) {
-    var _require = require("https-proxy-agent"),
-      HttpsProxyAgent = _require.HttpsProxyAgent;
-    proxy = new HttpsProxyAgent(httpProxy);
-  }
-  (0, _axiosEnrich["default"])(_redaxios["default"], proxy, clientId);
+  (0, _axiosEnrich["default"])(_redaxios["default"], clientId);
   if (historical) {
     logger("WARNING: you are using historical visibility data for generating the prefix list.");
   }

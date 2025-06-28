@@ -66,10 +66,7 @@ var ReportAlerta = exports["default"] = /*#__PURE__*/function (_Report) {
       var severity = _this.params && _this.params.severity && _this.params.severity[channel] ? _this.params.severity[channel] : "informational"; // informational level
       var context = _this.getContext(channel, content);
       if (_this.params.resource_templates) {
-        _this.logger.log({
-          level: "info",
-          message: "The resource_templates parameter is deprecated in favour of resourceTemplates. Please update your config.yml file accordingly."
-        });
+        throw new Error("The resource_templates parameter has been deprecated in favour of resourceTemplates. Please update your config.yml file accordingly.");
       }
       var resource = _this.params.resourceTemplates[channel] || _this.params.resourceTemplates["default"];
       _this.axios({

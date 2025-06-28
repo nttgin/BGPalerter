@@ -142,7 +142,7 @@ var Connector = exports["default"] = /*#__PURE__*/_createClass(function Connecto
   this.connectCallback = null;
   this.errorCallback = null;
   this.disconnectCallback = null;
-  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], !this.params.noProxy && env.agent ? env.agent : null, "".concat(env.clientId, "/").concat(env.version));
+  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], "".concat(env.clientId, "/").concat(env.version));
 });
 _defineProperty(Connector, "transform", function (message) {
   throw new Error("The method transform (STATIC) MUST be implemented");

@@ -70,5 +70,5 @@ var Uptime = exports["default"] = /*#__PURE__*/_createClass(function Uptime(_con
   });
   this.connectors = _connectors;
   this.params = params;
-  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], !this.params.noProxy && _env["default"].agent ? _env["default"].agent : null, "".concat(_env["default"].clientId, "/").concat(_env["default"].version));
+  this.axios = (0, _axiosEnrich["default"])(_redaxios["default"], "".concat(_env["default"].clientId, "/").concat(_env["default"].version));
 });

@@ -28,16 +28,11 @@ var retry = function retry(axios, error, params) {
     }, 2000);
   });
 };
-function _default(axios, httpsAgent, userAgent) {
+function _default(axios, userAgent) {
   var _axios$defaults, _axios$defaults2, _axios$defaults2$head, _axios$defaults$heade, _axios$defaults$heade2;
   (_axios$defaults = axios.defaults) !== null && _axios$defaults !== void 0 ? _axios$defaults : axios.defaults = {};
   (_axios$defaults2$head = (_axios$defaults2 = axios.defaults).headers) !== null && _axios$defaults2$head !== void 0 ? _axios$defaults2$head : _axios$defaults2.headers = {};
   (_axios$defaults$heade2 = (_axios$defaults$heade = axios.defaults.headers).common) !== null && _axios$defaults$heade2 !== void 0 ? _axios$defaults$heade2 : _axios$defaults$heade.common = {};
-
-  // Set agent/proxy
-  if (httpsAgent) {
-    axios.defaults.httpsAgent = httpsAgent;
-  }
   if (userAgent) {
     axios.defaults.headers.common = {
       "User-Agent": userAgent
