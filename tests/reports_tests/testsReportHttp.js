@@ -32,7 +32,8 @@
 
 const chai = require("chai");
 const chaiSubset = require("chai-subset");
-const restify = require("restify");
+const express = require("express");
+const bodyParser = require("body-parser");
 const asyncTimeout = 120000;
 chai.use(chaiSubset);
 const assert = chai.assert;
@@ -45,9 +46,8 @@ describe("Reports 2", function () {
     const pubSub = worker.pubSub;
 
     it("reportHTTP", function (done) {
-        const server = restify.createServer();
-        server.pre(restify.pre.sanitizePath());
-        server.use(restify.plugins.bodyParser({mapParams: true}));
+        const server = express();
+        server.use(bodyParser.json());
         let expectedData = [
             "The prefix 2a00:5884::/32 (alarig fix test) is announced by AS15563 instead of AS204092, and AS45. Top 1 most used AS paths: [2,3,15563].",
             "A new prefix 165.254.255.0/25 is announced by AS15562, and AS4. It should be instead 165.254.255.0/24 (description 2) announced by AS15562. Top 1 most used AS paths: [2,3,[15562,4]].",
@@ -55,7 +55,7 @@ describe("Reports 2", function () {
         ];
 
         pubSub.publish("test-type", "hijack");
-        server.post("/test", function (req, res, next) {
+        server.post("/test", function (req, res) {
             const text = req.body.text;
             if (expectedData.includes(text)) {
                 expectedData = expectedData.filter(i => i !== text);
@@ -66,6 +66,7 @@ describe("Reports 2", function () {
             if (expectedData.length === 0) {
                 done();
             }
+            res.status(200).end();
         });
         server.listen(8090);
 
