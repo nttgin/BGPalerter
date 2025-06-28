@@ -1,0 +1,226 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+var _monitor = _interopRequireDefault(require("./monitor"));
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { "default": e }; }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t["return"] || t["return"](); } finally { if (u) throw o; } } }; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /*
+ * 	BSD 3-Clause License
+ *
+ * Copyright (c) 2019, NTT Ltd.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ *
+ *  Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ *  Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from
+ *   this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+var MonitorRPKI = exports["default"] = /*#__PURE__*/function (_Monitor) {
+  function MonitorRPKI(name, channel, params, env, input) {
+    var _params$thresholdMinP;
+    var _this;
+    _classCallCheck(this, MonitorRPKI);
+    _this = _callSuper(this, MonitorRPKI, [name, channel, params, env, input]);
+
+    // Warn about deprecated config parameters
+    _defineProperty(_this, "updateMonitoredResources", function () {
+      _this.monitored = _this.input.getMonitoredASns();
+    });
+    _defineProperty(_this, "filter", function (message) {
+      return message.type === "announcement";
+    });
+    _defineProperty(_this, "squashAlerts", function (alerts) {
+      var peers = _this.getPeers(alerts);
+      if (peers >= _this.thresholdMinPeers) {
+        var firstAlert = alerts[0];
+        var message = firstAlert.matchedMessage;
+        var extra = firstAlert.extra;
+        var covering = extra.covering && extra.covering.length ? extra.covering.map(function (i) {
+          return "".concat(i.prefix, "|AS").concat(i.asn, "|maxLength:").concat(i.maxLength);
+        }).join(", ") : false;
+        var coveringString = covering ? ". Valid ROAs: ".concat(covering) : "";
+        if (extra.roaDisappeared && _this.params.checkDisappearing) {
+          return "The route ".concat(message.prefix, " announced by ").concat(message.originAS, " is no longer covered by a ROA");
+        } else if (extra.valid === null && _this.params.checkUncovered) {
+          return "The route ".concat(message.prefix, " announced by ").concat(message.originAS, " is not covered by a ROA");
+        } else if (extra.valid === false) {
+          return "The route ".concat(message.prefix, " announced by ").concat(message.originAS, " is not RPKI valid").concat(coveringString);
+        }
+      }
+    });
+    _defineProperty(_this, "_validate", function (result, message, matchedRule) {
+      var prefix = result.prefix;
+      var origin = result.origin.getValue();
+      if (result && !_this.rpki.getStatus().stale) {
+        var rpkiMetadata = _this.rpki.getMetadata();
+        var cacheKey = "a" + [prefix, origin].join("-").replace(/\./g, "_").replace(/\:/g, "_").replace(/\//g, "_");
+        var key = "".concat(cacheKey, "-").concat(result.valid);
+        if (result.valid === null) {
+          var cache = _this.seenRpkiValidAnnouncements[cacheKey];
+          if (cache && cache.rpkiValid && cache.date + _this.cacheValidPrefixesMs >= new Date().getTime()) {
+            // valid cache
+            _this.publishAlert(key, prefix, matchedRule, message, {
+              rpkiMetadata: rpkiMetadata,
+              covering: null,
+              valid: null,
+              roaDisappeared: true,
+              subType: "rpki-disappear"
+            });
+          } else if (_this.params.checkUncovered) {
+            _this.publishAlert(key, prefix, matchedRule, message, {
+              rpkiMetadata: rpkiMetadata,
+              covering: null,
+              valid: null,
+              subType: "rpki-unknown"
+            });
+          }
+        } else if (result.valid === false) {
+          _this.publishAlert(key, prefix, matchedRule, message, {
+            rpkiMetadata: rpkiMetadata,
+            covering: result.covering,
+            valid: false,
+            subType: "rpki-invalid"
+          });
+        } else if (result.valid) {
+          // Refresh dictionary
+          _this.seenRpkiValidAnnouncements[cacheKey] = {
+            date: new Date().getTime(),
+            rpkiValid: true
+          };
+          if (_this.seenRpkiValidAnnouncementsTimer) {
+            clearTimeout(_this.seenRpkiValidAnnouncementsTimer);
+          }
+
+          // Store dictionary
+          _this.seenRpkiValidAnnouncementsTimer = setTimeout(function () {
+            var now = new Date().getTime();
+
+            // Delete old cache items
+            for (var _i = 0, _Object$keys = Object.keys(_this.seenRpkiValidAnnouncements); _i < _Object$keys.length; _i++) {
+              var roa = _Object$keys[_i];
+              if (_this.seenRpkiValidAnnouncements[roa].date + _this.cacheValidPrefixesMs < now) {
+                delete _this.seenRpkiValidAnnouncements[roa];
+              }
+            }
+            _this.storage.set(_this.seenRpkiValidAnnouncementsKey, _this.seenRpkiValidAnnouncements)["catch"](function (error) {
+              _this.logger.log({
+                level: "error",
+                message: error
+              });
+            });
+          }, 1000);
+        }
+      }
+    });
+    _defineProperty(_this, "validate", function (message, matchedRule) {
+      _this.rpki.addToValidationQueue(message, matchedRule, _this._validate);
+    });
+    _defineProperty(_this, "monitor", function (message) {
+      try {
+        var messageOrigin = message.originAS;
+        var prefix = message.prefix;
+        var matchedPrefixRules = _this.getMoreSpecificMatches(prefix, false, true);
+        if (matchedPrefixRules.length) {
+          var _iterator = _createForOfIteratorHelper(matchedPrefixRules),
+            _step;
+          try {
+            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+              var matchedPrefixRule = _step.value;
+              if (matchedPrefixRule.matched) {
+                // There is a prefix match
+                if (!matchedPrefixRule.matched.ignore && matchedPrefixRule.included) {
+                  // The prefix match is not excluded in any way
+                  _this.validate(message, matchedPrefixRule.matched);
+                }
+              }
+            }
+          } catch (err) {
+            _iterator.e(err);
+          } finally {
+            _iterator.f();
+          }
+        } else {
+          var matchedASRule = _this.getMonitoredAsMatch(messageOrigin); // Try AS match
+          if (matchedASRule) {
+            _this.validate(message, matchedASRule);
+          }
+        }
+      } catch (error) {
+        _this.logger.log({
+          level: "error",
+          message: error
+        });
+      }
+      return Promise.resolve(true);
+    });
+    for (var _i2 = 0, _Object$keys2 = Object.keys(params); _i2 < _Object$keys2.length; _i2++) {
+      var configParamKey = _Object$keys2[_i2];
+      var deprecated = ["preCacheROAs", "refreshVrpListMinutes", "vrpFile", "vrpProvider"];
+      if (deprecated.includes(configParamKey)) {
+        _this.logger.log({
+          level: "error",
+          message: "The parameters ".concat(deprecated.join(","), " are deprecated in monitorRPKI. Please use see here: https://github.com/nttgin/BGPalerter/blob/main/docs/rpki.md")
+        });
+      }
+    }
+    _this.rpki = env.rpki;
+    _this.cacheValidPrefixesMs = (_this.params.cacheValidPrefixesSeconds || 3600 * 24 * 7) * 1000;
+    _this.input.onChange(function () {
+      _this.updateMonitoredResources();
+    });
+    _this.thresholdMinPeers = (_params$thresholdMinP = params === null || params === void 0 ? void 0 : params.thresholdMinPeers) !== null && _params$thresholdMinP !== void 0 ? _params$thresholdMinP : 1;
+    _this.seenRpkiValidAnnouncementsKey = "seen-rpki-valid-announcements";
+    _this.seenRpkiValidAnnouncements = {};
+    _this.storage // Reload the previously discovered ROAs (needed to alert in case of disappearing ROAs)
+    .get(_this.seenRpkiValidAnnouncementsKey).then(function (prefixes) {
+      _this.seenRpkiValidAnnouncements = prefixes ? prefixes : {};
+    })["catch"](function (error) {
+      _this.logger.log({
+        level: "error",
+        message: error
+      });
+    });
+    _this.queue = [];
+    return _this;
+  }
+  _inherits(MonitorRPKI, _Monitor);
+  return _createClass(MonitorRPKI);
+}(_monitor["default"]);
