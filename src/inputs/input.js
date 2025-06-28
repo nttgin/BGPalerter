@@ -172,91 +172,82 @@ export default class Input {
         throw new Error("The method retrieve MUST be implemented");
     };
 
-    generate = () => {
-        return inquirer
-            .prompt([
+    async generate() {
+        try {
+            const answer = await inquirer.prompt([
                 {
                     type: "confirm",
                     name: "continue",
                     message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
                     default: true
                 }
-            ])
-            .then((answer) => {
-                if (answer.continue) {
-                    return inquirer
-                        .prompt([
-                            {
-                                type: "input",
-                                name: "asns",
-                                message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
-                                default: null,
-                                validate: function (value) {
-                                    const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
-                                    return asns.length > 0;
-                                }
-                            },
+            ]);
+            if (!answer.continue) throw new Error("Nothing to monitor.");
 
-                            {
-                                type: "confirm",
-                                name: "m",
-                                message: "Do you want to be notified when your AS is announcing a new prefix?",
-                                default: true
-                            },
+            const nextAnswers = await inquirer.prompt([
+                {
+                    type: "input",
+                    name: "asns",
+                    message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
+                    default: "",
+                    validate: function (value) {
+                        const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
+                        return asns.length > 0;
+                    }
+                },
 
-                            {
-                                type: "confirm",
-                                name: "upstreams",
-                                message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
-                                default: true
-                            },
-                            {
-                                type: "confirm",
-                                name: "downstreams",
-                                message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
-                                default: true
-                            }
-                        ])
-                        .then((answer) => {
-                            const asns = answer.asns.split(",");
+                {
+                    type: "confirm",
+                    name: "m",
+                    message: "Do you want to be notified when your AS is announcing a new prefix?",
+                    default: true
+                },
 
-                            const inputParameters = {
-                                asnList: asns,
-                                exclude: [],
-                                excludeDelegated: true,
-                                prefixes: null,
-                                monitoredASes: answer.m ? asns : [],
-                                debug: false,
-                                historical: false,
-                                group: null,
-                                append: false,
-                                logger: null,
-                                upstreams: !!answer.upstreams,
-                                downstreams: !!answer.downstreams,
-                                getCurrentPrefixesList: () => {
-                                    return this.retrieve();
-                                }
-                            };
-
-                            return generatePrefixes(inputParameters);
-
-                        });
-                } else {
-                    throw new Error("Nothing to monitor.");
+                {
+                    type: "confirm",
+                    name: "upstreams",
+                    message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
+                    default: true
+                },
+                {
+                    type: "confirm",
+                    name: "downstreams",
+                    message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
+                    default: true
                 }
-            })
-            .then(this.save)
-            .then(() => {
-                console.log("Done!");
-            })
-            .catch(error => {
-                console.log(error);
-                this.logger.log({
-                    level: "error",
-                    message: error
-                });
-                process.exit();
+            ]);
+
+            const asns = nextAnswers.asns.split(",");
+
+            const inputParameters = {
+                asnList: asns,
+                exclude: [],
+                excludeDelegated: true,
+                prefixes: null,
+                monitoredASes: nextAnswers.m ? asns : [],
+                debug: false,
+                historical: false,
+                group: null,
+                append: false,
+                logger: null,
+                upstreams: !!nextAnswers.upstreams,
+                downstreams: !!nextAnswers.downstreams,
+                getCurrentPrefixesList: () => {
+                    return this.retrieve();
+                }
+            };
+
+            const result = await generatePrefixes(inputParameters);
+            await this.save(result);
+            console.log("Done!");
+        } catch (error) {
+            console.log(error);
+            this.logger.log({
+                level: "error",
+                message: error
             });
+            process.exit();
+        }
     };
 
     _reGeneratePrefixList = () => {
