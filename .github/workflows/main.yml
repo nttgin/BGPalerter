@@ -74,14 +74,6 @@ jobs:
         run: |
           npm run test-rpki
 
-      - name: Tests Proxy
-        run: |
-          npm install -g anyproxy
-          nohup anyproxy --port 8001 &
-          ANYPROXY_PID=$!
-          npm run test-proxy
-          kill $ANYPROXY_PID
-
       - name: Tests NPM
         run: |
           npm run test-npm

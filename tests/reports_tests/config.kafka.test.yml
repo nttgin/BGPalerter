@@ -263,16 +263,6 @@ checkForUpdatesAtBoot: true
 monitoredPrefixesFiles:
   - prefixes.yml
 
-
-############################
-# HTTP proxy setting:
-# Allow to run BGPalerter behind an HTTP/HTTPS proxy.
-# You can also specify which module can bypass the proxy.
-# More information here: https://github.com/nttgin/BGPalerter/blob/main/docs/http-proxy.md
-
-# httpProxy: http://username:password@127.0.0.1:9000
-
-
 ############################
 # Advanced settings (Don't touch here!)
 # Please, refer to the documentation to know the meaning of the following parameters.

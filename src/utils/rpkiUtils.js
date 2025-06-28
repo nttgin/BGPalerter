@@ -8,7 +8,6 @@ import fingerprint from "object-fingerprint";
 export default class RpkiUtils {
     constructor(env) {
         this.config = env.config;
-        this.agent = env.agent;
         this.params = this.config.rpki || {};
         this.clientId = env.clientId || "";
         this.logger = env.logger;
@@ -83,7 +82,7 @@ export default class RpkiUtils {
                 connector: this.params.vrpProvider,
                 clientId: this.clientId,
                 advancedStatsRefreshRateMinutes: this.params.advancedStatsRefreshRateMinutes ?? 120,
-                axios: axiosEnrich(axios, (!this.params.noProxy && this.agent) ? this.agent : null, this.userAgent)
+                axios: axiosEnrich(axios, this.userAgent)
             };
 
             if (this.params.url) {

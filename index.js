@@ -100,10 +100,6 @@ const params = yargs
             .nargs("m", 0)
             .describe("m", "Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.")
 
-            .alias("x", "proxy")
-            .nargs("x", 1)
-            .describe("x", "HTTP/HTTPS proxy to use")
-
             .alias("g", "group")
             .nargs("g", 1)
             .describe("x", "Define a user group for all the generated rules.")
@@ -174,7 +170,6 @@ switch (params._[0]) {
             excludeDelegated: params.i || false,
             prefixes,
             monitoredASes,
-            httpProxy: params.x || null,
             debug,
             historical,
             group: params.g || null,

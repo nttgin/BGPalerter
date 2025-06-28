@@ -226,7 +226,6 @@ export default class Input {
                                 excludeDelegated: true,
                                 prefixes: null,
                                 monitoredASes: answer.m ? asns : [],
-                                httpProxy: this.config.httpProxy || null,
                                 debug: false,
                                 historical: false,
                                 group: null,
@@ -276,7 +275,6 @@ export default class Input {
                     throw new Error("The prefix list cannot be refreshed because it was not generated automatically.");
                 }
 
-                inputParameters.httpProxy = this.config.httpProxy || null;
                 inputParameters.logger = (message) => {
                     // Nothing, ignore logs in this case (too many otherwise)
                 };

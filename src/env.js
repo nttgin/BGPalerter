@@ -193,8 +193,7 @@ config.connectors = config.connectors
     });
 
 if (config.httpProxy) {
-    const {HttpsProxyAgent} = require("https-proxy-agent");
-    vector.agent = new HttpsProxyAgent(config.httpProxy);
+    throw new Error("httpProxy configuration no longer supported")
 }
 
 vector.storage = new Storage({}, config);

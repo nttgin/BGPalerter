@@ -48,9 +48,7 @@ export default class Monitor {
         this.channel = channel;
         this.monitored = [];
 
-        this.axios = axiosEnrich(axios,
-            (!this.params.noProxy && env.agent) ? env.agent : null,
-            `${env.clientId}/${env.version}`);
+        this.axios = axiosEnrich(axios, `${env.clientId}/${env.version}`);
 
         this.alerts = {}; // Dictionary containing the alerts <id, Array>. The id is the "group" key of the alert.
         this.sent = {}; // Dictionary containing the last sent unix timestamp of each group <id, int>

@@ -17,7 +17,6 @@ module.exports = function generatePrefixes(inputParameters) {
         excludeDelegated,
         prefixes,
         monitoredASes,
-        httpProxy,
         debug,
         historical,
         group,
@@ -38,12 +37,7 @@ module.exports = function generatePrefixes(inputParameters) {
     const generateList = {};
     let someNotValidatedPrefixes = false;
 
-    let proxy;
-    if (httpProxy) {
-        const {HttpsProxyAgent} = require("https-proxy-agent");
-        proxy = new HttpsProxyAgent(httpProxy);
-    }
-    axiosEnrich(axios, proxy, clientId);
+    axiosEnrich(axios, clientId);
 
     if (historical) {
         logger("WARNING: you are using historical visibility data for generating the prefix list.");

@@ -18,16 +18,11 @@ const retry = function (axios, error, params) {
     });
 };
 
-export default function (axios, httpsAgent, userAgent) {
+export default function (axios, userAgent) {
 
     axios.defaults ??= {};
     axios.defaults.headers ??= {};
     axios.defaults.headers.common ??= {};
-
-    // Set agent/proxy
-    if (httpsAgent) {
-        axios.defaults.httpsAgent = httpsAgent;
-    }
 
     if (userAgent) {
         axios.defaults.headers.common = {
