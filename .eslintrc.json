@@ -1,21 +1,13 @@
 {
-    "parser": "babel-eslint",
-    "ecmaFeatures": {
-        "modules": true,
-        "spread": true,
-        "restParams": true
-    },
+    "parser": "@babel/eslint-parser",
     "env": {
         "browser": false,
         "node": true,
-        "es6": true,
+        "es2022": true,
         "mocha": true
     },
     "parserOptions": {
-        "ecmaVersion": 6,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
+        "ecmaVersion": 2022,
+        "sourceType": "module"
     }
 }
