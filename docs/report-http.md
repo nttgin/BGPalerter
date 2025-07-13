@@ -108,28 +108,53 @@ reports:
     params:
       templates:
         default: '{
-                    "@type": "MessageCard",
-                    "@context": "http://schema.org/extensions",
-                    "themeColor": "d76100",
-                    "summary": "BGPalerter",
-                    "sections": [{
-                        "activityTitle": "BGPalerter",
-                        "activitySubtitle": "${channel}",
-                        "facts": [{
-                            "name": "Summary",
-                            "value": "${summary}"
-                        }, {
-                            "name": "Event type",
-                            "value": "${type}"
-                        }, {
-                            "name": "First event",
-                            "value": "${earliest} UTC"
-                        }, {
-                            "name": "Last event",
-                            "value": "${latest} UTC"
-                        }],
-                        "markdown": true
-                    }]
+                  "type": "message",
+                  "attachments": [
+                    {
+                      "contentType": "application/vnd.microsoft.card.adaptive",
+                      "contentUrl": null,
+                      "content": {
+                        "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                        "type": "AdaptiveCard",
+                        "version": "1.2",
+                        "body": [
+                          {
+                            "type": "TextBlock",
+                            "text": "BGPalerter",
+                            "weight": "Bolder",
+                            "size": "Medium"
+                          },
+                          {
+                            "type": "TextBlock",
+                            "text": "${channel}",
+                            "isSubtle": true,
+                            "wrap": true
+                          },
+                          {
+                            "type": "FactSet",
+                            "facts": [
+                              {
+                                "title": "Summary",
+                                "value": "${summary}"
+                              },
+                              {
+                                "title": "Event type",
+                                "value": "${type}"
+                              },
+                              {
+                                "title": "First event",
+                                "value": "${earliest} UTC"
+                              },
+                              {
+                                "title": "Last event",
+                                "value": "${latest} UTC"
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }'
       isTemplateJSON: true
       headers:
