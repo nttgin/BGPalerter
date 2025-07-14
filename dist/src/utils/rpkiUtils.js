@@ -122,7 +122,7 @@ var RpkiUtils = exports["default"] = /*#__PURE__*/_createClass(function RpkiUtil
       if (!_this._cannotDownloadErrorOnce) {
         _this.logger.log({
           level: "error",
-          message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+          message: "The VRP list cannot be downloaded."
         });
       }
       _this._cannotDownloadErrorOnce = true;
