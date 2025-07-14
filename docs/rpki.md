@@ -28,8 +28,6 @@ Instead, you can specify your own VRPs in two ways:
 * Using your own API producing JSON output;
 * Using your favourite rpki validator to generate a file locally.
 
-> In case the download of the VRP data fails, an online provider is used (the error is reported in the logs).
-
 ### Use your own API
 To use your own API you need to set the following options in config.yml:
 

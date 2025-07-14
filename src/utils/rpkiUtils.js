@@ -182,7 +182,7 @@ export default class RpkiUtils {
                 if (!this._cannotDownloadErrorOnce) {
                     this.logger.log({
                         level: "error",
-                        message: "The VRP list cannot be downloaded. The RPKI monitoring should be working anyway with one of the on-line providers."
+                        message: "The VRP list cannot be downloaded."
                     });
                 }
                 this._cannotDownloadErrorOnce = true;
