@@ -113,7 +113,7 @@ export default class Config {
                 },
                 {
                     file: "monitorPathNeighbors",
-                    channel: "hijack",
+                    channel: "path",
                     name: "path-neighbors",
                     params: {
                         thresholdMinPeers: 3
