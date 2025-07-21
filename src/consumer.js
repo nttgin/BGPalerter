@@ -68,18 +68,25 @@ export default class Consumer {
 
                 for (let monitor of this.monitors) {
 
-                    // Blocking filtering to reduce stack usage
-                    for (const message of messages.filter(monitor.filter)) {
+                    try {
+                        // Blocking filtering to reduce stack usage
+                        for (const message of messages.filter(monitor.filter)) {
 
-                        // Promise call to reduce waiting times
-                        monitor
-                            .monitor(message)
-                            .catch(error => {
-                                this.logger.log({
-                                    level: "error",
-                                    message: error
+                            // Promise call to reduce waiting times
+                            monitor
+                                .monitor(message)
+                                .catch(error => {
+                                    this.logger.log({
+                                        level: "error",
+                                        message: error
+                                    });
                                 });
-                            });
+                        }
+                    } catch (error) {
+                        this.logger.log({
+                            level: "error",
+                            message: error.message
+                        });
                     }
                 }
             }
