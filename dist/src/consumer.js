@@ -63,24 +63,31 @@ var Consumer = exports["default"] = /*#__PURE__*/_createClass(function Consumer(
           try {
             for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
               var monitor = _step2.value;
-              // Blocking filtering to reduce stack usage
-              var _iterator3 = _createForOfIteratorHelper(messages.filter(monitor.filter)),
-                _step3;
               try {
-                for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-                  var message = _step3.value;
-                  // Promise call to reduce waiting times
-                  monitor.monitor(message)["catch"](function (error) {
-                    _this.logger.log({
-                      level: "error",
-                      message: error
+                // Blocking filtering to reduce stack usage
+                var _iterator3 = _createForOfIteratorHelper(messages.filter(monitor.filter)),
+                  _step3;
+                try {
+                  for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+                    var message = _step3.value;
+                    // Promise call to reduce waiting times
+                    monitor.monitor(message)["catch"](function (error) {
+                      _this.logger.log({
+                        level: "error",
+                        message: error
+                      });
                     });
-                  });
+                  }
+                } catch (err) {
+                  _iterator3.e(err);
+                } finally {
+                  _iterator3.f();
                 }
-              } catch (err) {
-                _iterator3.e(err);
-              } finally {
-                _iterator3.f();
+              } catch (error) {
+                _this.logger.log({
+                  level: "error",
+                  message: error.message
+                });
               }
             }
           } catch (err) {

@@ -130,7 +130,7 @@ var Config = exports["default"] = /*#__PURE__*/_createClass(function Config(para
       }
     }, {
       file: "monitorPathNeighbors",
-      channel: "hijack",
+      channel: "path",
       name: "path-neighbors",
       params: {
         thresholdMinPeers: 3
