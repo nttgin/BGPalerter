@@ -537,7 +537,7 @@ export default class ConnectorTest extends Connector {
                     {
                         data: {
                             announcements: [{
-                                prefixes: ["99.5.4.3/22"], // Monitored, path with wrong downstream
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with unexpected downstream
                                 next_hop: "124.0.0.3"
                             }],
                             peer: "124.0.0.3",
@@ -548,7 +548,7 @@ export default class ConnectorTest extends Connector {
                     {
                         data: {
                             announcements: [{
-                                prefixes: ["99.5.4.3/22"], // Monitored, path with wrong upstream
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with unexpected upstream
                                 next_hop: "124.0.0.3"
                             }],
                             peer: "124.0.0.3",
@@ -575,6 +575,28 @@ export default class ConnectorTest extends Connector {
                             }],
                             peer: "124.0.0.3",
                             path: [98, 99, 80, 100]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with prepending and different origin
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 80, 102, 102, 102, 102, 50]
+                        },
+                        type: "ris_message"
+                    },
+                    {
+                        data: {
+                            announcements: [{
+                                prefixes: ["99.5.4.3/22"], // Monitored, path with loop, skipped
+                                next_hop: "124.0.0.3"
+                            }],
+                            peer: "124.0.0.3",
+                            path: [98, 99, 80, 102, 50, 101, 50, 102]
                         },
                         type: "ris_message"
                     }

@@ -142,7 +142,39 @@ describe("Alerting", function () {
                     },
                     "extra": {"side": "downstream", "neighbor": 106}
                 }]
+            },
+            "80-102": {
+                "id": "80-102",
+                "truncated": false,
+                "origin": "path-neighbors",
+                "affected": 80,
+                "message": "A new downstream of AS80 has been detected: AS102",
+                "data": [{
+                    "affected": 80,
+                    "matchedRule": {
+                        "asn": [80],
+                        "group": ["default"],
+                        "upstreams": [99],
+                        "downstreams": null
+                    },
+                    "matchedMessage": {
+                        "type": "announcement",
+                        "prefix": "99.5.4.3/22",
+                        "peer": "124.0.0.3",
+                        "path": [98, 99, 80, 102, 102, 102, 102, 50],
+                        "originAS": [50],
+                        "nextHop": "124.0.0.3",
+                        "aggregator": null,
+                        "communities": []
+                    },
+                    "extra": {
+                        "side": "downstream",
+                        "neighbor": 102
+                    }
+                }]
             }
+
+
         };
 
         let pathNeighborsTestcompleted = false;

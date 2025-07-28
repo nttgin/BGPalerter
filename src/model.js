@@ -27,43 +27,43 @@ export class Path {
         return this.getValues();
     };
 
-    getUniqueValues() {
-        if (!this.uniqueValues) {
-            const index = {};
-            const out = [];
-
-            for (let asn of this.value) {
-                const key = asn.getId();
-
-                if (!index[key]) {
-                    out.push(asn);
-                    index[key] = asn;
-                }
+    _hasLoop(arr) {
+        const seen = new Set();
+        for (let i = 0; i < arr.length; i++) {
+            if (seen.has(arr[i]) && arr[i] !== arr[i - 1]) {
+                return true;
             }
-
-            this.uniqueValues = out;
+            seen.add(arr[i]);
         }
 
-        return this.uniqueValues ?? [];
+        return false;
+    }
+
+    getSimplePath() {
+        return this.value.map(i => i.numbers?.[0]).flat();
     }
 
     getNeighbors(of) {
-        const rawPath = this.getUniqueValues()
-            .slice(1); // Remove peer
+        const simplePath = this.getSimplePath();
 
-        const path = [null, ...rawPath, null];
-        const simplePath = path
-            .map(i => i?.numbers?.[0] ?? null);
-        const asn = of.numbers[0];
-        const i = simplePath.indexOf(asn);
-
-        if (i >= 0) {
-            const [left = null, current = null, right = null] = path.slice(i - 1, i + 2);
-
-            return [left ?? null, current, right ?? null];
+        if (this._hasLoop(simplePath)) { // Skip BGP loops
+            return [null, null];
         }
 
-        return [null, null, null];
+        const path = [...new Set(simplePath)].slice(1); // Remove duplicates and peer
+
+        const asn = of.numbers[0];
+        const i = path.indexOf(asn);
+
+        if (i >= 0) {
+
+            const left = path?.[i - 1];
+            const right = path?.[i + 1];
+
+            return [left ? new AS(left) : null, right ? new AS(right) : null];
+        } else {
+            return [null, null];
+        }
     };
 
     includes(asn) {
