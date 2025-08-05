@@ -79,7 +79,8 @@ describe("Core functions", function () {
                     "groupsFile",
                     "persistStatus",
                     "rpki",
-                    "rest"
+                    "rest",
+                    "configVersion"
                 ]);
 
             expect(config.connectors[0]).to.have

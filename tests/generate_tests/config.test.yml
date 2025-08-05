@@ -46,18 +46,6 @@ monitors:
 
 
 reports:
-#  - file: reportFile
-#    channels:
-#      - hijack
-#      - newprefix
-#      - visibility
-#      - path
-#      - misconfiguration
-#      - rpki
-#    params:
-#      persistAlertData: false
-#      alertDataDirectory: alertdata/
-
 
 # The file containing the monitored prefixes. Please see monitored_prefixes_test.yml for an example
 # This is an array (use new lines and dashes!)
@@ -80,3 +68,4 @@ checkFadeOffGroupsSeconds: 2
 pidFile: bgpalerter.pid
 multiProcess: false
 maxMessagesPerSecond: 6000
+configVersion: 3

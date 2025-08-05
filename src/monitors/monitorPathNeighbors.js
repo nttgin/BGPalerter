@@ -68,9 +68,9 @@ export default class MonitorPathNeighbors extends Monitor {
 
             for (let monitoredAs of this.monitored) {
                 if (monitoredAs.upstreams !== undefined || monitoredAs.downstreams !== undefined) {
-                    const [left, _, right] = path.getNeighbors(monitoredAs.asn);
+                    const [left, right] = path.getNeighbors(monitoredAs.asn);
 
-                    if (!!left || !!right) {
+                    if (left || right) {
                         let match = false;
                         let side = null;
                         let id = null;
@@ -88,15 +88,11 @@ export default class MonitorPathNeighbors extends Monitor {
                         }
 
                         if (match) {
-                            const monitoredId = monitoredAs.asn.getId();
-
-                            if (monitoredId !== id) { // Skip prepending
-                                this.publishAlert([monitoredId, id].join("-"),
-                                    monitoredId,
-                                    monitoredAs,
-                                    message,
-                                    {side, neighbor: id});
-                            }
+                            this.publishAlert([monitoredAs.asn.getId(), id].join("-"),
+                                monitoredAs.asn.getId(),
+                                monitoredAs,
+                                message,
+                                {side, neighbor: id});
                         }
                     }
                 }

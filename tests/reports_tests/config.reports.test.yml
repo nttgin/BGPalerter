@@ -106,3 +106,4 @@ checkFadeOffGroupsSeconds: 2
 pidFile: bgpalerter.pid
 multiProcess: false
 maxMessagesPerSecond: 6000
+configVersion: 3
