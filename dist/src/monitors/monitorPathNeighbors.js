@@ -91,11 +91,10 @@ var MonitorPathNeighbors = exports["default"] = /*#__PURE__*/function (_Monitor)
             var monitoredAs = _step.value;
             if (monitoredAs.upstreams !== undefined || monitoredAs.downstreams !== undefined) {
               var _path$getNeighbors = path.getNeighbors(monitoredAs.asn),
-                _path$getNeighbors2 = _slicedToArray(_path$getNeighbors, 3),
+                _path$getNeighbors2 = _slicedToArray(_path$getNeighbors, 2),
                 left = _path$getNeighbors2[0],
-                _ = _path$getNeighbors2[1],
-                right = _path$getNeighbors2[2];
-              if (!!left || !!right) {
+                right = _path$getNeighbors2[1];
+              if (left || right) {
                 var _monitoredAs$upstream, _monitoredAs$downstre;
                 var match = false;
                 var side = null;
@@ -111,14 +110,10 @@ var MonitorPathNeighbors = exports["default"] = /*#__PURE__*/function (_Monitor)
                   match = true;
                 }
                 if (match) {
-                  var monitoredId = monitoredAs.asn.getId();
-                  if (monitoredId !== id) {
-                    // Skip prepending
-                    _this.publishAlert([monitoredId, id].join("-"), monitoredId, monitoredAs, message, {
-                      side: side,
-                      neighbor: id
-                    });
-                  }
+                  _this.publishAlert([monitoredAs.asn.getId(), id].join("-"), monitoredAs.asn.getId(), monitoredAs, message, {
+                    side: side,
+                    neighbor: id
+                  });
                 }
               }
             }
