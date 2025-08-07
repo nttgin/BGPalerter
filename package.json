@@ -1,6 +1,6 @@
 {
     "name": "bgpalerter",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "BGP and RPKI monitoring tool. Pre-configured for real-time detection of visibility loss, RPKI invalid announcements, hijacks, ROA misconfiguration, and more.",
     "author": {
         "name": "Massimo Candela",
