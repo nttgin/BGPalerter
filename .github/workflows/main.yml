@@ -18,7 +18,7 @@ jobs:
           node-version: 22.14.0
 
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: '0'
 
@@ -46,7 +46,7 @@ jobs:
           node-version: 22.14.0
 
       - name: Check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: '0'
 
