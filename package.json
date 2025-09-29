@@ -73,7 +73,7 @@
         "object-fingerprint": "^1.1.2",
         "path": "^0.12.7",
         "redaxios": "^0.5.1",
-        "rpki-validator": "^2.14.0",
+        "rpki-validator": "^2.14.1",
         "semver": "^7.7.2",
         "syslog-client": "^1.1.1",
         "uuid": "^11.1.0",
