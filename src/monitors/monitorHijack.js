@@ -76,7 +76,7 @@ export default class MonitorHijack extends Monitor {
                 matchedRule.asn.getId(),
                 matchedRule,
                 message,
-                {});
+                {...result});
         }
     };
 
