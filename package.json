@@ -7,8 +7,8 @@
         "url": "https://massimocandela.com"
     },
     "license": "BSD-3-Clause",
-    "main": "src/worker.js",
-    "bin": "index.js",
+    "main": "dist/src/worker.js",
+    "bin": "dist/src/worker.js",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/nttgin/BGPalerter.git"
