@@ -33,6 +33,7 @@
 import fs from "fs";
 import PubSub from "./utils/pubSub";
 import FileLogger from "fast-file-logger";
+import moment from "moment";
 import {version} from "../package.json";
 import Storage from "./utils/storages/storageFile";
 import RpkiUtils from "./utils/rpkiUtils";
@@ -83,54 +84,81 @@ if (!config.configVersion || config.configVersion < Config.configVersion) {
     console.log("Your config.yml file is old. It works, but it may not support all the new features. Update your config file or generate a new one (e.g., rename the file into config.yml.bak, run BGPalerter and proceed with the auto configuration, apply to the new config.yml the personalizations you did in config.yml.bak.");
 }
 
-const loggingDirectory = config.volume + config.logging.directory;
-
-try {
-    if (!fs.existsSync(loggingDirectory)) {
-        fs.mkdirSync(loggingDirectory, {recursive: true});
-    }
-} catch (error) {
-    console.log(error);
+if (config.logging.directory && config.logging.console) {
+    console.log("Cannot enable both file logging and console logging at the same time. File logging takes precedence.");
 }
 
-const errorTransport = new FileLogger({
-    logRotatePattern: config.logging.logRotatePattern,
-    filename: "error-%DATE%.log",
-    symLink: "error.log",
-    directory: loggingDirectory,
-    maxRetainedFiles: config.logging.maxRetainedFiles,
-    maxFileSizeMB: config.logging.maxFileSizeMB,
-    compressOnRotation: config.logging.compressOnRotation,
-    label: config.environment,
-    useUTC: !!config.logging.useUTC,
-    format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
-});
+if (config.logging.directory) {
+    const loggingDirectory = config.volume + config.logging.directory;
 
-const verboseTransport = new FileLogger({
-    logRotatePattern: config.logging.logRotatePattern,
-    filename: "reports-%DATE%.log",
-    symLink: "reports.log",
-    directory: loggingDirectory,
-    maxRetainedFiles: config.logging.maxRetainedFiles,
-    maxFileSizeMB: config.logging.maxFileSizeMB,
-    compressOnRotation: config.logging.compressOnRotation,
-    label: config.environment,
-    useUTC: !!config.logging.useUTC,
-    format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
-});
-
-const loggerTransports = {
-    verbose: verboseTransport,
-    error: errorTransport,
-    info: errorTransport
-};
-
-const wlogger = {
-    log:
-        function (data) {
-            return loggerTransports[data.level].log(data);
+    try {
+        if (!fs.existsSync(loggingDirectory)) {
+            fs.mkdirSync(loggingDirectory, {recursive: true});
         }
-};
+    } catch (error) {
+        console.log(error);
+    }
+
+    const errorTransport = new FileLogger({
+        logRotatePattern: config.logging.logRotatePattern,
+        filename: "error-%DATE%.log",
+        symLink: "error.log",
+        directory: loggingDirectory,
+        maxRetainedFiles: config.logging.maxRetainedFiles,
+        maxFileSizeMB: config.logging.maxFileSizeMB,
+        compressOnRotation: config.logging.compressOnRotation,
+        label: config.environment,
+        useUTC: !!config.logging.useUTC,
+        format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
+    });
+
+    const verboseTransport = new FileLogger({
+        logRotatePattern: config.logging.logRotatePattern,
+        filename: "reports-%DATE%.log",
+        symLink: "reports.log",
+        directory: loggingDirectory,
+        maxRetainedFiles: config.logging.maxRetainedFiles,
+        maxFileSizeMB: config.logging.maxFileSizeMB,
+        compressOnRotation: config.logging.compressOnRotation,
+        label: config.environment,
+        useUTC: !!config.logging.useUTC,
+        format: ({data, timestamp}) => `${timestamp} ${data.level}: ${data.message}`
+    });
+
+    const loggerTransports = {
+        verbose: verboseTransport,
+        error: errorTransport,
+        info: errorTransport
+    };
+
+    var wlogger = {
+        log:
+            function (data) {
+                return loggerTransports[data.level].log(data);
+            }
+    };
+} else if (config.logging.console) {
+    const format = (!!config.logging.timestamp) ?
+            (data) => {
+                const now = (!!config.logging.useUTC) ? moment.utc() : moment();
+                const timestamp = now.format('YYYY-MM-DDTHH:mm:ssZ');
+                return `${timestamp} ${data.level}: ${data.message}`;
+            } :
+            (data) => {
+                return `${data.level}: ${data.message}`;
+            };
+    var wlogger = {
+        log:
+            function (data) {
+                console.log(format(data))
+            }
+    };
+} else {
+    var wlogger = {
+        log:
+            function (data) {}
+    };
+}
 
 config.monitors = (config.monitors || []);
 config.monitors.push({

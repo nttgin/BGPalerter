@@ -332,7 +332,14 @@ logging:
   maxFileSizeMB: 15
   compressOnRotation: false
   useUTC: true
-  
+
+# Alternative configuration for logging to console (stdout)
+#logging:
+#  console: true
+#  timestamp: false
+#  useUTC: true
+
+
 checkForUpdatesAtBoot: true
 generatePrefixListEveryDays: 0
 
