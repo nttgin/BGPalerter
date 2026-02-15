@@ -240,36 +240,33 @@ export default class RpkiUtils {
             .then(() => {
                 return Promise.all(batch
                     .map(({prefix, origin}) => {
-                        const origins = [origin.getValue()].flat();
 
-                        return Promise
-                            .all(origins.map(asn => this.rpki.validate(prefix, asn, true))) // Validate each origin
-                            .then((results = []) => {
-                                if (results.length === 1) { // Only one result = only one origin, just return
-                                    return {...results[0], prefix, origin};
-                                } else { // Multiple origin
-                                    if (!!results.length && results.every(result => result && result.valid)) { // All valid
-                                        return {
-                                            valid: true,
-                                            covering: results.map(i => i.covering).flat(),
-                                            prefix,
-                                            origin
-                                        };
-                                    } else if (results.some(result => result && !result.valid)) { // At least one not valid
-                                        return {
-                                            valid: false,
-                                            covering: results.map(i => i.covering).flat(),
-                                            prefix,
-                                            origin
-                                        };
-                                    } else { // return not covered
-                                        return {
-                                            valid: null,
-                                            covering: results.map(i => i.covering).flat(),
-                                            prefix,
-                                            origin
-                                        };
-                                    }
+                        return this.rpki.validate(prefix, [origin.getValue()].flat()?.[0], true) // Validate first origin
+                            .then(result => {
+
+                                if (origin.isASset()) { // AS SET are always invalid
+
+                                    return {
+                                        valid: false,
+                                        covering: result?.covering ?? [],
+                                        prefix,
+                                        origin
+                                    };
+                                } else if (result) {
+
+                                    return {
+                                        ...result,
+                                        prefix,
+                                        origin
+                                    };
+                                } else {
+
+                                    return {
+                                        valid: null,
+                                        covering: [],
+                                        prefix,
+                                        origin
+                                    };
                                 }
                             });
                     }))
