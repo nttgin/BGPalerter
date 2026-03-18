@@ -190,6 +190,10 @@ switch (params._[0]) {
             .then(content => {
                 fs.writeFileSync(params.o, yaml.dump(content));
                 process.exit(0);
+            })
+            .catch((e) => {
+                console.log(`Something went wrong ${e}`);
+                process.exit(1)
             });
 
         break;
