@@ -193,7 +193,7 @@ switch (params._[0]) {
             })
             .catch((e) => {
                 console.log(`Something went wrong ${e}`);
-                process.exit(1)
+                process.exit(1);
             });
 
         break;
