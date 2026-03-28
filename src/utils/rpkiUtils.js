@@ -95,7 +95,9 @@ export default class RpkiUtils {
     };
 
     _watchVrpFile = (vrpFile) => {
-        const reload = () => { // Watch the external file to refresh the list
+        this._watchedVrpFile = vrpFile;
+
+        this._vrpFileWatcher = () => { // Watch the external file to refresh the list
             if (this.watchFileTimer) {
                 clearTimeout(this.watchFileTimer);
             }
@@ -108,7 +110,15 @@ export default class RpkiUtils {
             }, 3000);
         };
 
-        fs.watchFile(vrpFile, reload);
+        fs.watchFile(vrpFile, this._vrpFileWatcher);
+    };
+
+    stopWatching = () => {
+        if (this._watchedVrpFile && this._vrpFileWatcher) {
+            fs.unwatchFile(this._watchedVrpFile, this._vrpFileWatcher);
+            this._watchedVrpFile = null;
+            this._vrpFileWatcher = null;
+        }
     };
 
     _loadRpkiValidatorFromVrpFile = (vrpFile) => {
