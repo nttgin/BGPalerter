@@ -140,6 +140,12 @@ export default class WebSocket {
     };
 
     disconnect = () => {
+        if (this.connectTimeout) {
+            clearTimeout(this.connectTimeout);
+            this.connectTimeout = null;
+        }
+        this.setOpenTimeout(false);
+
         try {
             this.ws.removeAllListeners("message");
             this.ws.removeAllListeners("close");
@@ -151,6 +157,7 @@ export default class WebSocket {
             this.alive = false;
             if (this.pingIntervalTimer) {
                 clearInterval(this.pingIntervalTimer);
+                this.pingIntervalTimer = null;
             }
         } catch (e) {
             // Nobody cares
