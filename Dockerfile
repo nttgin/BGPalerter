@@ -1,4 +1,4 @@
-FROM node:18.19.0-alpine
+FROM node:22.22.0-alpine
 WORKDIR /opt/bgpalerter
 
 COPY . .
