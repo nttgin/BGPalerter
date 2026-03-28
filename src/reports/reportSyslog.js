@@ -58,6 +58,10 @@ export default class ReportSyslog extends Report {
                 if (this.connected) {
                     resolve(true);
                 } else {
+                    if (this.client) {
+                        this.client.removeAllListeners();
+                    }
+
                     this.client = syslog.createClient(this.host, this.options);
                     this.connected = true;
 
@@ -66,6 +70,8 @@ export default class ReportSyslog extends Report {
                             level: "error",
                             message: "Syslog disconnected: " + error
                         });
+                        this.connected = false;
+                        this.connecting = null;
                     });
 
                     this.client.on("error", error => {
