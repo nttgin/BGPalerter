@@ -172,84 +172,88 @@ export default class Input {
         throw new Error("The method retrieve MUST be implemented");
     };
 
-    async generate() {
-        try {
-            const answer = await inquirer.prompt([
-                {
-                    type: "confirm",
-                    name: "continue",
-                    message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
-                    default: true
-                }
-            ]);
-            if (!answer.continue) {
-                throw new Error("Nothing to monitor.");
+    generate = () => {
+        return inquirer.prompt([
+            {
+                type: "confirm",
+                name: "continue",
+                message: "The file prefixes.yml cannot be loaded. Do you want to auto-configure BGPalerter?",
+                default: true
             }
+        ])
+            .then(answer => {
+                if (!answer.continue) {
+                    throw new Error("Nothing to monitor.");
+                }
 
-            const nextAnswers = await inquirer.prompt([
-                {
-                    type: "input",
-                    name: "asns",
-                    message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
-                    default: "",
-                    validate: function (value) {
-                        const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
-                        return asns.length > 0;
+                return inquirer.prompt([
+                    {
+                        type: "input",
+                        name: "asns",
+                        message: "Which Autonomous System(s) you want to monitor? (comma-separated, e.g., 2914,3333)",
+                        default: "",
+                        validate: function (value) {
+                            const asns = value.split(",").filter(i => i !== "" && !isNaN(i));
+                            return asns.length > 0;
+                        }
+                    },
+
+                    {
+                        type: "confirm",
+                        name: "m",
+                        message: "Do you want to be notified when your AS is announcing a new prefix?",
+                        default: true
+                    },
+
+                    {
+                        type: "confirm",
+                        name: "upstreams",
+                        message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
+                        default: true
+                    },
+                    {
+                        type: "confirm",
+                        name: "downstreams",
+                        message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
+                        default: true
                     }
-                },
+                ]);
+            })
+            .then(nextAnswers => {
+                const asns = nextAnswers.asns.split(",");
 
-                {
-                    type: "confirm",
-                    name: "m",
-                    message: "Do you want to be notified when your AS is announcing a new prefix?",
-                    default: true
-                },
+                const inputParameters = {
+                    asnList: asns,
+                    exclude: [],
+                    excludeDelegated: true,
+                    prefixes: null,
+                    monitoredASes: nextAnswers.m ? asns : [],
+                    debug: false,
+                    historical: false,
+                    group: null,
+                    append: false,
+                    logger: null,
+                    upstreams: !!nextAnswers.upstreams,
+                    downstreams: !!nextAnswers.downstreams,
+                    getCurrentPrefixesList: () => {
+                        return this.retrieve();
+                    }
+                };
 
-                {
-                    type: "confirm",
-                    name: "upstreams",
-                    message: "Do you want to be notified when a new upstream AS appears in a BGP path?",
-                    default: true
-                },
-                {
-                    type: "confirm",
-                    name: "downstreams",
-                    message: "Do you want to be notified when a new downstream AS appears in a BGP path?",
-                    default: true
-                }
-            ]);
-
-            const asns = nextAnswers.asns.split(",");
-
-            const inputParameters = {
-                asnList: asns,
-                exclude: [],
-                excludeDelegated: true,
-                prefixes: null,
-                monitoredASes: nextAnswers.m ? asns : [],
-                debug: false,
-                historical: false,
-                group: null,
-                append: false,
-                logger: null,
-                upstreams: !!nextAnswers.upstreams,
-                downstreams: !!nextAnswers.downstreams,
-                getCurrentPrefixesList: () => {
-                    return this.retrieve();
-                }
-            };
-
-            const result = await generatePrefixes(inputParameters);
-            await this.save(result);
-            console.log("Done!");
-        } catch (error) {
-            console.log(error);
-            this.logger.log({
-                level: "error",
-                message: error
+                return generatePrefixes(inputParameters);
+            })
+            .then(result => this.save(result))
+            .then(() => {
+                console.log("Done!");
+            })
+            .catch(error => {
+                console.log(error);
+                this.logger.log({
+                    level: "error",
+                    message: error
+                });
+                process.exit(1);
             });
-            process.exit();
-        }
     };
 
     _reGeneratePrefixList = () => {
@@ -319,6 +323,12 @@ export default class Input {
                         }
 
                         return newPrefixList;
+                    })
+                    .catch(error => {
+                        this.logger.log({
+                            level: "error",
+                            message: error
+                        });
                     });
             })
             .then(this.save)

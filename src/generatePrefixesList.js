@@ -415,9 +415,5 @@ module.exports = function generatePrefixes(inputParameters) {
                         }
                     }))
                 : generateList;
-        })
-        .catch((e) => {
-            logger(`Something went wrong ${e}`);
         });
-
 };
