@@ -31,7 +31,7 @@
  */
 
 import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+import {hideBin} from "yargs/helpers";
 import fs from "fs";
 import yaml from "js-yaml";
 import os from "os";

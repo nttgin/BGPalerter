@@ -193,7 +193,7 @@ config.connectors = config.connectors
     });
 
 if (config.httpProxy) {
-    throw new Error("httpProxy configuration no longer supported")
+    throw new Error("httpProxy configuration no longer supported");
 }
 
 vector.storage = new Storage({}, config);

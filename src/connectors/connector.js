@@ -142,6 +142,6 @@ export default class Connector {
     };
 
     disconnect = () => {
-        throw new Error('The method disconnect MUST be implemented');
+        throw new Error("The method disconnect MUST be implemented");
     };
 }

@@ -182,7 +182,9 @@ export default class Input {
                     default: true
                 }
             ]);
-            if (!answer.continue) throw new Error("Nothing to monitor.");
+            if (!answer.continue) {
+                throw new Error("Nothing to monitor.");
+            }
 
             const nextAnswers = await inquirer.prompt([
                 {
