@@ -55,7 +55,7 @@
         "syslogd": "^1.1.2"
     },
     "dependencies": {
-        "@sentry/node": "^9.38.0",
+        "@sentry/node": "10.47.0",
         "batch-promises": "^0.0.3",
         "brembo": "^2.2.1",
         "deepmerge": "^4.3.1",
