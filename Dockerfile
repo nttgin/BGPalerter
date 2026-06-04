@@ -1,4 +1,4 @@
-FROM node:22.22.0-alpine
+FROM node:22.22.2-alpine
 WORKDIR /opt/bgpalerter
 
 COPY . .
@@ -6,7 +6,7 @@ COPY . .
 RUN npm ci --no-audit --prefer-offline \
   && npm run compile
 
-FROM node:22.22.0-alpine
+FROM node:22.22.2-alpine
 WORKDIR /opt/bgpalerter
 COPY --from=0 /opt/bgpalerter/dist/ /opt/bgpalerter/
 RUN apk add --no-cache tzdata \
