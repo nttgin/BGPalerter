@@ -53,6 +53,7 @@ export default class reportTelegram extends ReportHTTP {
 
         super(channels, telegramParams, env);
         this.chatIds = params.chatIds;
+        this.messageThreadIds = params.messageThreadIds || null;
 
         if (!params.botUrl) {
             this.logger.log({
@@ -72,11 +73,27 @@ export default class reportTelegram extends ReportHTTP {
     };
 
     getTemplate = (group, channel, content) => {
-        return JSON.stringify({
+        const payload = {
             "chat_id": this.chatIds[group] || this.chatIds["default"],
             "text": "${summary}${markDownUrl}",
             "parse_mode": "markdown",
             "disable_web_page_preview": true
-        });
+        };
+
+        if (this.messageThreadIds) {
+            // Retrieve the thread ID for the specific group, falling back to the default group if undefined
+            const threadId = this.messageThreadIds[group] !== undefined ? this.messageThreadIds[group] : this.messageThreadIds["default"];
+            
+            if (threadId !== undefined && threadId !== null && threadId !== "") {
+                const parsedThreadId = parseInt(threadId, 10);
+                
+                // Only inject the parameter if it is a valid, non-zero topic ID
+                if (parsedThreadId !== 0 && !isNaN(parsedThreadId)) {
+                    payload["message_thread_id"] = parsedThreadId;
+                }
+            }
+        }
+
+        return JSON.stringify(payload);
     };
 }

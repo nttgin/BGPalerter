@@ -142,7 +142,7 @@ Parameters for this report module:
 
 ## reportTelegram
 
-This report module sends alerts directly to specified Telegram users, groups, or channels.
+This report module sends alerts directly to specified Telegram users, groups, or channels. It also supports routing messages to specific topics within Forum Supergroups.
 To send alert to Telegram you need to create a bot.
 
 To create a bot:
@@ -152,6 +152,7 @@ To create a bot:
 4. Open the chat (channel, group, user) where you want to send the alerts.
 5. Write something in the chat (from whatever user).
 6. Visit `https://api.telegram.org/bot_BOT_ID_/getUpdates` (replace `_BOT_ID_` with your bot ID) from your browser and take note of the chat ID returned in the answer. In case of multiple chat IDs, use the one with the same text you sent at the previous point.
+7. *(Optional)* If using Forum Topics, navigate to the specific topic thread in your group chat. Copy the link to any message in that topic. The link will look like `https://t.me/c/123456789/42/50`. The middle number (`42`) is your `message_thread_id`.
 
 Parameters for this report module:
 
@@ -161,6 +162,8 @@ Parameters for this report module:
 |botUrl| The Telegram bot URL. Usually, `https://api.telegram.org/bot_BOT_ID_/sendMessage` where `_BOT_ID_` is your both ID.                               |
 |chatIds| A dictionary containing chat IDs grouped by user group (key: group, value: chat ID).                                                              | 
 |chatIds.default| The chat ID of the default user group.                                                                                                            | 
+|messageThreadIds| *(Optional)* A dictionary containing topic thread IDs grouped by user group (key: group, value: thread ID). Set to `0` to disable topics. |
+|messageThreadIds.default| *(Optional)* The thread ID of the default user group. Used for routing alerts into specific topics in Forum Supergroups.                  |
 
 ## reportPullAPI
 
