@@ -359,7 +359,8 @@ module.exports = function generatePrefixes(inputParameters) {
                 generateList.options.monitorASns = generateList.options.monitorASns || {};
                 for (let monitoredAs of list) {
                     logger(`Generating generic monitoring rule for AS${monitoredAs}`);
-                    const neighbors = asnNeighbors.filter(i => i.asn.toString() === monitoredAs.toString());
+                    const neighbors = asnNeighbors
+                        .filter(i => !!i && i.asn.toString() === monitoredAs.toString());
                     generateList.options.monitorASns[monitoredAs] = {
                         group: group,
                         upstreams: upstreams && neighbors.length ? neighbors[0].upstreams : null,
