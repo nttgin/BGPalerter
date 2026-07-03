@@ -159,6 +159,28 @@ reports:
 #        default: _YOUR_SLACK_WEBHOOK_URL_
 #        noc: _YOUR_SLACK_WEBHOOK_URL_
 
+#  - file: reportDiscord
+#    channels:
+#      - hijack
+#      - newprefix
+#      - visibility
+#      - path
+#      - misconfiguration
+#      - rpki
+#      - roa
+#    params:
+#      showPaths: 0 # Amount of AS_PATHs to report in the alert
+#      colors: # Optional, hex colors for the embed sidebar
+#        hijack: '#d60b1c'
+#        newprefix: '#fa9548'
+#        visibility: '#fad648'
+#        path: '#42cbf5'
+#        rpki: '#d892f0'
+#        roa: '#d892f0'
+#      hooks:
+#        default: _YOUR_DISCORD_WEBHOOK_URL_
+#        noc: _YOUR_DISCORD_WEBHOOK_URL_
+
 #  - file: reportKafka
 #    channels:
 #      - hijack
