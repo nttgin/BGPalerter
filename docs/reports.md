@@ -13,6 +13,7 @@ This will generate fake alerts. [Read more here](installation.md#bgpalerter-para
 - [reportFile](reports.md#reportFile)
 - [reportEmail](reports.md#reportEmail)
 - [reportSlack](reports.md#reportSlack)
+- [reportDiscord](reports.md#reportDiscord)
 - [reportKafka](reports.md#reportKafka)
 - [reportSyslog](reports.md#reportSyslog)
 - [reportAlerta](reports.md#reportAlerta)
@@ -63,6 +64,19 @@ Parameters for this report module:
 |colors| A dictionary having as key the event channel and as value a hex color (string). These colors will be used to make messages in Slack distinguishable. | 
 |showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
 |hooks| A dictionary containing Slack WebHooks grouped by user group (key: group, value: WebHook).| 
+|hooks.default| The WebHook (URL) of the default user group.| 
+
+## reportDiscord
+
+This report module sends alerts on Discord as embeds, using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
+
+Parameters for this report module:
+
+|Parameter| Description| 
+|---|---|
+|colors| A dictionary having as key the event channel and as value a hex color (string, e.g., `'#d60b1c'`). These colors will be used for the embed sidebar to make messages in Discord distinguishable. | 
+|showPaths| Amount of AS_PATHs to report in the alert (0 to disable). | 
+|hooks| A dictionary containing Discord WebHooks grouped by user group (key: group, value: WebHook).| 
 |hooks.default| The WebHook (URL) of the default user group.| 
 
 ## reportKafka

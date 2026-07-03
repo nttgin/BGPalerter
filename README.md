@@ -71,6 +71,7 @@ If the installation doesn't go smoothly, read [here](docs/installation.md). Read
         - [Announcements of new prefixes](docs/configuration.md#monitoras)
         - [Path matching](docs/configuration.md#monitorpath)
     - [Send alerts to](docs/reports.md#reports)
+        - [Discord](docs/reports.md#reportDiscord)
         - [File](docs/reports.md#reportfile)
         - [E-mail](docs/reports.md#reportemail)
         - [Slack](docs/reports.md#reportslack)
