@@ -11,6 +11,8 @@ npm run compile
 
 ./node_modules/.bin/pkg ./dist/package.json --options "no-warnings,max-old-space-size=4096" --targets node22-linux-x64 --output bin/bgpalerter-linux-x64 --loglevel=error
 
+./node_modules/.bin/pkg ./dist/package.json --options "no-warnings,max-old-space-size=4096" --targets node22-linux-arm64 --output bin/bgpalerter-linux-arm64 --loglevel=error
+
 ./node_modules/.bin/pkg ./dist/package.json --options "no-warnings,max-old-space-size=4096" --targets node22-macos-x64 --output bin/bgpalerter-macos-x64 --loglevel=error
 
 ./node_modules/.bin/pkg ./dist/package.json --options "no-warnings,max-old-space-size=4096" --targets node22-macos-arm64 --output bin/bgpalerter-macos-arm64 --loglevel=error
