@@ -64,8 +64,7 @@ describe("Prefix List", function () {
         generatePrefixes(inputParameters)
             .then(content => {
                 fs.writeFileSync(outputFile, yaml.dump(content));
-            })
-            .then(() => {
+
                 const result = fs.readFileSync(outputFile, "utf8");
                 fs.unlinkSync(outputFile);
                 const original = fs.readFileSync(originalFile, "utf8");
@@ -77,7 +76,8 @@ describe("Prefix List", function () {
 
                 expect(resultJson).to.containSubset(originalJson);
                 done();
-            });
+            })
+            .catch(done);
     }).timeout(asyncTimeout);
 
     it("generate file - specific group - no exclude", function (done) {
@@ -115,7 +115,8 @@ describe("Prefix List", function () {
 
                 expect(resultJson).to.containSubset(originalJson);
                 done();
-            });
+            })
+            .catch(done);
     }).timeout(asyncTimeout);
 
     it("generate file - append - no exclude", function (done) {
@@ -159,6 +160,7 @@ describe("Prefix List", function () {
 
                 expect(resultJson).to.containSubset(originalJson);
                 done();
-            });
+            })
+            .catch(done);
     }).timeout(asyncTimeout);
 });
