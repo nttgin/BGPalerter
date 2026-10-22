@@ -74,3 +74,7 @@ Please, let me know so I can add your company name here.
 * Webdade (AS49556)
 * Zeacloud Services Private Limited (AS134303, AS137134)
 * Vanilla ISP (AS37199)
+* Netzquadrat GmbH (AS15594)
+* NetFlash CY (AS203206)
+* ITS Telecomunicações (AS28186)
+* Folkeye
