@@ -32,6 +32,7 @@
 
 import Report from "./report";
 import syslog from "syslog-client";
+import os from "os";
 
 export default class ReportSyslog extends Report {
 
@@ -42,7 +43,7 @@ export default class ReportSyslog extends Report {
         this.connecting = null;
         this.host = params.host;
         this.options = {
-            syslogHostname: params.host,
+            syslogHostname: os.hostname(),
             transport: (params.transport === "tcp") ? syslog.Transport.Tcp : syslog.Transport.Udp,
             port: params.port
         };
@@ -96,7 +97,7 @@ export default class ReportSyslog extends Report {
 
                 this.logger.log({
                     level: "info",
-                    message: `[reportSyslog] sending report to: ${this.options.syslogHostname}`
+                    message: `[reportSyslog] sending report to: ${this.host}`
                 });
 
                 this.client.log(message, {}, error => {
