@@ -58,17 +58,23 @@ export default class ReportSyslog extends Report {
                 if (this.connected) {
                     resolve(true);
                 } else {
+                    if (this.client) {
+                        this.client.removeAllListeners();
+                    }
+
                     this.client = syslog.createClient(this.host, this.options);
                     this.connected = true;
 
-                    this.client.on("close", function (error) {
+                    this.client.on("close", error => {
                         this.logger.log({
                             level: "error",
                             message: "Syslog disconnected: " + error
                         });
+                        this.connected = false;
+                        this.connecting = null;
                     });
 
-                    this.client.on("error", function (error) {
+                    this.client.on("error", error => {
                         this.logger.log({
                             level: "error",
                             message: "Syslog: " + error

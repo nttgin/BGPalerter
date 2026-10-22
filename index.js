@@ -31,15 +31,16 @@
  */
 
 import yargs from "yargs";
+import {hideBin} from "yargs/helpers";
 import fs from "fs";
 import yaml from "js-yaml";
 import os from "os";
 
-const params = yargs
+const params = yargs(hideBin(process.argv))
     .usage("Usage: $0 <command> [options]")
 
-    .command("$0", "Run BGPalerter (default)", function () {
-        yargs
+    .command("$0", "Run BGPalerter (default)", function (y) {
+        y
             .alias("v", "version")
             .nargs("v", 0)
             .describe("v", "Show version number")
@@ -62,8 +63,8 @@ const params = yargs
             .describe("d", "A directory where configuration and data is persisted");
     })
 
-    .command("generate", "Generate prefixes to monitor", function () {
-        yargs
+    .command("generate", "Generate prefixes to monitor", function (y) {
+        y
             .alias("v", "version")
             .nargs("v", 0)
             .describe("v", "Show version number")
@@ -130,7 +131,7 @@ const params = yargs
     .help("h")
     .alias("h", "help")
     .epilog("Copyright (c) 2019, NTT Ltd")
-    .argv;
+    .parseSync();
 
 switch (params._[0]) {
     case "generate":
@@ -190,7 +191,11 @@ switch (params._[0]) {
             .then(content => {
                 fs.writeFileSync(params.o, yaml.dump(content));
                 process.exit(0);
-            });
+            })
+            .catch((e) => {
+                console.log(`Something went wrong ${e}`);
+                process.exit(1);
+            })
 
         break;
 

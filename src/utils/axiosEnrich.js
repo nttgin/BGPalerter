@@ -3,15 +3,15 @@ import md5 from "md5";
 const attempts = {};
 const numAttempts = 2;
 
-const retry = function (axios, error, params) {
+const retry = function (sendRequest, error, params, key) {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            const key = md5(JSON.stringify(params));
             attempts[key] = attempts[key] || 0;
             attempts[key]++;
             if (attempts[key] <= numAttempts) {
-                resolve(axios.request(params));
+                resolve(sendRequest(params));
             } else {
+                delete attempts[key];
                 reject(error);
             }
         }, 2000);
@@ -19,22 +19,36 @@ const retry = function (axios, error, params) {
 };
 
 export default function (axios, userAgent) {
+    const sendRequest = params => typeof axios.request === "function" ? axios.request(params) : axios(params);
 
-    axios.defaults ??= {};
-    axios.defaults.headers ??= {};
-    axios.defaults.headers.common ??= {};
-
-    if (userAgent) {
-        axios.defaults.headers.common = {
-            "User-Agent": userAgent
+    return params => {
+        const requestParams = params || {};
+        const headers = {
+            ...(requestParams.headers || {})
         };
-    }
 
-    axios.defaults.headers.common = {
-        ...axios.defaults.headers.common,
-        "Accept-Encoding": "gzip"
+        if (userAgent && headers["user-agent"] == null && headers["User-Agent"] == null) {
+            headers["user-agent"] = userAgent;
+        }
+
+        if (headers["accept-encoding"] == null && headers["Accept-Encoding"] == null) {
+            headers["accept-encoding"] = "gzip";
+        }
+
+        // redaxios can serialize headers.common as a literal "common" header.
+        delete headers.common;
+
+        const enrichedParams = {
+            ...requestParams,
+            headers
+        };
+        const key = md5(JSON.stringify(enrichedParams));
+
+        return sendRequest(enrichedParams)
+            .catch(error => retry(sendRequest, error, enrichedParams, key))
+            .then(response => {
+                delete attempts[key];
+                return response;
+            });
     };
-
-    return params => axios(params)
-        .catch(error => retry(axios, error, params));
 }

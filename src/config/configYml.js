@@ -71,7 +71,7 @@ export default class ConfigYml extends Config {
                 }
             }
 
-            fs.watchFile(this.groupsFile, () => {
+            this._groupsFileWatcher = () => {
                 if (this._watchPrefixFileTimer) {
                     clearTimeout(this._watchPrefixFileTimer);
                 }
@@ -87,9 +87,18 @@ export default class ConfigYml extends Config {
                         }
                     }
                 }, 5000);
-            });
+            };
+
+            fs.watchFile(this.groupsFile, this._groupsFileWatcher);
         }
 
+    };
+
+    stopWatching = () => {
+        if (this.groupsFile && this._groupsFileWatcher) {
+            fs.unwatchFile(this.groupsFile, this._groupsFileWatcher);
+            this._groupsFileWatcher = null;
+        }
     };
 
 }

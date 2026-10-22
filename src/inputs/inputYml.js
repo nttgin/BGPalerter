@@ -65,8 +65,9 @@ export default class InputYml extends Input {
     _watchPrefixFile = (file) => {
         if (!this.watcherSet) {
             this.watcherSet = true;
+            this._watchedPrefixFile = file;
 
-            fs.watchFile(file, () => {
+            this._prefixFileWatcher = () => {
                 if (this._watchPrefixFileTimer) {
                     clearTimeout(this._watchPrefixFileTimer);
                 }
@@ -82,7 +83,18 @@ export default class InputYml extends Input {
                             });
                         });
                 }, 5000);
-            });
+            };
+
+            fs.watchFile(file, this._prefixFileWatcher);
+        }
+    };
+
+    stopWatching = () => {
+        if (this.watcherSet && this._watchedPrefixFile && this._prefixFileWatcher) {
+            fs.unwatchFile(this._watchedPrefixFile, this._prefixFileWatcher);
+            this.watcherSet = false;
+            this._watchedPrefixFile = null;
+            this._prefixFileWatcher = null;
         }
     };
 
