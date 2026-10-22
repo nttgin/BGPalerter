@@ -33,6 +33,7 @@
 const chai = require("chai");
 const chaiSubset = require("chai-subset");
 const Syslogd = require("syslogd");
+const os = require("os");
 const expect = chai.expect;
 const asyncTimeout = 20000;
 chai.use(chaiSubset);
@@ -55,7 +56,8 @@ describe("Reports 1", function () {
 
         Syslogd(function (info) {
             if (!doneCalled) {
-                expect(info.hostname).to.equals("127.0.0.1");
+                expect(info.hostname).to.equals(os.hostname());
+                expect(info.address).to.equals("127.0.0.1");
                 const object = expectedData.filter(i => info.msg.startsWith(i))[0];
                 expectedData = expectedData.filter(i => i !== object);
 
