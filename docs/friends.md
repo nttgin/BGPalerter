@@ -78,3 +78,4 @@ Please, let me know so I can add your company name here.
 * NetFlash CY (AS203206)
 * ITS Telecomunicações (AS28186)
 * Folkeye
+* Somcable (AS37425)
