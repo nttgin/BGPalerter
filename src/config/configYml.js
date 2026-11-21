@@ -1,5 +1,6 @@
 import Config from "./config";
 import yaml from "js-yaml";
+import {loadYaml} from "../utils/yaml";
 import fs from "fs";
 import path from "path";
 
@@ -30,7 +31,7 @@ export default class ConfigYml extends Config {
 
         if (fs.existsSync(this.configFile)) {
             try {
-                const config = yaml.load(fs.readFileSync(this.configFile, "utf8")) || this.default;
+                const config = loadYaml(fs.readFileSync(this.configFile, "utf8")) || this.default;
                 this._readUserGroupsFiles(config);
 
                 return config;
@@ -61,7 +62,7 @@ export default class ConfigYml extends Config {
                 ? config.volume + config.groupsFile
                 : path.resolve(process.cwd(), config.groupsFile));
 
-            const userGroups = yaml.load(fs.readFileSync(this.groupsFile, "utf8"));
+            const userGroups = loadYaml(fs.readFileSync(this.groupsFile, "utf8")) || {};
 
             for (let report of config.reports) {
                 const name = report.file;
@@ -76,7 +77,7 @@ export default class ConfigYml extends Config {
                     clearTimeout(this._watchPrefixFileTimer);
                 }
                 this._watchPrefixFileTimer = setTimeout(() => {
-                    const userGroups = yaml.load(fs.readFileSync(this.groupsFile, "utf8"));
+                    const userGroups = loadYaml(fs.readFileSync(this.groupsFile, "utf8")) || {};
 
                     for (let report of config.reports) {
                         const name = report.file;

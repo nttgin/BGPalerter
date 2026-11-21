@@ -34,6 +34,7 @@ import yargs from "yargs";
 import {hideBin} from "yargs/helpers";
 import fs from "fs";
 import yaml from "js-yaml";
+import {loadYaml} from "./src/utils/yaml";
 import os from "os";
 
 const params = yargs(hideBin(process.argv))
@@ -179,7 +180,7 @@ switch (params._[0]) {
             upstreams: !!params.u,
             downstreams: !!params.n,
             getCurrentPrefixesList: () => {
-                return Promise.resolve(yaml.load(fs.readFileSync(params.o, "utf8")));
+                return Promise.resolve(loadYaml(fs.readFileSync(params.o, "utf8")) || {});
             }
         };
 

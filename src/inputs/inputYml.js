@@ -31,6 +31,7 @@
  */
 
 import yaml from "js-yaml";
+import {loadYaml} from "../utils/yaml";
 import fs from "fs";
 import Input from "./input";
 import ipUtils from "ip-sub";
@@ -114,7 +115,7 @@ export default class InputYml extends Input {
                 if (fs.existsSync(file)) {
                     fileContent = fs.readFileSync(file, "utf8");
                     try {
-                        monitoredPrefixesFile = yaml.load(fileContent) || {};
+                        monitoredPrefixesFile = loadYaml(fileContent) || {};
                         this._watchPrefixFile(file);
                     } catch (error) {
                         reject(new Error("The file " + prefixesFile + " is not valid yml: " + error.message.split(":")[0]));
