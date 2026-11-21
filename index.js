@@ -30,111 +30,138 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import yargs from "yargs";
-import {hideBin} from "yargs/helpers";
+import {parseArgs} from "util";
 import fs from "fs";
 import yaml from "js-yaml";
 import {loadYaml} from "./src/utils/yaml";
 import os from "os";
+import {version} from "./package.json";
 
-const params = yargs(hideBin(process.argv))
-    .usage("Usage: $0 <command> [options]")
+const commonOptions = [
+    {short: "h", long: "help", type: "boolean", description: "Show help"},
+    {short: "v", long: "version", type: "boolean", description: "Show version number"}
+];
 
-    .command("$0", "Run BGPalerter (default)", function (y) {
-        y
-            .alias("v", "version")
-            .nargs("v", 0)
-            .describe("v", "Show version number")
+// Options without a description are accepted but not shown in the help
+const commands = {
+    run: {
+        usage: "bgpalerter [options]",
+        description: "Run BGPalerter (default)",
+        options: [
+            ...commonOptions,
+            {short: "c", long: "config", type: "string", description: "Config file to load"},
+            {short: "t", long: "test", type: "boolean", description: "Test the configuration with fake BGP updates"},
+            {short: "M", long: "skip-memory-check", type: "boolean", description: "Skip memory check"},
+            {short: "d", long: "data-volume", type: "string", description: "A directory where configuration and data is persisted"},
+            {short: "E", type: "string"}
+        ]
+    },
+    generate: {
+        usage: "bgpalerter generate [options]",
+        description: "Generate prefixes to monitor",
+        required: ["o"],
+        options: [
+            ...commonOptions,
+            {short: "o", long: "output", type: "string", description: "Write to file"},
+            {short: "a", long: "asn", type: "string", description: "AS number to monitor"},
+            {short: "e", long: "exclude", type: "string", description: "Comma-separated list of prefixes to exclude"},
+            {short: "p", long: "prefixes", type: "string", description: "Comma-separated list of prefixes to include"},
+            {short: "l", long: "prefixes-file", type: "string", description: "File containing the prefixes to include in the monitoring. One prefix for each line"},
+            {short: "i", long: "ignore-delegated", type: "boolean", description: "Ignore delegated prefixes"},
+            {short: "s", long: "monitor-as", type: "string", description: "List of monitored ASes to be added for generic monitoring in options.monitorASns."},
+            {short: "m", long: "monitor-as-origin", type: "boolean", description: "Automatically generate list of monitored ASes (options.monitorASns) from prefix origins."},
+            {short: "g", long: "group", type: "string", description: "Define a user group for all the generated rules."},
+            {short: "A", long: "append", type: "boolean", description: "Append the new configuration to the previous one."},
+            {short: "D", long: "debug", type: "boolean", description: "Provide verbose output for debugging"},
+            {short: "H", long: "historical", type: "boolean", description: "Use historical visibility data for generating prefix list (prefixes visible in the last week)."},
+            {short: "u", long: "upstreams", type: "boolean", description: "Detect a list of allowed upstream ASes and enable detection of new left-side ASes"},
+            {short: "n", long: "downstreams", type: "boolean", description: "Detect a list of allowed downstream ASes and enable detection of new right-side ASes."},
+            {long: "pf", type: "string"}
+        ]
+    }
+};
 
-            .alias("c", "config")
-            .nargs("c", 1)
-            .describe("c", "Config file to load")
+const getHelp = (command) => {
+    const {usage, description, options} = commands[command];
+    const visible = options.filter(i => i.description);
+    const flags = visible.map(i => [i.short && `-${i.short}`, i.long && `--${i.long}`].filter(Boolean).join(", "));
+    const width = Math.max(...flags.map(i => i.length)) + 2;
 
-            .alias("t", "test")
-            .nargs("t", 0)
-            .describe("t", "Test the configuration with fake BGP updates")
+    return [
+        `Usage: ${usage}`,
+        "",
+        description,
+        "",
+        "Commands:",
+        "  bgpalerter           Run BGPalerter (default)",
+        "  bgpalerter generate  Generate prefixes to monitor",
+        "",
+        "Options:",
+        ...visible.map((option, n) => `  ${flags[n].padEnd(width)}${option.description}`),
+        "",
+        "Examples:",
+        "  bgpalerter generate -a 2914 -o prefixes.yml  Generate prefixes for AS2914",
+        "",
+        "Copyright (c) 2019, NTT Ltd"
+    ].join("\n");
+};
 
-            .alias("M", "skip-memory-check")
-            .nargs("M", 0)
-            .describe("M", "Skip memory check")
+const parseCli = (argv) => {
+    const command = argv[0] === "generate" ? "generate" : "run";
+    const spec = commands[command];
+    const options = {};
 
+    for (const {short, long, type} of spec.options) {
+        if (long) {
+            options[long] = short ? {type, short} : {type};
+        }
+        // Also accept the single letter as long option (e.g., --d), as documented
+        if (short) {
+            options[short] = long ? {type} : {type, short};
+        }
+    }
 
-            .alias("d", "data-volume")
-            .nargs("d", 1)
-            .describe("d", "A directory where configuration and data is persisted");
-    })
+    const {values} = parseArgs({
+        args: command === "generate" ? argv.slice(1) : argv,
+        options,
+        strict: false,
+        allowPositionals: true
+    });
 
-    .command("generate", "Generate prefixes to monitor", function (y) {
-        y
-            .alias("v", "version")
-            .nargs("v", 0)
-            .describe("v", "Show version number")
+    const params = {};
+    for (const {short, long, type} of spec.options) {
+        const key = short || long;
+        const value = (long && values[long] !== undefined) ? values[long] : values[short];
 
-            .alias("o", "output")
-            .nargs("o", 1)
-            .describe("o", "Write to file")
+        if (type === "string" && value === true) {
+            console.error(`${getHelp(command)}\n\nNot enough arguments following: ${key}`);
+            process.exit(1);
+        }
+        params[key] = value;
+    }
 
-            .alias("a", "asn")
-            .nargs("a", 1)
-            .describe("a", "AS number to monitor")
+    if (params.h) {
+        console.log(getHelp(command));
+        process.exit(0);
+    }
 
-            .alias("e", "exclude")
-            .nargs("e", 1)
-            .describe("e", "Comma-separated list of prefixes to exclude")
+    if (params.v) {
+        console.log(version);
+        process.exit(0);
+    }
 
-            .alias("p", "prefixes")
-            .nargs("p", 1)
-            .describe("p", "Comma-separated list of prefixes to include")
+    const missing = (spec.required || []).filter(i => params[i] === undefined);
+    if (missing.length) {
+        console.error(`${getHelp(command)}\n\nMissing required argument: ${missing.join(", ")}`);
+        process.exit(1);
+    }
 
-            .alias("l", "prefixes-file")
-            .nargs("l", 1)
-            .describe("l", "File containing the prefixes to include in the monitoring. One prefix for each line")
+    return {command, params};
+};
 
-            .alias("i", "ignore-delegated")
-            .nargs("i", 0)
-            .describe("i", "Ignore delegated prefixes")
+const {command, params} = parseCli(process.argv.slice(2));
 
-            .alias("s", "monitor-as")
-            .nargs("s", 1)
-            .describe("s", "List of monitored ASes to be added for generic monitoring in options.monitorASns.")
-
-            .alias("m", "monitor-as-origin")
-            .nargs("m", 0)
-            .describe("m", "Automatically generate list of monitored ASes (options.monitorASns) from prefix origins.")
-
-            .alias("g", "group")
-            .nargs("g", 1)
-            .describe("x", "Define a user group for all the generated rules.")
-
-            .alias("A", "append")
-            .nargs("A", 0)
-            .describe("A", "Append the new configuration to the previous one.")
-
-            .alias("D", "debug")
-            .nargs("D", 0)
-            .describe("D", "Provide verbose output for debugging")
-
-            .alias("H", "historical")
-            .nargs("H", 0)
-            .describe("H", "Use historical visibility data for generating prefix list (prefixes visible in the last week).")
-
-            .alias("u", "upstreams")
-            .nargs("u", 0)
-            .describe("u", "Detect a list of allowed upstream ASes and enable detection of new left-side ASes")
-
-            .alias("n", "downstreams")
-            .nargs("n", 0)
-            .describe("n", "Detect a list of allowed downstream ASes and enable detection of new right-side ASes.")
-
-            .demandOption(["o"]);
-    })
-    .example("$0 generate -a 2914 -o prefixes.yml", "Generate prefixes for AS2914")
-    .help("h")
-    .alias("h", "help")
-    .epilog("Copyright (c) 2019, NTT Ltd")
-    .parseSync();
-
-switch (params._[0]) {
+switch (command) {
     case "generate":
         const generatePrefixes = require("./src/generatePrefixesList");
         const debug = !!params.D;
@@ -196,7 +223,7 @@ switch (params._[0]) {
             .catch((e) => {
                 console.log(`Something went wrong ${e}`);
                 process.exit(1);
-            })
+            });
 
         break;
 
