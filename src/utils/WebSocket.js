@@ -98,6 +98,9 @@ export default class WebSocket {
 
     send = (data) => {
         return new Promise((resolve, reject) => {
+            if (!this.ws || this.ws.readyState !== _ws.OPEN) {
+                return reject(new Error("WebSocket is not open"));
+            }
             try {
                 this.ws.send(data);
                 resolve();

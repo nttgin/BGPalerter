@@ -57,7 +57,7 @@ export default class Input {
                         message: error
                     });
                     console.log(error);
-                    process.exit();
+                    process.exit(1);
                 });
         }, 200);
     };

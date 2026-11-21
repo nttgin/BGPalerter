@@ -305,9 +305,9 @@ export default class ConnectorRIS extends Connector {
                     this.ws.send(JSON.stringify({
                         type: "ris_subscribe",
                         data: params
-                    }));
-
-                    setTimeout(() => resolve(true), this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
+                    }))
+                        .then(() => setTimeout(() => resolve(true), this.risSubscriptionDelay)) // Slow down subscriptions to avoid RIS drop/ban
+                        .catch(reject);
                 });
             });
 
@@ -342,9 +342,9 @@ export default class ConnectorRIS extends Connector {
                 this.ws.send(JSON.stringify({
                     type: "ris_subscribe",
                     data: params
-                }));
-
-                setTimeout(() => resolve(true), this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
+                }))
+                    .then(() => setTimeout(() => resolve(true), this.risSubscriptionDelay)) // Slow down subscriptions to avoid RIS drop/ban
+                    .catch(reject);
             });
         });
     };
@@ -367,9 +367,9 @@ export default class ConnectorRIS extends Connector {
                                 acknowledge: false
                             }
                         }
-                    }));
-
-                    setTimeout(() => resolve(true), this.risSubscriptionDelay); // Slow down subscriptions to avoid RIS drop/ban
+                    }))
+                        .then(() => setTimeout(() => resolve(true), this.risSubscriptionDelay)) // Slow down subscriptions to avoid RIS drop/ban
+                        .catch(reject);
                 });
             })
                 .then(() => {
