@@ -66,7 +66,7 @@ export default class ConnectorRISDump extends Connector {
     };
 
     _shouldDownloadDump = () => {
-        return !this.lastRun || this.lastRun.diff(moment(), "hours") > 2;
+        return !this.lastRun || moment().diff(this.lastRun, "hours") > 2;
     };
 
     connect = () =>

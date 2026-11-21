@@ -105,29 +105,29 @@ export default class Worker {
         this.config.maxMessagesPerSecond = this.config.maxMessagesPerSecond || 6000;
         const buffer = new LossyBuffer(parseInt(this.config.maxMessagesPerSecond / (1000 / bufferCleaningInterval)), bufferCleaningInterval, this.logger);
         connectorFactory.loadConnectors();
+
+        for (const connector of connectorFactory.getConnectors()) {
+
+            connector.onMessage((message) => {
+                buffer.add({
+                    connector: connector.name,
+                    message
+                });
+            });
+            if (worker) {
+                buffer.onData((message) => {
+                    worker.send(message);
+                });
+            } else {
+                buffer.onData((message) => {
+                    this.pubSub.publish("data", message);
+                });
+            }
+
+        }
+
         return connectorFactory
             .connectConnectors(this.input)
-            .then(() => {
-                for (const connector of connectorFactory.getConnectors()) {
-
-                    connector.onMessage((message) => {
-                        buffer.add({
-                            connector: connector.name,
-                            message
-                        });
-                    });
-                    if (worker) {
-                        buffer.onData((message) => {
-                            worker.send(message);
-                        });
-                    } else {
-                        buffer.onData((message) => {
-                            this.pubSub.publish("data", message);
-                        });
-                    }
-
-                }
-            })
             .catch(error => {
                 this.logger.log({
                     level: "error",
