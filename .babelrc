@@ -1,6 +1,6 @@
 {
     "presets": [
-        "@babel/preset-env"
+        ["@babel/preset-env", {"modules": "commonjs", "targets": {"node": "22"}}]
     ],
     "plugins": [
         "@babel/plugin-transform-async-to-generator"
