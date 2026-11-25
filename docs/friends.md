@@ -77,5 +77,6 @@ Please, let me know so I can add your company name here.
 * Netzquadrat GmbH (AS15594)
 * NetFlash CY (AS203206)
 * ITS Telecomunicações (AS28186)
+* MERLIN (AS16796, AS1048)
 * Folkeye
 * Somcable (AS37425)
